@@ -9,7 +9,7 @@ void
 myview::resizeEvent(QResizeEvent *event)
 {
     QGraphicsView::resizeEvent(event);
-    //fitInView(scene()->sceneRect(), Qt::KeepAspectRatio);
+    fitInView(scene()->sceneRect(), Qt::KeepAspectRatio);
 
 }
 
