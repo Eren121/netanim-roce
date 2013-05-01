@@ -16,5 +16,7 @@ myscene::myscene()
 
 void myscene::testSlot()
 {
+    static int i = 0;
+    addEllipse(i++, 15, 4, 4);
     qDebug("Hi");
 }

@@ -18,5 +18,5 @@ void
 myview::mouseDoubleClickEvent(QMouseEvent *event)
 {
     QGraphicsView::mouseDoubleClickEvent(event);
-    scale(2,2);
+    //scale(2,2);
 }
