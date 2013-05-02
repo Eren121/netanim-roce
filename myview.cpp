@@ -8,8 +8,10 @@ myview::myview(QWidget *parent) :
 void
 myview::resizeEvent(QResizeEvent *event)
 {
+    return;
     QGraphicsView::resizeEvent(event);
     fitInView(scene()->sceneRect(), Qt::KeepAspectRatio);
+    qDebug("Resizing");
 
 }
 
