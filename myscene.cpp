@@ -1,6 +1,24 @@
 #include "myscene.h"
 #include <QGraphicsProxyWidget>
 
+
+ResizeablePixmap::ResizeablePixmap(QPixmap pix): QGraphicsPixmapItem(pix)
+{
+
+}
+
+
+QRectF ResizeablePixmap::boundingRect() const
+{
+    return QGraphicsPixmapItem::boundingRect();
+}
+
+void ResizeablePixmap::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+{
+    return QGraphicsPixmapItem::paint(painter, option, widget);
+
+}
+
 myscene::myscene()
 {
     m_testButton = new QPushButton("Test");
@@ -23,7 +41,8 @@ void myscene::testSlot()
     s.setHeight(5);
     s.setWidth(5);
     pix.scaled(s);
-    QGraphicsPixmapItem * pItem = addPixmap(pix);
+    QGraphicsPixmapItem * pItem = new ResizeablePixmap(pix);
+    addItem(pItem);
     pItem->setZValue(0);
     pItem->scale(.3, .3);
     pItem->setPos(15, 15);

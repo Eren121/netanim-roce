@@ -2,6 +2,9 @@
 #define MYVIEW_H
 
 #include <QGraphicsView>
+#include <QGraphicsItem>
+
+
 
 class myview : public QGraphicsView
 {
