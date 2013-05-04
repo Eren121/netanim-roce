@@ -1,12 +1,33 @@
 #include "myscene.h"
 #include <QGraphicsProxyWidget>
+#include <QGraphicsSceneHoverEvent>
 
 
-ResizeablePixmap::ResizeablePixmap(QPixmap pix): QGraphicsPixmapItem(pix)
+void QDEBUG(QPointF p, QString prefix)
 {
+    QString str = "X:" + QString::number(p.x()) + " Y:" + QString::number(p.y());
+    QDEBUG(prefix + ":" + str);
+}
+
+void QDEBUG(QString str)
+{
+    str = "QD:" + str;
+    qDebug(str.toAscii());
+}
+
+
+ResizeablePixmap::ResizeablePixmap(QPixmap pix): QGraphicsPixmapItem(pix), m_mousePressed(false)
+{
+    setAcceptsHoverEvents(true);
 
 }
 
+void ResizeablePixmap::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
+{
+    QDEBUG(event->pos());
+    QDEBUG(boundingRect().bottomRight(), "Right");
+    return QGraphicsPixmapItem::hoverMoveEvent(event);
+}
 
 QRectF ResizeablePixmap::boundingRect() const
 {
@@ -25,9 +46,11 @@ myscene::myscene()
     connect(m_testButton, SIGNAL(clicked()), this, SLOT(testSlot()));
     addWidget(m_testButton);
     QPixmap pix("/Users/john/ns-3/newcanvas1/ns3logo2.png","png");
-    m_background = addPixmap(pix);
+
+    m_background = new ResizeablePixmap(pix);
     m_background->setFlags(QGraphicsItem::ItemIsMovable|QGraphicsItem::ItemIsSelectable);
     m_background->setZValue(-100);
+    addItem(m_background);
 
 }
 
@@ -41,7 +64,7 @@ void myscene::testSlot()
     s.setHeight(5);
     s.setWidth(5);
     pix.scaled(s);
-    QGraphicsPixmapItem * pItem = new ResizeablePixmap(pix);
+    ResizeablePixmap * pItem = new ResizeablePixmap(pix);
     addItem(pItem);
     pItem->setZValue(0);
     pItem->scale(.3, .3);
