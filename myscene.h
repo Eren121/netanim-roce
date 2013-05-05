@@ -28,11 +28,15 @@ public:
     void hoverMoveEvent(QGraphicsSceneHoverEvent *event);
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
+    void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
 
 private:
     bool m_mousePressed;
-    ResizeDirection_t m_resizeDirection;
+    ResizeDirection_t m_currentResizeDirection;
+    ResizeDirection_t m_lastResizeDirection;
     bool m_resizing;
+    qreal m_lastResizingX;
+    qreal m_lastResizingY;
 
 };
 
