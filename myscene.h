@@ -15,13 +15,24 @@ class ResizeablePixmap : public QGraphicsPixmapItem
 {
 
 public:
+    typedef enum {
+        RESIZE_RIGHT,
+        RESIZE_LEFT,
+        RESIZE_TOP,
+        RESIZE_BOTTOM,
+        RESIZE_NOTRESIZING
+    } ResizeDirection_t;
     ResizeablePixmap(QPixmap pix);
     QRectF boundingRect() const;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
     void hoverMoveEvent(QGraphicsSceneHoverEvent *event);
+    void mousePressEvent(QGraphicsSceneMouseEvent *event);
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
 
 private:
     bool m_mousePressed;
+    ResizeDirection_t m_resizeDirection;
+    bool m_resizing;
 
 };
 
