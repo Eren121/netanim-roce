@@ -24,8 +24,30 @@ ResizeablePixmap::ResizeablePixmap(QPixmap pix): QGraphicsPixmapItem(pix), m_mou
 
 void ResizeablePixmap::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
 {
-    QDEBUG(event->pos());
-    QDEBUG(boundingRect().bottomRight(), "Right");
+    QCursor c(Qt::OpenHandCursor);
+    setCursor(c);
+    qreal borderWidth = 3;
+    qreal bottomRightX = boundingRect().bottomRight().x();
+    qreal bottomRightXLow = bottomRightX - borderWidth;
+
+    qreal bottomRightY = boundingRect().bottomRight().y();
+    qreal bottomRightYLow = bottomRightY - borderWidth;
+
+    qreal eventPosX = event->pos().x();
+    qreal eventPosY = event->pos().y();
+    if (((eventPosX >= bottomRightXLow) && (eventPosX <= bottomRightX)) ||
+            (eventPosX <= borderWidth))
+    {
+        QCursor c(Qt::SizeHorCursor);
+        setCursor(c);
+    }
+    else if (((eventPosY >= bottomRightYLow) && (eventPosY <= bottomRightY)) ||
+         (eventPosY <= borderWidth))
+    {
+        QCursor c(Qt::SizeVerCursor);
+        setCursor(c);
+
+    }
     return QGraphicsPixmapItem::hoverMoveEvent(event);
 }
 
