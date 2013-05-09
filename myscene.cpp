@@ -1,7 +1,10 @@
+#include "log.h"
 #include "myscene.h"
 #include <QGraphicsProxyWidget>
 #include <QGraphicsSceneHoverEvent>
 
+using namespace ns3;
+NS_LOG_COMPONENT_DEFINE("MyScene");
 
 void QDEBUG(QPointF p, QString prefix)
 {
@@ -23,6 +26,7 @@ ResizeablePixmap::ResizeablePixmap(QPixmap pix):
     m_lastResizeDirection(RESIZE_NOTRESIZING),
     m_resizing(false)
 {
+    NS_LOG_FUNCTION(m_mousePressed);
     setAcceptsHoverEvents(true);
 }
 
