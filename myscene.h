@@ -46,7 +46,9 @@ Q_OBJECT
 public:
     myscene();
     ResizeablePixmap * m_background;
+    ResizeablePixmap * m_pItem;
     QPushButton * m_testButton;
+    void addPix();
 public slots:
     void testSlot();
 };

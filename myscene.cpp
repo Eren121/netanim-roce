@@ -41,22 +41,26 @@ void ResizeablePixmap::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
 void ResizeablePixmap::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
-    NS_LOG_FUNCTION("Event Pos: " << event->pos() << " Bottom Right:" << sceneBoundingRect().bottomRight());
-    qreal bottomRightX = boundingRect().bottomRight().x();
+    //NS_LOG_FUNCTION("Event Pos: " << event->pos() << " Bottom Right:" << sceneBoundingRect().bottomRight());
+    qreal bottomRightX = sceneBoundingRect().bottomRight().x();
     qreal bottomRightY = boundingRect().bottomRight().y();
 
-    qreal eventPosX = event->pos().x();
-    qreal eventPosY = event->pos().y();
+    qreal eventPosX = mapToScene(event->pos()).x();
+    qreal eventPosY = mapToScene(event->pos()).y();
+    NS_LOG_DEBUG("XSize:" << bottomRightX << " EventX:" << eventPosX);
     QGraphicsPixmapItem::mouseMoveEvent(event);
     if ((m_currentResizeDirection != RESIZE_NOTRESIZING) && (m_currentResizeDirection == m_lastResizeDirection) && (m_mousePressed))
     {
         //DoResize
         QTransform transform;
         qreal diff = eventPosX-bottomRightX;
-        NS_LOG_DEBUG("Diff:" << diff);
-        transform.translate(-(diff), 0);
-        transform.scale((eventPosX/bottomRightX), 1);
-        setTransform(transform);
+        qreal xScale = eventPosX/bottomRightX;
+        NS_LOG_DEBUG("Diff:" << diff << " Scale:" << xScale);
+        //transform.translate(-(diff), 0);
+        scale(xScale, 1);
+        //transform.scale(xScale, 1);
+        //prepareGeometryChange();
+        //setTransform(transform);
         //qDebug("Transforming");
 
     }
@@ -74,14 +78,14 @@ void ResizeablePixmap::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
 {
 
     qreal borderWidth = 3;
-    qreal bottomRightX = boundingRect().bottomRight().x();
+    qreal bottomRightX = sceneBoundingRect().bottomRight().x();
     qreal bottomRightXLow = bottomRightX - borderWidth;
 
-    qreal bottomRightY = boundingRect().bottomRight().y();
+    qreal bottomRightY = sceneBoundingRect().bottomRight().y();
     qreal bottomRightYLow = bottomRightY - borderWidth;
 
-    qreal eventPosX = event->pos().x();
-    qreal eventPosY = event->pos().y();
+    qreal eventPosX = mapToScene(event->pos()).x();
+    qreal eventPosY = mapToScene(event->pos()).y();
     if (((eventPosX >= bottomRightXLow) && (eventPosX <= bottomRightX)))
     {
         setFlags(QGraphicsItem::ItemIsSelectable);
@@ -123,7 +127,7 @@ void ResizeablePixmap::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
         m_lastResizingX = eventPosX;
         m_lastResizingY = eventPosY;
     }
-    QDEBUG("Current Resize Direction:" + QString::number(m_currentResizeDirection) + " Last Resize:" + QString::number(m_lastResizeDirection));
+    //QDEBUG("Current Resize Direction:" + QString::number(m_currentResizeDirection) + " Last Resize:" + QString::number(m_lastResizeDirection));
 
     m_lastResizeDirection = m_currentResizeDirection;
 }
@@ -135,6 +139,7 @@ QRectF ResizeablePixmap::boundingRect() const
 
 void ResizeablePixmap::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
+    //NS_LOG_DEBUG(sceneBoundingRect());
     return QGraphicsPixmapItem::paint(painter, option, widget);
 
 }
@@ -150,12 +155,16 @@ myscene::myscene()
     m_background->setFlags(QGraphicsItem::ItemIsMovable|QGraphicsItem::ItemIsSelectable);
     m_background->setZValue(-100);
     //addItem(m_background);
-    testSlot();
-
+    //testSlot();
+    addPix();
 }
 
-
 void myscene::testSlot()
+{
+    m_pItem->scale(0.994, 1);
+}
+
+void myscene::addPix()
 {
     static int i = 0;
     addEllipse(i++, 15, 4, 4);
@@ -164,11 +173,11 @@ void myscene::testSlot()
     s.setHeight(5);
     s.setWidth(5);
     pix.scaled(s);
-    ResizeablePixmap * pItem = new ResizeablePixmap(pix);
-    addItem(pItem);
-    pItem->setZValue(0);
-    pItem->scale(.3, .3);
-    pItem->setPos(15, 15);
+    m_pItem = new ResizeablePixmap(pix);
+    addItem(m_pItem);
+    m_pItem->setZValue(0);
+    m_pItem->scale(.3, .3);
+    m_pItem->setPos(15, 15);
 
     qDebug("Hi");
 }
