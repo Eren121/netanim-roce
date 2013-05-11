@@ -1,10 +1,12 @@
 #include "log.h"
+#include "logqt.h"
 #include "myscene.h"
 #include <QGraphicsProxyWidget>
 #include <QGraphicsSceneHoverEvent>
 
 using namespace ns3;
 NS_LOG_COMPONENT_DEFINE("MyScene");
+
 
 void QDEBUG(QPointF p, QString prefix)
 {
@@ -39,8 +41,8 @@ void ResizeablePixmap::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
 void ResizeablePixmap::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
+    NS_LOG_FUNCTION("Event Pos: " << event->pos() << " Bottom Right:" << sceneBoundingRect().bottomRight());
     qreal bottomRightX = boundingRect().bottomRight().x();
-
     qreal bottomRightY = boundingRect().bottomRight().y();
 
     qreal eventPosX = event->pos().x();
@@ -50,9 +52,12 @@ void ResizeablePixmap::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     {
         //DoResize
         QTransform transform;
-        transform.scale(eventPosX/bottomRightX, 1);
+        qreal diff = eventPosX-bottomRightX;
+        NS_LOG_DEBUG("Diff:" << diff);
+        transform.translate(-(diff), 0);
+        transform.scale((eventPosX/bottomRightX), 1);
         setTransform(transform);
-        qDebug("Transforming");
+        //qDebug("Transforming");
 
     }
 }
@@ -144,7 +149,8 @@ myscene::myscene()
     m_background = new ResizeablePixmap(pix);
     m_background->setFlags(QGraphicsItem::ItemIsMovable|QGraphicsItem::ItemIsSelectable);
     m_background->setZValue(-100);
-    addItem(m_background);
+    //addItem(m_background);
+    testSlot();
 
 }
 

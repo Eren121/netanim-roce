@@ -4,7 +4,8 @@ SOURCES += \
     myscene.cpp \
     log.cpp \
     fatal-error.cpp \
-    fatal-impl.cpp
+    fatal-impl.cpp \
+    logqt.cpp
 
 HEADERS += \
     myview.h \
@@ -13,6 +14,7 @@ HEADERS += \
     fatal-error.h \
     fatal-impl.h \
     abort.h \
-    assert.h
+    assert.h \
+    logqt.h
 
 DEFINES += NS3_LOG_ENABLE
