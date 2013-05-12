@@ -41,29 +41,48 @@ void ResizeablePixmap::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
 void ResizeablePixmap::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
-    //NS_LOG_FUNCTION("Event Pos: " << event->pos() << " Bottom Right:" << sceneBoundingRect().bottomRight());
+    NS_LOG_FUNCTION("Event Pos: " << event->pos() << " SB Rect:" << sceneBoundingRect());
     qreal bottomRightX = sceneBoundingRect().bottomRight().x();
+    qreal topLeftX = sceneBoundingRect().topLeft().x();
     qreal bottomRightY = boundingRect().bottomRight().y();
+    qreal sz = boundingRect().bottomRight().x();
+
+    qreal otopleft = boundingRect().topLeft().x();
+    QPointF originalPos = mapToScene(event->pos());// scenePos();// (sceneBoundingRect().topLeft());
 
     qreal eventPosX = mapToScene(event->pos()).x();
     qreal eventPosY = mapToScene(event->pos()).y();
-    NS_LOG_DEBUG("XSize:" << bottomRightX << " EventX:" << eventPosX);
+    //NS_LOG_DEBUG("XSize:" << bottomRightX << " EventX:" << eventPosX);
     QGraphicsPixmapItem::mouseMoveEvent(event);
-    if ((m_currentResizeDirection != RESIZE_NOTRESIZING) && (m_currentResizeDirection == m_lastResizeDirection) && (m_mousePressed))
+    if ((m_currentResizeDirection == RESIZE_RIGHT) && (m_currentResizeDirection == m_lastResizeDirection) && (m_mousePressed))
     {
         //DoResize
-        QTransform transform;
         qreal diff = eventPosX-bottomRightX;
         qreal xScale = eventPosX/bottomRightX;
         NS_LOG_DEBUG("Diff:" << diff << " Scale:" << xScale);
-        //transform.translate(-(diff), 0);
-        scale(xScale, 1);
-        //transform.scale(xScale, 1);
-        //prepareGeometryChange();
-        //setTransform(transform);
-        //qDebug("Transforming");
-
+        scale((xScale), 1);
     }
+    if ((m_currentResizeDirection == RESIZE_LEFT) && (m_currentResizeDirection == m_lastResizeDirection) && (m_mousePressed))
+    {
+        NS_LOG_DEBUG("Event PosX:" << eventPosX << " topLeftX:" << topLeftX << " bottomRight:" << bottomRightX);
+        qreal diff = event->pos().x() - otopleft;// eventPosX - topLeftX;
+        //qreal xScale = (bottomRightX-diff)/bottomRightX;
+        qreal xScale = (sz-diff)/sz;
+
+        NS_LOG_DEBUG("Diff:" << diff << " Scale:" << xScale << "ScenePos:" << scenePos());
+        scale(xScale, 1);
+        NS_LOG_DEBUG("After:" << scenePos());
+        //setPos(QPointF(originalPos.x()+3, originalPos.y()));
+        setPos(originalPos);
+        //scene()->itemAt()
+        NS_LOG_DEBUG("After2:" << scenePos());
+
+        NS_LOG_DEBUG("New:" << sceneBoundingRect());
+    }
+
+
+
+
 }
 
 
@@ -78,14 +97,14 @@ void ResizeablePixmap::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
 {
 
     qreal borderWidth = 3;
-    qreal bottomRightX = sceneBoundingRect().bottomRight().x();
+    qreal bottomRightX = boundingRect().bottomRight().x();
     qreal bottomRightXLow = bottomRightX - borderWidth;
 
-    qreal bottomRightY = sceneBoundingRect().bottomRight().y();
+    qreal bottomRightY = boundingRect().bottomRight().y();
     qreal bottomRightYLow = bottomRightY - borderWidth;
 
-    qreal eventPosX = mapToScene(event->pos()).x();
-    qreal eventPosY = mapToScene(event->pos()).y();
+    qreal eventPosX = (event->pos()).x();
+    qreal eventPosY = (event->pos()).y();
     if (((eventPosX >= bottomRightXLow) && (eventPosX <= bottomRightX)))
     {
         setFlags(QGraphicsItem::ItemIsSelectable);
@@ -144,7 +163,7 @@ void ResizeablePixmap::paint(QPainter *painter, const QStyleOptionGraphicsItem *
 
 }
 
-myscene::myscene()
+myscene::myscene():QGraphicsScene(0, 0, 1000, 1000)
 {
     m_testButton = new QPushButton("Test");
     connect(m_testButton, SIGNAL(clicked()), this, SLOT(testSlot()));
@@ -161,7 +180,10 @@ myscene::myscene()
 
 void myscene::testSlot()
 {
-    m_pItem->scale(0.994, 1);
+    NS_LOG_DEBUG("Before:" << m_pItem->sceneBoundingRect() << " Pos:" << m_pItem->pos());
+    m_pItem->scale(1.1, 1);
+    NS_LOG_DEBUG("After:" << m_pItem->sceneBoundingRect() << " Pos:" << m_pItem->pos());
+
 }
 
 void myscene::addPix()
