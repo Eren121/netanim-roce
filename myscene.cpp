@@ -42,42 +42,25 @@ void ResizeablePixmap::mousePressEvent(QGraphicsSceneMouseEvent *event)
 void ResizeablePixmap::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
     NS_LOG_FUNCTION("Event Pos: " << event->pos() << " SB Rect:" << sceneBoundingRect());
-    qreal bottomRightX = sceneBoundingRect().bottomRight().x();
-    qreal topLeftX = sceneBoundingRect().topLeft().x();
-    qreal bottomRightY = boundingRect().bottomRight().y();
-    qreal sz = boundingRect().bottomRight().x();
 
-    qreal otopleft = boundingRect().topLeft().x();
-    QPointF originalPos = mapToScene(event->pos());// scenePos();// (sceneBoundingRect().topLeft());
+    qreal sceneWidth = sceneBoundingRect().bottomRight().x();
+
+
 
     qreal eventPosX = mapToScene(event->pos()).x();
-    qreal eventPosY = mapToScene(event->pos()).y();
     //NS_LOG_DEBUG("XSize:" << bottomRightX << " EventX:" << eventPosX);
     QGraphicsPixmapItem::mouseMoveEvent(event);
     if ((m_currentResizeDirection == RESIZE_RIGHT) && (m_currentResizeDirection == m_lastResizeDirection) && (m_mousePressed))
     {
         //DoResize
         qreal diff = eventPosX-bottomRightX;
-        qreal xScale = eventPosX/bottomRightX;
+        qreal xScale = eventPosX/sceneWidth;
         NS_LOG_DEBUG("Diff:" << diff << " Scale:" << xScale);
         scale((xScale), 1);
     }
     if ((m_currentResizeDirection == RESIZE_LEFT) && (m_currentResizeDirection == m_lastResizeDirection) && (m_mousePressed))
     {
-        NS_LOG_DEBUG("Event PosX:" << eventPosX << " topLeftX:" << topLeftX << " bottomRight:" << bottomRightX);
-        qreal diff = event->pos().x() - otopleft;// eventPosX - topLeftX;
-        //qreal xScale = (bottomRightX-diff)/bottomRightX;
-        qreal xScale = (sz-diff)/sz;
 
-        NS_LOG_DEBUG("Diff:" << diff << " Scale:" << xScale << "ScenePos:" << scenePos());
-        scale(xScale, 1);
-        NS_LOG_DEBUG("After:" << scenePos());
-        //setPos(QPointF(originalPos.x()+3, originalPos.y()));
-        setPos(originalPos);
-        //scene()->itemAt()
-        NS_LOG_DEBUG("After2:" << scenePos());
-
-        NS_LOG_DEBUG("New:" << sceneBoundingRect());
     }
 
 
