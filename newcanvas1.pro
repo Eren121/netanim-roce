@@ -19,3 +19,6 @@ HEADERS += \
     logqt.h
 
 DEFINES += NS3_LOG_ENABLE
+
+RESOURCES += \
+    testrc.qrc

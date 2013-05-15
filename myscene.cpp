@@ -53,7 +53,7 @@ void ResizeablePixmap::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     if ((m_currentResizeDirection == RESIZE_RIGHT) && (m_currentResizeDirection == m_lastResizeDirection) && (m_mousePressed))
     {
         //DoResize
-        qreal diff = eventPosX-bottomRightX;
+        qreal diff = eventPosX-sceneWidth;
         qreal xScale = eventPosX/sceneWidth;
         NS_LOG_DEBUG("Diff:" << diff << " Scale:" << xScale);
         scale((xScale), 1);
@@ -151,7 +151,7 @@ myscene::myscene():QGraphicsScene(0, 0, 1000, 1000)
     m_testButton = new QPushButton("Test");
     connect(m_testButton, SIGNAL(clicked()), this, SLOT(testSlot()));
     addWidget(m_testButton);
-    QPixmap pix("/Users/john/ns-3/newcanvas1/ns3logo2.png","png");
+    QPixmap pix(":/prefix1/ns3logo2.png","png");
 
     m_background = new ResizeablePixmap(pix);
     m_background->setFlags(QGraphicsItem::ItemIsMovable|QGraphicsItem::ItemIsSelectable);
