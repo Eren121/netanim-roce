@@ -1,4 +1,3 @@
-
 /* -*- Mode:C++; c-file-style:"gnu"; indent-tabs-mode:nil; -*- */
 /*
  * Copyright (c) 2006,2007 INRIA
@@ -24,7 +23,7 @@
 #include <utility>
 #include <iostream>
 #include "assert.h"
-#include "ns3/core-config.h"
+//#include "ns3/core-config.h"
 #include "fatal-error.h"
 
 #ifdef HAVE_GETENV
@@ -577,9 +576,8 @@ LogNodePrinter LogGetNodePrinter (void)
   return g_logNodePrinter;
 }
 
-
 ParameterLogger::ParameterLogger (std::ostream &os)
-  : m_itemNumber (0),
+  : std::basic_ostream<char> (os.rdbuf ()), m_itemNumber (0),
     m_os (os)
 {
 }
