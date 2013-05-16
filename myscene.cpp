@@ -173,7 +173,7 @@ void myscene::addPix()
 {
     static int i = 0;
     addEllipse(i++, 15, 4, 4);
-    QPixmap pix("/Users/john/ns-3/newcanvas1/ns3logo2.png","png");
+    QPixmap pix(":/new/prefix1/ns3logo2.png","png");
     QSize s;
     s.setHeight(5);
     s.setWidth(5);
