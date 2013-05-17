@@ -62,8 +62,10 @@ void ResizeablePixmap::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     {
         qreal w = event->pos().x();
         qreal xScale = (getItemWidth() - w)/getItemWidth();
+        qreal savedY = pos().y();
         scale((xScale), 1);
         //setPos( event->pos().x()-(sceneBoundingRect().width()/2), event->pos().y());
+        setPos(QPointF(mapToScene(event->pos())).x(), savedY );
         NS_LOG_DEBUG("POS:" << pos() << " EventPos:" << event->pos() << sceneBoundingRect().topLeft());
     }
 
