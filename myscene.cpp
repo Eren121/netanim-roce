@@ -41,7 +41,7 @@ void ResizeablePixmap::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
 void ResizeablePixmap::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
-    NS_LOG_FUNCTION("Event Pos: " << event->pos() << " SB Rect:" << sceneBoundingRect());
+    //NS_LOG_FUNCTION("Event Pos: " << event->pos() << " SB Rect:" << sceneBoundingRect());
 
     qreal sceneWidth = sceneBoundingRect().bottomRight().x();
 
@@ -55,12 +55,16 @@ void ResizeablePixmap::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         //DoResize
         qreal diff = eventPosX-sceneWidth;
         qreal xScale = eventPosX/sceneWidth;
-        NS_LOG_DEBUG("Diff:" << diff << " Scale:" << xScale);
+        //NS_LOG_DEBUG("Diff:" << diff << " Scale:" << xScale);
         scale((xScale), 1);
     }
     if ((m_currentResizeDirection == RESIZE_LEFT) && (m_currentResizeDirection == m_lastResizeDirection) && (m_mousePressed))
     {
-
+        qreal w = event->pos().x();
+        qreal xScale = (getItemWidth() - w)/getItemWidth();
+        scale((xScale), 1);
+        //setPos( event->pos().x()-(sceneBoundingRect().width()/2), event->pos().y());
+        NS_LOG_DEBUG("POS:" << pos() << " EventPos:" << event->pos() << sceneBoundingRect().topLeft());
     }
 
 
@@ -69,6 +73,15 @@ void ResizeablePixmap::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 }
 
 
+qreal ResizeablePixmap::getItemWidth()
+{
+    QPointF sceneLeft = sceneBoundingRect().topLeft();
+    QPointF sceneRight = sceneBoundingRect().topRight();
+    QPointF itemMapLeft = mapFromScene(sceneLeft);
+    QPointF itemMapRight = mapFromScene(sceneRight);
+    return itemMapRight.x() - itemMapLeft.x();
+
+}
 void ResizeablePixmap::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     qDebug("Mouse released");
@@ -182,7 +195,7 @@ void myscene::addPix()
     addItem(m_pItem);
     m_pItem->setZValue(0);
     m_pItem->scale(.3, .3);
-    m_pItem->setPos(15, 15);
+    m_pItem->setPos(355, 355);
 
     qDebug("Hi");
 }
