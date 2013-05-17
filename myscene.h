@@ -39,6 +39,8 @@ private:
     qreal m_lastResizingX;
     qreal m_lastResizingY;
 
+    bool isResizing();
+
 };
 
 class myscene : public QGraphicsScene

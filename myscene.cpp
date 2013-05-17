@@ -39,24 +39,28 @@ void ResizeablePixmap::mousePressEvent(QGraphicsSceneMouseEvent *event)
     QGraphicsPixmapItem::mousePressEvent(event);
 }
 
+bool ResizeablePixmap::isResizing()
+{
+    return (m_currentResizeDirection == m_lastResizeDirection);
+}
 void ResizeablePixmap::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
     //NS_LOG_FUNCTION("Event Pos: " << event->pos() << " SB Rect:" << sceneBoundingRect());
     QGraphicsPixmapItem::mouseMoveEvent(event);
     NS_LOG_DEBUG("POS:" << pos() << " EventPos:" << event->pos() << sceneBoundingRect().topLeft());
-
-    if ((m_currentResizeDirection == RESIZE_RIGHT) && (m_currentResizeDirection == m_lastResizeDirection) && (m_mousePressed))
+    if (!m_mousePressed || !isResizing())
+        return;
+    qreal eventPosX = event->pos().x();
+    if ((m_currentResizeDirection == RESIZE_RIGHT))
     {
-        qreal w = event->pos().x();
-        qreal xScale = (w)/getItemWidth();
-        scale((xScale), 1);
+        qreal xScale = eventPosX/getItemWidth();
+        scale(xScale, 1);
     }
-    if ((m_currentResizeDirection == RESIZE_LEFT) && (m_currentResizeDirection == m_lastResizeDirection) && (m_mousePressed))
+    if ((m_currentResizeDirection == RESIZE_LEFT))
     {
-        qreal w = event->pos().x();
-        qreal xScale = (getItemWidth() - w)/getItemWidth();
+        qreal xScale = (getItemWidth() - eventPosX)/getItemWidth();
         qreal savedY = pos().y();
-        scale((xScale), 1);
+        scale(xScale, 1);
         setPos(QPointF(mapToScene(event->pos())).x(), savedY );
     }
 
