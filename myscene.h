@@ -11,6 +11,9 @@
 void QDEBUG(QPointF p, QString prefix = "");
 void QDEBUG(QString str);
 
+
+#define PIXMAP_RESIZING_BORDER 3
+
 class ResizeablePixmap : public QGraphicsPixmapItem
 {
 
@@ -40,6 +43,7 @@ private:
     qreal m_lastResizingY;
 
     bool isResizing();
+    void setResizingDirection(ResizeDirection_t direction);
 
 };
 

@@ -89,10 +89,36 @@ void ResizeablePixmap::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     QGraphicsPixmapItem::mouseReleaseEvent(event);
 }
 
+void ResizeablePixmap::setResizingDirection(ResizeDirection_t direction)
+{
+    QCursor c;
+    switch (direction)
+    {
+
+        case RESIZE_BOTTOM:
+        case RESIZE_TOP:
+            c.setShape(Qt::SizeVerCursor);
+            setFlags(QGraphicsItem::ItemIsSelectable);
+            break;
+        case RESIZE_LEFT:
+        case RESIZE_RIGHT:
+            c.setShape(Qt::SizeHorCursor);
+            setFlags(QGraphicsItem::ItemIsSelectable);
+            break;
+        case RESIZE_NOTRESIZING:
+            c.setShape(Qt::OpenHandCursor);
+            setFlags(QGraphicsItem::ItemIsMovable|QGraphicsItem::ItemIsSelectable);
+
+
+    }
+    setCursor(c);
+    m_currentResizeDirection = direction;
+}
+
 void ResizeablePixmap::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
 {
 
-    qreal borderWidth = 3;
+    qreal borderWidth = PIXMAP_RESIZING_BORDER;
     qreal bottomRightX = boundingRect().bottomRight().x();
     qreal bottomRightXLow = bottomRightX - borderWidth;
 
@@ -103,38 +129,23 @@ void ResizeablePixmap::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
     qreal eventPosY = (event->pos()).y();
     if (((eventPosX >= bottomRightXLow) && (eventPosX <= bottomRightX)))
     {
-        setFlags(QGraphicsItem::ItemIsSelectable);
-        QCursor c(Qt::SizeHorCursor);
-        setCursor(c);
-        m_currentResizeDirection = RESIZE_RIGHT;
+        setResizingDirection(RESIZE_RIGHT);
     }
     else if (eventPosX <= borderWidth)
     {
-        setFlags(QGraphicsItem::ItemIsSelectable);
-        QCursor c(Qt::SizeHorCursor);
-        setCursor(c);
-        m_currentResizeDirection = RESIZE_LEFT;
+        setResizingDirection(RESIZE_LEFT);
     }
     else if (((eventPosY >= bottomRightYLow) && (eventPosY <= bottomRightY)))
     {
-        setFlags(QGraphicsItem::ItemIsSelectable);
-        QCursor c(Qt::SizeVerCursor);
-        setCursor(c);
-        m_currentResizeDirection = RESIZE_BOTTOM;
+        setResizingDirection(RESIZE_BOTTOM);
     }
     else if (eventPosY <= borderWidth)
     {
-        setFlags(QGraphicsItem::ItemIsSelectable);
-        QCursor c(Qt::SizeVerCursor);
-        setCursor(c);
-        m_currentResizeDirection = RESIZE_TOP;
+        setResizingDirection(RESIZE_TOP);
     }
     else
     {
-        setFlags(QGraphicsItem::ItemIsMovable|QGraphicsItem::ItemIsSelectable);
-        QCursor c(Qt::OpenHandCursor);
-        setCursor(c);
-        m_currentResizeDirection = RESIZE_NOTRESIZING;
+        setResizingDirection(RESIZE_NOTRESIZING);
     }
     QGraphicsPixmapItem::hoverMoveEvent(event);
     if ((m_lastResizeDirection == RESIZE_NOTRESIZING) && (m_lastResizeDirection != m_currentResizeDirection))

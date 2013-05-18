@@ -16,7 +16,8 @@ HEADERS += \
     fatal-impl.h \
     abort.h \
     assert.h \
-    logqt.h
+    logqt.h \
+    animatorconstants.h
 
 DEFINES += NS3_LOG_ENABLE
 
