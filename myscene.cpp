@@ -63,10 +63,6 @@ void ResizeablePixmap::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         scale(xScale, 1);
         setPos(QPointF(mapToScene(event->pos())).x(), savedY );
     }
-
-
-
-
 }
 
 
@@ -148,11 +144,6 @@ void ResizeablePixmap::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
         setResizingDirection(RESIZE_NOTRESIZING);
     }
     QGraphicsPixmapItem::hoverMoveEvent(event);
-    if ((m_lastResizeDirection == RESIZE_NOTRESIZING) && (m_lastResizeDirection != m_currentResizeDirection))
-    {
-        m_lastResizingX = eventPosX;
-        m_lastResizingY = eventPosY;
-    }
     //QDEBUG("Current Resize Direction:" + QString::number(m_currentResizeDirection) + " Last Resize:" + QString::number(m_lastResizeDirection));
 
     m_lastResizeDirection = m_currentResizeDirection;

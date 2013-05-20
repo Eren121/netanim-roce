@@ -39,9 +39,6 @@ private:
     ResizeDirection_t m_currentResizeDirection;
     ResizeDirection_t m_lastResizeDirection;
     bool m_resizing;
-    qreal m_lastResizingX;
-    qreal m_lastResizingY;
-
     bool isResizing();
     void setResizingDirection(ResizeDirection_t direction);
 
