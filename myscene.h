@@ -33,6 +33,7 @@ public:
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
     qreal getItemWidth();
+    qreal getItemHeight();
 
 private:
     bool m_mousePressed;

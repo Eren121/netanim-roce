@@ -51,6 +51,7 @@ void ResizeablePixmap::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     if (!m_mousePressed || !isResizing())
         return;
     qreal eventPosX = event->pos().x();
+    qreal eventPosY = event->pos().y();
     if ((m_currentResizeDirection == RESIZE_RIGHT))
     {
         qreal xScale = eventPosX/getItemWidth();
@@ -62,6 +63,18 @@ void ResizeablePixmap::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         qreal savedY = pos().y();
         scale(xScale, 1);
         setPos(QPointF(mapToScene(event->pos())).x(), savedY );
+    }
+    if ((m_currentResizeDirection == RESIZE_TOP))
+    {
+        qreal yScale = (getItemHeight()- eventPosY)/getItemHeight();
+        qreal savedX = pos().x();
+        scale(1, yScale);
+        setPos(savedX, QPointF(mapToScene(event->pos())).y());
+    }
+    if ((m_currentResizeDirection == RESIZE_BOTTOM))
+    {
+        qreal yScale = eventPosY/getItemHeight();
+        scale(1, yScale);
     }
 }
 
@@ -78,6 +91,18 @@ qreal ResizeablePixmap::getItemWidth()
     return w;
 
 }
+
+qreal ResizeablePixmap::getItemHeight()
+{
+    QPointF sceneTop = sceneBoundingRect().topLeft();
+    QPointF sceneBottom = sceneBoundingRect().bottomLeft();
+    QPointF itemMapTop = mapFromScene(sceneTop);
+    QPointF itemMapBottom = mapFromScene(sceneBottom);
+    qreal h = itemMapBottom.y() - itemMapTop.y();
+    NS_LOG_DEBUG ("ItemHeight:" << h);
+    return h;
+}
+
 void ResizeablePixmap::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     qDebug("Mouse released");
