@@ -139,20 +139,25 @@ void ResizeablePixmap::setResizingDirection(ResizeDirection_t direction)
 void ResizeablePixmap::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
 {
 
-    qreal borderWidth = PIXMAP_RESIZING_BORDER;
-    qreal bottomRightX = boundingRect().bottomRight().x();
+    NS_LOG_DEBUG("Item Rect:" << boundingRect() << " Event Pos:" << event->pos());
+
+    //NS_LOG_DEBUG("Scene Rect:" << sceneBoundingRect());
+    qreal borderWidth = PIXMAP_RESIZING_BORDER * (boundingRect().width()/sceneBoundingRect().width());
+    qreal bottomRightX = sceneBoundingRect().bottomRight().x();
     qreal bottomRightXLow = bottomRightX - borderWidth;
+    qreal bottomLeftX = sceneBoundingRect().bottomLeft().x();
 
-    qreal bottomRightY = boundingRect().bottomRight().y();
+    qreal bottomRightY = sceneBoundingRect().bottomRight().y();
     qreal bottomRightYLow = bottomRightY - borderWidth;
+    qreal topLeftY = sceneBoundingRect().topLeft().y();
 
-    qreal eventPosX = (event->pos()).x();
-    qreal eventPosY = (event->pos()).y();
+    qreal eventPosX = (mapToScene(event->pos())).x();
+    qreal eventPosY = (mapToScene(event->pos())).y();
     if (((eventPosX >= bottomRightXLow) && (eventPosX <= bottomRightX)))
     {
         setResizingDirection(RESIZE_RIGHT);
     }
-    else if (eventPosX <= borderWidth)
+    else if (eventPosX <= (bottomLeftX+borderWidth))
     {
         setResizingDirection(RESIZE_LEFT);
     }
@@ -160,7 +165,7 @@ void ResizeablePixmap::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
     {
         setResizingDirection(RESIZE_BOTTOM);
     }
-    else if (eventPosY <= borderWidth)
+    else if (eventPosY <= (topLeftY+borderWidth))
     {
         setResizingDirection(RESIZE_TOP);
     }
