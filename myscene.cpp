@@ -142,7 +142,7 @@ void ResizeablePixmap::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
     NS_LOG_DEBUG("Item Rect:" << boundingRect() << " Event Pos:" << event->pos());
 
     //NS_LOG_DEBUG("Scene Rect:" << sceneBoundingRect());
-    qreal borderWidth = PIXMAP_RESIZING_BORDER * (boundingRect().width()/sceneBoundingRect().width());
+    qreal borderWidth = PIXMAP_RESIZING_BORDER * (sceneBoundingRect().width()/boundingRect().width());
     qreal bottomRightX = sceneBoundingRect().bottomRight().x();
     qreal bottomRightXLow = bottomRightX - borderWidth;
     qreal bottomLeftX = sceneBoundingRect().bottomLeft().x();
@@ -209,7 +209,7 @@ myscene::myscene():QGraphicsScene(0, 0, 1000, 1000)
 void myscene::testSlot()
 {
     NS_LOG_DEBUG("Before:" << m_pItem->sceneBoundingRect() << " Pos:" << m_pItem->pos());
-    m_pItem->scale(1.1, 1);
+    m_pItem->scale(1.5, 1.5);
     NS_LOG_DEBUG("After:" << m_pItem->sceneBoundingRect() << " Pos:" << m_pItem->pos());
 
 }
@@ -226,7 +226,7 @@ void myscene::addPix()
     m_pItem = new ResizeablePixmap(pix);
     addItem(m_pItem);
     m_pItem->setZValue(0);
-    m_pItem->scale(.3, .3);
+    m_pItem->scale(1, 1);
     m_pItem->setPos(355, 355);
 
     qDebug("Hi");
