@@ -13,3 +13,8 @@ std::ostream & operator << (std::ostream & os, QRectF r)
 }
 
 
+std::ostream & operator << (std::ostream & os, QTransform t)
+{
+    os << "QTransform m11:" << t.m11() << " m22:" << t.m22();
+    return os;
+}

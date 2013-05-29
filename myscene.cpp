@@ -138,11 +138,13 @@ void ResizeablePixmap::setResizingDirection(ResizeDirection_t direction)
 
 void ResizeablePixmap::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
 {
-
-    NS_LOG_DEBUG("Item Rect:" << boundingRect() << " Event Pos:" << event->pos());
-
+    //QPointF itemBorderPoint = mapFromScene(QPointF(PIXMAP_RESIZING_BORDER), 0);
+    //QPointF itemTopLeft =
+    //NS_LOG_DEBUG("Item Rect:" << boundingRect() << " Event Pos:" << event->pos());
+    NS_LOG_DEBUG("ITEM Transform: " << transform());
+    //NS_LOG_DEBUG("SCENE Transform:" << );
     //NS_LOG_DEBUG("Scene Rect:" << sceneBoundingRect());
-    qreal borderWidth = PIXMAP_RESIZING_BORDER * (sceneBoundingRect().width()/boundingRect().width());
+    qreal borderWidth = 5* transform().m11() ;// * transform().m11() / sceneTransform().m11(); // sceneBoundingRect().width()/10;
     qreal bottomRightX = sceneBoundingRect().bottomRight().x();
     qreal bottomRightXLow = bottomRightX - borderWidth;
     qreal bottomLeftX = sceneBoundingRect().bottomLeft().x();
@@ -230,4 +232,9 @@ void myscene::addPix()
     m_pItem->setPos(355, 355);
 
     qDebug("Hi");
+}
+void myscene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
+{
+    NS_LOG_DEBUG("Scene Pos:" << event->pos());
+    return QGraphicsScene::mouseMoveEvent(event);
 }

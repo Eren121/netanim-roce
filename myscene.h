@@ -54,6 +54,7 @@ public:
     ResizeablePixmap * m_pItem;
     QPushButton * m_testButton;
     void addPix();
+    void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
 public slots:
     void testSlot();
 };
