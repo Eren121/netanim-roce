@@ -31,6 +31,7 @@ myview::mouseDoubleClickEvent(QMouseEvent *event)
 void
 myview::mouseMoveEvent(QMouseEvent *event)
 {
-    NS_LOG_DEBUG("myview::MouseMove:" << event->pos());
+    //NS_LOG_DEBUG("myview::MouseMove:" << event->pos());
+    //NS_LOG_DEBUG("myview::transform:" << transform());
     QGraphicsView::mouseMoveEvent(event);
 }

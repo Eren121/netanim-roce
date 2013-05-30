@@ -34,6 +34,7 @@ public:
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
     qreal getItemWidth();
     qreal getItemHeight();
+    qreal getBorderWidth();
 
 private:
     bool m_mousePressed;

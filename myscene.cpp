@@ -3,6 +3,7 @@
 #include "myscene.h"
 #include <QGraphicsProxyWidget>
 #include <QGraphicsSceneHoverEvent>
+#include <QGraphicsView>
 
 using namespace ns3;
 NS_LOG_COMPONENT_DEFINE("MyScene");
@@ -136,15 +137,28 @@ void ResizeablePixmap::setResizingDirection(ResizeDirection_t direction)
     m_currentResizeDirection = direction;
 }
 
+qreal ResizeablePixmap::getBorderWidth()
+{
+
+    QGraphicsView * view = scene()->views().last();
+    QPointF scenePos1 = view->mapToScene(QPointF(0, 0).toPoint());
+    QPointF scenePos2 = view->mapToScene(QPointF(5, 0).toPoint());
+    NS_LOG_DEBUG("Mapped scenePos:" << scenePos1 << " SceneRect:" << view->sceneRect());
+    return qAbs(scenePos2.x() - scenePos1.x());
+}
+
 void ResizeablePixmap::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
 {
     //QPointF itemBorderPoint = mapFromScene(QPointF(PIXMAP_RESIZING_BORDER), 0);
     //QPointF itemTopLeft =
     //NS_LOG_DEBUG("Item Rect:" << boundingRect() << " Event Pos:" << event->pos());
-    NS_LOG_DEBUG("ITEM Transform: " << transform());
+    NS_LOG_DEBUG("transform: " << transform());
+    //NS_LOG_DEBUG("Item Transform:" << itemTransform());
+    //NS_LOG_DEBUG("SCENE Transform:" << scene()->)
     //NS_LOG_DEBUG("SCENE Transform:" << );
     //NS_LOG_DEBUG("Scene Rect:" << sceneBoundingRect());
-    qreal borderWidth = 5* transform().m11() ;// * transform().m11() / sceneTransform().m11(); // sceneBoundingRect().width()/10;
+    qreal borderWidth = getBorderWidth() ;//* transform().m11();// 5* transform().m11() ;// * transform().m11() / sceneTransform().m11(); // sceneBoundingRect().width()/10;
+    NS_LOG_DEBUG("BorderWidth:" << borderWidth);
     qreal bottomRightX = sceneBoundingRect().bottomRight().x();
     qreal bottomRightXLow = bottomRightX - borderWidth;
     qreal bottomLeftX = sceneBoundingRect().bottomLeft().x();
@@ -235,6 +249,12 @@ void myscene::addPix()
 }
 void myscene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
-    NS_LOG_DEBUG("Scene Pos:" << event->pos());
+    QGraphicsView * view = views().last();
+    NS_LOG_DEBUG("Scene Mouse Move ScenePos:" << event->scenePos());
+    //NS_LOG_DEBUG("Scene Mouse Move ScreenPos:" << event->screenPos());
+
+    QPoint viewP = view->mapFromScene(event->scenePos());
+    QPoint globalP = view->viewport()->mapToGlobal(viewP);
+    //NS_LOG_DEBUG("Scene Mouse Move ViewPos:" << globalP);
     return QGraphicsScene::mouseMoveEvent(event);
 }
