@@ -145,10 +145,16 @@ qreal ResizeablePixmap::getBorderWidth()
     QPointF scenePos2 = view->mapToScene(QPointF(5, 0).toPoint());
     NS_LOG_DEBUG("Mapped scenePos:" << scenePos1 << " SceneRect:" << view->sceneRect());
     return qAbs(scenePos2.x() - scenePos1.x());
+
+
+
+
 }
 
 void ResizeablePixmap::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
 {
+    //prepareGeometryChange();update();
+
     //QPointF itemBorderPoint = mapFromScene(QPointF(PIXMAP_RESIZING_BORDER), 0);
     //QPointF itemTopLeft =
     //NS_LOG_DEBUG("Item Rect:" << boundingRect() << " Event Pos:" << event->pos());
@@ -167,6 +173,7 @@ void ResizeablePixmap::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
     qreal bottomRightYLow = bottomRightY - borderWidth;
     qreal topLeftY = sceneBoundingRect().topLeft().y();
 
+    NS_LOG_DEBUG("Hover ScenePos:" << mapToScene(event->pos()) << " LeftX:" << bottomLeftX);
     qreal eventPosX = (mapToScene(event->pos())).x();
     qreal eventPosY = (mapToScene(event->pos())).y();
     if (((eventPosX >= bottomRightXLow) && (eventPosX <= bottomRightX)))
@@ -197,7 +204,9 @@ void ResizeablePixmap::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
 
 QRectF ResizeablePixmap::boundingRect() const
 {
-    return QGraphicsPixmapItem::boundingRect();
+    //return boundingRegion(transform()).rects().last();
+    //return QGraphicsPixmapItem::boundingRect();
+    return pixmap().rect();
 }
 
 void ResizeablePixmap::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
