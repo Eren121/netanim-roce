@@ -13,6 +13,7 @@ public:
     explicit myview(QWidget *parent = 0);
     void resizeEvent(QResizeEvent *event);
     void mouseDoubleClickEvent(QMouseEvent *event);
+    void mouseMoveEvent(QMouseEvent *event);
     
 signals:
     
