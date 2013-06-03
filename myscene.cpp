@@ -47,47 +47,75 @@ bool ResizeablePixmap::isResizing()
 void ResizeablePixmap::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
     //NS_LOG_FUNCTION("Event Pos: " << event->pos() << " SB Rect:" << sceneBoundingRect());
-    QGraphicsPixmapItem::mouseMoveEvent(event);
+    //QGraphicsPixmapItem::mouseMoveEvent(event);
     //NS_LOG_DEBUG("POS:" << pos() << " EventPos:" << event->pos() << sceneBoundingRect().topLeft());
     if (!m_mousePressed || !isResizing())
         return;
-    qreal eventPosX = event->pos().x();
-    qreal eventPosY = event->pos().y();
-    qreal sceneRectWidth = sceneBoundingRect().width();
-    qreal sceneRectHeight = sceneBoundingRect().height();
+    qreal eventPosX = mapToScene(event->pos()).x() - (sceneBoundingRect().topLeft()).x();
+    qreal eventPosY = mapToScene(event->pos()).y() - (sceneBoundingRect().topLeft()).y();
     if ((m_currentResizeDirection == RESIZE_RIGHT))
     {
+        //NS_LOG_DEBUG("Resize Right:" << eventPosX <<" SB RECT:" << sceneBoundingRect());
         qreal xScale = eventPosX/getItemWidth();
-        if(((xScale < 1) && (sceneRectWidth < (PIXMAP_WIDTH_MIN))))
+        //NS_LOG_DEBUG(xScale);
+        if(((xScale < 1) && (eventPosX < (PIXMAP_WIDTH_MIN))))
         {
             return;
         }
-        scale(xScale, 1);
+        if(xScale > 0)
+        {
+            scale(xScale, 1);
+        }
 
     }
     if ((m_currentResizeDirection == RESIZE_LEFT))
     {
+        NS_LOG_DEBUG("Resize Left");
         qreal xScale = (getItemWidth() - eventPosX)/getItemWidth();
-        if(((xScale < 1) && (sceneRectWidth < (PIXMAP_WIDTH_MIN))))
+        if(((xScale < 1) && (eventPosX < (PIXMAP_WIDTH_MIN))))
         {
             return;
         }
+        NS_LOG_DEBUG(xScale);
+
         qreal savedY = pos().y();
-        scale(xScale, 1);
-        setPos(QPointF(mapToScene(event->pos())).x(), savedY);
+        if(xScale > 0)
+        {
+            scale(xScale, 1);
+            setPos(QPointF(mapToScene(event->pos())).x(), savedY);
+        }
+
     }
     if ((m_currentResizeDirection == RESIZE_TOP))
     {
+
         qreal yScale = (getItemHeight()- eventPosY)/getItemHeight();
+        if(((yScale < 1) && (eventPosY < (PIXMAP_WIDTH_MIN))))
+        {
+            return;
+        }
         qreal savedX = pos().x();
-        scale(1, yScale);
-        setPos(savedX, QPointF(mapToScene(event->pos())).y());
+        if(yScale > 0)
+        {
+            scale(1, yScale);
+            setPos(savedX, QPointF(mapToScene(event->pos())).y());
+
+        }
     }
     if ((m_currentResizeDirection == RESIZE_BOTTOM))
     {
+
         qreal yScale = eventPosY/getItemHeight();
-        scale(1, yScale);
+        if(((yScale < 1) && (eventPosY < (PIXMAP_WIDTH_MIN))))
+        {
+            return;
+        }
+        if(yScale > 0)
+        {
+            scale(1, yScale);
+        }
     }
+    QGraphicsPixmapItem::mouseMoveEvent(event);
 
 }
 
@@ -97,10 +125,7 @@ qreal ResizeablePixmap::getItemWidth()
     //NS_LOG_FUNCTION_NOARGS();
     QPointF sceneLeft = sceneBoundingRect().topLeft();
     QPointF sceneRight = sceneBoundingRect().topRight();
-    QPointF itemMapLeft = mapFromScene(sceneLeft);
-    QPointF itemMapRight = mapFromScene(sceneRight);
-    qreal w = itemMapRight.x() - itemMapLeft.x();
-    //NS_LOG_DEBUG ("ItemWidth:" << w);
+    qreal w = sceneRight.x() - sceneLeft.x();
     return w;
 }
 
@@ -108,9 +133,7 @@ qreal ResizeablePixmap::getItemHeight()
 {
     QPointF sceneTop = sceneBoundingRect().topLeft();
     QPointF sceneBottom = sceneBoundingRect().bottomLeft();
-    QPointF itemMapTop = mapFromScene(sceneTop);
-    QPointF itemMapBottom = mapFromScene(sceneBottom);
-    qreal h = itemMapBottom.y() - itemMapTop.y();
+    qreal h = sceneBottom.y() - sceneTop.y();
     //NS_LOG_DEBUG ("ItemHeight:" << h);
     return h;
 }
