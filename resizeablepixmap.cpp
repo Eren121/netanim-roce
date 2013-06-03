@@ -37,6 +37,12 @@ ResizeablePixmap::ResizeablePixmap(QPixmap pix):
     setAcceptsHoverEvents(true);
 }
 
+void ResizeablePixmap::setSize(qreal width, qreal height)
+{
+    qreal xScale = width/sceneBoundingRect().width();
+    qreal yScale = height/sceneBoundingRect().height();
+    scale(xScale, yScale);
+}
 void ResizeablePixmap::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     m_mousePressed = true;
