@@ -13,6 +13,7 @@ void QDEBUG(QString str);
 
 
 #define PIXMAP_RESIZING_BORDER 3
+#define PIXMAP_WIDTH_MIN 20
 
 class ResizeablePixmap : public QGraphicsPixmapItem
 {

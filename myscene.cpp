@@ -48,22 +48,33 @@ void ResizeablePixmap::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
     //NS_LOG_FUNCTION("Event Pos: " << event->pos() << " SB Rect:" << sceneBoundingRect());
     QGraphicsPixmapItem::mouseMoveEvent(event);
-    NS_LOG_DEBUG("POS:" << pos() << " EventPos:" << event->pos() << sceneBoundingRect().topLeft());
+    //NS_LOG_DEBUG("POS:" << pos() << " EventPos:" << event->pos() << sceneBoundingRect().topLeft());
     if (!m_mousePressed || !isResizing())
         return;
     qreal eventPosX = event->pos().x();
     qreal eventPosY = event->pos().y();
+    qreal sceneRectWidth = sceneBoundingRect().width();
+    qreal sceneRectHeight = sceneBoundingRect().height();
     if ((m_currentResizeDirection == RESIZE_RIGHT))
     {
         qreal xScale = eventPosX/getItemWidth();
+        if(((xScale < 1) && (sceneRectWidth < (PIXMAP_WIDTH_MIN))))
+        {
+            return;
+        }
         scale(xScale, 1);
+
     }
     if ((m_currentResizeDirection == RESIZE_LEFT))
     {
         qreal xScale = (getItemWidth() - eventPosX)/getItemWidth();
+        if(((xScale < 1) && (sceneRectWidth < (PIXMAP_WIDTH_MIN))))
+        {
+            return;
+        }
         qreal savedY = pos().y();
         scale(xScale, 1);
-        setPos(QPointF(mapToScene(event->pos())).x(), savedY );
+        setPos(QPointF(mapToScene(event->pos())).x(), savedY);
     }
     if ((m_currentResizeDirection == RESIZE_TOP))
     {
@@ -77,6 +88,7 @@ void ResizeablePixmap::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         qreal yScale = eventPosY/getItemHeight();
         scale(1, yScale);
     }
+
 }
 
 
@@ -88,9 +100,8 @@ qreal ResizeablePixmap::getItemWidth()
     QPointF itemMapLeft = mapFromScene(sceneLeft);
     QPointF itemMapRight = mapFromScene(sceneRight);
     qreal w = itemMapRight.x() - itemMapLeft.x();
-    NS_LOG_DEBUG ("ItemWidth:" << w);
+    //NS_LOG_DEBUG ("ItemWidth:" << w);
     return w;
-
 }
 
 qreal ResizeablePixmap::getItemHeight()
@@ -100,7 +111,7 @@ qreal ResizeablePixmap::getItemHeight()
     QPointF itemMapTop = mapFromScene(sceneTop);
     QPointF itemMapBottom = mapFromScene(sceneBottom);
     qreal h = itemMapBottom.y() - itemMapTop.y();
-    NS_LOG_DEBUG ("ItemHeight:" << h);
+    //NS_LOG_DEBUG ("ItemHeight:" << h);
     return h;
 }
 
@@ -143,7 +154,7 @@ qreal ResizeablePixmap::getBorderWidth()
     QGraphicsView * view = scene()->views().last();
     QPointF scenePos1 = view->mapToScene(QPointF(0, 0).toPoint());
     QPointF scenePos2 = view->mapToScene(QPointF(5, 0).toPoint());
-    NS_LOG_DEBUG("Mapped scenePos:" << scenePos1 << " SceneRect:" << view->sceneRect());
+    //NS_LOG_DEBUG("Mapped scenePos:" << scenePos1 << " SceneRect:" << view->sceneRect());
     return qAbs(scenePos2.x() - scenePos1.x());
 
 
@@ -153,18 +164,8 @@ qreal ResizeablePixmap::getBorderWidth()
 
 void ResizeablePixmap::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
 {
-    //prepareGeometryChange();update();
 
-    //QPointF itemBorderPoint = mapFromScene(QPointF(PIXMAP_RESIZING_BORDER), 0);
-    //QPointF itemTopLeft =
-    //NS_LOG_DEBUG("Item Rect:" << boundingRect() << " Event Pos:" << event->pos());
-    NS_LOG_DEBUG("transform: " << transform());
-    //NS_LOG_DEBUG("Item Transform:" << itemTransform());
-    //NS_LOG_DEBUG("SCENE Transform:" << scene()->)
-    //NS_LOG_DEBUG("SCENE Transform:" << );
-    //NS_LOG_DEBUG("Scene Rect:" << sceneBoundingRect());
-    qreal borderWidth = getBorderWidth() ;//* transform().m11();// 5* transform().m11() ;// * transform().m11() / sceneTransform().m11(); // sceneBoundingRect().width()/10;
-    NS_LOG_DEBUG("BorderWidth:" << borderWidth);
+    qreal borderWidth = getBorderWidth() ;
     qreal bottomRightX = sceneBoundingRect().bottomRight().x();
     qreal bottomRightXLow = bottomRightX - borderWidth;
     qreal bottomLeftX = sceneBoundingRect().bottomLeft().x();
@@ -173,7 +174,6 @@ void ResizeablePixmap::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
     qreal bottomRightYLow = bottomRightY - borderWidth;
     qreal topLeftY = sceneBoundingRect().topLeft().y();
 
-    NS_LOG_DEBUG("Hover ScenePos:" << mapToScene(event->pos()) << " LeftX:" << bottomLeftX);
     qreal eventPosX = (mapToScene(event->pos())).x();
     qreal eventPosY = (mapToScene(event->pos())).y();
     if (((eventPosX >= bottomRightXLow) && (eventPosX <= bottomRightX)))
@@ -259,7 +259,7 @@ void myscene::addPix()
 void myscene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
     QGraphicsView * view = views().last();
-    NS_LOG_DEBUG("Scene Mouse Move ScenePos:" << event->scenePos());
+    //NS_LOG_DEBUG("Scene Mouse Move ScenePos:" << event->scenePos());
     //NS_LOG_DEBUG("Scene Mouse Move ScreenPos:" << event->screenPos());
 
     QPoint viewP = view->mapFromScene(event->scenePos());
