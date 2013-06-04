@@ -2,6 +2,7 @@
 #define MYSCENE_H
 
 #include "resizeablepixmap.h"
+#include "resizeableitem.h"
 
 #include <QGraphicsScene>
 #include <QPushButton>
@@ -21,7 +22,8 @@ Q_OBJECT
 public:
     myscene();
     ResizeablePixmap * m_background;
-    ResizeablePixmap * m_pItem;
+    //ResizeablePixmap * m_pItem;
+    ResizeableItem * m_pItem;
     QPushButton * m_testButton;
     void addPix();
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event);

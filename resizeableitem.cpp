@@ -36,10 +36,21 @@ ResizeableItem::ResizeableItem():
     setAcceptsHoverEvents(true);
 }
 
+void ResizeableItem::setSize(qreal width, qreal height)
+{
+    qreal xScale = width/sceneBoundingRect().width();
+    qreal yScale = height/sceneBoundingRect().height();
+    scale(xScale, yScale);
+}
 void ResizeableItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     m_mousePressed = true;
     mousePressEvent(event);
+}
+
+void ResizeableItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+{
+
 }
 
 bool ResizeableItem::isResizing()
@@ -204,8 +215,8 @@ void ResizeableItem::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
 QRectF ResizeableItem::boundingRect() const
 {
     //return pixmap().rect();
-    return boundingRect();
+    //return boundingRect();
+    return QRectF(0, 0, 100, 100);
 }
-
 
 

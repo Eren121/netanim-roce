@@ -5,6 +5,7 @@
 #include <QGraphicsSceneHoverEvent>
 #include <QGraphicsView>
 
+
 using namespace ns3;
 NS_LOG_COMPONENT_DEFINE("MyScene");
 
@@ -59,7 +60,7 @@ void myscene::addPix()
     s.setHeight(5);
     s.setWidth(5);
     pix.scaled(s);
-    m_pItem = new ResizeablePixmap(pix);
+    m_pItem = new ResizeableItem;// new ResizeablePixmap(pix);
     addItem(m_pItem);
     m_pItem->setZValue(0);
     m_pItem->scale(1, 1);

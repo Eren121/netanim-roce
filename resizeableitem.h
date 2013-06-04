@@ -17,8 +17,8 @@
  *
  */
 
-#ifndef RESIZEABLEPIXMAP_H
-#define RESIZEABLEPIXMAP_H
+#ifndef RESIZEABLEITEM_H
+#define RESIZEABLEITEM_H
 
 #include <QGraphicsItem>
 #include <QGraphicsSceneMouseEvent>
@@ -47,7 +47,8 @@ public:
     qreal getItemWidth();
     qreal getItemHeight();
     qreal getBorderWidth();
-
+    void setSize(qreal width, qreal height);
+    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);
 private:
     bool m_mousePressed;
     ResizeDirection_t m_currentResizeDirection;
@@ -58,4 +59,4 @@ private:
 
 };
 
-#endif // RESIZEABLEPIXMAP_H
+#endif // RESIZEABLEITEM_H
