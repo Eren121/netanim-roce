@@ -1,0 +1,211 @@
+/* -*- Mode:C++; c-file-style:"gnu"; indent-tabs-mode:nil; -*- */
+/*
+ * Copyright (c) 2006,2007 INRIA
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 as
+ * published by the Free Software Foundation;
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ */
+
+#include <QCursor>
+#include <QGraphicsView>
+
+#include "resizeableitem.h"
+#include "logqt.h"
+#include "log.h"
+
+NS_LOG_COMPONENT_DEFINE("ResizeableItem");
+
+ResizeableItem::ResizeableItem():
+    m_mousePressed(false),
+    m_currentResizeDirection(RESIZE_NOTRESIZING),
+    m_lastResizeDirection(RESIZE_NOTRESIZING),
+    m_resizing(false)
+{
+    NS_LOG_FUNCTION(m_mousePressed);
+    setAcceptsHoverEvents(true);
+}
+
+void ResizeableItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
+{
+    m_mousePressed = true;
+    mousePressEvent(event);
+}
+
+bool ResizeableItem::isResizing()
+{
+    return (m_currentResizeDirection == m_lastResizeDirection);
+}
+void ResizeableItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
+{
+    if (!m_mousePressed || !isResizing())
+        return;
+    qreal eventPosX = mapToScene(event->pos()).x() - (sceneBoundingRect().topLeft()).x();
+    qreal eventPosY = mapToScene(event->pos()).y() - (sceneBoundingRect().topLeft()).y();
+    if ((m_currentResizeDirection == RESIZE_RIGHT))
+    {
+        qreal xScale = eventPosX/getItemWidth();
+        if(((xScale < 1) && (eventPosX < (PIXMAP_WIDTH_MIN))))
+        {
+            return;
+        }
+        if(xScale > 0)
+        {
+            scale(xScale, 1);
+        }
+
+    }
+    if ((m_currentResizeDirection == RESIZE_LEFT))
+    {
+        qreal xScale = (getItemWidth() - eventPosX)/getItemWidth();
+        if(((xScale < 1) && (eventPosX < (PIXMAP_WIDTH_MIN))))
+        {
+            return;
+        }
+        NS_LOG_DEBUG(xScale);
+
+        qreal savedY = pos().y();
+        if(xScale > 0)
+        {
+            scale(xScale, 1);
+            setPos(QPointF(mapToScene(event->pos())).x(), savedY);
+        }
+
+    }
+    if ((m_currentResizeDirection == RESIZE_TOP))
+    {
+
+        qreal yScale = (getItemHeight()- eventPosY)/getItemHeight();
+        if(((yScale < 1) && (eventPosY < (PIXMAP_WIDTH_MIN))))
+        {
+            return;
+        }
+        qreal savedX = pos().x();
+        if(yScale > 0)
+        {
+            scale(1, yScale);
+            setPos(savedX, QPointF(mapToScene(event->pos())).y());
+
+        }
+    }
+    if ((m_currentResizeDirection == RESIZE_BOTTOM))
+    {
+
+        qreal yScale = eventPosY/getItemHeight();
+        if(((yScale < 1) && (eventPosY < (PIXMAP_WIDTH_MIN))))
+        {
+            return;
+        }
+        if(yScale > 0)
+        {
+            scale(1, yScale);
+        }
+    }
+    mouseMoveEvent(event);
+
+}
+
+qreal ResizeableItem::getItemWidth()
+{
+    return sceneBoundingRect().width();
+}
+
+qreal ResizeableItem::getItemHeight()
+{
+    return sceneBoundingRect().height();
+}
+
+void ResizeableItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+{
+    m_mousePressed = false;
+    mouseReleaseEvent(event);
+}
+
+void ResizeableItem::setResizingDirection(ResizeDirection_t direction)
+{
+    QCursor c;
+    switch (direction)
+    {
+
+        case RESIZE_BOTTOM:
+        case RESIZE_TOP:
+            c.setShape(Qt::SizeVerCursor);
+            setFlags(QGraphicsItem::ItemIsSelectable);
+            break;
+        case RESIZE_LEFT:
+        case RESIZE_RIGHT:
+            c.setShape(Qt::SizeHorCursor);
+            setFlags(QGraphicsItem::ItemIsSelectable);
+            break;
+        case RESIZE_NOTRESIZING:
+            c.setShape(Qt::OpenHandCursor);
+            setFlags(QGraphicsItem::ItemIsMovable|QGraphicsItem::ItemIsSelectable);
+    }
+    setCursor(c);
+    m_currentResizeDirection = direction;
+}
+
+qreal ResizeableItem::getBorderWidth()
+{
+    QGraphicsView * view = scene()->views().last();
+    QPointF scenePos1 = view->mapToScene(QPointF(0, 0).toPoint());
+    QPointF scenePos2 = view->mapToScene(QPointF(PIXMAP_RESIZING_BORDER, 0).toPoint());
+    return qAbs(scenePos2.x() - scenePos1.x());
+}
+
+void ResizeableItem::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
+{
+
+    qreal borderWidth = getBorderWidth() ;
+    qreal bottomRightX = sceneBoundingRect().bottomRight().x();
+    qreal bottomRightXLow = bottomRightX - borderWidth;
+    qreal bottomLeftX = sceneBoundingRect().bottomLeft().x();
+
+    qreal bottomRightY = sceneBoundingRect().bottomRight().y();
+    qreal bottomRightYLow = bottomRightY - borderWidth;
+    qreal topLeftY = sceneBoundingRect().topLeft().y();
+
+    qreal eventPosX = (mapToScene(event->pos())).x();
+    qreal eventPosY = (mapToScene(event->pos())).y();
+    if (((eventPosX >= bottomRightXLow) && (eventPosX <= bottomRightX)))
+    {
+        setResizingDirection(RESIZE_RIGHT);
+    }
+    else if (eventPosX <= (bottomLeftX+borderWidth))
+    {
+        setResizingDirection(RESIZE_LEFT);
+    }
+    else if (((eventPosY >= bottomRightYLow) && (eventPosY <= bottomRightY)))
+    {
+        setResizingDirection(RESIZE_BOTTOM);
+    }
+    else if (eventPosY <= (topLeftY+borderWidth))
+    {
+        setResizingDirection(RESIZE_TOP);
+    }
+    else
+    {
+        setResizingDirection(RESIZE_NOTRESIZING);
+    }
+    hoverMoveEvent(event);
+    m_lastResizeDirection = m_currentResizeDirection;
+}
+
+QRectF ResizeableItem::boundingRect() const
+{
+    //return pixmap().rect();
+    return boundingRect();
+}
+
+
+
