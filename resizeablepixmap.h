@@ -47,6 +47,7 @@ public:
     qreal getItemWidth();
     qreal getItemHeight();
     qreal getBorderWidth();
+    void setSize(qreal width, qreal height);
 
 private:
     bool m_mousePressed;

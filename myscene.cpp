@@ -45,9 +45,9 @@ myscene::myscene():QGraphicsScene(0, 0, 1000, 1000)
 void myscene::testSlot()
 {
     NS_LOG_DEBUG("Before:" << m_pItem->sceneBoundingRect() << " Pos:" << m_pItem->pos());
-    m_pItem->scale(1.5, 1.5);
+    //m_pItem->scale(1.5, 1.5);
     NS_LOG_DEBUG("After:" << m_pItem->sceneBoundingRect() << " Pos:" << m_pItem->pos());
-
+    m_pItem->setSize(150, 20);
 }
 
 void myscene::addPix()
