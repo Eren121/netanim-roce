@@ -45,12 +45,12 @@ void ResizeableItem::setSize(qreal width, qreal height)
 void ResizeableItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     m_mousePressed = true;
-    mousePressEvent(event);
+    //mousePressEvent(event);
 }
 
 void ResizeableItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
-
+    painter->drawRect(0, 0, 100, 100);
 }
 
 bool ResizeableItem::isResizing()
@@ -122,7 +122,7 @@ void ResizeableItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
             scale(1, yScale);
         }
     }
-    mouseMoveEvent(event);
+    //mouseMoveEvent(event);
 
 }
 
@@ -139,7 +139,7 @@ qreal ResizeableItem::getItemHeight()
 void ResizeableItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     m_mousePressed = false;
-    mouseReleaseEvent(event);
+    //mouseReleaseEvent(event);
 }
 
 void ResizeableItem::setResizingDirection(ResizeDirection_t direction)
@@ -208,7 +208,7 @@ void ResizeableItem::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
     {
         setResizingDirection(RESIZE_NOTRESIZING);
     }
-    hoverMoveEvent(event);
+    //::hoverMoveEvent(event);
     m_lastResizeDirection = m_currentResizeDirection;
 }
 
