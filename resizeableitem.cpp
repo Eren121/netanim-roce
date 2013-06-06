@@ -19,6 +19,7 @@
 
 #include <QCursor>
 #include <QGraphicsView>
+#include <QGraphicsEllipseItem>
 
 #include "resizeableitem.h"
 #include "logqt.h"
@@ -30,7 +31,8 @@ ResizeableItem::ResizeableItem():
     m_mousePressed(false),
     m_currentResizeDirection(RESIZE_NOTRESIZING),
     m_lastResizeDirection(RESIZE_NOTRESIZING),
-    m_resizing(false)
+    m_resizing(false),
+    m_type(ResizeableItem::CIRCLE)
 {
     NS_LOG_FUNCTION(m_mousePressed);
     setAcceptsHoverEvents(true);
@@ -122,7 +124,7 @@ void ResizeableItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
             scale(1, yScale);
         }
     }
-    //mouseMoveEvent(event);
+    QGraphicsItem::mouseMoveEvent(event);
 
 }
 

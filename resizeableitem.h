@@ -38,6 +38,11 @@ public:
         RESIZE_BOTTOM,
         RESIZE_NOTRESIZING
     } ResizeDirection_t;
+    typedef enum {
+        RECTANGLE,
+        CIRCLE,
+        PIXMAP
+    } ResizeableItemType_t;
     ResizeableItem();
     QRectF boundingRect() const;
     void hoverMoveEvent(QGraphicsSceneHoverEvent *event);
@@ -54,6 +59,7 @@ private:
     ResizeDirection_t m_currentResizeDirection;
     ResizeDirection_t m_lastResizeDirection;
     bool m_resizing;
+    ResizeableItemType_t m_type;
     bool isResizing();
     void setResizingDirection(ResizeDirection_t direction);
 
