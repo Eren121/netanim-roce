@@ -32,7 +32,9 @@ ResizeableItem::ResizeableItem():
     m_currentResizeDirection(RESIZE_NOTRESIZING),
     m_lastResizeDirection(RESIZE_NOTRESIZING),
     m_resizing(false),
-    m_type(ResizeableItem::CIRCLE)
+    m_type(ResizeableItem::CIRCLE),
+    m_width(100),
+    m_height(100)
 {
     NS_LOG_FUNCTION(m_mousePressed);
     setAcceptsHoverEvents(true);
@@ -52,7 +54,15 @@ void ResizeableItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
 void ResizeableItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
-    painter->drawRect(0, 0, 100, 100);
+    switch(m_type)
+    {
+        case ResizeableItem::RECTANGLE:
+            painter->drawRect(0, 0, m_width, m_height);
+            break;
+        case ResizeableItem::CIRCLE:
+            painter->drawEllipse(0, 0, m_width, m_height);
+            break;
+    }
 }
 
 bool ResizeableItem::isResizing()
@@ -218,7 +228,7 @@ QRectF ResizeableItem::boundingRect() const
 {
     //return pixmap().rect();
     //return boundingRect();
-    return QRectF(0, 0, 100, 100);
+    return QRectF(0, 0, m_width, m_height);
 }
 
 

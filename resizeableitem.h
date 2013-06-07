@@ -60,6 +60,8 @@ private:
     ResizeDirection_t m_lastResizeDirection;
     bool m_resizing;
     ResizeableItemType_t m_type;
+    qreal m_width;
+    qreal m_height;
     bool isResizing();
     void setResizingDirection(ResizeDirection_t direction);
 
