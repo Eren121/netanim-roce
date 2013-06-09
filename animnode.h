@@ -8,11 +8,12 @@ class AnimNode: public ResizeableItem
 {
 public:
     AnimNode();
+    ~AnimNode();
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
-    void init();
+    void setNodeDescription(QString description);
 private:
-    QGraphicsTextItem * m_textItem;
+    QGraphicsTextItem * m_nodeDescription;
 
 };
 

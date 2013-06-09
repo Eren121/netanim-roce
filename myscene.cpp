@@ -57,19 +57,21 @@ void myscene::addPix()
     static int i = 0;
     addEllipse(i++, 15, 4, 4);
     QPixmap pix(":/new/prefix1/ns3logo2.png","png");
-    QSize s;
-    s.setHeight(5);
-    s.setWidth(5);
-    pix.scaled(s);
+
+
     m_pItem = new AnimNode;// ResizeableItem;// new ResizeablePixmap(pix);
     addItem(m_pItem);
-    m_pItem->init();
-    m_pItem->setZValue(0);
-    m_pItem->scale(1, 1);
+    m_pItem->setNodeDescription("Item1");
     m_pItem->setPos(355, 355);
     m_pItem->setPixmap(pix);
 
-    qDebug("Hi");
+
+    AnimNode * item2 = new AnimNode;
+    addItem(item2);
+    item2->setNodeDescription("Item2");
+    item2->setPos(500, 500);
+    item2->setPixmap(pix);
+
 }
 void myscene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
