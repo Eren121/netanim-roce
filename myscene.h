@@ -1,6 +1,7 @@
 #ifndef MYSCENE_H
 #define MYSCENE_H
 
+#include "animnode.h"
 #include "resizeablepixmap.h"
 #include "resizeableitem.h"
 
@@ -23,7 +24,7 @@ public:
     myscene();
     ResizeablePixmap * m_background;
     //ResizeablePixmap * m_pItem;
-    ResizeableItem * m_pItem;
+    AnimNode * m_pItem;
     QPushButton * m_testButton;
     void addPix();
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event);

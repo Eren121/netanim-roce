@@ -9,7 +9,7 @@ int main(int argc, char *argv[])
 {
   ns3::LogComponentEnable("MyScene", ns3::LOG_LEVEL_ALL);
   ns3::LogComponentEnable("MyView", ns3::LOG_LEVEL_ALL);
-
+  ns3::LogComponentEnable("AnimNode", ns3::LOG_LEVEL_ALL);
   QApplication a(argc, argv);
   myscene s;
   myview v;

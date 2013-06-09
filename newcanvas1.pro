@@ -8,7 +8,8 @@ SOURCES += \
     fatal-impl.cpp \
     logqt.cpp \
     resizeablepixmap.cpp \
-    resizeableitem.cpp
+    resizeableitem.cpp \
+    animnode.cpp
 
 HEADERS += \
     myview.h \
@@ -21,7 +22,8 @@ HEADERS += \
     logqt.h \
     animatorconstants.h \
     resizeablepixmap.h \
-    resizeableitem.h
+    resizeableitem.h \
+    animnode.h
 
 DEFINES += NS3_LOG_ENABLE
 

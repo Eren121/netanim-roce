@@ -1,6 +1,7 @@
 #include "log.h"
 #include "logqt.h"
 #include "myscene.h"
+#include "animnode.h"
 #include <QGraphicsProxyWidget>
 #include <QGraphicsSceneHoverEvent>
 #include <QGraphicsView>
@@ -60,8 +61,9 @@ void myscene::addPix()
     s.setHeight(5);
     s.setWidth(5);
     pix.scaled(s);
-    m_pItem = new ResizeableItem;// new ResizeablePixmap(pix);
+    m_pItem = new AnimNode;// ResizeableItem;// new ResizeablePixmap(pix);
     addItem(m_pItem);
+    m_pItem->init();
     m_pItem->setZValue(0);
     m_pItem->scale(1, 1);
     m_pItem->setPos(355, 355);
