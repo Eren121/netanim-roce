@@ -44,6 +44,7 @@ public:
         PIXMAP
     } ResizeableItemType_t;
     ResizeableItem();
+    ~ResizeableItem();
     QRectF boundingRect() const;
     void hoverMoveEvent(QGraphicsSceneHoverEvent *event);
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
@@ -54,6 +55,9 @@ public:
     qreal getBorderWidth();
     void setSize(qreal width, qreal height);
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);
+    void setPixmap(QPixmap pix);
+    void setType(ResizeableItemType_t t);
+
 private:
     bool m_mousePressed;
     ResizeDirection_t m_currentResizeDirection;
@@ -62,6 +66,7 @@ private:
     ResizeableItemType_t m_type;
     qreal m_width;
     qreal m_height;
+    QPixmap * m_pixmap;
     bool isResizing();
     void setResizingDirection(ResizeDirection_t direction);
 

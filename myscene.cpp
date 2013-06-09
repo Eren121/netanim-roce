@@ -65,6 +65,7 @@ void myscene::addPix()
     m_pItem->setZValue(0);
     m_pItem->scale(1, 1);
     m_pItem->setPos(355, 355);
+    m_pItem->setPixmap(pix);
 
     qDebug("Hi");
 }

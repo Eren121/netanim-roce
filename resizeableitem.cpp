@@ -34,10 +34,31 @@ ResizeableItem::ResizeableItem():
     m_resizing(false),
     m_type(ResizeableItem::CIRCLE),
     m_width(100),
-    m_height(100)
+    m_height(100),
+    m_pixmap(0)
 {
     NS_LOG_FUNCTION(m_mousePressed);
     setAcceptsHoverEvents(true);
+}
+
+ResizeableItem::~ResizeableItem()
+{
+    if (m_pixmap)
+    {
+        delete m_pixmap;
+    }
+
+}
+
+void ResizeableItem::setPixmap(QPixmap pix)
+{
+    m_pixmap = new QPixmap(pix);
+    setType(ResizeableItem::PIXMAP);
+}
+
+void ResizeableItem::setType(ResizeableItemType_t t)
+{
+    m_type = t;
 }
 
 void ResizeableItem::setSize(qreal width, qreal height)
@@ -49,7 +70,7 @@ void ResizeableItem::setSize(qreal width, qreal height)
 void ResizeableItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     m_mousePressed = true;
-    //mousePressEvent(event);
+    QGraphicsItem::mousePressEvent(event);
 }
 
 void ResizeableItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -61,6 +82,12 @@ void ResizeableItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
             break;
         case ResizeableItem::CIRCLE:
             painter->drawEllipse(0, 0, m_width, m_height);
+            break;
+        case ResizeableItem::PIXMAP:
+            if (m_pixmap)
+            {
+                painter->drawPixmap(0, 0, m_width, m_height, *m_pixmap);
+            }
             break;
     }
 }
@@ -151,7 +178,7 @@ qreal ResizeableItem::getItemHeight()
 void ResizeableItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     m_mousePressed = false;
-    //mouseReleaseEvent(event);
+    QGraphicsItem::mouseReleaseEvent(event);
 }
 
 void ResizeableItem::setResizingDirection(ResizeDirection_t direction)
@@ -220,14 +247,12 @@ void ResizeableItem::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
     {
         setResizingDirection(RESIZE_NOTRESIZING);
     }
-    //::hoverMoveEvent(event);
+    QGraphicsItem::hoverMoveEvent(event);
     m_lastResizeDirection = m_currentResizeDirection;
 }
 
 QRectF ResizeableItem::boundingRect() const
 {
-    //return pixmap().rect();
-    //return boundingRect();
     return QRectF(0, 0, m_width, m_height);
 }
 
