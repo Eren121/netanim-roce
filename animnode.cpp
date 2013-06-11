@@ -3,10 +3,15 @@
 #include "animnode.h"
 #include "logqt.h"
 #include "log.h"
+#include "assert.h"
 
 NS_LOG_COMPONENT_DEFINE("AnimNode");
 
-AnimNode::AnimNode():m_nodeDescription(0)
+
+AnimNodeMgr * pAnimNodeMgr = 0;
+
+AnimNode::AnimNode(uint32_t nodeId):m_nodeDescription(0),
+    m_nodeId(nodeId)
 {
 
 }
@@ -14,6 +19,7 @@ AnimNode::AnimNode():m_nodeDescription(0)
 AnimNode::~AnimNode()
 {
     QGraphicsScene * s = scene();
+    NS_ASSERT(s);
     if(s)
     {
         if(m_nodeDescription)
@@ -58,4 +64,20 @@ void AnimNode::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         m_nodeDescription->setPos(sceneBoundingRect().bottomRight());
         update();
     }
+}
+
+
+
+AnimNodeMgr::AnimNodeMgr()
+{
+
+}
+
+AnimNodeMgr * AnimNodeMgr::getInstance()
+{
+    if(!pAnimNodeMgr)
+    {
+        pAnimNodeMgr = new AnimNodeMgr;
+    }
+    return pAnimNodeMgr;
 }

@@ -59,14 +59,14 @@ void myscene::addPix()
     QPixmap pix(":/new/prefix1/ns3logo2.png","png");
 
 
-    m_pItem = new AnimNode;// ResizeableItem;// new ResizeablePixmap(pix);
+    m_pItem = new AnimNode(0);// ResizeableItem;// new ResizeablePixmap(pix);
     addItem(m_pItem);
     m_pItem->setNodeDescription("Item1");
     m_pItem->setPos(355, 355);
     m_pItem->setPixmap(pix);
 
 
-    AnimNode * item2 = new AnimNode;
+    AnimNode * item2 = new AnimNode(1);
     addItem(item2);
     item2->setNodeDescription("Item2");
     item2->setPos(500, 500);
