@@ -23,7 +23,8 @@ HEADERS += \
     animatorconstants.h \
     resizeablepixmap.h \
     resizeableitem.h \
-    animnode.h
+    animnode.h \
+    common.h
 
 DEFINES += NS3_LOG_ENABLE
 

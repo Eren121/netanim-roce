@@ -3,6 +3,7 @@
 #include "animnode.h"
 #include "logqt.h"
 #include "log.h"
+#include "fatal-error.h"
 #include "assert.h"
 
 NS_LOG_COMPONENT_DEFINE("AnimNode");
@@ -30,6 +31,10 @@ AnimNode::~AnimNode()
     }
 }
 
+QPointF AnimNode::getCenter()
+{
+    return sceneBoundingRect().center();
+}
 void AnimNode::setNodeDescription(QString description)
 {
     if(!m_nodeDescription)
@@ -85,9 +90,12 @@ AnimNodeMgr * AnimNodeMgr::getInstance()
 
 AnimNode * AnimNodeMgr::add(uint32_t nodeId, qreal x, qreal y)
 {
+    if(m_nodes.find(nodeId) != m_nodes.end())
+    {
+        NS_FATAL_ERROR("NodeId:" << nodeId << " Already exists");
+    }
     QPixmap pix(":/new/prefix1/ns3logo2.png","png");
     AnimNode * node = new AnimNode(nodeId);// ResizeableItem;// new ResizeablePixmap(pix);
-    node->setNodeDescription("Item1");
     node->setPos(x, y);
     node->setPixmap(pix);
     m_nodes[nodeId] = node;

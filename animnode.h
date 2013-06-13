@@ -2,6 +2,7 @@
 #define ANIMNODE_H
 
 #include <QGraphicsTextItem>
+#include "common.h"
 #include "resizeableitem.h"
 
 #include <map>
@@ -16,6 +17,7 @@ public:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
     void setNodeDescription(QString description);
+    QPointF getCenter();
 private:
     QGraphicsTextItem * m_nodeDescription;
     uint32_t m_nodeId;

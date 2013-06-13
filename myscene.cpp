@@ -5,6 +5,7 @@
 #include <QGraphicsProxyWidget>
 #include <QGraphicsSceneHoverEvent>
 #include <QGraphicsView>
+#include <QGraphicsLineItem>
 
 
 using namespace ns3;
@@ -46,10 +47,11 @@ myscene::myscene():QGraphicsScene(0, 0, 1000, 1000)
 
 void myscene::testSlot()
 {
-    NS_LOG_DEBUG("Before:" << m_pItem->sceneBoundingRect() << " Pos:" << m_pItem->pos());
+    //NS_LOG_DEBUG("Before:" << m_pItem->sceneBoundingRect() << " Pos:" << m_pItem->pos());
     //m_pItem->scale(1.5, 1.5);
-    NS_LOG_DEBUG("After:" << m_pItem->sceneBoundingRect() << " Pos:" << m_pItem->pos());
-    m_pItem->setSize(150, 20);
+    //NS_LOG_DEBUG("After:" << m_pItem->sceneBoundingRect() << " Pos:" << m_pItem->pos());
+    //m_pItem->setSize(150, 20);
+    views().last()->scale(1.1, 1.1);
 }
 
 void myscene::addPix()
@@ -60,7 +62,18 @@ void myscene::addPix()
     AnimNodeMgr::getInstance()->add(0, 355, 500);
     addItem(AnimNodeMgr::getInstance()->getNode(0));
     AnimNodeMgr::getInstance()->getNode(0)->setNodeDescription("Item1");
-    AnimNode * n =  AnimNodeMgr::getInstance()->getNode(1);
+
+    AnimNodeMgr::getInstance()->add(1, 155, 500);
+    addItem(AnimNodeMgr::getInstance()->getNode(1));
+    AnimNodeMgr::getInstance()->getNode(1)->setNodeDescription("Item2");
+
+
+    AnimNode * n0 =  AnimNodeMgr::getInstance()->getNode(0);
+    AnimNode * n1 =  AnimNodeMgr::getInstance()->getNode(1);
+    QLineF line(n0->getCenter(), n1->getCenter());
+    QGraphicsLineItem * lineItem = new QGraphicsLineItem(line);
+    addItem(lineItem);
+
 }
 void myscene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
