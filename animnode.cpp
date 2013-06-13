@@ -81,3 +81,14 @@ AnimNodeMgr * AnimNodeMgr::getInstance()
     }
     return pAnimNodeMgr;
 }
+
+
+AnimNode * AnimNodeMgr::add(uint32_t nodeId)
+{
+    QPixmap pix(":/new/prefix1/ns3logo2.png","png");
+    AnimNode * node = new AnimNode(nodeId);// ResizeableItem;// new ResizeablePixmap(pix);
+    node->setNodeDescription("Item1");
+    node->setPos(nodeId * 355, 355);
+    node->setPixmap(pix);
+    return node;
+}

@@ -4,6 +4,8 @@
 #include <QGraphicsTextItem>
 #include "resizeableitem.h"
 
+#include <map>
+
 
 
 class AnimNode: public ResizeableItem
@@ -24,10 +26,13 @@ private:
 class AnimNodeMgr
 {
 public:
+    typedef std::map <uint32_t, AnimNode *> NodeIdAnimNodeMap_t;
     static AnimNodeMgr * getInstance();
     AnimNode * getNode(uint32_t nodeId);
+    AnimNode * add(uint32_t nodeId);
 private:
     AnimNodeMgr();
+    NodeIdAnimNodeMap_t m_nodes;
 
 };
 
