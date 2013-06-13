@@ -57,10 +57,10 @@ void myscene::addPix()
     static int i = 0;
     addEllipse(i++, 15, 4, 4);
 
-    AnimNode * node = AnimNodeMgr::getInstance()->add(0);
-    addItem(node);
-    node->setNodeDescription("Item1");
-
+    AnimNodeMgr::getInstance()->add(0, 355, 500);
+    addItem(AnimNodeMgr::getInstance()->getNode(0));
+    AnimNodeMgr::getInstance()->getNode(0)->setNodeDescription("Item1");
+    AnimNode * n =  AnimNodeMgr::getInstance()->getNode(1);
 }
 void myscene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {

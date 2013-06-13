@@ -83,12 +83,19 @@ AnimNodeMgr * AnimNodeMgr::getInstance()
 }
 
 
-AnimNode * AnimNodeMgr::add(uint32_t nodeId)
+AnimNode * AnimNodeMgr::add(uint32_t nodeId, qreal x, qreal y)
 {
     QPixmap pix(":/new/prefix1/ns3logo2.png","png");
     AnimNode * node = new AnimNode(nodeId);// ResizeableItem;// new ResizeablePixmap(pix);
     node->setNodeDescription("Item1");
-    node->setPos(nodeId * 355, 355);
+    node->setPos(x, y);
     node->setPixmap(pix);
+    m_nodes[nodeId] = node;
     return node;
+}
+
+
+AnimNode * AnimNodeMgr::getNode(uint32_t nodeId)
+{
+    return m_nodes[nodeId];
 }
