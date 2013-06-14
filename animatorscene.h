@@ -17,11 +17,11 @@ void QDEBUG(QString str);
 
 
 
-class myscene : public QGraphicsScene
+class AnimatorScene : public QGraphicsScene
 {
 Q_OBJECT
 public:
-    myscene();
+    AnimatorScene();
     ResizeablePixmap * m_background;
     //ResizeablePixmap * m_pItem;
     AnimNode * m_pItem;

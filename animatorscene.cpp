@@ -1,6 +1,6 @@
 #include "log.h"
 #include "logqt.h"
-#include "myscene.h"
+#include "animatorscene.h"
 #include "animnode.h"
 #include <QGraphicsProxyWidget>
 #include <QGraphicsSceneHoverEvent>
@@ -30,7 +30,7 @@ void QDEBUG(QString str)
 
 
 
-myscene::myscene():QGraphicsScene(0, 0, 1000, 1000)
+AnimatorScene::AnimatorScene():QGraphicsScene(0, 0, 1000, 1000)
 {
     m_testButton = new QPushButton("Test");
     connect(m_testButton, SIGNAL(clicked()), this, SLOT(testSlot()));
@@ -45,7 +45,7 @@ myscene::myscene():QGraphicsScene(0, 0, 1000, 1000)
     addPix();
 }
 
-void myscene::testSlot()
+void AnimatorScene::testSlot()
 {
     //NS_LOG_DEBUG("Before:" << m_pItem->sceneBoundingRect() << " Pos:" << m_pItem->pos());
     //m_pItem->scale(1.5, 1.5);
@@ -54,7 +54,7 @@ void myscene::testSlot()
     views().last()->scale(1.1, 1.1);
 }
 
-void myscene::addPix()
+void AnimatorScene::addPix()
 {
     static int i = 0;
     addEllipse(i++, 15, 4, 4);
@@ -73,7 +73,7 @@ void myscene::addPix()
     addItem(lineItem);
 
 }
-void myscene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
+void AnimatorScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
     QGraphicsView * view = views().last();
     //NS_LOG_DEBUG("Scene Mouse Move ScenePos:" << event->scenePos());
