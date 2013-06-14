@@ -59,12 +59,10 @@ void myscene::addPix()
     static int i = 0;
     addEllipse(i++, 15, 4, 4);
 
-    AnimNodeMgr::getInstance()->add(0, 355, 500);
-    addItem(AnimNodeMgr::getInstance()->getNode(0));
+    AnimNodeMgr::getInstance()->add(0, this, 355, 500);
     AnimNodeMgr::getInstance()->getNode(0)->setNodeDescription("Item1");
 
-    AnimNodeMgr::getInstance()->add(1, 155, 500);
-    addItem(AnimNodeMgr::getInstance()->getNode(1));
+    AnimNodeMgr::getInstance()->add(1, this, 155, 500);
     AnimNodeMgr::getInstance()->getNode(1)->setNodeDescription("Item2");
 
 

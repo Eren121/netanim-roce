@@ -11,10 +11,13 @@ NS_LOG_COMPONENT_DEFINE("AnimNode");
 
 AnimNodeMgr * pAnimNodeMgr = 0;
 
-AnimNode::AnimNode(uint32_t nodeId):m_nodeDescription(0),
+AnimNode::AnimNode(uint32_t nodeId, QGraphicsScene * scene):m_nodeDescription(0),
     m_nodeId(nodeId)
 {
-
+    if(scene)
+    {
+        scene->addItem(this);
+    }
 }
 
 AnimNode::~AnimNode()
@@ -88,14 +91,14 @@ AnimNodeMgr * AnimNodeMgr::getInstance()
 }
 
 
-AnimNode * AnimNodeMgr::add(uint32_t nodeId, qreal x, qreal y)
+AnimNode * AnimNodeMgr::add(uint32_t nodeId, QGraphicsScene * scene, qreal x, qreal y)
 {
     if(m_nodes.find(nodeId) != m_nodes.end())
     {
         NS_FATAL_ERROR("NodeId:" << nodeId << " Already exists");
     }
     QPixmap pix(":/new/prefix1/ns3logo2.png","png");
-    AnimNode * node = new AnimNode(nodeId);// ResizeableItem;// new ResizeablePixmap(pix);
+    AnimNode * node = new AnimNode(nodeId, scene);// ResizeableItem;// new ResizeablePixmap(pix);
     node->setPos(x, y);
     node->setPixmap(pix);
     m_nodes[nodeId] = node;
