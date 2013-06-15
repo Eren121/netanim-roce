@@ -9,10 +9,9 @@
 #include <QPushButton>
 
 
+#define ANIMATORSCENE_USERAREA_WIDTH 1024
+#define ANIMATORSCENE_USERAREA_HEIGHT 1024
 
-
-void QDEBUG(QPointF p, QString prefix = "");
-void QDEBUG(QString str);
 
 
 
@@ -30,6 +29,9 @@ public:
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
 public slots:
     void testSlot();
+private:
+    qreal m_userAreadWidth;
+    qreal m_userAreaHeight;
 };
 
 #endif // MYSCENE_H

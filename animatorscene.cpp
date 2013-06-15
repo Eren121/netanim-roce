@@ -9,29 +9,13 @@
 
 
 using namespace ns3;
-NS_LOG_COMPONENT_DEFINE("MyScene");
+NS_LOG_COMPONENT_DEFINE("AnimatorScene");
 
 
-void QDEBUG(QPointF p, QString prefix)
+AnimatorScene::AnimatorScene():QGraphicsScene(0, 0, ANIMATORSCENE_USERAREA_WIDTH, ANIMATORSCENE_USERAREA_WIDTH)
 {
-    QString str = "X:" + QString::number(p.x()) + " Y:" + QString::number(p.y());
-    QDEBUG(prefix + ":" + str);
-}
-
-void QDEBUG(QString str)
-{
-    str = "QD:" + str;
-    qDebug(str.toAscii());
-}
-
-
-
-
-
-
-
-AnimatorScene::AnimatorScene():QGraphicsScene(0, 0, 1000, 1000)
-{
+    m_userAreadWidth = ANIMATORSCENE_USERAREA_WIDTH;
+    m_userAreaHeight = ANIMATORSCENE_USERAREA_HEIGHT;
     m_testButton = new QPushButton("Test");
     connect(m_testButton, SIGNAL(clicked()), this, SLOT(testSlot()));
     addWidget(m_testButton);
