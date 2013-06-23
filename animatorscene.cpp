@@ -27,6 +27,7 @@ AnimatorScene::AnimatorScene():QGraphicsScene(0, 0, ANIMATORSCENE_USERAREA_WIDTH
     //addItem(m_background);
     //testSlot();
     addPix();
+    addRect(0, 0, m_userAreadWidth, m_userAreaHeight);
 }
 
 void AnimatorScene::testSlot()
@@ -36,6 +37,16 @@ void AnimatorScene::testSlot()
     //NS_LOG_DEBUG("After:" << m_pItem->sceneBoundingRect() << " Pos:" << m_pItem->pos());
     //m_pItem->setSize(150, 20);
     views().last()->scale(1.1, 1.1);
+}
+
+void AnimatorScene::setUserAreaHeight(qreal h)
+{
+    m_userAreaHeight = h;
+}
+
+void AnimatorScene::setUserAreaWidth(qreal w)
+{
+    m_userAreadWidth = w;
 }
 
 void AnimatorScene::addPix()

@@ -27,6 +27,8 @@ public:
     QPushButton * m_testButton;
     void addPix();
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
+    void setUserAreaWidth(qreal w);
+    void setUserAreaHeight(qreal h);
 public slots:
     void testSlot();
 private:
