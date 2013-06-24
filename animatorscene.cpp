@@ -28,6 +28,8 @@ AnimatorScene::AnimatorScene():QGraphicsScene(0, 0, ANIMATORSCENE_USERAREA_WIDTH
     //testSlot();
     addPix();
     addRect(0, 0, m_userAreadWidth, m_userAreaHeight);
+    addLine(m_userAreadWidth/2, 0, m_userAreadWidth/2, m_userAreaHeight);
+    addLine(0, m_userAreaHeight/2, m_userAreadWidth, m_userAreaHeight/2);
 }
 
 void AnimatorScene::testSlot()
@@ -54,7 +56,7 @@ void AnimatorScene::addPix()
     static int i = 0;
     addEllipse(i++, 15, 4, 4);
 
-    AnimNodeMgr::getInstance()->add(0, this, 355, 500);
+    AnimNodeMgr::getInstance()->add(0, this, m_userAreadWidth/2, m_userAreaHeight/2);
     AnimNodeMgr::getInstance()->getNode(0)->setNodeDescription("Item1");
 
     AnimNodeMgr::getInstance()->add(1, this, 155, 500);
