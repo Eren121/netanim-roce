@@ -24,7 +24,8 @@ HEADERS += \
     resizeableitem.h \
     animnode.h \
     common.h \
-    animatorscene.h
+    animatorscene.h \
+    timevalue.h
 
 DEFINES += NS3_LOG_ENABLE
 
