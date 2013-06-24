@@ -6,6 +6,7 @@
 #include <QGraphicsSceneHoverEvent>
 #include <QGraphicsView>
 #include <QGraphicsLineItem>
+#include "timevalue.h"
 
 
 using namespace ns3;
@@ -30,6 +31,7 @@ AnimatorScene::AnimatorScene():QGraphicsScene(0, 0, ANIMATORSCENE_USERAREA_WIDTH
     addRect(0, 0, m_userAreadWidth, m_userAreaHeight);
     addLine(m_userAreadWidth/2, 0, m_userAreadWidth/2, m_userAreaHeight);
     addLine(0, m_userAreaHeight/2, m_userAreadWidth, m_userAreaHeight/2);
+    prepareTimeValueData();
 }
 
 void AnimatorScene::testSlot()
@@ -80,4 +82,32 @@ void AnimatorScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     QPoint globalP = view->viewport()->mapToGlobal(viewP);
     //NS_LOG_DEBUG("Scene Mouse Move ViewPos:" << globalP);
     return QGraphicsScene::mouseMoveEvent(event);
+}
+
+void AnimatorScene::prepareTimeValueData()
+{
+    QVector<qreal> t ;
+    t.push_back(0.0);
+    t.push_back(1.0001);
+    t.push_back(1.0004);
+    t.push_back(1.0006);
+    t.push_back(2.00001);
+    t.push_back(3);
+    t.push_back(4);
+    t.push_back(4.5);
+    t.push_back(4.51);
+    for(QVector<qreal>::const_iterator i = t.begin();
+        i != t.end();
+        ++i)
+    {
+        m_testTimeValue.add(*i, QString::number(*i));
+    }
+    m_testTimeValue.setCurrentTime(0);
+    NS_LOG_DEBUG(m_testTimeValue.getCurrent().data()->toAscii());
+    m_testTimeValue.setCurrentTime(1);
+    NS_LOG_DEBUG(m_testTimeValue.getCurrent().toDouble());
+    m_testTimeValue.setCurrentTime(2);
+    NS_LOG_DEBUG(m_testTimeValue.getCurrent().toDouble());
+
+
 }

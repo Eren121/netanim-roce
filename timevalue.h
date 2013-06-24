@@ -23,7 +23,6 @@
 #include <map>
 #include <QtGlobal>
 
-namespace netanim {
 
 template <class T>
 class TimeValue {
@@ -147,5 +146,5 @@ TimeValue<T>::setCurrentTime(qreal t)
 
 }
 
-}
+
 #endif // TIMEVALUE_H

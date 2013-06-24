@@ -4,7 +4,7 @@
 #include "animnode.h"
 #include "resizeablepixmap.h"
 #include "resizeableitem.h"
-
+#include "timevalue.h"
 #include <QGraphicsScene>
 #include <QPushButton>
 
@@ -29,11 +29,13 @@ public:
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
     void setUserAreaWidth(qreal w);
     void setUserAreaHeight(qreal h);
+    void prepareTimeValueData();
 public slots:
     void testSlot();
 private:
     qreal m_userAreadWidth;
     qreal m_userAreaHeight;
+    TimeValue<QString> m_testTimeValue;
 };
 
 #endif // MYSCENE_H
