@@ -108,6 +108,11 @@ void AnimatorScene::prepareTimeValueData()
     NS_LOG_DEBUG(m_testTimeValue.getCurrent().toDouble());
     m_testTimeValue.setCurrentTime(2);
     NS_LOG_DEBUG(m_testTimeValue.getCurrent().toDouble());
+    NS_LOG_DEBUG(m_testTimeValue.getCurrent().toDouble());
+    NS_LOG_DEBUG(m_testTimeValue.getCurrent().toDouble());
+
+   // m_testTimeValue.setCurrentTime(2);
+
 
 
 }

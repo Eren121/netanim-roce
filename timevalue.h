@@ -33,7 +33,8 @@ public:
     typedef std::map<qreal, T> TimeValue_t;
     void add(qreal t, T value);
     void systemReset();
-    void setCurrentTime(qreal t);
+    void setCurrentTime(qreal t, bool goBackOneStep = false);
+    void setCurrentTimeLookBehind(qreal t);
     T getCurrent();
 
 private:
@@ -149,7 +150,7 @@ TimeValue<T>::setCurrentTimeLookBehind(qreal t)
 
 template <class T>
 void
-TimeValue<T>::setCurrentTime(qreal t)
+TimeValue<T>::setCurrentTime(qreal t, bool goBackOneStep)
 {
     if (m_timeValues.empty())
         return;
@@ -166,7 +167,10 @@ TimeValue<T>::setCurrentTime(qreal t)
     {
         if (i->first > t)
         {
-            --m_currentIterator;
+            if(goBackOneStep)
+            {
+                --m_currentIterator;
+            }
             return;
         }
         else if (i->first == t)
