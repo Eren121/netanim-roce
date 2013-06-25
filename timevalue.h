@@ -114,6 +114,41 @@ TimeValue<T>::getCurrent()
 
 template <class T>
 void
+TimeValue<T>::setCurrentTimeLookBehind(qreal t)
+{
+    if (m_timeValues.empty())
+        return;
+
+    if ((!t) || (t < m_currentIterator->first))
+    {
+        m_currentIterator = m_timeValues.begin();
+        return;
+    }
+
+    for(class TimeValue<T>::TimeValue_t::const_iterator i = m_currentIterator;
+        i != m_timeValues.begin();
+        --i)
+    {
+        if (i->first > t)
+        {
+            return;
+        }
+        else if (i->first == t)
+        {
+            return;
+        }
+        else
+        {
+            --m_currentIterator;
+        }
+    }
+
+}
+
+
+
+template <class T>
+void
 TimeValue<T>::setCurrentTime(qreal t)
 {
     if (m_timeValues.empty())
