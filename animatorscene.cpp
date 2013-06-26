@@ -86,33 +86,10 @@ void AnimatorScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
 void AnimatorScene::prepareTimeValueData()
 {
-    QVector<qreal> t ;
-    t.push_back(0.0);
-    t.push_back(1.0001);
-    t.push_back(1.0004);
-    t.push_back(1.0006);
-    t.push_back(2.00001);
-    t.push_back(3);
-    t.push_back(4);
-    t.push_back(4.5);
-    t.push_back(4.51);
-    for(QVector<qreal>::const_iterator i = t.begin();
-        i != t.end();
-        ++i)
-    {
-        m_testTimeValue.add(*i, QString::number(*i));
-    }
-    m_testTimeValue.setCurrentTime(0);
-    NS_LOG_DEBUG(m_testTimeValue.getCurrent().data()->toAscii());
-    m_testTimeValue.setCurrentTime(1);
-    NS_LOG_DEBUG(m_testTimeValue.getCurrent().toDouble());
-    m_testTimeValue.setCurrentTime(2);
-    NS_LOG_DEBUG(m_testTimeValue.getCurrent().toDouble());
-    NS_LOG_DEBUG(m_testTimeValue.getCurrent().toDouble());
-    NS_LOG_DEBUG(m_testTimeValue.getCurrent().toDouble());
-
-   // m_testTimeValue.setCurrentTime(2);
+    AnimPacket * p = new AnimPacket(0, 1, 0, 0.5, 0.75, 1.25);
+    m_testTimeValue.add(p->getFirstBitTx(), p);
 
 
+   // m_testTimeValue.setCurrentTime(
 
 }

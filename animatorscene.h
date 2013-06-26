@@ -5,6 +5,7 @@
 #include "resizeablepixmap.h"
 #include "resizeableitem.h"
 #include "timevalue.h"
+#include "animpacket.h"
 #include <QGraphicsScene>
 #include <QPushButton>
 
@@ -35,7 +36,7 @@ public slots:
 private:
     qreal m_userAreadWidth;
     qreal m_userAreaHeight;
-    TimeValue<QString> m_testTimeValue;
+    TimeValue<AnimPacket *> m_testTimeValue;
 };
 
 #endif // MYSCENE_H

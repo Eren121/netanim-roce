@@ -9,7 +9,8 @@ SOURCES += \
     resizeablepixmap.cpp \
     resizeableitem.cpp \
     animnode.cpp \
-    animatorscene.cpp
+    animatorscene.cpp \
+    animpacket.cpp
 
 HEADERS += \
     myview.h \
@@ -25,7 +26,8 @@ HEADERS += \
     animnode.h \
     common.h \
     animatorscene.h \
-    timevalue.h
+    timevalue.h \
+    animpacket.h
 
 DEFINES += NS3_LOG_ENABLE
 
