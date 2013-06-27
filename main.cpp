@@ -17,7 +17,8 @@ int main(int argc, char *argv[])
 
 
   v.setGeometry(0, 0, 500, 500);
-  v.showMaximized();
+  //v.showMaximized();
+  v.showMinimized();
   v.show();
   return a.exec();
 }

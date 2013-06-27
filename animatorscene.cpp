@@ -84,12 +84,68 @@ void AnimatorScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     return QGraphicsScene::mouseMoveEvent(event);
 }
 
+
+AnimPacket * AnimatorScene::getTestPacket(qreal firstBitTx, qreal propDelay, qreal bitRate)
+{
+    qreal packetSize = 8 * 1024;
+    qreal lastBitDelta = packetSize/bitRate;
+    AnimPacket * p = new AnimPacket(0, 1, firstBitTx, firstBitTx + lastBitDelta, firstBitTx + propDelay, firstBitTx + propDelay +lastBitDelta );
+    return p;
+
+}
+
+void AnimatorScene::displayPacket(qreal t)
+{
+    m_testTimeValue.setCurrentTime(t-2);
+    NS_LOG_DEBUG(m_testTimeValue.getCurrent()->getFirstBitTx());
+}
+
+
 void AnimatorScene::prepareTimeValueData()
 {
-    AnimPacket * p = new AnimPacket(0, 1, 0, 0.5, 0.75, 1.25);
-    m_testTimeValue.add(p->getFirstBitTx(), p);
+    qreal propDelay1 = 10e-3;
+    qreal bitRate = 100 * 1024;
+    qreal firstBitTx = 0;
+    m_testTimeValue.add(firstBitTx, getTestPacket(firstBitTx, propDelay1, bitRate));
+    firstBitTx = 0.25;
+    m_testTimeValue.add(firstBitTx, getTestPacket(firstBitTx, propDelay1, bitRate));
+    firstBitTx = 0.50;
+    m_testTimeValue.add(firstBitTx, getTestPacket(firstBitTx, propDelay1, bitRate));
+    firstBitTx = 0.75;
+    m_testTimeValue.add(firstBitTx, getTestPacket(firstBitTx, propDelay1, bitRate));
+    firstBitTx = 1.0;
+    m_testTimeValue.add(firstBitTx, getTestPacket(firstBitTx, propDelay1, bitRate));
+    firstBitTx = 1.25;
+    m_testTimeValue.add(firstBitTx, getTestPacket(firstBitTx, propDelay1, bitRate));
+    firstBitTx = 1.50;
+    m_testTimeValue.add(firstBitTx, getTestPacket(firstBitTx, propDelay1, bitRate));
+    firstBitTx = 1.75;
+    m_testTimeValue.add(firstBitTx, getTestPacket(firstBitTx, propDelay1, bitRate));
+    firstBitTx = 2.0;
+    m_testTimeValue.add(firstBitTx, getTestPacket(firstBitTx, propDelay1, bitRate));
+    firstBitTx = 2.5;
+    m_testTimeValue.add(firstBitTx, getTestPacket(firstBitTx, propDelay1, bitRate));
+    firstBitTx = 3.0;
+    m_testTimeValue.add(firstBitTx, getTestPacket(firstBitTx, propDelay1, bitRate));
+    firstBitTx = 3.25;
+    m_testTimeValue.add(firstBitTx, getTestPacket(firstBitTx, propDelay1, bitRate));
+    firstBitTx = 3.5;
+    m_testTimeValue.add(firstBitTx, getTestPacket(firstBitTx, propDelay1, bitRate));
+    firstBitTx = 3.75;
+    m_testTimeValue.add(firstBitTx, getTestPacket(firstBitTx, propDelay1, bitRate));
+    firstBitTx = 4.0;
+    m_testTimeValue.add(firstBitTx, getTestPacket(firstBitTx, propDelay1, bitRate));
+    firstBitTx = 4.25;
+    m_testTimeValue.add(firstBitTx, getTestPacket(firstBitTx, propDelay1, bitRate));
+
+    displayPacket(0);
+    displayPacket(1);
+    displayPacket(2);
+    displayPacket(3);
+    displayPacket(3.1);
+    displayPacket(4.75);
 
 
-   // m_testTimeValue.setCurrentTime(
+
 
 }

@@ -9,6 +9,7 @@ NS_LOG_COMPONENT_DEFINE("MyView");
 myview::myview(QWidget *parent) :
     QGraphicsView(parent)
 {
+    setRenderHint(QPainter::Antialiasing);
 }
 
 void
