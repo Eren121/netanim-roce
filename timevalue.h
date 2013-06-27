@@ -39,7 +39,7 @@ public:
 
 private:
     TimeValue_t m_timeValues;
-    class TimeValue<T>::TimeValue_t::const_iterator m_currentIterator;
+    typename TimeValue<T>::TimeValue_t::const_iterator m_currentIterator;
 };
 
 template <class T>
@@ -51,7 +51,7 @@ TimeValue<T>::TimeValue()
 template <class T>
 TimeValue<T>::TimeValue(const TimeValue & other)
 {
-    for(class TimeValue<T>::TimeValue_t::const_iterator i = other.m_timeValues.begin();
+    for(typename TimeValue<T>::TimeValue_t::const_iterator i = other.m_timeValues.begin();
         i != other.m_timeValues.end();
         ++i)
     {
@@ -68,7 +68,7 @@ template <class T>
 TimeValue <T> &
 TimeValue<T>::operator= (const TimeValue <T> & other)
 {
-    for(class TimeValue<T>::TimeValue_t::const_iterator i = other.m_timeValues.begin();
+    for(typename TimeValue<T>::TimeValue_t::const_iterator i = other.m_timeValues.begin();
         i != other.m_timeValues.end();
         ++i)
     {
@@ -126,7 +126,7 @@ TimeValue<T>::setCurrentTimeLookBehind(qreal t)
         return;
     }
 
-    for(class TimeValue<T>::TimeValue_t::const_iterator i = m_currentIterator;
+    for(typename TimeValue<T>::TimeValue_t::const_iterator i = m_currentIterator;
         i != m_timeValues.begin();
         --i)
     {
@@ -161,7 +161,7 @@ TimeValue<T>::setCurrentTime(qreal t, bool goBackOneStep)
         return;
     }
 
-    for(class TimeValue<T>::TimeValue_t::const_iterator i = m_currentIterator;
+    for(typename TimeValue<T>::TimeValue_t::const_iterator i = m_currentIterator;
         i != m_timeValues.end();
         ++i)
     {
