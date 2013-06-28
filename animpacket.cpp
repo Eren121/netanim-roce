@@ -12,8 +12,22 @@ AnimPacket::AnimPacket(uint32_t fromNodeId, uint32_t toNodeId, qreal firstBitTx,
 
 }
 
+uint32_t AnimPacket::getFromNodeId()
+{
+    return m_fromNodeId;
+}
+
+uint32_t AnimPacket::getToNodeId()
+{
+    return m_toNodeId;
+}
 
 qreal AnimPacket::getFirstBitTx()
 {
     return m_firstBitTx;
+}
+
+qreal AnimPacket::getFirstBitRx()
+{
+    return m_firstBitRx;
 }

@@ -12,6 +12,10 @@ public:
                qreal firstBitRx,
                qreal lastBitRx);
     qreal getFirstBitTx();
+    qreal getFirstBitRx();
+    uint32_t getFromNodeId();
+    uint32_t getToNodeId();
+
 private:
     uint32_t m_fromNodeId;
     uint32_t m_toNodeId;
