@@ -7,7 +7,7 @@
 #include <QGraphicsView>
 #include <QGraphicsLineItem>
 #include "timevalue.h"
-
+#define PI 3.14159265
 
 using namespace ns3;
 NS_LOG_COMPONENT_DEFINE("AnimatorScene");
@@ -98,12 +98,28 @@ void AnimatorScene::displayPacket(qreal t)
 {
     m_testTimeValue.setCurrentTime(t-2);
     NS_LOG_DEBUG(m_testTimeValue.getCurrent()->getFirstBitTx());
+    uint32_t fromNodeId = m_testTimeValue.getCurrent()->getFromNodeId();
+    uint32_t toNodeId = m_testTimeValue.getCurrent()->getToNodeId();
+    QPointF fromPos = AnimNodeMgr::getInstance()->getNode(fromNodeId)->getCenter();
+    QPointF toPos = AnimNodeMgr::getInstance()->getNode(toNodeId)->getCenter();
+    QLineF l(fromPos, toPos);
+    qreal propDelay = m_testTimeValue.getCurrent()->getFirstBitRx() - m_testTimeValue.getCurrent()->getFirstBitTx();
+    qreal velocity = l.length()/propDelay;
+//    addLine(l);
+    qreal timeElapsed = t - m_testTimeValue.getCurrent()->getFirstBitTx();
+    qreal distanceTravelled = velocity * timeElapsed;
+    qreal x = distanceTravelled * cos(l.angle()* PI /180);
+    qreal y = distanceTravelled * sin(l.angle()* PI /180);
+    NS_LOG_DEBUG ("Length:" << l.length() << " PropDelay" << propDelay << " velocity:" << velocity << " timeElapsed:" << timeElapsed << " distance:" << distanceTravelled);
+    NS_LOG_DEBUG ("x:" << x << " y:" <<y);
+    addEllipse(fromPos.x()-x, fromPos.y() - y, 5, 5);
+
 }
 
 
 void AnimatorScene::prepareTimeValueData()
 {
-    qreal propDelay1 = 10e-3;
+    qreal propDelay1 = 1000e-3;
     qreal bitRate = 100 * 1024;
     qreal firstBitTx = 0;
     m_testTimeValue.add(firstBitTx, getTestPacket(firstBitTx, propDelay1, bitRate));
@@ -139,11 +155,11 @@ void AnimatorScene::prepareTimeValueData()
     m_testTimeValue.add(firstBitTx, getTestPacket(firstBitTx, propDelay1, bitRate));
 
     displayPacket(0);
-    displayPacket(1);
-    displayPacket(2);
-    displayPacket(3);
-    displayPacket(3.1);
-    displayPacket(4.75);
+    displayPacket(0.1);
+    displayPacket(0.2);
+    displayPacket(0.3);
+    displayPacket(0.5);
+    displayPacket(0.7);
 
 
 
