@@ -112,7 +112,7 @@ void AnimatorScene::displayPacket(qreal t)
     qreal y = distanceTravelled * sin(l.angle()* PI /180);
     NS_LOG_DEBUG ("Length:" << l.length() << " PropDelay" << propDelay << " velocity:" << velocity << " timeElapsed:" << timeElapsed << " distance:" << distanceTravelled);
     NS_LOG_DEBUG ("x:" << x << " y:" <<y);
-    addEllipse(fromPos.x()-x, fromPos.y() - y, 5, 5);
+    addEllipse(fromPos.x() + x, fromPos.y() + y, 5, 5);
 
 }
 
