@@ -7,7 +7,6 @@
 #include <QGraphicsView>
 #include <QGraphicsLineItem>
 #include "timevalue.h"
-
 #include <math.h>
 #define PI 3.14159265
 
@@ -91,7 +90,20 @@ AnimPacket * AnimatorScene::getTestPacket(qreal firstBitTx, qreal propDelay, qre
 {
     qreal packetSize = 8 * 1024;
     qreal lastBitDelta = packetSize/bitRate;
-    AnimPacket * p = new AnimPacket(0, 1, firstBitTx, firstBitTx + lastBitDelta, firstBitTx + propDelay, firstBitTx + propDelay +lastBitDelta );
+
+    uint32_t fromNodeId = 0;
+    uint32_t toNodeId = 1;
+    qreal l_firstBitTx = firstBitTx;
+    qreal lastBitTx = firstBitTx + lastBitDelta;
+    qreal firstBitRx = firstBitTx + propDelay;
+    qreal lastBitRx = firstBitRx + lastBitDelta;
+
+    AnimPacket * p = new AnimPacket(fromNodeId,
+                                    toNodeId,
+                                    l_firstBitTx,
+                                    lastBitTx,
+                                    firstBitRx,
+                                    lastBitRx);
     return p;
 
 }
@@ -121,47 +133,17 @@ void AnimatorScene::displayPacket(qreal t)
 
 void AnimatorScene::prepareTimeValueData()
 {
-    qreal propDelay1 = 1000e-3;
-    qreal bitRate = 100 * 1024;
+    qreal propDelay1 = 10; // 10s for test
+    qreal bitRate = 100 * 1024; //100KBps
     qreal firstBitTx = 0;
     m_testTimeValue.add(firstBitTx, getTestPacket(firstBitTx, propDelay1, bitRate));
-    firstBitTx = 0.25;
-    m_testTimeValue.add(firstBitTx, getTestPacket(firstBitTx, propDelay1, bitRate));
-    firstBitTx = 0.50;
-    m_testTimeValue.add(firstBitTx, getTestPacket(firstBitTx, propDelay1, bitRate));
-    firstBitTx = 0.75;
-    m_testTimeValue.add(firstBitTx, getTestPacket(firstBitTx, propDelay1, bitRate));
-    firstBitTx = 1.0;
-    m_testTimeValue.add(firstBitTx, getTestPacket(firstBitTx, propDelay1, bitRate));
-    firstBitTx = 1.25;
-    m_testTimeValue.add(firstBitTx, getTestPacket(firstBitTx, propDelay1, bitRate));
-    firstBitTx = 1.50;
-    m_testTimeValue.add(firstBitTx, getTestPacket(firstBitTx, propDelay1, bitRate));
-    firstBitTx = 1.75;
-    m_testTimeValue.add(firstBitTx, getTestPacket(firstBitTx, propDelay1, bitRate));
-    firstBitTx = 2.0;
-    m_testTimeValue.add(firstBitTx, getTestPacket(firstBitTx, propDelay1, bitRate));
-    firstBitTx = 2.5;
-    m_testTimeValue.add(firstBitTx, getTestPacket(firstBitTx, propDelay1, bitRate));
-    firstBitTx = 3.0;
-    m_testTimeValue.add(firstBitTx, getTestPacket(firstBitTx, propDelay1, bitRate));
-    firstBitTx = 3.25;
-    m_testTimeValue.add(firstBitTx, getTestPacket(firstBitTx, propDelay1, bitRate));
-    firstBitTx = 3.5;
-    m_testTimeValue.add(firstBitTx, getTestPacket(firstBitTx, propDelay1, bitRate));
-    firstBitTx = 3.75;
-    m_testTimeValue.add(firstBitTx, getTestPacket(firstBitTx, propDelay1, bitRate));
-    firstBitTx = 4.0;
-    m_testTimeValue.add(firstBitTx, getTestPacket(firstBitTx, propDelay1, bitRate));
-    firstBitTx = 4.25;
-    m_testTimeValue.add(firstBitTx, getTestPacket(firstBitTx, propDelay1, bitRate));
-
     displayPacket(0);
     displayPacket(0.1);
     displayPacket(0.2);
     displayPacket(0.3);
     displayPacket(0.5);
     displayPacket(0.7);
+    displayPacket(1.3);
 
 
 
