@@ -60,10 +60,31 @@ void AnimatorScene::addPix()
     addEllipse(i++, 15, 4, 4);
 
     AnimNodeMgr::getInstance()->add(0, this, m_userAreadWidth/2, m_userAreaHeight/2);
-    AnimNodeMgr::getInstance()->getNode(0)->setNodeDescription("Item1");
+    AnimNodeMgr::getInstance()->getNode(0)->setNodeDescription("Item0");
 
-    AnimNodeMgr::getInstance()->add(1, this, 155, 500);
+    AnimNodeMgr::getInstance()->add(1, this, 7 *m_userAreadWidth/8, m_userAreaHeight/2);
+    AnimNodeMgr::getInstance()->getNode(1)->setNodeDescription("Item1");
+
+    AnimNodeMgr::getInstance()->add(2, this, 6 * m_userAreadWidth/8, m_userAreaHeight/4);
     AnimNodeMgr::getInstance()->getNode(1)->setNodeDescription("Item2");
+
+    AnimNodeMgr::getInstance()->add(3, this, m_userAreadWidth/2, m_userAreaHeight/8);
+    AnimNodeMgr::getInstance()->getNode(1)->setNodeDescription("Item3");
+
+    AnimNodeMgr::getInstance()->add(4, this, m_userAreadWidth/4, m_userAreaHeight/8);
+    AnimNodeMgr::getInstance()->getNode(1)->setNodeDescription("Item4");
+
+    AnimNodeMgr::getInstance()->add(5, this, m_userAreadWidth/8, m_userAreaHeight/2);
+    AnimNodeMgr::getInstance()->getNode(1)->setNodeDescription("Item5");
+
+    AnimNodeMgr::getInstance()->add(6, this, m_userAreadWidth/4, 6 * m_userAreaHeight/8);
+    AnimNodeMgr::getInstance()->getNode(1)->setNodeDescription("Item6");
+
+    AnimNodeMgr::getInstance()->add(7, this, m_userAreadWidth/2, 7* m_userAreaHeight/8);
+    AnimNodeMgr::getInstance()->getNode(1)->setNodeDescription("Item7");
+
+    AnimNodeMgr::getInstance()->add(8, this, 6 *m_userAreadWidth/8, 6* m_userAreaHeight/8);
+    AnimNodeMgr::getInstance()->getNode(1)->setNodeDescription("Item8");
 
 
     AnimNode * n0 =  AnimNodeMgr::getInstance()->getNode(0);
@@ -110,13 +131,13 @@ AnimPacket * AnimatorScene::getTestPacket(qreal firstBitTx, qreal propDelay, qre
 
 void AnimatorScene::displayPacket(qreal t)
 {
-    m_testTimeValue.setCurrentTime(t-2);
-    NS_LOG_DEBUG(m_testTimeValue.getCurrent()->getFirstBitTx());
+    //m_testTimeValue.setCurrentTime(t-2);
     uint32_t fromNodeId = m_testTimeValue.getCurrent()->getFromNodeId();
     uint32_t toNodeId = m_testTimeValue.getCurrent()->getToNodeId();
     QPointF fromPos = AnimNodeMgr::getInstance()->getNode(fromNodeId)->getCenter();
     QPointF toPos = AnimNodeMgr::getInstance()->getNode(toNodeId)->getCenter();
     QLineF l(fromPos, toPos);
+
     qreal propDelay = m_testTimeValue.getCurrent()->getFirstBitRx() - m_testTimeValue.getCurrent()->getFirstBitTx();
     qreal velocity = l.length()/propDelay;
 //    addLine(l);
@@ -124,6 +145,7 @@ void AnimatorScene::displayPacket(qreal t)
     qreal distanceTravelled = velocity * timeElapsed;
     qreal x = distanceTravelled * cos(l.angle()* PI /180);
     qreal y = distanceTravelled * sin(l.angle()* PI /180);
+
     NS_LOG_DEBUG ("Length:" << l.length() << " PropDelay" << propDelay << " velocity:" << velocity << " timeElapsed:" << timeElapsed << " distance:" << distanceTravelled);
     NS_LOG_DEBUG ("x:" << x << " y:" <<y);
     addEllipse(fromPos.x() + x, fromPos.y() + y, 5, 5);
@@ -144,6 +166,11 @@ void AnimatorScene::prepareTimeValueData()
     displayPacket(0.5);
     displayPacket(0.7);
     displayPacket(1.3);
+    displayPacket(5.0);
+    displayPacket(8);
+    displayPacket(9.9);
+    displayPacket(10.0);
+    displayPacket(11.0);
 
 
 
