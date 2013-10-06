@@ -15,8 +15,8 @@ int main(int argc, char *argv[])
   myview v;
   v.setScene(&s);
 
-  qDebug(QString::number(sizeof(int)).toAscii().data());
-  qDebug(QString::number(sizeof(int*)).toAscii().data());
+  //qDebug(QString::number(sizeof(int)).toAscii().data());
+  //qDebug(QString::number(sizeof(int*)).toAscii().data());
 
 
   v.setGeometry(0, 0, 500, 500);

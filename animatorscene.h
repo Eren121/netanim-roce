@@ -31,7 +31,7 @@ public:
     void setUserAreaWidth(qreal w);
     void setUserAreaHeight(qreal h);
     void prepareTimeValueData();
-    AnimPacket * getTestPacket(qreal firstBitTx, qreal propDelay, qreal bitRate);
+    AnimPacket * getTestPacket(uint32_t fromNodeId, uint32_t toNodeId, qreal firstBitTx, qreal propDelay, qreal bitRate);
     void displayPacket(qreal t);
 public slots:
     void testSlot();

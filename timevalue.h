@@ -21,6 +21,7 @@
 
 
 #include <map>
+#include <ostream>
 #include <QtGlobal>
 
 
@@ -36,6 +37,7 @@ public:
     void setCurrentTime(qreal t, bool goBackOneStep = false);
     void setCurrentTimeLookBehind(qreal t);
     T getCurrent();
+    std::ostringstream toString();
 
 private:
     TimeValue_t m_timeValues;
@@ -184,6 +186,19 @@ TimeValue<T>::setCurrentTime(qreal t, bool goBackOneStep)
     }
 
 }
-
+template <class T>
+std::ostringstream
+TimeValue<T>::toString()
+{
+    std::ostringstream os;
+    for(typename TimeValue<T>::TimeValue_t::const_iterator i = m_currentIterator;
+        i != m_timeValues.end();
+        ++i)
+    {
+        T v = i->second;
+        os << v;
+    }
+    return os;
+}
 
 #endif // TIMEVALUE_H

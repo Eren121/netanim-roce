@@ -31,3 +31,13 @@ qreal AnimPacket::getFirstBitRx()
 {
     return m_firstBitRx;
 }
+
+qreal AnimPacket::getLastBitRx()
+{
+    return m_lastBitRx;
+}
+
+qreal AnimPacket::getLastBitTx()
+{
+    return m_lastBitTx;
+}

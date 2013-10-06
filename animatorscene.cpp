@@ -8,6 +8,8 @@
 #include <QGraphicsLineItem>
 #include "timevalue.h"
 #include <math.h>
+#include <string.h>
+#include <sstream>
 #define PI 3.14159265
 
 using namespace ns3;
@@ -107,13 +109,10 @@ void AnimatorScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 }
 
 
-AnimPacket * AnimatorScene::getTestPacket(qreal firstBitTx, qreal propDelay, qreal bitRate)
+AnimPacket * AnimatorScene::getTestPacket(uint32_t fromNodeId, uint32_t toNodeId, qreal firstBitTx, qreal propDelay, qreal bitRate)
 {
     qreal packetSize = 8 * 1024;
     qreal lastBitDelta = packetSize/bitRate;
-
-    uint32_t fromNodeId = 0;
-    uint32_t toNodeId = 1;
     qreal l_firstBitTx = firstBitTx;
     qreal lastBitTx = firstBitTx + lastBitDelta;
     qreal firstBitRx = firstBitTx + propDelay;
@@ -146,8 +145,8 @@ void AnimatorScene::displayPacket(qreal t)
     qreal x = distanceTravelled * cos(l.angle()* PI /180);
     qreal y = distanceTravelled * sin(l.angle()* PI /180);
 
-    NS_LOG_DEBUG ("Length:" << l.length() << " PropDelay" << propDelay << " velocity:" << velocity << " timeElapsed:" << timeElapsed << " distance:" << distanceTravelled);
-    NS_LOG_DEBUG ("x:" << x << " y:" <<y);
+    //NS_LOG_DEBUG ("Length:" << l.length() << " PropDelay" << propDelay << " velocity:" << velocity << " timeElapsed:" << timeElapsed << " distance:" << distanceTravelled);
+    //NS_LOG_DEBUG ("x:" << x << " y:" <<y);
     addEllipse(fromPos.x() + x, fromPos.y() + y, 5, 5);
 
 }
@@ -158,7 +157,16 @@ void AnimatorScene::prepareTimeValueData()
     qreal propDelay1 = 10; // 10s for test
     qreal bitRate = 100 * 1024; //100KBps
     qreal firstBitTx = 0;
-    m_testTimeValue.add(firstBitTx, getTestPacket(firstBitTx, propDelay1, bitRate));
+    m_testTimeValue.add(firstBitTx, getTestPacket(0, 1, firstBitTx, propDelay1, bitRate));
+    m_testTimeValue.add(firstBitTx, getTestPacket(0, 2, firstBitTx, propDelay1, bitRate));
+    m_testTimeValue.add(firstBitTx, getTestPacket(0, 3, firstBitTx, propDelay1, bitRate));
+    m_testTimeValue.add(firstBitTx, getTestPacket(0, 4, firstBitTx, propDelay1, bitRate));
+    m_testTimeValue.add(firstBitTx, getTestPacket(0, 5, firstBitTx, propDelay1, bitRate));
+    m_testTimeValue.add(firstBitTx, getTestPacket(0, 6, firstBitTx, propDelay1, bitRate));
+    m_testTimeValue.add(firstBitTx, getTestPacket(0, 7, firstBitTx, propDelay1, bitRate));
+    m_testTimeValue.add(firstBitTx, getTestPacket(0, 8, firstBitTx, propDelay1, bitRate));
+
+
     displayPacket(0);
     displayPacket(0.1);
     displayPacket(0.2);
@@ -171,8 +179,6 @@ void AnimatorScene::prepareTimeValueData()
     displayPacket(9.9);
     displayPacket(10.0);
     displayPacket(11.0);
-
-
-
-
+    std::cout << m_testTimeValue.toString().str();
+    fflush(stdout);
 }
