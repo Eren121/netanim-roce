@@ -31,7 +31,8 @@ public:
     TimeValue();
     TimeValue(const TimeValue & other);
     TimeValue <T> & operator=(const TimeValue <T> & rhs);
-    typedef std::map<qreal, T> TimeValue_t;
+    typedef std::multimap<qreal, T> TimeValue_t;
+    typedef std::pair<qreal, T> TimeValuePair_t;
     void add(qreal t, T value);
     void systemReset();
     void setCurrentTime(qreal t, bool goBackOneStep = false);
@@ -89,7 +90,7 @@ void
 TimeValue<T>::add(qreal t, T value)
 {
     bool wasEmpty = m_timeValues.empty();
-    m_timeValues[t] = value;
+    m_timeValues.insert(TimeValuePair_t (t, value));
     if (wasEmpty)
     {
         m_currentIterator = m_timeValues.begin();
@@ -191,12 +192,23 @@ std::ostringstream
 TimeValue<T>::toString()
 {
     std::ostringstream os;
-    for(typename TimeValue<T>::TimeValue_t::const_iterator i = m_currentIterator;
+    for(typename TimeValue<T>::TimeValue_t::const_iterator i = m_timeValues.begin();
         i != m_timeValues.end();
-        ++i)
+        )
     {
-        T v = i->second;
-        os << v;
+        std::cout << "**** " << i->first << std::endl;
+        qDebug("HIIII");
+        fflush(stdout);
+
+        std::pair<TimeValue_t::const_iterator, TimeValue_t::const_iterator> pp =  m_timeValues.equal_range(i->first);
+        for(TimeValue<T>::TimeValue_t::const_iterator j = pp.first;
+            j != pp.second;
+            ++j)
+        {
+            os << j->second;
+        }
+        fflush(stdout);
+        i = m_timeValues.upper_bound(i->first);
     }
     return os;
 }

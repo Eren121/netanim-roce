@@ -167,6 +167,19 @@ void AnimatorScene::prepareTimeValueData()
     m_testTimeValue.add(firstBitTx, getTestPacket(0, 8, firstBitTx, propDelay1, bitRate));
 
 
+    firstBitTx = 1;
+        m_testTimeValue.add(firstBitTx, getTestPacket(0, 1, firstBitTx, propDelay1, bitRate));
+        m_testTimeValue.add(firstBitTx, getTestPacket(0, 2, firstBitTx, propDelay1, bitRate));
+        m_testTimeValue.add(firstBitTx, getTestPacket(0, 3, firstBitTx, propDelay1, bitRate));
+        m_testTimeValue.add(firstBitTx, getTestPacket(0, 4, firstBitTx, propDelay1, bitRate));
+        m_testTimeValue.add(firstBitTx, getTestPacket(0, 5, firstBitTx, propDelay1, bitRate));
+        m_testTimeValue.add(firstBitTx, getTestPacket(0, 6, firstBitTx, propDelay1, bitRate));
+        m_testTimeValue.add(firstBitTx, getTestPacket(0, 7, firstBitTx, propDelay1, bitRate));
+        m_testTimeValue.add(firstBitTx, getTestPacket(0, 8, firstBitTx, propDelay1, bitRate));
+
+
+
+    /*
     displayPacket(0);
     displayPacket(0.1);
     displayPacket(0.2);
@@ -179,6 +192,7 @@ void AnimatorScene::prepareTimeValueData()
     displayPacket(9.9);
     displayPacket(10.0);
     displayPacket(11.0);
+    */
     std::cout << m_testTimeValue.toString().str();
     fflush(stdout);
 }
