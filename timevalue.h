@@ -35,18 +35,21 @@ public:
     typedef std::pair<qreal, T> TimeValuePair_t;
     void add(qreal t, T value);
     void systemReset();
-    void setCurrentTime(qreal t, bool goBackOneStep = false);
-    void setCurrentTimeLookBehind(qreal t);
+    void setCurrentTime(qreal t);
     T getCurrent();
     std::ostringstream toString();
+    void setLookBack (qreal lookBack);
 
 private:
     TimeValue_t m_timeValues;
     typename TimeValue<T>::TimeValue_t::const_iterator m_currentIterator;
+    qreal m_lookBack;
+    qreal m_lastTime;
+  void rewindCurrentIterator();
 };
 
 template <class T>
-TimeValue<T>::TimeValue()
+TimeValue<T>::TimeValue(): m_lookBack(0)
 {
 
 }
@@ -84,6 +87,12 @@ TimeValue<T>::operator= (const TimeValue <T> & other)
     return *this;
 }
 
+template <class T>
+void
+TimeValue<T>::rewindCurrentIterator()
+{
+    m_currentIterator = m_timeValues.begin ();
+}
 
 template <class T>
 void
@@ -116,51 +125,26 @@ TimeValue<T>::getCurrent()
     return m_currentIterator->second;
 }
 
-template <class T>
-void
-TimeValue<T>::setCurrentTimeLookBehind(qreal t)
-{
-    if (m_timeValues.empty())
-        return;
-
-    if ((!t) || (t < m_currentIterator->first))
-    {
-        m_currentIterator = m_timeValues.begin();
-        return;
-    }
-
-    for(typename TimeValue<T>::TimeValue_t::const_iterator i = m_currentIterator;
-        i != m_timeValues.begin();
-        --i)
-    {
-        if (i->first > t)
-        {
-            return;
-        }
-        else if (i->first == t)
-        {
-            return;
-        }
-        else
-        {
-            --m_currentIterator;
-        }
-    }
-
-}
-
 
 
 template <class T>
 void
-TimeValue<T>::setCurrentTime(qreal t, bool goBackOneStep)
+TimeValue<T>::setCurrentTime(qreal t)
 {
+  m_lastTime = t;
     if (m_timeValues.empty())
         return;
 
+  t = t - m_lookBack;
+  t = qMax (t, 0);
+  if (t < m_lastTime)
+  {
+    rewindCurrentIterator();
+    return;
+  }
     if ((!t) || (t < m_currentIterator->first))
     {
-        m_currentIterator = m_timeValues.begin();
+        rewindCurrentIterator();
         return;
     }
 
@@ -170,10 +154,6 @@ TimeValue<T>::setCurrentTime(qreal t, bool goBackOneStep)
     {
         if (i->first > t)
         {
-            if(goBackOneStep)
-            {
-                --m_currentIterator;
-            }
             return;
         }
         else if (i->first == t)
@@ -196,9 +176,6 @@ TimeValue<T>::toString()
         i != m_timeValues.end();
         )
     {
-        std::cout << "**** " << i->first << std::endl;
-        qDebug("HIIII");
-        fflush(stdout);
 
         std::pair<TimeValue_t::const_iterator, TimeValue_t::const_iterator> pp =  m_timeValues.equal_range(i->first);
         for(TimeValue<T>::TimeValue_t::const_iterator j = pp.first;
@@ -207,7 +184,6 @@ TimeValue<T>::toString()
         {
             os << j->second;
         }
-        fflush(stdout);
         i = m_timeValues.upper_bound(i->first);
     }
     return os;
