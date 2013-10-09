@@ -28,23 +28,26 @@
 template <class T>
 class TimeValue {
 public:
-    TimeValue();
-    TimeValue(const TimeValue & other);
-    TimeValue <T> & operator=(const TimeValue <T> & rhs);
-    typedef std::multimap<qreal, T> TimeValue_t;
-    typedef std::pair<qreal, T> TimeValuePair_t;
-    void add(qreal t, T value);
-    void systemReset();
-    void setCurrentTime(qreal t);
-    T getCurrent();
-    std::ostringstream toString();
-    void setLookBack (qreal lookBack);
+  TimeValue();
+  TimeValue(const TimeValue & other);
+  TimeValue <T> & operator=(const TimeValue <T> & rhs);
+  typedef std::multimap<qreal, T> TimeValue_t;
+  typedef std::pair<qreal, T> TimeValuePair_t;
+  typedef std::pair<typename TimeValue_t::const_iterator, typename TimeValue_t::const_iterator> TimeValueIteratorPair_t;
+
+  void add(qreal t, T value);
+  void systemReset();
+  void setCurrentTime(qreal t);
+  T getCurrent();
+  TimeValueIteratorPair_t getRange(qreal lowerBound, qreal upperBound);
+  std::ostringstream toString();
+  void setLookBack (qreal lookBack);
+  bool isEnd ();
 
 private:
-    TimeValue_t m_timeValues;
-    typename TimeValue<T>::TimeValue_t::const_iterator m_currentIterator;
-    qreal m_lookBack;
-    qreal m_lastTime;
+  TimeValue_t m_timeValues;
+  typename TimeValue<T>::TimeValue_t::const_iterator m_currentIterator;
+  qreal m_lookBack;
   void rewindCurrentIterator();
 };
 
@@ -106,6 +109,15 @@ TimeValue<T>::add(qreal t, T value)
     }
 }
 
+
+template <class T>
+bool
+TimeValue<T>::isEnd()
+{
+  return m_currentIterator == m_timeValues.end();
+}
+
+
 template <class T>
 void
 TimeValue<T>::systemReset()
@@ -113,6 +125,24 @@ TimeValue<T>::systemReset()
     m_timeValues.clear();
 }
 
+template <class T>
+typename TimeValue<T>::TimeValueIteratorPair_t
+TimeValue<T>::getRange(qreal lowerBound, qreal upperBound)
+{
+  setCurrentTime(lowerBound);
+  TimeValue_t::const_iterator lowerIterator = m_currentIterator;
+  TimeValue_t::const_iterator tempIterator = m_currentIterator;
+  while (tempIterator != m_timeValues.end())
+    {
+      if (tempIterator->first > upperBound)
+        {
+          --tempIterator;
+          break;
+        }
+      ++tempIterator;
+    }
+
+}
 
 template <class T>
 T
@@ -131,29 +161,24 @@ template <class T>
 void
 TimeValue<T>::setCurrentTime(qreal t)
 {
-  m_lastTime = t;
-    if (m_timeValues.empty())
-        return;
+  if (m_timeValues.empty())
+    return;
 
   t = t - m_lookBack;
   t = qMax (t, 0);
-  if (t < m_lastTime)
-  {
-    rewindCurrentIterator();
-    return;
-  }
-    if ((!t) || (t < m_currentIterator->first))
+  if ((!t) || (t < m_currentIterator->first))
     {
         rewindCurrentIterator();
         return;
     }
 
-    for(typename TimeValue<T>::TimeValue_t::const_iterator i = m_currentIterator;
+  for(typename TimeValue<T>::TimeValue_t::const_iterator i = m_currentIterator;
         i != m_timeValues.end();
         ++i)
     {
         if (i->first > t)
         {
+            --m_currentIterator;
             return;
         }
         else if (i->first == t)
