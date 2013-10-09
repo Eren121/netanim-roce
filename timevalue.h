@@ -34,10 +34,15 @@ public:
   typedef std::multimap<qreal, T> TimeValue_t;
   typedef std::pair<qreal, T> TimeValuePair_t;
   typedef std::pair<typename TimeValue_t::const_iterator, typename TimeValue_t::const_iterator> TimeValueIteratorPair_t;
+  typedef enum {
+    GOOD,
+    UNDERRUN,
+    OVERRUN
+  } TimeValueResult_t;
 
   void add(qreal t, T value);
   void systemReset();
-  void setCurrentTime(qreal t);
+  TimeValueResult_t setCurrentTime(qreal t);
   T getCurrent();
   TimeValueIteratorPair_t getRange(qreal lowerBound, qreal upperBound);
   std::ostringstream toString();
@@ -141,7 +146,8 @@ TimeValue<T>::getRange(qreal lowerBound, qreal upperBound)
         }
       ++tempIterator;
     }
-
+  TimeValueIteratorPair_t pp (lowerIterator, tempIterator);
+  return pp;
 }
 
 template <class T>
@@ -159,37 +165,52 @@ TimeValue<T>::getCurrent()
 
 template <class T>
 void
+TimeValue<T>::setLookBack(qreal lookBack)
+{
+  m_lookBack = lookBack;
+}
+
+template <class T>
+typename TimeValue<T>::TimeValueResult_t
 TimeValue<T>::setCurrentTime(qreal t)
 {
   if (m_timeValues.empty())
-    return;
+    {
+      return UNDERRUN;
+    }
 
   t = t - m_lookBack;
-  t = qMax (t, 0);
+  t = qMax (t, 0.0);
   if ((!t) || (t < m_currentIterator->first))
     {
         rewindCurrentIterator();
-        return;
+        if (t < m_currentIterator->first)
+          {
+            return UNDERRUN;
+          }
+        return GOOD;
     }
 
   for(typename TimeValue<T>::TimeValue_t::const_iterator i = m_currentIterator;
         i != m_timeValues.end();
         ++i)
     {
+      logQString (QString ("i->first:") + QString::number( i->first) + " t:" + QString::number(t));
         if (i->first > t)
         {
             --m_currentIterator;
-            return;
+            return GOOD;
         }
         else if (i->first == t)
         {
-            return;
+            return GOOD;
         }
         else
         {
             ++m_currentIterator;
         }
     }
+    return GOOD;
 
 }
 template <class T>

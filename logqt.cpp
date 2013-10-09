@@ -24,11 +24,24 @@ std::ostream & operator << (std::ostream & os, QTransform t)
 std::ostream & operator << (std::ostream & os, AnimPacket * p)
 {
     os << "AnimPacket:" << endl;
-    os << "From Node Id:" << p->getFromNodeId() << endl;
-    os << "To Node Id:" << p->getToNodeId() << endl;
+    //os << "From Node Id:" << p->getFromNodeId() << endl;
+    //os << "To Node Id:" << p->getToNodeId() << endl;
     os << "First Bit Tx:" << p->getFirstBitTx() << endl;
-    os << "First Bit Rx:" << p->getFirstBitRx() << endl;
-    os << "Last Bit Tx:" << p->getLastBitTx() << endl;
-    os << "Last Bit Rx:" << p->getLastBitRx() << endl;
+    //os << "First Bit Rx:" << p->getFirstBitRx() << endl;
+    //os << "Last Bit Tx:" << p->getLastBitTx() << endl;
+    //os << "Last Bit Rx:" << p->getLastBitRx() << endl;
     return os;
+}
+
+void
+logQString(QString msg)
+{
+    qDebug(msg.toAscii().data());
+}
+
+
+void
+logQString(bool b)
+{
+    logQString(QString ("Bool:") + QString::number(b));
 }

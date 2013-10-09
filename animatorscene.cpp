@@ -130,7 +130,9 @@ AnimPacket * AnimatorScene::getTestPacket(uint32_t fromNodeId, uint32_t toNodeId
 
 void AnimatorScene::displayPacket(qreal t)
 {
-    //m_testTimeValue.setCurrentTime(t-2);
+    m_testTimeValue.setCurrentTime(t);
+    AnimPacket * p = m_testTimeValue.getCurrent();
+    std::cout << p;
     uint32_t fromNodeId = m_testTimeValue.getCurrent()->getFromNodeId();
     uint32_t toNodeId = m_testTimeValue.getCurrent()->getToNodeId();
     QPointF fromPos = AnimNodeMgr::getInstance()->getNode(fromNodeId)->getCenter();
@@ -154,33 +156,49 @@ void AnimatorScene::displayPacket(qreal t)
 
 void AnimatorScene::prepareTimeValueData()
 {
+    m_testTimeValue.setLookBack(1);
     qreal propDelay1 = 10; // 10s for test
     qreal bitRate = 100 * 1024; //100KBps
-    qreal firstBitTx = 0;
+
+    qreal firstBitTx = 0.3;
     m_testTimeValue.add(firstBitTx, getTestPacket(0, 1, firstBitTx, propDelay1, bitRate));
     m_testTimeValue.add(firstBitTx, getTestPacket(0, 2, firstBitTx, propDelay1, bitRate));
-    m_testTimeValue.add(firstBitTx, getTestPacket(0, 3, firstBitTx, propDelay1, bitRate));
-    m_testTimeValue.add(firstBitTx, getTestPacket(0, 4, firstBitTx, propDelay1, bitRate));
-    m_testTimeValue.add(firstBitTx, getTestPacket(0, 5, firstBitTx, propDelay1, bitRate));
-    m_testTimeValue.add(firstBitTx, getTestPacket(0, 6, firstBitTx, propDelay1, bitRate));
-    m_testTimeValue.add(firstBitTx, getTestPacket(0, 7, firstBitTx, propDelay1, bitRate));
-    m_testTimeValue.add(firstBitTx, getTestPacket(0, 8, firstBitTx, propDelay1, bitRate));
 
 
     firstBitTx = 1;
-        m_testTimeValue.add(firstBitTx, getTestPacket(0, 1, firstBitTx, propDelay1, bitRate));
-        m_testTimeValue.add(firstBitTx, getTestPacket(0, 2, firstBitTx, propDelay1, bitRate));
-        m_testTimeValue.add(firstBitTx, getTestPacket(0, 3, firstBitTx, propDelay1, bitRate));
-        m_testTimeValue.add(firstBitTx, getTestPacket(0, 4, firstBitTx, propDelay1, bitRate));
-        m_testTimeValue.add(firstBitTx, getTestPacket(0, 5, firstBitTx, propDelay1, bitRate));
-        m_testTimeValue.add(firstBitTx, getTestPacket(0, 6, firstBitTx, propDelay1, bitRate));
-        m_testTimeValue.add(firstBitTx, getTestPacket(0, 7, firstBitTx, propDelay1, bitRate));
-        m_testTimeValue.add(firstBitTx, getTestPacket(0, 8, firstBitTx, propDelay1, bitRate));
+    m_testTimeValue.add(firstBitTx, getTestPacket(0, 1, firstBitTx, propDelay1, bitRate));
+    m_testTimeValue.add(firstBitTx, getTestPacket(0, 2, firstBitTx, propDelay1, bitRate));
 
 
+    firstBitTx = 1.2;
+    m_testTimeValue.add(firstBitTx, getTestPacket(0, 1, firstBitTx, propDelay1, bitRate));
+    m_testTimeValue.add(firstBitTx, getTestPacket(0, 2, firstBitTx, propDelay1, bitRate));
+
+    firstBitTx = 1.3;
+    m_testTimeValue.add(firstBitTx, getTestPacket(0, 1, firstBitTx, propDelay1, bitRate));
+    m_testTimeValue.add(firstBitTx, getTestPacket(0, 2, firstBitTx, propDelay1, bitRate));
+
+    firstBitTx = 2;
+    m_testTimeValue.add(firstBitTx, getTestPacket(0, 1, firstBitTx, propDelay1, bitRate));
+    m_testTimeValue.add(firstBitTx, getTestPacket(0, 2, firstBitTx, propDelay1, bitRate));
+
+    firstBitTx = 2.1;
+    m_testTimeValue.add(firstBitTx, getTestPacket(0, 1, firstBitTx, propDelay1, bitRate));
+    m_testTimeValue.add(firstBitTx, getTestPacket(0, 2, firstBitTx, propDelay1, bitRate));
+
+    displayPacket(0);
+    displayPacket(0.1);
+    displayPacket(0.2);
+    displayPacket(0.7);
+    displayPacket(0.9);
+    displayPacket(1.0);
+    displayPacket(2.0);
+    displayPacket(2.2);
+    displayPacket(7.2);
+    logQString(m_testTimeValue.isEnd());
+    displayPacket(0);
 
     /*
-    displayPacket(0);
     displayPacket(0.1);
     displayPacket(0.2);
     displayPacket(0.3);
@@ -193,6 +211,6 @@ void AnimatorScene::prepareTimeValueData()
     displayPacket(10.0);
     displayPacket(11.0);
     */
-    std::cout << m_testTimeValue.toString().str();
+    /*std::cout << m_testTimeValue.toString().str();*/
     fflush(stdout);
 }
