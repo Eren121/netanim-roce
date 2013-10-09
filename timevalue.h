@@ -210,7 +210,7 @@ TimeValue<T>::setCurrentTime(qreal t)
             ++m_currentIterator;
         }
     }
-    return GOOD;
+    return OVERRUN;
 
 }
 template <class T>
