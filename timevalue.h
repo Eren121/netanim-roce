@@ -202,7 +202,8 @@ TimeValue<T>::setCurrentTime(qreal t)
             --m_currentIterator;
             return GOOD;
         }
-        else if (i->first == t)
+        //else if (i->first == t)
+            else if (qFuzzyCompare(i->first, t))
         {
             return GOOD;
         }
