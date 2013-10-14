@@ -23,10 +23,10 @@ std::ostream & operator << (std::ostream & os, QTransform t)
 
 std::ostream & operator << (std::ostream & os, AnimPacket * p)
 {
-    os << "AnimPacket:" << endl;
-    //os << "From Node Id:" << p->getFromNodeId() << endl;
-    //os << "To Node Id:" << p->getToNodeId() << endl;
-    os << "First Bit Tx:" << p->getFirstBitTx() << endl;
+    os << "AnimPacket:";
+    os << " From Node Id:" << p->getFromNodeId();
+    os << " To Node Id:" << p->getToNodeId();
+    os << " First Bit Tx:" << p->getFirstBitTx() << endl;
     //os << "First Bit Rx:" << p->getFirstBitRx() << endl;
     //os << "Last Bit Tx:" << p->getLastBitTx() << endl;
     //os << "Last Bit Rx:" << p->getLastBitRx() << endl;

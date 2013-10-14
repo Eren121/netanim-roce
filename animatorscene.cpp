@@ -130,19 +130,20 @@ AnimPacket * AnimatorScene::getTestPacket(uint32_t fromNodeId, uint32_t toNodeId
 
 void AnimatorScene::displayPacket(qreal t)
 {
+
     m_testTimeValue.setCurrentTime(t);
     AnimPacket * p = m_testTimeValue.getCurrent();
-    std::cout << p;
-    uint32_t fromNodeId = m_testTimeValue.getCurrent()->getFromNodeId();
-    uint32_t toNodeId = m_testTimeValue.getCurrent()->getToNodeId();
+    std::cout << "T=" << t << p;
+    uint32_t fromNodeId = p->getFromNodeId();
+    uint32_t toNodeId = p->getToNodeId();
     QPointF fromPos = AnimNodeMgr::getInstance()->getNode(fromNodeId)->getCenter();
     QPointF toPos = AnimNodeMgr::getInstance()->getNode(toNodeId)->getCenter();
     QLineF l(fromPos, toPos);
 
-    qreal propDelay = m_testTimeValue.getCurrent()->getFirstBitRx() - m_testTimeValue.getCurrent()->getFirstBitTx();
+    qreal propDelay = p->getFirstBitRx() - p->getFirstBitTx();
     qreal velocity = l.length()/propDelay;
 //    addLine(l);
-    qreal timeElapsed = t - m_testTimeValue.getCurrent()->getFirstBitTx();
+    qreal timeElapsed = t - p->getFirstBitTx();
     qreal distanceTravelled = velocity * timeElapsed;
     qreal x = distanceTravelled * cos(l.angle()* PI /180);
     qreal y = distanceTravelled * sin(l.angle()* PI /180);

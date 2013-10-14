@@ -22,6 +22,7 @@
 
 #include <map>
 #include <ostream>
+#include <sstream>
 #include <QtGlobal>
 
 
@@ -135,8 +136,8 @@ typename TimeValue<T>::TimeValueIteratorPair_t
 TimeValue<T>::getRange(qreal lowerBound, qreal upperBound)
 {
   setCurrentTime(lowerBound);
-  TimeValue_t::const_iterator lowerIterator = m_currentIterator;
-  TimeValue_t::const_iterator tempIterator = m_currentIterator;
+  typename TimeValue_t::const_iterator lowerIterator = m_currentIterator;
+  typename TimeValue_t::const_iterator tempIterator = m_currentIterator;
   while (tempIterator != m_timeValues.end())
     {
       if (tempIterator->first > upperBound)
@@ -223,8 +224,8 @@ TimeValue<T>::toString()
         )
     {
 
-        std::pair<TimeValue_t::const_iterator, TimeValue_t::const_iterator> pp =  m_timeValues.equal_range(i->first);
-        for(TimeValue<T>::TimeValue_t::const_iterator j = pp.first;
+        std::pair<typename TimeValue_t::const_iterator, typename TimeValue_t::const_iterator> pp =  m_timeValues.equal_range(i->first);
+        for(typename TimeValue<T>::TimeValue_t::const_iterator j = pp.first;
             j != pp.second;
             ++j)
         {
