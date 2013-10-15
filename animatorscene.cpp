@@ -132,25 +132,29 @@ void AnimatorScene::displayPacket(qreal t)
 {
 
     m_testTimeValue.setCurrentTime(t);
-    AnimPacket * p = m_testTimeValue.getCurrent();
-    std::cout << "T=" << t << p;
-    uint32_t fromNodeId = p->getFromNodeId();
-    uint32_t toNodeId = p->getToNodeId();
-    QPointF fromPos = AnimNodeMgr::getInstance()->getNode(fromNodeId)->getCenter();
-    QPointF toPos = AnimNodeMgr::getInstance()->getNode(toNodeId)->getCenter();
-    QLineF l(fromPos, toPos);
+    TimeValue<AnimPacket*>::TimeValueResult_t result = m_testTimeValue.GOOD ;
+    while (result == m_testTimeValue.GOOD)
+    {
+        AnimPacket * p = m_testTimeValue.get(t, result);
+        std::cout << "T=" << t << p;
+        uint32_t fromNodeId = p->getFromNodeId();
+        uint32_t toNodeId = p->getToNodeId();
+        QPointF fromPos = AnimNodeMgr::getInstance()->getNode(fromNodeId)->getCenter();
+        QPointF toPos = AnimNodeMgr::getInstance()->getNode(toNodeId)->getCenter();
+        QLineF l(fromPos, toPos);
 
-    qreal propDelay = p->getFirstBitRx() - p->getFirstBitTx();
-    qreal velocity = l.length()/propDelay;
-//    addLine(l);
-    qreal timeElapsed = t - p->getFirstBitTx();
-    qreal distanceTravelled = velocity * timeElapsed;
-    qreal x = distanceTravelled * cos(l.angle()* PI /180);
-    qreal y = distanceTravelled * sin(l.angle()* PI /180);
+        qreal propDelay = p->getFirstBitRx() - p->getFirstBitTx();
+        qreal velocity = l.length()/propDelay;
+    //    addLine(l);
+        qreal timeElapsed = t - p->getFirstBitTx();
+        qreal distanceTravelled = velocity * timeElapsed;
+        qreal x = distanceTravelled * cos(l.angle()* PI /180);
+        qreal y = distanceTravelled * sin(l.angle()* PI /180);
 
-    //NS_LOG_DEBUG ("Length:" << l.length() << " PropDelay" << propDelay << " velocity:" << velocity << " timeElapsed:" << timeElapsed << " distance:" << distanceTravelled);
-    //NS_LOG_DEBUG ("x:" << x << " y:" <<y);
-    addEllipse(fromPos.x() + x, fromPos.y() + y, 5, 5);
+        //NS_LOG_DEBUG ("Length:" << l.length() << " PropDelay" << propDelay << " velocity:" << velocity << " timeElapsed:" << timeElapsed << " distance:" << distanceTravelled);
+        //NS_LOG_DEBUG ("x:" << x << " y:" <<y);
+        addEllipse(fromPos.x() + x, fromPos.y() + y, 5, 5);
+    }
 
 }
 
@@ -161,9 +165,14 @@ void AnimatorScene::prepareTimeValueData()
     qreal propDelay1 = 10; // 10s for test
     qreal bitRate = 100 * 1024; //100KBps
 
-    qreal firstBitTx = 0.3;
+    qreal firstBitTx = 0;
     m_testTimeValue.add(firstBitTx, getTestPacket(0, 1, firstBitTx, propDelay1, bitRate));
     m_testTimeValue.add(firstBitTx, getTestPacket(0, 2, firstBitTx, propDelay1, bitRate));
+
+    firstBitTx = 0.3;
+    m_testTimeValue.add(firstBitTx, getTestPacket(0, 1, firstBitTx, propDelay1, bitRate));
+    m_testTimeValue.add(firstBitTx, getTestPacket(0, 2, firstBitTx, propDelay1, bitRate));
+
 
 
     firstBitTx = 1;
@@ -188,12 +197,16 @@ void AnimatorScene::prepareTimeValueData()
     m_testTimeValue.add(firstBitTx, getTestPacket(0, 2, firstBitTx, propDelay1, bitRate));
 
     displayPacket(0);
+    displayPacket(0);
+
+    displayPacket(0.1);
     displayPacket(0.1);
     displayPacket(0.2);
     displayPacket(0.7);
     displayPacket(0.9);
     displayPacket(1.0);
     displayPacket(2.0);
+    displayPacket(2.2);
     displayPacket(2.2);
     displayPacket(7.2);
     logQString(m_testTimeValue.isEnd());

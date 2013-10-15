@@ -45,6 +45,7 @@ public:
   void systemReset();
   TimeValueResult_t setCurrentTime(qreal t);
   T getCurrent();
+  T get(qreal tUpperBound, TimeValueResult_t & result);
   TimeValueIteratorPair_t getRange(qreal lowerBound, qreal upperBound);
   std::ostringstream toString();
   void setLookBack (qreal lookBack);
@@ -53,6 +54,7 @@ public:
 private:
   TimeValue_t m_timeValues;
   typename TimeValue<T>::TimeValue_t::const_iterator m_currentIterator;
+  typename TimeValue<T>::TimeValue_t::const_iterator m_getIterator;
   qreal m_lookBack;
   void rewindCurrentIterator();
 };
@@ -151,6 +153,20 @@ TimeValue<T>::getRange(qreal lowerBound, qreal upperBound)
   return pp;
 }
 
+
+template <class T>
+T
+TimeValue<T>::get(qreal tUpperBound, TimeValueResult_t & result)
+{
+    T v = m_getIterator->second;
+    if ((isEnd()) || (m_getIterator->first > tUpperBound))
+    {
+        result = OVERRUN;
+    }
+    ++m_getIterator;
+    return v;
+}
+
 template <class T>
 T
 TimeValue<T>::getCurrent()
@@ -175,44 +191,58 @@ template <class T>
 typename TimeValue<T>::TimeValueResult_t
 TimeValue<T>::setCurrentTime(qreal t)
 {
+  TimeValueResult_t result = GOOD;
   if (m_timeValues.empty())
     {
-      return UNDERRUN;
+      result = UNDERRUN;
     }
 
-  t = t - m_lookBack;
-  t = qMax (t, 0.0);
-  if ((!t) || (t < m_currentIterator->first))
-    {
-        rewindCurrentIterator();
-        if (t < m_currentIterator->first)
-          {
-            return UNDERRUN;
-          }
-        return GOOD;
-    }
+  bool skipIteration = false;
+  if (result == GOOD)
+  {
+      t = t - m_lookBack;
+      t = qMax (t, 0.0);
+      if ((!t) || (t < m_currentIterator->first))
+        {
+          skipIteration = true;
+            rewindCurrentIterator();
+            if (t < m_currentIterator->first)
+              {
+                result = UNDERRUN;
+              }
+            else
+                {
+                result = GOOD;
+                }
+        }
+  }
+  if(result == GOOD && (!skipIteration))
+  {
+      for(typename TimeValue<T>::TimeValue_t::const_iterator i = m_currentIterator;
+            i != m_timeValues.end();
+            ++i)
+        {
+          logQString (QString ("i->first:") + QString::number( i->first) + " t:" + QString::number(t));
+            if (i->first > t)
+            {
+                --m_currentIterator;
+                result = GOOD;
+            }
+            //else if (i->first == t)
+                else if (qFuzzyCompare(i->first, t))
+            {
+                result = GOOD;
+            }
+            else
+            {
+                ++m_currentIterator;
+            }
+        }
+        result = OVERRUN;
+  }
+  m_getIterator = m_currentIterator;
 
-  for(typename TimeValue<T>::TimeValue_t::const_iterator i = m_currentIterator;
-        i != m_timeValues.end();
-        ++i)
-    {
-      logQString (QString ("i->first:") + QString::number( i->first) + " t:" + QString::number(t));
-        if (i->first > t)
-        {
-            --m_currentIterator;
-            return GOOD;
-        }
-        //else if (i->first == t)
-            else if (qFuzzyCompare(i->first, t))
-        {
-            return GOOD;
-        }
-        else
-        {
-            ++m_currentIterator;
-        }
-    }
-    return OVERRUN;
+    return result;
 
 }
 template <class T>
