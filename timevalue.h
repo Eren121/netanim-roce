@@ -158,12 +158,17 @@ template <class T>
 T
 TimeValue<T>::get(qreal tUpperBound, TimeValueResult_t & result)
 {
+    logQString (QString ("m_getIterator->first:") + QString::number(m_getIterator->first) + " t:" + QString::number(tUpperBound));
+    result = GOOD;
     T v = m_getIterator->second;
-    if ((isEnd()) || (m_getIterator->first > tUpperBound))
+    if ((m_getIterator == m_timeValues.end()) || (m_getIterator->first > tUpperBound))
     {
         result = OVERRUN;
     }
+    else
+    {
     ++m_getIterator;
+    }
     return v;
 }
 
@@ -205,6 +210,8 @@ TimeValue<T>::setCurrentTime(qreal t)
       if ((!t) || (t < m_currentIterator->first))
         {
           skipIteration = true;
+          logQString (QString ("m_currentIterator->first:") + QString::number(m_currentIterator->first) + " t:" + QString::number(t));
+
             rewindCurrentIterator();
             if (t < m_currentIterator->first)
               {
@@ -218,7 +225,8 @@ TimeValue<T>::setCurrentTime(qreal t)
   }
   if(result == GOOD && (!skipIteration))
   {
-      for(typename TimeValue<T>::TimeValue_t::const_iterator i = m_currentIterator;
+      typename TimeValue<T>::TimeValue_t::const_iterator i = m_currentIterator;
+      for( ;
             i != m_timeValues.end();
             ++i)
         {
@@ -227,20 +235,28 @@ TimeValue<T>::setCurrentTime(qreal t)
             {
                 --m_currentIterator;
                 result = GOOD;
+                break;
             }
             //else if (i->first == t)
                 else if (qFuzzyCompare(i->first, t))
             {
                 result = GOOD;
+                break;
             }
             else
             {
                 ++m_currentIterator;
             }
         }
+      if (i == m_timeValues.end())
+      {
         result = OVERRUN;
+      }
   }
   m_getIterator = m_currentIterator;
+  logQString (QString ("ENd m_currentIterator->first:") + QString::number( m_currentIterator->first) + " t:" + QString::number(t));
+  logQString (QString ("ENd m_getIterator->first:") + QString::number( m_getIterator->first) + " t:" + QString::number(t));
+
 
     return result;
 

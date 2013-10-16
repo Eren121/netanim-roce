@@ -132,10 +132,11 @@ void AnimatorScene::displayPacket(qreal t)
 {
 
     m_testTimeValue.setCurrentTime(t);
-    TimeValue<AnimPacket*>::TimeValueResult_t result = m_testTimeValue.GOOD ;
+    TimeValue<AnimPacket*>::TimeValueResult_t result;
+    AnimPacket * p = m_testTimeValue.get(t, result);
     while (result == m_testTimeValue.GOOD)
     {
-        AnimPacket * p = m_testTimeValue.get(t, result);
+
         std::cout << "T=" << t << p;
         uint32_t fromNodeId = p->getFromNodeId();
         uint32_t toNodeId = p->getToNodeId();
@@ -154,6 +155,7 @@ void AnimatorScene::displayPacket(qreal t)
         //NS_LOG_DEBUG ("Length:" << l.length() << " PropDelay" << propDelay << " velocity:" << velocity << " timeElapsed:" << timeElapsed << " distance:" << distanceTravelled);
         //NS_LOG_DEBUG ("x:" << x << " y:" <<y);
         addEllipse(fromPos.x() + x, fromPos.y() + y, 5, 5);
+        p = m_testTimeValue.get(t, result);
     }
 
 }
@@ -161,7 +163,7 @@ void AnimatorScene::displayPacket(qreal t)
 
 void AnimatorScene::prepareTimeValueData()
 {
-    m_testTimeValue.setLookBack(1);
+    m_testTimeValue.setLookBack(11);
     qreal propDelay1 = 10; // 10s for test
     qreal bitRate = 100 * 1024; //100KBps
 
@@ -196,21 +198,22 @@ void AnimatorScene::prepareTimeValueData()
     m_testTimeValue.add(firstBitTx, getTestPacket(0, 1, firstBitTx, propDelay1, bitRate));
     m_testTimeValue.add(firstBitTx, getTestPacket(0, 2, firstBitTx, propDelay1, bitRate));
 
-    displayPacket(0);
-    displayPacket(0);
+    //displayPacket(0);
+    //displayPacket(0);
 
-    displayPacket(0.1);
-    displayPacket(0.1);
-    displayPacket(0.2);
-    displayPacket(0.7);
+    //displayPacket(0.1);
+    //displayPacket(0.1);
+
+    //displayPacket(0.2);
+    //displayPacket(0.7);
     displayPacket(0.9);
-    displayPacket(1.0);
-    displayPacket(2.0);
-    displayPacket(2.2);
-    displayPacket(2.2);
-    displayPacket(7.2);
-    logQString(m_testTimeValue.isEnd());
-    displayPacket(0);
+    //displayPacket(1.0);
+    //displayPacket(2.0);
+    //displayPacket(2.2);
+    //displayPacket(2.2);
+    //displayPacket(7.2);
+    //logQString(m_testTimeValue.isEnd());
+    //displayPacket(0);
 
     /*
     displayPacket(0.1);
