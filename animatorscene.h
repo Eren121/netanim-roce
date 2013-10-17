@@ -10,6 +10,9 @@
 #include <QPushButton>
 
 
+namespace ns3
+{
+
 #define ANIMATORSCENE_USERAREA_WIDTH 1024
 #define ANIMATORSCENE_USERAREA_HEIGHT 1024
 
@@ -40,5 +43,7 @@ private:
     qreal m_userAreaHeight;
     TimeValue<AnimPacket *> m_testTimeValue;
 };
+
+} // namespace netanim
 
 #endif // MYSCENE_H

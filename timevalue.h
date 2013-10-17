@@ -23,15 +23,20 @@
 #include <map>
 #include <ostream>
 #include <sstream>
+
+#include "log.h"
 #include <QtGlobal>
 
+
+namespace ns3
+{
 
 template <class T>
 class TimeValue {
 public:
-  TimeValue();
-  TimeValue(const TimeValue & other);
-  TimeValue <T> & operator=(const TimeValue <T> & rhs);
+  TimeValue ();
+  TimeValue (const TimeValue & other);
+  TimeValue <T> & operator= (const TimeValue <T> & rhs);
   typedef std::multimap<qreal, T> TimeValue_t;
   typedef std::pair<qreal, T> TimeValuePair_t;
   typedef std::pair<typename TimeValue_t::const_iterator, typename TimeValue_t::const_iterator> TimeValueIteratorPair_t;
@@ -41,13 +46,13 @@ public:
     OVERRUN
   } TimeValueResult_t;
 
-  void add(qreal t, T value);
-  void systemReset();
-  TimeValueResult_t setCurrentTime(qreal t);
-  T getCurrent();
-  T get(qreal tUpperBound, TimeValueResult_t & result);
-  TimeValueIteratorPair_t getRange(qreal lowerBound, qreal upperBound);
-  std::ostringstream toString();
+  void add (qreal t, T value);
+  void systemReset ();
+  TimeValueResult_t setCurrentTime (qreal t);
+  T getCurrent ();
+  T get (qreal tUpperBound, TimeValueResult_t & result);
+  TimeValueIteratorPair_t getRange (qreal lowerBound, qreal upperBound);
+  std::ostringstream toString ();
   void setLookBack (qreal lookBack);
   bool isEnd ();
 
@@ -56,7 +61,7 @@ private:
   typename TimeValue<T>::TimeValue_t::const_iterator m_currentIterator;
   typename TimeValue<T>::TimeValue_t::const_iterator m_getIterator;
   qreal m_lookBack;
-  void rewindCurrentIterator();
+  void rewindCurrentIterator ();
 };
 
 template <class T>
@@ -66,17 +71,17 @@ TimeValue<T>::TimeValue(): m_lookBack(0)
 }
 
 template <class T>
-TimeValue<T>::TimeValue(const TimeValue & other)
+TimeValue<T>::TimeValue (const TimeValue & other)
 {
-    for(typename TimeValue<T>::TimeValue_t::const_iterator i = other.m_timeValues.begin();
-        i != other.m_timeValues.end();
-        ++i)
+  for (typename TimeValue<T>::TimeValue_t::const_iterator i = other.m_timeValues.begin ();
+       i != other.m_timeValues.end ();
+       ++i)
     {
-        m_timeValues[i->first] = i->second;
+      m_timeValues[i->first] = i->second;
     }
-    if(!m_timeValues.empty())
+    if (!m_timeValues.empty ())
     {
-        m_currentIterator = m_timeValues.begin();
+      m_currentIterator = m_timeValues.begin ();
     }
 }
 
@@ -85,62 +90,62 @@ template <class T>
 TimeValue <T> &
 TimeValue<T>::operator= (const TimeValue <T> & other)
 {
-    for(typename TimeValue<T>::TimeValue_t::const_iterator i = other.m_timeValues.begin();
-        i != other.m_timeValues.end();
+  for(typename TimeValue<T>::TimeValue_t::const_iterator i = other.m_timeValues.begin ();
+        i != other.m_timeValues.end ();
         ++i)
     {
-        m_timeValues[i->first] = i->second;
+      m_timeValues[i->first] = i->second;
     }
-    if(!m_timeValues.empty())
-    {
-        m_currentIterator = m_timeValues.begin();
-    }
-    return *this;
+    if (!m_timeValues.empty ())
+      {
+        m_currentIterator = m_timeValues.begin ();
+      }
+  return *this;
 }
 
 template <class T>
 void
-TimeValue<T>::rewindCurrentIterator()
+TimeValue<T>::rewindCurrentIterator ()
 {
-    m_currentIterator = m_timeValues.begin ();
+  m_currentIterator = m_timeValues.begin ();
 }
 
 template <class T>
 void
-TimeValue<T>::add(qreal t, T value)
+TimeValue<T>::add (qreal t, T value)
 {
-    bool wasEmpty = m_timeValues.empty();
-    m_timeValues.insert(TimeValuePair_t (t, value));
-    if (wasEmpty)
+  bool wasEmpty = m_timeValues.empty ();
+  m_timeValues.insert(TimeValuePair_t (t, value));
+  if (wasEmpty)
     {
-        m_currentIterator = m_timeValues.begin();
+        m_currentIterator = m_timeValues.begin ();
     }
 }
 
 
 template <class T>
 bool
-TimeValue<T>::isEnd()
+TimeValue<T>::isEnd ()
 {
-  return m_currentIterator == m_timeValues.end();
+  return m_currentIterator == m_timeValues.end ();
 }
 
 
 template <class T>
 void
-TimeValue<T>::systemReset()
+TimeValue<T>::systemReset ()
 {
-    m_timeValues.clear();
+  m_timeValues.clear ();
 }
 
 template <class T>
 typename TimeValue<T>::TimeValueIteratorPair_t
-TimeValue<T>::getRange(qreal lowerBound, qreal upperBound)
+TimeValue<T>::getRange (qreal lowerBound, qreal upperBound)
 {
-  setCurrentTime(lowerBound);
+  setCurrentTime (lowerBound);
   typename TimeValue_t::const_iterator lowerIterator = m_currentIterator;
   typename TimeValue_t::const_iterator tempIterator = m_currentIterator;
-  while (tempIterator != m_timeValues.end())
+  while (tempIterator != m_timeValues.end ())
     {
       if (tempIterator->first > upperBound)
         {
@@ -156,131 +161,127 @@ TimeValue<T>::getRange(qreal lowerBound, qreal upperBound)
 
 template <class T>
 T
-TimeValue<T>::get(qreal tUpperBound, TimeValueResult_t & result)
+TimeValue<T>::get (qreal tUpperBound, TimeValueResult_t & result)
 {
-    logQString (QString ("m_getIterator->first:") + QString::number(m_getIterator->first) + " t:" + QString::number(tUpperBound));
-    result = GOOD;
-    T v = m_getIterator->second;
-    if ((m_getIterator == m_timeValues.end()) || (m_getIterator->first > tUpperBound))
+  logQString (QString ("m_getIterator->first:") + QString::number (m_getIterator->first) + " t:" + QString::number (tUpperBound));
+  result = GOOD;
+  T v = m_getIterator->second;
+  if ((m_getIterator == m_timeValues.end ()) || (m_getIterator->first > tUpperBound))
     {
-        result = OVERRUN;
+      result = OVERRUN;
     }
     else
     {
-    ++m_getIterator;
+      ++m_getIterator;
     }
-    return v;
+  return v;
 }
 
 template <class T>
 T
-TimeValue<T>::getCurrent()
+TimeValue<T>::getCurrent ()
 {
-    if (m_currentIterator == m_timeValues.end())
+  if (m_currentIterator == m_timeValues.end ())
     {
-        return T(m_timeValues.rbegin()->second);
+        return T(m_timeValues.rbegin ()->second);
     }
-    return m_currentIterator->second;
+  return m_currentIterator->second;
 }
 
 
 
 template <class T>
 void
-TimeValue<T>::setLookBack(qreal lookBack)
+TimeValue<T>::setLookBack (qreal lookBack)
 {
   m_lookBack = lookBack;
 }
 
 template <class T>
 typename TimeValue<T>::TimeValueResult_t
-TimeValue<T>::setCurrentTime(qreal t)
+TimeValue<T>::setCurrentTime (qreal t)
 {
   TimeValueResult_t result = GOOD;
-  if (m_timeValues.empty())
+  if (m_timeValues.empty ())
     {
       result = UNDERRUN;
     }
 
   bool skipIteration = false;
   if (result == GOOD)
-  {
+    {
       t = t - m_lookBack;
       t = qMax (t, 0.0);
       if ((!t) || (t < m_currentIterator->first))
         {
           skipIteration = true;
-          logQString (QString ("m_currentIterator->first:") + QString::number(m_currentIterator->first) + " t:" + QString::number(t));
-
-            rewindCurrentIterator();
-            if (t < m_currentIterator->first)
-              {
-                result = UNDERRUN;
-              }
-            else
-                {
-                result = GOOD;
-                }
+          logQString (QString ("m_currentIterator->first:") + QString::number (m_currentIterator->first) + " t:" + QString::number (t));
+      rewindCurrentIterator();
+      if (t < m_currentIterator->first)
+        {
+          result = UNDERRUN;
         }
-  }
-  if(result == GOOD && (!skipIteration))
-  {
+      else
+        {
+                result = GOOD;
+        }
+        }
+    }
+  if (result == GOOD && (!skipIteration))
+    {
       typename TimeValue<T>::TimeValue_t::const_iterator i = m_currentIterator;
-      for( ;
+      for ( ;
             i != m_timeValues.end();
             ++i)
         {
-          logQString (QString ("i->first:") + QString::number( i->first) + " t:" + QString::number(t));
-            if (i->first > t)
+          logQString (QString ("i->first:") + QString::number (i->first) + " t:" + QString::number (t));
+      if (i->first > t)
             {
-                --m_currentIterator;
-                result = GOOD;
-                break;
+          --m_currentIterator;
+          result = GOOD;
+          break;
             }
-            //else if (i->first == t)
-                else if (qFuzzyCompare(i->first, t))
+      else if (qFuzzyCompare (i->first, t))
             {
-                result = GOOD;
-                break;
+          result = GOOD;
+          break;
             }
-            else
+      else
             {
-                ++m_currentIterator;
+          ++m_currentIterator;
             }
         }
-      if (i == m_timeValues.end())
-      {
-        result = OVERRUN;
-      }
+      if (i == m_timeValues.end ())
+        {
+          result = OVERRUN;
+        }
   }
   m_getIterator = m_currentIterator;
   logQString (QString ("ENd m_currentIterator->first:") + QString::number( m_currentIterator->first) + " t:" + QString::number(t));
   logQString (QString ("ENd m_getIterator->first:") + QString::number( m_getIterator->first) + " t:" + QString::number(t));
-
-
-    return result;
-
+  return result;
 }
+
 template <class T>
 std::ostringstream
-TimeValue<T>::toString()
+TimeValue<T>::toString ()
 {
-    std::ostringstream os;
-    for(typename TimeValue<T>::TimeValue_t::const_iterator i = m_timeValues.begin();
-        i != m_timeValues.end();
-        )
+  std::ostringstream os;
+  for(typename TimeValue<T>::TimeValue_t::const_iterator i = m_timeValues.begin ();
+      i != m_timeValues.end ();
+      )
     {
-
-        std::pair<typename TimeValue_t::const_iterator, typename TimeValue_t::const_iterator> pp =  m_timeValues.equal_range(i->first);
-        for(typename TimeValue<T>::TimeValue_t::const_iterator j = pp.first;
+      std::pair<typename TimeValue_t::const_iterator, typename TimeValue_t::const_iterator> pp =  m_timeValues.equal_range (i->first);
+      for(typename TimeValue<T>::TimeValue_t::const_iterator j = pp.first;
             j != pp.second;
             ++j)
         {
-            os << j->second;
+      os << j->second;
         }
-        i = m_timeValues.upper_bound(i->first);
+      i = m_timeValues.upper_bound (i->first);
     }
-    return os;
+  return os;
 }
 
+} // namespace ns3
 #endif // TIMEVALUE_H

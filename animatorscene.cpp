@@ -12,9 +12,11 @@
 #include <sstream>
 #define PI 3.14159265
 
-using namespace ns3;
-NS_LOG_COMPONENT_DEFINE("AnimatorScene");
 
+namespace ns3
+{
+
+NS_LOG_COMPONENT_DEFINE("AnimatorScene");
 
 AnimatorScene::AnimatorScene():QGraphicsScene(0, 0, ANIMATORSCENE_USERAREA_WIDTH, ANIMATORSCENE_USERAREA_WIDTH)
 {
@@ -231,3 +233,5 @@ void AnimatorScene::prepareTimeValueData()
     /*std::cout << m_testTimeValue.toString().str();*/
     fflush(stdout);
 }
+
+} // namespace ns3

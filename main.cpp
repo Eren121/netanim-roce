@@ -4,6 +4,7 @@
 #include "animatorscene.h"
 #include "log.h"
 
+using namespace ns3;
 
 int main(int argc, char *argv[])
 {
