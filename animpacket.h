@@ -2,8 +2,10 @@
 #define ANIMPACKET_H
 #include "common.h"
 #include "qglobal.h"
+#include <QGraphicsItem>
 
-class AnimPacket {
+class AnimPacket : public QGraphicsItem
+{
 public:
     AnimPacket(uint32_t fromNodeId,
                uint32_t toNodeId,
@@ -17,6 +19,9 @@ public:
     qreal getLastBitRx();
     uint32_t getFromNodeId();
     uint32_t getToNodeId();
+    void update (qreal t);
+    virtual QRectF boundingRect () const;
+    void paint (QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);
 
 private:
     uint32_t m_fromNodeId;
@@ -25,6 +30,12 @@ private:
     qreal m_lastBitTx;
     qreal m_firstBitRx;
     qreal m_lastBitRx;
+    qreal m_velocity;
+    QLineF m_line;
+    qreal m_cos;
+    qreal m_sin;
+    QPointF m_fromPos;
+    QPointF m_toPos;
 };
 
 #endif // ANIMPACKET_H

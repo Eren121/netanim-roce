@@ -10,7 +10,6 @@
 #include <math.h>
 #include <string.h>
 #include <sstream>
-#define PI 3.14159265
 
 
 namespace ns3
@@ -45,7 +44,11 @@ void AnimatorScene::testSlot()
     //m_pItem->scale(1.5, 1.5);
     //NS_LOG_DEBUG("After:" << m_pItem->sceneBoundingRect() << " Pos:" << m_pItem->pos());
     //m_pItem->setSize(150, 20);
-    views().last()->scale(1.1, 1.1);
+    //views().last()->scale(1.1, 1.1);
+    static qreal t = 0;
+    displayPacket(t);
+    t += 0.1;
+
 }
 
 void AnimatorScene::setUserAreaHeight(qreal h)
@@ -138,25 +141,8 @@ void AnimatorScene::displayPacket(qreal t)
     AnimPacket * p = m_testTimeValue.get(t, result);
     while (result == m_testTimeValue.GOOD)
     {
-
-        std::cout << "T=" << t << p;
-        uint32_t fromNodeId = p->getFromNodeId();
-        uint32_t toNodeId = p->getToNodeId();
-        QPointF fromPos = AnimNodeMgr::getInstance()->getNode(fromNodeId)->getCenter();
-        QPointF toPos = AnimNodeMgr::getInstance()->getNode(toNodeId)->getCenter();
-        QLineF l(fromPos, toPos);
-
-        qreal propDelay = p->getFirstBitRx() - p->getFirstBitTx();
-        qreal velocity = l.length()/propDelay;
-    //    addLine(l);
-        qreal timeElapsed = t - p->getFirstBitTx();
-        qreal distanceTravelled = velocity * timeElapsed;
-        qreal x = distanceTravelled * cos(l.angle()* PI /180);
-        qreal y = distanceTravelled * sin(l.angle()* PI /180);
-
-        //NS_LOG_DEBUG ("Length:" << l.length() << " PropDelay" << propDelay << " velocity:" << velocity << " timeElapsed:" << timeElapsed << " distance:" << distanceTravelled);
-        //NS_LOG_DEBUG ("x:" << x << " y:" <<y);
-        addEllipse(fromPos.x() + x, fromPos.y() + y, 5, 5);
+        p->update (t);
+        //addEllipse(fromPos.x() + x, fromPos.y() + y, 5, 5);
         p = m_testTimeValue.get(t, result);
     }
 
@@ -208,7 +194,7 @@ void AnimatorScene::prepareTimeValueData()
 
     //displayPacket(0.2);
     //displayPacket(0.7);
-    displayPacket(0.9);
+    //displayPacket(0.9);
     //displayPacket(1.0);
     //displayPacket(2.0);
     //displayPacket(2.2);
