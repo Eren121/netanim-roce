@@ -22,6 +22,7 @@ public:
     void update (qreal t);
     virtual QRectF boundingRect () const;
     void paint (QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);
+    QPointF getHead();
 
 private:
     uint32_t m_fromNodeId;
@@ -36,6 +37,8 @@ private:
     qreal m_sin;
     QPointF m_fromPos;
     QPointF m_toPos;
+    QPointF m_head;
+    QRectF m_boundingRect;
 };
 
 #endif // ANIMPACKET_H

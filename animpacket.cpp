@@ -1,7 +1,11 @@
 #include <iostream>
+#include <math.h>
 #include <QPointF>
+#include <QPainter>
+#include <QPainterPath>
 #include "animpacket.h"
 #include "animnode.h"
+
 #define PI 3.14159265
 
 AnimPacket::AnimPacket(uint32_t fromNodeId,
@@ -70,7 +74,7 @@ AnimPacket::update (qreal t)
     qreal distanceTravelled = m_velocity * timeElapsed;
     qreal x = distanceTravelled * m_cos;
     qreal y = distanceTravelled * m_sin;
-
+    m_head = QPointF (m_fromPos.x () + x,  m_fromPos.y () + y);
     //NS_LOG_DEBUG ("Length:" << l.length() << " PropDelay" << propDelay << " velocity:" << velocity << " timeElapsed:" << timeElapsed << " distance:" << distanceTravelled);
     //NS_LOG_DEBUG ("x:" << x << " y:" <<y);
     //addEllipse(fromPos.x() + x, fromPos.y() + y, 5, 5);
@@ -79,12 +83,21 @@ AnimPacket::update (qreal t)
 QRectF
 AnimPacket::boundingRect() const
 {
-  QRectF r;
-  return r;
+  return m_boundingRect;
 }
 
 void
 AnimPacket::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
+  QPainterPath path;
+  path.addEllipse(0, 0, 5, 5);
+  painter->drawPath(path);
+  m_boundingRect = path.boundingRect();
+}
 
+
+QPointF
+AnimPacket::getHead()
+{
+    return m_head;
 }

@@ -129,6 +129,7 @@ AnimPacket * AnimatorScene::getTestPacket(uint32_t fromNodeId, uint32_t toNodeId
                                     lastBitTx,
                                     firstBitRx,
                                     lastBitRx);
+    addItem (p);
     return p;
 
 }
@@ -142,6 +143,7 @@ void AnimatorScene::displayPacket(qreal t)
     while (result == m_testTimeValue.GOOD)
     {
         p->update (t);
+        p->setPos(p->getHead ());
         //addEllipse(fromPos.x() + x, fromPos.y() + y, 5, 5);
         p = m_testTimeValue.get(t, result);
     }
