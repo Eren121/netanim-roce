@@ -143,6 +143,7 @@ void AnimatorScene::displayPacket(qreal t)
     while (result == m_testTimeValue.GOOD)
     {
         p->update (t);
+        NS_LOG_DEBUG ("Pos:" << p->getHead ());
         p->setPos(p->getHead ());
         //addEllipse(fromPos.x() + x, fromPos.y() + y, 5, 5);
         p = m_testTimeValue.get(t, result);

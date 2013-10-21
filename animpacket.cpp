@@ -5,8 +5,12 @@
 #include <QPainterPath>
 #include "animpacket.h"
 #include "animnode.h"
+#include "log.h"
+#include "logqt.h"
+
 
 #define PI 3.14159265
+NS_LOG_COMPONENT_DEFINE("AnimPacket");
 
 AnimPacket::AnimPacket(uint32_t fromNodeId,
                        uint32_t toNodeId,
@@ -21,8 +25,9 @@ AnimPacket::AnimPacket(uint32_t fromNodeId,
     m_firstBitRx(firstBitRx),
     m_lastBitRx(lastBitRx)
 {
-  QPointF m_fromPos = AnimNodeMgr::getInstance ()->getNode (fromNodeId)->getCenter ();
-  QPointF m_toPos = AnimNodeMgr::getInstance ()->getNode (toNodeId)->getCenter ();
+  m_fromPos = AnimNodeMgr::getInstance ()->getNode (fromNodeId)->getCenter ();
+  NS_LOG_DEBUG ("From Pos:" << m_fromPos);
+  m_toPos = AnimNodeMgr::getInstance ()->getNode (toNodeId)->getCenter ();
   m_line = QLineF (m_fromPos, m_toPos);
   qreal propDelay = m_firstBitRx - m_firstBitTx;
   m_velocity = m_line.length()/propDelay;

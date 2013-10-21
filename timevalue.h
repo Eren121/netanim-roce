@@ -163,7 +163,7 @@ template <class T>
 T
 TimeValue<T>::get (qreal tUpperBound, TimeValueResult_t & result)
 {
-  logQString (QString ("m_getIterator->first:") + QString::number (m_getIterator->first) + " t:" + QString::number (tUpperBound));
+  //logQString (QString ("m_getIterator->first:") + QString::number (m_getIterator->first) + " t:" + QString::number (tUpperBound));
   result = GOOD;
   T v = m_getIterator->second;
   if ((m_getIterator == m_timeValues.end ()) || (m_getIterator->first > tUpperBound))
@@ -215,16 +215,16 @@ TimeValue<T>::setCurrentTime (qreal t)
       if ((!t) || (t < m_currentIterator->first))
         {
           skipIteration = true;
-          logQString (QString ("m_currentIterator->first:") + QString::number (m_currentIterator->first) + " t:" + QString::number (t));
-      rewindCurrentIterator();
-      if (t < m_currentIterator->first)
-        {
-          result = UNDERRUN;
-        }
-      else
-        {
-                result = GOOD;
-        }
+          //logQString (QString ("m_currentIterator->first:") + QString::number (m_currentIterator->first) + " t:" + QString::number (t));
+          rewindCurrentIterator();
+          if (t < m_currentIterator->first)
+            {
+              result = UNDERRUN;
+            }
+          else
+            {
+              result = GOOD;
+            }
         }
     }
   if (result == GOOD && (!skipIteration))
@@ -234,31 +234,31 @@ TimeValue<T>::setCurrentTime (qreal t)
             i != m_timeValues.end();
             ++i)
         {
-          logQString (QString ("i->first:") + QString::number (i->first) + " t:" + QString::number (t));
-      if (i->first > t)
+          //logQString (QString ("i->first:") + QString::number (i->first) + " t:" + QString::number (t));
+          if (i->first > t)
             {
-          --m_currentIterator;
-          result = GOOD;
-          break;
+              --m_currentIterator;
+              result = GOOD;
+              break;
             }
-      else if (qFuzzyCompare (i->first, t))
+          else if (qFuzzyCompare (i->first, t))
             {
-          result = GOOD;
-          break;
+              result = GOOD;
+              break;
             }
-      else
+          else
             {
-          ++m_currentIterator;
+              ++m_currentIterator;
             }
         }
       if (i == m_timeValues.end ())
         {
           result = OVERRUN;
         }
-  }
+    }
   m_getIterator = m_currentIterator;
-  logQString (QString ("ENd m_currentIterator->first:") + QString::number( m_currentIterator->first) + " t:" + QString::number(t));
-  logQString (QString ("ENd m_getIterator->first:") + QString::number( m_getIterator->first) + " t:" + QString::number(t));
+  //logQString (QString ("ENd m_currentIterator->first:") + QString::number( m_currentIterator->first) + " t:" + QString::number(t));
+  //logQString (QString ("ENd m_getIterator->first:") + QString::number( m_getIterator->first) + " t:" + QString::number(t));
   return result;
 }
 
@@ -276,7 +276,7 @@ TimeValue<T>::toString ()
             j != pp.second;
             ++j)
         {
-      os << j->second;
+          os << j->second;
         }
       i = m_timeValues.upper_bound (i->first);
     }
