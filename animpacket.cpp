@@ -95,9 +95,12 @@ void
 AnimPacket::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
   QPainterPath path;
-  path.addEllipse(0, 0, 5, 5);
-  painter->drawPath(path);
+//  path.addEllipse(0, 0, 5, 5);
+  path.lineTo(0, 10);
+  path.lineTo(0, -10);
   m_boundingRect = path.boundingRect();
+  painter->drawPath(path);
+
 }
 
 
