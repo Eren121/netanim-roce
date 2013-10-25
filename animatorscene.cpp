@@ -23,7 +23,7 @@ AnimatorScene::AnimatorScene():QGraphicsScene(0, 0, ANIMATORSCENE_USERAREA_WIDTH
     m_userAreaHeight = ANIMATORSCENE_USERAREA_HEIGHT;
     m_testButton = new QPushButton("Test");
     connect(m_testButton, SIGNAL(clicked()), this, SLOT(testSlot()));
-    addWidget(m_testButton);
+    addWidget(m_testButton)->setPos(500, 500);
     QPixmap pix(":/new/prefix1/ns3logo2.png","png");
 
     m_background = new ResizeablePixmap(pix);
@@ -36,6 +36,7 @@ AnimatorScene::AnimatorScene():QGraphicsScene(0, 0, ANIMATORSCENE_USERAREA_WIDTH
     addLine(m_userAreadWidth/2, 0, m_userAreadWidth/2, m_userAreaHeight);
     addLine(0, m_userAreaHeight/2, m_userAreadWidth, m_userAreaHeight/2);
     prepareTimeValueData();
+
 }
 
 void AnimatorScene::testSlot()

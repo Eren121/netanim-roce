@@ -103,7 +103,10 @@ AnimPacket::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
 
   NS_LOG_DEBUG("d:" << -10 * sin (45 * PI/180));
   m_boundingRect = path.boundingRect();
+  painter->save();
+  painter->rotate(m_line.angle());
   painter->drawPath(path);
+  painter->restore();
 
 }
 
