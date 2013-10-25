@@ -96,8 +96,12 @@ AnimPacket::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
 {
   QPainterPath path;
 //  path.addEllipse(0, 0, 5, 5);
-  path.lineTo(0, 10);
-  path.lineTo(0, -10);
+  //path.lineTo(0, 10);
+  path.lineTo(-10 * sin (PI/4), -10 * sin (PI/4));
+  path.moveTo(0, 0);
+  path.lineTo(-10 * sin (PI/4), 10 * sin (PI/4));
+
+  NS_LOG_DEBUG("d:" << -10 * sin (45 * PI/180));
   m_boundingRect = path.boundingRect();
   painter->drawPath(path);
 
