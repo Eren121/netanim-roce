@@ -101,7 +101,7 @@ void AnimatorScene::addPix()
         AnimNode * n1 =  AnimNodeMgr::getInstance()->getNode(i);
         QLineF line(n0->getCenter(), n1->getCenter());
         QGraphicsLineItem * lineItem = new QGraphicsLineItem(line);
-        addItem(lineItem);
+       // addItem(lineItem);
     }
 
 }
@@ -149,8 +149,8 @@ void AnimatorScene::displayPacket(qreal t)
         p->update (t);
         NS_LOG_DEBUG ("Pos:" << p->getHead ());
         p->setPos(p->getHead ());
-        //addEllipse(fromPos.x() + x, fromPos.y() + y, 5, 5);
         p = m_testTimeValue.get(t, result);
+        update();
     }
 
 }

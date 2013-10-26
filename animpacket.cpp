@@ -78,8 +78,9 @@ AnimPacket::update (qreal t)
     std::cout << "T=" << t << this;
     qreal timeElapsed = t - getFirstBitTx();
     qreal distanceTravelled = m_velocity * timeElapsed;
-    qreal x = distanceTravelled * m_cos;
-    qreal y = distanceTravelled * m_sin;
+    m_distanceTraveled = distanceTravelled;
+    qreal x = m_distanceTraveled * m_cos;
+    qreal y = m_distanceTraveled * m_sin;
     NS_LOG_DEBUG ("Distance moved:" << x << "," << y);
     m_head = QPointF (m_fromPos.x () + x,  m_fromPos.y () + y);
     //NS_LOG_DEBUG ("Length:" << l.length() << " PropDelay" << propDelay << " velocity:" << velocity << " timeElapsed:" << timeElapsed << " distance:" << distanceTravelled);
@@ -93,16 +94,17 @@ AnimPacket::boundingRect() const
   return m_boundingRect;
 }
 
+
 void
 AnimPacket::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
   QPainterPath path;
-//  path.addEllipse(0, 0, 5, 5);
-  //path.lineTo(0, 10);
   painter->save();
   path.lineTo(-10 * sin (PI/4), -10 * sin (PI/4));
   path.moveTo(0, 0);
   path.lineTo(-10 * sin (PI/4), 10 * sin (PI/4));
+  path.moveTo(0, 0);
+  path.lineTo(-15, 0);
   painter->restore();
   NS_LOG_DEBUG("d:" << -10 * sin (45 * PI/180));
   m_boundingRect = path.boundingRect();
@@ -110,7 +112,6 @@ AnimPacket::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
   painter->rotate(360 - m_line.angle());
   painter->drawPath(path);
   painter->restore();
-
 }
 
 

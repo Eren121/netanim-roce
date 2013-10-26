@@ -32,6 +32,7 @@ private:
     qreal m_firstBitRx;
     qreal m_lastBitRx;
     qreal m_velocity;
+    qreal m_distanceTraveled;
     QLineF m_line;
     qreal m_cos;
     qreal m_sin;
