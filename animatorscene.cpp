@@ -74,32 +74,35 @@ void AnimatorScene::addPix()
     AnimNodeMgr::getInstance()->getNode(1)->setNodeDescription("Item1");
 
     AnimNodeMgr::getInstance()->add(2, this, 6 * m_userAreadWidth/8, m_userAreaHeight/4);
-    AnimNodeMgr::getInstance()->getNode(1)->setNodeDescription("Item2");
+    AnimNodeMgr::getInstance()->getNode(2)->setNodeDescription("Item2");
 
     AnimNodeMgr::getInstance()->add(3, this, m_userAreadWidth/2, m_userAreaHeight/8);
-    AnimNodeMgr::getInstance()->getNode(1)->setNodeDescription("Item3");
+    AnimNodeMgr::getInstance()->getNode(3)->setNodeDescription("Item3");
 
     AnimNodeMgr::getInstance()->add(4, this, m_userAreadWidth/4, m_userAreaHeight/8);
-    AnimNodeMgr::getInstance()->getNode(1)->setNodeDescription("Item4");
+    AnimNodeMgr::getInstance()->getNode(4)->setNodeDescription("Item4");
 
     AnimNodeMgr::getInstance()->add(5, this, m_userAreadWidth/8, m_userAreaHeight/2);
-    AnimNodeMgr::getInstance()->getNode(1)->setNodeDescription("Item5");
+    AnimNodeMgr::getInstance()->getNode(5)->setNodeDescription("Item5");
 
     AnimNodeMgr::getInstance()->add(6, this, m_userAreadWidth/4, 6 * m_userAreaHeight/8);
-    AnimNodeMgr::getInstance()->getNode(1)->setNodeDescription("Item6");
+    AnimNodeMgr::getInstance()->getNode(6)->setNodeDescription("Item6");
 
     AnimNodeMgr::getInstance()->add(7, this, m_userAreadWidth/2, 7* m_userAreaHeight/8);
-    AnimNodeMgr::getInstance()->getNode(1)->setNodeDescription("Item7");
+    AnimNodeMgr::getInstance()->getNode(7)->setNodeDescription("Item7");
 
     AnimNodeMgr::getInstance()->add(8, this, 6 *m_userAreadWidth/8, 6* m_userAreaHeight/8);
-    AnimNodeMgr::getInstance()->getNode(1)->setNodeDescription("Item8");
+    AnimNodeMgr::getInstance()->getNode(8)->setNodeDescription("Item8");
 
 
-    AnimNode * n0 =  AnimNodeMgr::getInstance()->getNode(0);
-    AnimNode * n1 =  AnimNodeMgr::getInstance()->getNode(1);
-    QLineF line(n0->getCenter(), n1->getCenter());
-    QGraphicsLineItem * lineItem = new QGraphicsLineItem(line);
-    addItem(lineItem);
+    for (uint32_t i = 1; i <=8; ++i)
+    {
+        AnimNode * n0 =  AnimNodeMgr::getInstance()->getNode(0);
+        AnimNode * n1 =  AnimNodeMgr::getInstance()->getNode(i);
+        QLineF line(n0->getCenter(), n1->getCenter());
+        QGraphicsLineItem * lineItem = new QGraphicsLineItem(line);
+        addItem(lineItem);
+    }
 
 }
 void AnimatorScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
@@ -162,6 +165,14 @@ void AnimatorScene::prepareTimeValueData()
     qreal firstBitTx = 0;
     m_testTimeValue.add(firstBitTx, getTestPacket(0, 1, firstBitTx, propDelay1, bitRate));
     m_testTimeValue.add(firstBitTx, getTestPacket(0, 2, firstBitTx, propDelay1, bitRate));
+    m_testTimeValue.add(firstBitTx, getTestPacket(0, 3, firstBitTx, propDelay1, bitRate));
+    m_testTimeValue.add(firstBitTx, getTestPacket(0, 4, firstBitTx, propDelay1, bitRate));
+    m_testTimeValue.add(firstBitTx, getTestPacket(0, 5, firstBitTx, propDelay1, bitRate));
+    m_testTimeValue.add(firstBitTx, getTestPacket(0, 6, firstBitTx, propDelay1, bitRate));
+    m_testTimeValue.add(firstBitTx, getTestPacket(0, 7, firstBitTx, propDelay1, bitRate));
+    m_testTimeValue.add(firstBitTx, getTestPacket(0, 8, firstBitTx, propDelay1, bitRate));
+
+/*
 
     firstBitTx = 0.3;
     m_testTimeValue.add(firstBitTx, getTestPacket(0, 1, firstBitTx, propDelay1, bitRate));
@@ -189,6 +200,7 @@ void AnimatorScene::prepareTimeValueData()
     firstBitTx = 2.1;
     m_testTimeValue.add(firstBitTx, getTestPacket(0, 1, firstBitTx, propDelay1, bitRate));
     m_testTimeValue.add(firstBitTx, getTestPacket(0, 2, firstBitTx, propDelay1, bitRate));
+    */
 
     //displayPacket(0);
     //displayPacket(0);

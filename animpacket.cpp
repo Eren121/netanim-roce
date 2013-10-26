@@ -31,8 +31,9 @@ AnimPacket::AnimPacket(uint32_t fromNodeId,
   m_line = QLineF (m_fromPos, m_toPos);
   qreal propDelay = m_firstBitRx - m_firstBitTx;
   m_velocity = m_line.length()/propDelay;
-  m_cos = cos (m_line.angle () * PI/180);
-  m_sin = sin (m_line.angle () * PI/180);
+  NS_LOG_DEBUG ("Angle:" << m_line.angle());
+  m_cos = cos ((360 - m_line.angle ()) * PI/180);
+  m_sin = sin ((360 - m_line.angle ()) * PI/180);
 }
 
 uint32_t
@@ -79,6 +80,7 @@ AnimPacket::update (qreal t)
     qreal distanceTravelled = m_velocity * timeElapsed;
     qreal x = distanceTravelled * m_cos;
     qreal y = distanceTravelled * m_sin;
+    NS_LOG_DEBUG ("Distance moved:" << x << "," << y);
     m_head = QPointF (m_fromPos.x () + x,  m_fromPos.y () + y);
     //NS_LOG_DEBUG ("Length:" << l.length() << " PropDelay" << propDelay << " velocity:" << velocity << " timeElapsed:" << timeElapsed << " distance:" << distanceTravelled);
     //NS_LOG_DEBUG ("x:" << x << " y:" <<y);
@@ -97,14 +99,15 @@ AnimPacket::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
   QPainterPath path;
 //  path.addEllipse(0, 0, 5, 5);
   //path.lineTo(0, 10);
+  painter->save();
   path.lineTo(-10 * sin (PI/4), -10 * sin (PI/4));
   path.moveTo(0, 0);
   path.lineTo(-10 * sin (PI/4), 10 * sin (PI/4));
-
+  painter->restore();
   NS_LOG_DEBUG("d:" << -10 * sin (45 * PI/180));
   m_boundingRect = path.boundingRect();
   painter->save();
-  painter->rotate(m_line.angle());
+  painter->rotate(360 - m_line.angle());
   painter->drawPath(path);
   painter->restore();
 

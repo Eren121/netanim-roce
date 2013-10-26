@@ -87,6 +87,7 @@ void ResizeableItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
             if (m_pixmap)
             {
                 painter->drawPixmap(0, 0, m_width, m_height, *m_pixmap);
+                painter->drawRect(0, 0, m_width, m_height);
             }
             break;
     }
