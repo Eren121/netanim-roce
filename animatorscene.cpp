@@ -73,7 +73,7 @@ void AnimatorScene::addPix()
     AnimNodeMgr::getInstance()->add(1, this, 7 *m_userAreadWidth/8, m_userAreaHeight/2);
     AnimNodeMgr::getInstance()->getNode(1)->setNodeDescription("Item1");
 
-    AnimNodeMgr::getInstance()->add(2, this, 6 * m_userAreadWidth/8, m_userAreaHeight/4);
+    AnimNodeMgr::getInstance()->add(2, this, 6 * m_userAreadWidth/8.5, m_userAreaHeight/4.5);
     AnimNodeMgr::getInstance()->getNode(2)->setNodeDescription("Item2");
 
     AnimNodeMgr::getInstance()->add(3, this, m_userAreadWidth/2, m_userAreaHeight/8);

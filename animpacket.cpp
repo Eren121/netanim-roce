@@ -112,6 +112,19 @@ AnimPacket::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
   painter->rotate(360 - m_line.angle());
   painter->drawPath(path);
   painter->restore();
+  painter->save();
+  qreal textAngle = m_line.angle();
+
+  //NS_LOG_DEBUG("Text Angle:" << textAngle);
+  if(textAngle < 90)
+      painter->rotate(360-textAngle);
+  else if (textAngle > 270)
+      painter->rotate(360-textAngle);
+  else
+    painter->rotate(180-textAngle);
+
+  painter->drawText(0, 0, QString::number(m_line.angle()));
+  painter->restore();
 }
 
 
