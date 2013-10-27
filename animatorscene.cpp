@@ -140,14 +140,14 @@ AnimPacket * AnimatorScene::getTestPacket(uint32_t fromNodeId, uint32_t toNodeId
 
 void AnimatorScene::displayPacket(qreal t)
 {
-
+    NS_LOG_DEBUG("Diplaying packet at t:" << t);
     m_testTimeValue.setCurrentTime(t);
     TimeValue<AnimPacket*>::TimeValueResult_t result;
     AnimPacket * p = m_testTimeValue.get(t, result);
     while (result == m_testTimeValue.GOOD)
     {
         p->update (t);
-        NS_LOG_DEBUG ("Pos:" << p->getHead ());
+        //NS_LOG_DEBUG ("Pos:" << p->getHead ());
         p->setPos(p->getHead ());
         p = m_testTimeValue.get(t, result);
         update();
