@@ -25,7 +25,7 @@ AnimatorScene::AnimatorScene():QGraphicsScene(0, 0, ANIMATORSCENE_USERAREA_WIDTH
     m_userAreaHeight = ANIMATORSCENE_USERAREA_HEIGHT;
     m_testButton = new QPushButton("Test");
     connect(m_testButton, SIGNAL(clicked()), this, SLOT(testSlot()));
-    addWidget(m_testButton);
+    addWidget(m_testButton)->setPos(500, 500);
     QPixmap pix(":/new/prefix1/ns3logo2.png","png");
 
     m_background = new ResizeablePixmap(pix);
@@ -38,6 +38,7 @@ AnimatorScene::AnimatorScene():QGraphicsScene(0, 0, ANIMATORSCENE_USERAREA_WIDTH
     addLine(m_userAreadWidth/2, 0, m_userAreadWidth/2, m_userAreaHeight);
     addLine(0, m_userAreaHeight/2, m_userAreadWidth, m_userAreaHeight/2);
     prepareTimeValueData();
+
 }
 
 
@@ -85,33 +86,36 @@ void AnimatorScene::addPix()
     AnimNodeMgr::getInstance()->add(1, this, 7 *m_userAreadWidth/8, m_userAreaHeight/2);
     AnimNodeMgr::getInstance()->getNode(1)->setNodeDescription("Item1");
 
-    AnimNodeMgr::getInstance()->add(2, this, 6 * m_userAreadWidth/8, m_userAreaHeight/4);
-    AnimNodeMgr::getInstance()->getNode(1)->setNodeDescription("Item2");
+    AnimNodeMgr::getInstance()->add(2, this, 6 * m_userAreadWidth/8.5, m_userAreaHeight/4.5);
+    AnimNodeMgr::getInstance()->getNode(2)->setNodeDescription("Item2");
 
     AnimNodeMgr::getInstance()->add(3, this, m_userAreadWidth/2, m_userAreaHeight/8);
-    AnimNodeMgr::getInstance()->getNode(1)->setNodeDescription("Item3");
+    AnimNodeMgr::getInstance()->getNode(3)->setNodeDescription("Item3");
 
     AnimNodeMgr::getInstance()->add(4, this, m_userAreadWidth/4, m_userAreaHeight/8);
-    AnimNodeMgr::getInstance()->getNode(1)->setNodeDescription("Item4");
+    AnimNodeMgr::getInstance()->getNode(4)->setNodeDescription("Item4");
 
     AnimNodeMgr::getInstance()->add(5, this, m_userAreadWidth/8, m_userAreaHeight/2);
-    AnimNodeMgr::getInstance()->getNode(1)->setNodeDescription("Item5");
+    AnimNodeMgr::getInstance()->getNode(5)->setNodeDescription("Item5");
 
     AnimNodeMgr::getInstance()->add(6, this, m_userAreadWidth/4, 6 * m_userAreaHeight/8);
-    AnimNodeMgr::getInstance()->getNode(1)->setNodeDescription("Item6");
+    AnimNodeMgr::getInstance()->getNode(6)->setNodeDescription("Item6");
 
     AnimNodeMgr::getInstance()->add(7, this, m_userAreadWidth/2, 7* m_userAreaHeight/8);
-    AnimNodeMgr::getInstance()->getNode(1)->setNodeDescription("Item7");
+    AnimNodeMgr::getInstance()->getNode(7)->setNodeDescription("Item7");
 
     AnimNodeMgr::getInstance()->add(8, this, 6 *m_userAreadWidth/8, 6* m_userAreaHeight/8);
-    AnimNodeMgr::getInstance()->getNode(1)->setNodeDescription("Item8");
+    AnimNodeMgr::getInstance()->getNode(8)->setNodeDescription("Item8");
 
 
-    AnimNode * n0 =  AnimNodeMgr::getInstance()->getNode(0);
-    AnimNode * n1 =  AnimNodeMgr::getInstance()->getNode(1);
-    QLineF line(n0->getCenter(), n1->getCenter());
-    QGraphicsLineItem * lineItem = new QGraphicsLineItem(line);
-    addItem(lineItem);
+    for (uint32_t i = 1; i <=8; ++i)
+    {
+        AnimNode * n0 =  AnimNodeMgr::getInstance()->getNode(0);
+        AnimNode * n1 =  AnimNodeMgr::getInstance()->getNode(i);
+        QLineF line(n0->getCenter(), n1->getCenter());
+        QGraphicsLineItem * lineItem = new QGraphicsLineItem(line);
+       // addItem(lineItem);
+    }
 
 }
 void AnimatorScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
@@ -149,17 +153,17 @@ AnimPacket * AnimatorScene::getTestPacket(uint32_t fromNodeId, uint32_t toNodeId
 
 void AnimatorScene::displayPacket(qreal t)
 {
-
+    NS_LOG_DEBUG("Diplaying packet at t:" << t);
     m_testTimeValue.setCurrentTime(t);
     TimeValue<AnimPacket*>::TimeValueResult_t result;
     AnimPacket * p = m_testTimeValue.get(t, result);
     while (result == m_testTimeValue.GOOD)
     {
         p->update (t);
-        NS_LOG_DEBUG ("Pos:" << p->getHead ());
+        //NS_LOG_DEBUG ("Pos:" << p->getHead ());
         p->setPos(p->getHead ());
-        //addEllipse(fromPos.x() + x, fromPos.y() + y, 5, 5);
         p = m_testTimeValue.get(t, result);
+        update();
     }
 
 }
@@ -174,6 +178,14 @@ void AnimatorScene::prepareTimeValueData()
     qreal firstBitTx = 0;
     m_testTimeValue.add(firstBitTx, getTestPacket(0, 1, firstBitTx, propDelay1, bitRate));
     m_testTimeValue.add(firstBitTx, getTestPacket(0, 2, firstBitTx, propDelay1, bitRate));
+    m_testTimeValue.add(firstBitTx, getTestPacket(0, 3, firstBitTx, propDelay1, bitRate));
+    m_testTimeValue.add(firstBitTx, getTestPacket(0, 4, firstBitTx, propDelay1, bitRate));
+    m_testTimeValue.add(firstBitTx, getTestPacket(0, 5, firstBitTx, propDelay1, bitRate));
+    m_testTimeValue.add(firstBitTx, getTestPacket(0, 6, firstBitTx, propDelay1, bitRate));
+    m_testTimeValue.add(firstBitTx, getTestPacket(0, 7, firstBitTx, propDelay1, bitRate));
+    m_testTimeValue.add(firstBitTx, getTestPacket(0, 8, firstBitTx, propDelay1, bitRate));
+
+/*
 
     firstBitTx = 0.3;
     m_testTimeValue.add(firstBitTx, getTestPacket(0, 1, firstBitTx, propDelay1, bitRate));
@@ -201,6 +213,7 @@ void AnimatorScene::prepareTimeValueData()
     firstBitTx = 2.1;
     m_testTimeValue.add(firstBitTx, getTestPacket(0, 1, firstBitTx, propDelay1, bitRate));
     m_testTimeValue.add(firstBitTx, getTestPacket(0, 2, firstBitTx, propDelay1, bitRate));
+    */
 
     //displayPacket(0);
     //displayPacket(0);
