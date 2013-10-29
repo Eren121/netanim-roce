@@ -10,7 +10,9 @@ SOURCES += \
     resizeableitem.cpp \
     animnode.cpp \
     animatorscene.cpp \
-    animpacket.cpp
+    animpacket.cpp \
+    animatormode.cpp \
+    animatorview.cpp
 
 HEADERS += \
     myview.h \
@@ -27,7 +29,11 @@ HEADERS += \
     common.h \
     animatorscene.h \
     timevalue.h \
-    animpacket.h
+    animpacket.h \
+    animatormode.h \
+    animatorview.h \
+    mode.h \
+    animxmlparser.h
 
 DEFINES += NS3_LOG_ENABLE
 

@@ -12,10 +12,12 @@
 #include <sstream>
 
 
-namespace ns3
+namespace netanim
 {
 
 NS_LOG_COMPONENT_DEFINE("AnimatorScene");
+
+AnimatorScene * pAnimatorScene = 0;
 
 AnimatorScene::AnimatorScene():QGraphicsScene(0, 0, ANIMATORSCENE_USERAREA_WIDTH, ANIMATORSCENE_USERAREA_WIDTH)
 {
@@ -36,6 +38,17 @@ AnimatorScene::AnimatorScene():QGraphicsScene(0, 0, ANIMATORSCENE_USERAREA_WIDTH
     addLine(m_userAreadWidth/2, 0, m_userAreadWidth/2, m_userAreaHeight);
     addLine(0, m_userAreaHeight/2, m_userAreadWidth, m_userAreaHeight/2);
     prepareTimeValueData();
+}
+
+
+AnimatorScene *
+AnimatorScene::getInstance()
+{
+    if(!pAnimatorScene)
+    {
+        pAnimatorScene = new AnimatorScene;
+    }
+    return pAnimatorScene;
 }
 
 void AnimatorScene::testSlot()

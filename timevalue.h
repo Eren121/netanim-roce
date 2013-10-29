@@ -28,7 +28,7 @@
 #include <QtGlobal>
 
 
-namespace ns3
+namespace netanim
 {
 
 template <class T>
