@@ -3,8 +3,9 @@
 #include "myview.h"
 #include "animatorscene.h"
 #include "log.h"
+#include "netanim.h"
 
-using namespace ns3;
+using namespace netanim;
 
 int main(int argc, char *argv[])
 {
@@ -14,17 +15,10 @@ int main(int argc, char *argv[])
   ns3::LogComponentEnable("AnimPacket", ns3::LOG_LEVEL_ALL);
 
   QApplication a(argc, argv);
-  AnimatorScene s;
-  myview v;
-  v.setScene(&s);
-
-  //qDebug(QString::number(sizeof(int)).toAscii().data());
-  //qDebug(QString::number(sizeof(int*)).toAscii().data());
+  QApplication app(argc, argv);
+  app.setApplicationName("NetAnim");
+  NetAnim netAnim;
+  return app.exec();
 
 
-  v.setGeometry(0, 0, 500, 500);
-  //v.showMaximized();
-  //v.showMinimized();
-  v.show();
-  return a.exec();
 }

@@ -11,29 +11,28 @@ NS_LOG_COMPONENT_DEFINE("AnimNode");
 
 AnimNodeMgr * pAnimNodeMgr = 0;
 
-AnimNode::AnimNode(uint32_t nodeId, QGraphicsScene * scene):m_nodeDescription(0),
-    m_nodeId(nodeId)
+AnimNode::AnimNode(uint32_t nodeId, qreal x, qreal y):m_nodeDescription(0),
+    m_nodeId(nodeId),
+    m_x(x),
+    m_y(y)
 {
-    if(scene)
-    {
-        scene->addItem(this);
-    }
 }
 
 AnimNode::~AnimNode()
 {
-    QGraphicsScene * s = scene();
-    NS_ASSERT(s);
-    if(s)
-    {
-        if(m_nodeDescription)
-        {
-            s->removeItem(m_nodeDescription);
-            delete m_nodeDescription;
-        }
-    }
 }
 
+qreal
+AnimNode::getX()
+{
+    return m_x;
+}
+
+qreal
+AnimNode::getY()
+{
+    return m_y;
+}
 QPointF AnimNode::getCenter()
 {
     return sceneBoundingRect().center();
@@ -91,14 +90,14 @@ AnimNodeMgr * AnimNodeMgr::getInstance()
 }
 
 
-AnimNode * AnimNodeMgr::add(uint32_t nodeId, QGraphicsScene * scene, qreal x, qreal y)
+AnimNode * AnimNodeMgr::add(uint32_t nodeId, qreal x, qreal y)
 {
     if(m_nodes.find(nodeId) != m_nodes.end())
     {
         NS_FATAL_ERROR("NodeId:" << nodeId << " Already exists");
     }
     QPixmap pix(":/new/prefix1/ns3logo2.png","png");
-    AnimNode * node = new AnimNode(nodeId, scene);// ResizeableItem;// new ResizeablePixmap(pix);
+    AnimNode * node = new AnimNode(nodeId, x, y);
     node->setPos(x, y);
     node->setPixmap(pix);
     m_nodes[nodeId] = node;
@@ -109,4 +108,10 @@ AnimNode * AnimNodeMgr::add(uint32_t nodeId, QGraphicsScene * scene, qreal x, qr
 AnimNode * AnimNodeMgr::getNode(uint32_t nodeId)
 {
     return m_nodes[nodeId];
+}
+
+uint32_t
+AnimNodeMgr::getCount()
+{
+    return m_nodes.size();
 }

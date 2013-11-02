@@ -28,7 +28,7 @@
 #include <QtGlobal>
 
 
-namespace ns3
+namespace netanim
 {
 
 template <class T>
@@ -283,5 +283,5 @@ TimeValue<T>::toString ()
   return os;
 }
 
-} // namespace ns3
+} // namespace netanim
 #endif // TIMEVALUE_H

@@ -12,10 +12,11 @@
 #include <sstream>
 
 
-namespace ns3
+namespace netanim
 {
 
 NS_LOG_COMPONENT_DEFINE("AnimatorScene");
+AnimatorScene * pAnimatorScene = 0;
 
 AnimatorScene::AnimatorScene():QGraphicsScene(0, 0, ANIMATORSCENE_USERAREA_WIDTH, ANIMATORSCENE_USERAREA_WIDTH)
 {
@@ -31,12 +32,23 @@ AnimatorScene::AnimatorScene():QGraphicsScene(0, 0, ANIMATORSCENE_USERAREA_WIDTH
     m_background->setZValue(-100);
     //addItem(m_background);
     //testSlot();
-    addPix();
+    /*addPix();
     addRect(0, 0, m_userAreadWidth, m_userAreaHeight);
     addLine(m_userAreadWidth/2, 0, m_userAreadWidth/2, m_userAreaHeight);
     addLine(0, m_userAreaHeight/2, m_userAreadWidth, m_userAreaHeight/2);
-    prepareTimeValueData();
+    prepareTimeValueData();*/
 
+}
+
+
+AnimatorScene *
+AnimatorScene::getInstance()
+{
+    if(!pAnimatorScene)
+    {
+        pAnimatorScene = new AnimatorScene;
+    }
+    return pAnimatorScene;
 }
 
 void AnimatorScene::testSlot()
@@ -67,7 +79,7 @@ void AnimatorScene::addPix()
     static int i = 0;
     addEllipse(i++, 15, 4, 4);
 
-    AnimNodeMgr::getInstance()->add(0, this, m_userAreadWidth/2, m_userAreaHeight/2);
+    /*AnimNodeMgr::getInstance()->add(0, this, m_userAreadWidth/2, m_userAreaHeight/2);
     AnimNodeMgr::getInstance()->getNode(0)->setNodeDescription("Item0");
 
     AnimNodeMgr::getInstance()->add(1, this, 7 *m_userAreadWidth/8, m_userAreaHeight/2);
@@ -92,17 +104,17 @@ void AnimatorScene::addPix()
     AnimNodeMgr::getInstance()->getNode(7)->setNodeDescription("Item7");
 
     AnimNodeMgr::getInstance()->add(8, this, 6 *m_userAreadWidth/8, 6* m_userAreaHeight/8);
-    AnimNodeMgr::getInstance()->getNode(8)->setNodeDescription("Item8");
+    AnimNodeMgr::getInstance()->getNode(8)->setNodeDescription("Item8");*/
 
 
-    for (uint32_t i = 1; i <=8; ++i)
+    /*for (uint32_t i = 1; i <=8; ++i)
     {
         AnimNode * n0 =  AnimNodeMgr::getInstance()->getNode(0);
         AnimNode * n1 =  AnimNodeMgr::getInstance()->getNode(i);
         QLineF line(n0->getCenter(), n1->getCenter());
         QGraphicsLineItem * lineItem = new QGraphicsLineItem(line);
        // addItem(lineItem);
-    }
+    }*/
 
 }
 void AnimatorScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
@@ -236,4 +248,4 @@ void AnimatorScene::prepareTimeValueData()
     fflush(stdout);
 }
 
-} // namespace ns3
+} // namespace netanim

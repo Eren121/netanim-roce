@@ -10,7 +10,7 @@
 #include <QPushButton>
 
 
-namespace ns3
+namespace netanim
 {
 
 #define ANIMATORSCENE_USERAREA_WIDTH 1024
@@ -24,6 +24,7 @@ class AnimatorScene : public QGraphicsScene
 {
 Q_OBJECT
 public:
+    static AnimatorScene * getInstance();
     AnimatorScene();
     ResizeablePixmap * m_background;
     //ResizeablePixmap * m_pItem;
@@ -36,6 +37,7 @@ public:
     void prepareTimeValueData();
     AnimPacket * getTestPacket(uint32_t fromNodeId, uint32_t toNodeId, qreal firstBitTx, qreal propDelay, qreal bitRate);
     void displayPacket(qreal t);
+
 public slots:
     void testSlot();
 private:
