@@ -19,8 +19,10 @@
 #ifndef AnimatorPlugin_H
 #define AnimatorPlugin_H
 
-#include "mode.h"
 #include "animatorconstants.h"
+#include "animatorscene.h"
+#include "animatorview.h"
+#include "mode.h"
 
 #include <QWidget>
 #include <QtGui/QToolButton>
@@ -38,9 +40,13 @@
 #include <QProgressBar>
 #include <QGraphicsPixmapItem>
 
-
 namespace netanim {
 
+class PacketPersistThread: public QThread
+{
+public:
+    void msleep(unsigned long);
+};
 
 class AnimatorMode: public Mode
 {
@@ -53,6 +59,7 @@ public:
     QWidget * getCentralWidget();
     QString getTabName();
     qreal getCurrentNodeSize();
+    QGraphicsPixmapItem * getBackground();
 
     // Setters
 
@@ -87,6 +94,7 @@ private:
     double m_currentTime;
     qreal m_currentZoomFactor;
     bool m_showWiressCircles;
+    double m_updateRates[UPDATE_RATE_SLIDER_MAX];
     double m_currentUpdateRate;
     double m_parsedMaxSimulationTime;
     int m_oldTimelineValue;
@@ -183,7 +191,31 @@ private slots:
     void testSlot();
 
     void clickTraceFileOpenSlot();
+    void clickZoomInSlot();
+    void clickZoomOutSlot();
+    void clickSaveSlot();
+    void clickResetSlot();
+    void clickPlaySlot();
+    void clickAddCustomImageSlot();
+    void updatePacketPersistenceSlot(QString value);
+    void updateTimelineSlot(int value);
+    void updateRateTimeoutSlot();
+    void updateGridLinesSlot(int value);
+    void updateNodeSizeSlot(QString value);
+    void updateUpdateRateSlot(int);
 
+    void showGridLinesSlot();
+    void showNodeIdSlot();
+    void showMetaSlot();
+    void showPacketSlot();
+    void showWirelessCirclesSlot();
+    void showPacketStatsSlot();
+    void showNodePositionStatsSlot();
+    void showIpSlot();
+    void showMacSlot();
+    void setUnicastMatchSlot();
+    void showRoutePathSlot();
+    void showBatteryCapacitySlot();
 
 };
 

@@ -20,6 +20,7 @@
 #include "animatorview.h"
 #include "animatorscene.h"
 
+
 #include <QtGui/QGraphicsScene>
 #include <QPaintEvent>
 #include <QMouseEvent>
@@ -75,9 +76,24 @@ AnimatorView::getAnimatorScene()
 }
 
 void
-AnimatorView::setCurrentZoomFactor(qreal factor)
+AnimatorView::updateTransform()
 {
 
+}
+
+void
+AnimatorView::setCurrentZoomFactor(qreal factor)
+{
+    if (m_currentZoomFactor < factor)
+    {
+        scale(1.1, 1.1);
+    }
+    else
+    {
+        scale(0.9, 0.9);
+    }
+    m_currentZoomFactor = factor;
+    update();
 }
 
 void
@@ -90,19 +106,27 @@ AnimatorView::wheelEvent(QWheelEvent *event)
 void
 AnimatorView::save()
 {
+}
 
+void
+AnimatorView::fitSceneWithinView()
+{
+    updateTransform();
 }
 
 void
 AnimatorView::systemReset()
 {
     m_currentZoomFactor = 1;
+
+    resetTransform();
 }
 
 void
 AnimatorView::postParse()
 {
     fitInView(AnimatorScene::getInstance()->sceneRect());
+
 }
 
 int

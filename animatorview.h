@@ -34,6 +34,7 @@ public:
     void setCurrentZoomFactor(qreal factor);
     void save();
     void systemReset();
+    void fitSceneWithinView();
     void postParse();
     int  getCurrentZoomFactor();
 
@@ -48,6 +49,7 @@ private:
     qreal m_currentZoomFactor;
 
     AnimatorScene * getAnimatorScene();
+    void updateTransform();
 signals:
 
 public slots:

@@ -88,10 +88,8 @@ AnimatorMode::init()
     m_centralWidget->setLayout(m_vLayout);
     setWindowTitle("NetAnim");
     setControlDefaults();
-    m_verticalToolbar->adjustSize();
-
     m_state = APP_START;
-
+    m_verticalToolbar->adjustSize();
 }
 
 AnimatorMode *
@@ -118,13 +116,21 @@ AnimatorMode::setControlDefaults()
 
     initUpdateRate();
     m_gridButton->setChecked(false);
+    showGridLinesSlot();
+    showBatteryCapacitySlot();
+    m_gridLinesSpinBox->setValue(GRID_LINES_DEFAULT);
+    m_nodeSizeComboBox->setCurrentIndex(NODE_SIZE_DEFAULT);
     m_showNodeIdButton->setChecked(true);
+    showNodeIdSlot();
 
     // Vertical toolbar
 
     m_showMetaButton->setChecked(true);
+    showMetaSlot();
     m_packetStatsButton->setChecked(false);
+    showPacketStatsSlot();
     m_showWirelessCirclesButton->setChecked(m_wPacketDetected);
+    showWirelessCirclesSlot();
 
 
     // Bottom toolbar/Status bar
@@ -134,6 +140,7 @@ AnimatorMode::setControlDefaults()
 
     // Scene elements if any
 
+    //AnimatorScene::getInstance()->setSceneInfoText("Please select an XML trace file using the file load button on the top-left corner", true);
     //AnimatorScene::getInstance()->setSceneInfoText("Please select an XML trace file using the file load button on the top-left corner", true);
 
 
@@ -261,6 +268,8 @@ AnimatorMode::initControls()
     m_gridLinesSpinBox->setToolTip("Set the number of grid lines");
     //m_gridLinesSpinBox->setRange(GRID_LINES_LOW, GRID_LINES_HIGH);
     //m_gridLinesSpinBox->setSingleStep(GRID_LINES_STEP);
+    m_gridLinesSpinBox->setRange(GRID_LINES_LOW, GRID_LINES_HIGH);
+    m_gridLinesSpinBox->setSingleStep(GRID_LINES_STEP);
     connect(m_gridLinesSpinBox, SIGNAL(valueChanged(int)), this, SLOT(updateGridLinesSlot(int)));
 
     m_nodeSizeComboBox = new QComboBox;
@@ -298,6 +307,7 @@ AnimatorMode::initControls()
     m_packetPersistenceComboBox->addItems(persistTimes);
     connect(m_packetPersistenceComboBox, SIGNAL(currentIndexChanged(QString)), this, SLOT(updatePacketPersistenceSlot(QString)));
     //m_packetPersistenceComboBox->setCurrentIndex(PACKET_PERSIST_DEFAULT);
+    m_packetPersistenceComboBox->setCurrentIndex(PACKET_PERSIST_DEFAULT);
 
 
     m_testButton = new QToolButton;
@@ -352,6 +362,7 @@ AnimatorMode::initControls()
     m_updateRateSlider->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     connect(m_updateRateSlider, SIGNAL(valueChanged(int)), this, SLOT(updateUpdateRateSlot(int)));
     //m_updateRateSlider->setRange (0, UPDATE_RATE_SLIDER_MAX);
+    m_updateRateSlider->setRange (0, UPDATE_RATE_SLIDER_MAX);
 
     m_simulationTimeSlider = new QSlider(Qt::Horizontal);
     m_simulationTimeSlider->setToolTip("Set Simulation Time");
@@ -427,9 +438,11 @@ AnimatorMode::initLabels()
     m_fastRateLabel = new QLabel("fast");
     m_fastRateLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     //m_fastRateLabel->setFixedWidth(UPDATE_RATE_LABEL_WIDTH);
+    m_fastRateLabel->setFixedWidth(UPDATE_RATE_LABEL_WIDTH);
     m_slowRateLabel = new QLabel("slow");
     m_slowRateLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     //m_slowRateLabel->setFixedWidth(UPDATE_RATE_LABEL_WIDTH);
+    m_slowRateLabel->setFixedWidth(UPDATE_RATE_LABEL_WIDTH);
     m_timelineSliderLabel = new QLabel("Sim time");
     m_timelineSliderLabel->setToolTip("Set current time");
     m_bottomStatusLabel = new QLabel;
@@ -491,8 +504,11 @@ void
 AnimatorMode::systemReset()
 {
    m_state = SYSTEM_RESET_IN_PROGRESS;
+   clickResetSlot();
    setControlDefaults();
    //AnimatorView::getInstance()->systemReset();
+   //AnimatorScene::getInstance()->systemReset();
+   AnimatorView::getInstance()->systemReset();
    //AnimatorScene::getInstance()->systemReset();
    m_state = SYSTEM_RESET_COMPLETE;
 }
@@ -500,8 +516,28 @@ AnimatorMode::systemReset()
 void
 AnimatorMode::initUpdateRate()
 {
-
-
+    m_updateRates[0]  = 0.000001;
+    m_updateRates[1]  = 0.000002;
+    m_updateRates[2]  = 0.000004;
+    m_updateRates[3]  = 0.000008;
+    m_updateRates[4]  = 0.000016;
+    m_updateRates[5]  = 0.000032;
+    m_updateRates[6]  = 0.000064;
+    m_updateRates[7]  = 0.000125;
+    m_updateRates[8]  = 0.000250;
+    m_updateRates[9]  = 0.000500;
+    m_updateRates[10] = 0.001000;
+    m_updateRates[11] = 0.002000;
+    m_updateRates[12] = 0.004000;
+    m_updateRates[13] = 0.008000;
+    m_updateRates[14] = 0.016000;
+    m_updateRates[15] = 0.032000;
+    m_updateRates[16] = 0.064000;
+    m_updateRates[17] = 0.125000;
+    m_updateRates[18] = 0.250000;
+    m_updateRates[19] = 0.500000;
+    m_updateRates[20] = 1.000000;
+    m_updateRates[21] = 2.000000;
 
     m_updateRateSlider->setValue(UPDATE_RATE_SLIDER_DEFAULT);
     if(m_updateRateTimer)
@@ -510,6 +546,7 @@ AnimatorMode::initUpdateRate()
     }
     m_updateRateTimer = new QTimer(this);
     //m_updateRateTimer->setInterval(m_updateRates[UPDATE_RATE_SLIDER_DEFAULT] * 1000);
+    m_updateRateTimer->setInterval(m_updateRates[UPDATE_RATE_SLIDER_DEFAULT] * 1000);
     connect(m_updateRateTimer, SIGNAL(timeout()), this, SLOT(updateRateTimeoutSlot()));
 }
 
@@ -521,7 +558,9 @@ AnimatorMode::doWirelessDetectedAction()
         return;
     }
     m_showWirelessCirclesButton->setChecked(m_wPacketDetected);
+    showWirelessCirclesSlot();
     m_updateRateSlider->setValue(UPDATE_RATE_SLIDER_WIRELESS_DEFAULT);
+    updateUpdateRateSlot(UPDATE_RATE_SLIDER_WIRELESS_DEFAULT);
 }
 
 qreal
@@ -562,6 +601,14 @@ AnimatorMode::nodeSizeStringToValue(QString nodeSize)
 void
 AnimatorMode::externalPauseEvent()
 {
+    if(m_state != PLAYING)
+    {
+        return;
+    }
+    if(m_playButton->isEnabled())
+    {
+        clickPlaySlot();
+    }
 }
 
 void
@@ -623,12 +670,13 @@ AnimatorMode::parseXMLTraceFile(QString traceFileName)
     preParse();
 
     showParsingXmlDialog(true);
-    //m_rxCount = parser.getRxCount();
+
+    m_rxCount = parser.getRxCount();
     setProgressBarRange(m_rxCount);
 
     parser.doParse();
     showParsingXmlDialog(false);
-    //setMaxSimulationTime(parser.getMaxSimulationTime());
+    setMaxSimulationTime(parser.getMaxSimulationTime());
 
     postParse();
     return true;
@@ -638,6 +686,7 @@ void
 AnimatorMode::preParse()
 {
     //AnimatorScene::getInstance()->preParse();
+    //AnimatorScene::getInstance()->preParse();
 }
 
 void
@@ -646,11 +695,16 @@ AnimatorMode::postParse()
     enableAllToolButtons(true);
     doWirelessDetectedAction();
     m_showNodeIdButton->setChecked(true);
+    showNodeIdSlot();
     m_gridButton->setChecked(true);
+    showGridLinesSlot();
     AnimatorView::getInstance()->postParse();
+    //AnimatorScene::getInstance()->postParse();
+    //AnimatorScene::getInstance()->setNodeSize(nodeSizeStringToValue(m_nodeSizeComboBox->currentText()));
     update();
     m_bottomStatusLabel->setText("Parsing complete:Click Play");
     m_parseProgressBar->reset();
+    //m_showMetaButton->setChecked(AnimPktMgr::getInstance()->getMetaInfoSeen());
     resetBackground();
     uint32_t nodeCount = AnimNodeMgr::getInstance()->getCount();
     for (uint32_t i = 0; i < nodeCount; ++i)
@@ -679,6 +733,11 @@ AnimatorMode::getCurrentNodeSize()
    return nodeSizeStringToValue(m_nodeSizeComboBox->currentText());
 }
 
+QGraphicsPixmapItem *
+AnimatorMode::getBackground()
+{
+    return m_background;
+}
 
 bool
 AnimatorMode::keepAppResponsive()
@@ -720,6 +779,7 @@ AnimatorMode::doSimulationCompleted()
     m_updateRateTimer->stop();
     m_playButton->setEnabled(false);
     QApplication::processEvents();
+    clickResetSlot();
     m_bottomStatusLabel->setText("Simulation Completed");
 }
 bool
@@ -773,11 +833,158 @@ void
 AnimatorMode::showPackets(bool show)
 {
     m_blockPacketsButton->setChecked(!show);
+    showPacketSlot();
+}
+
+void
+PacketPersistThread::msleep(unsigned long interval)
+{
+   QThread::msleep(interval);
 }
 
 // Slots
+void
+AnimatorMode::showMetaSlot()
+{
+
+}
+void
+AnimatorMode::clickSaveSlot()
+{
+    AnimatorView::getInstance()->save();
+}
+
+ void
+ AnimatorMode::showPacketSlot()
+ {
+
+ }
 
 
+ void
+ AnimatorMode::clickResetSlot()
+ {
+    timerCleanup();
+    m_playing = false;
+    m_playButton->setIcon(QIcon(":/animator_resource/animator_play.svg"));
+    m_playButton->setToolTip("Play Animation");
+    m_playButton->setEnabled(true);
+ }
+
+ void
+ AnimatorMode::updateTimelineSlot(int value)
+ {
+    if(value == m_oldTimelineValue)
+         return;
+    m_oldTimelineValue = value;
+    m_currentTime = value;
+    if(m_nodePositionStatsButton->isChecked())
+    {
+        if(!m_playing)
+            clickPlaySlot();
+    }
+    updateRateTimeoutSlot();
+ }
+
+ void
+ AnimatorMode::showNodePositionStatsSlot()
+ {
+
+ }
+
+ void
+ AnimatorMode::showRoutePathSlot()
+ {
+ }
+
+void
+AnimatorMode::showPacketStatsSlot()
+{
+
+}
+
+ void
+ AnimatorMode::showWirelessCirclesSlot()
+ {
+    m_showWiressCircles = m_showWirelessCirclesButton->isChecked();
+ }
+
+ void
+ AnimatorMode::clickZoomInSlot()
+ {
+    AnimatorView::getInstance()->setCurrentZoomFactor(++m_currentZoomFactor);
+ }
+
+ void
+ AnimatorMode::clickZoomOutSlot()
+ {
+     if(m_currentZoomFactor == 1)
+         return;
+     AnimatorView::getInstance()->setCurrentZoomFactor(--m_currentZoomFactor);
+ }
+
+ void
+ AnimatorMode::updateRateTimeoutSlot()
+ {
+     AnimatorScene::getInstance()->invalidate();
+     m_updateRateTimer->stop();
+     m_simulationTimeSlider->setValue(m_currentTime);
+     m_qLcdNumber->display(m_currentTime);
+     fflush(stdout);
+     if(m_playing)
+     {
+         keepAppResponsive();
+
+         qreal lastTime = m_currentTime;
+         if(m_state == SIMULATION_COMPLETE)
+         {
+             doSimulationCompleted();
+             return;
+         }
+         checkSimulationCompleted();
+         QApplication::processEvents();
+         if(lastTime == m_currentTime)
+         {
+             m_currentTime += 0.0001;
+         }
+         if(lastTime > m_currentTime)
+         {
+             m_currentTime = PACKET_TIME_MAX;
+         }
+         m_updateRateTimer->start();
+     }
+ }
+
+ void
+ AnimatorMode::updateUpdateRateSlot(int value)
+ {
+     m_currentUpdateRate = m_updateRates[value];
+     if(m_updateRateTimer)
+     {
+         m_updateRateTimer->setInterval(m_currentUpdateRate * 1000);
+     }
+ }
+
+ void
+ AnimatorMode::clickAddCustomImageSlot()
+ {
+     QFileDialog fileDialog;
+     fileDialog.setFileMode(QFileDialog::ExistingFiles);
+     QString traceFileName = "";
+     if(fileDialog.exec())
+     {
+         traceFileName = fileDialog.selectedFiles().at(0);
+         //qDebug((traceFileName));
+         if(traceFileName != "")
+         {
+             QPixmap pixmap(traceFileName);
+             m_background = new QGraphicsPixmapItem(pixmap);
+             AnimatorScene::getInstance()->addItem(m_background);
+             resetBackground();
+         }
+     }
+
+ }
 
  void
  AnimatorMode::clickTraceFileOpenSlot()
@@ -788,6 +995,10 @@ AnimatorMode::showPackets(bool show)
     fileDialog.setFileMode(QFileDialog::ExistingFiles);
     QString traceFileName = "/Users/john/ns3/netanim-3.104/dumbbell-animation.xml";
     /*if(fileDialog.exec())
+=======
+    QString traceFileName = "";
+    if(fileDialog.exec())
+>>>>>>> other
     {
         traceFileName = fileDialog.selectedFiles().at(0);
         //qDebug((traceFileName));
@@ -798,7 +1009,38 @@ AnimatorMode::showPackets(bool show)
         }
     }*/
     parseXMLTraceFile(traceFileName);
+    //}
     QApplication::processEvents();
+ }
+
+
+ void
+ AnimatorMode::clickPlaySlot()
+ {
+    m_playing = !m_playing;
+    if(m_playing)
+    {
+        m_state = PLAYING;
+        m_bottomStatusLabel->setText("Playing");
+        if(m_simulationCompleted)
+        {
+            //AnimatorScene::getInstance()->softReset();
+            m_simulationCompleted = false;
+        }
+        m_appResponsiveTimer.restart();
+        m_playButton->setIcon(QIcon(":/animator_resource/animator_pause.svg"));
+        m_playButton->setToolTip("Pause Animation");
+        m_updateRateTimer->start();
+
+    }
+    else
+    {
+        m_state = PAUSING;
+        m_bottomStatusLabel->setText("Not Playing");
+        m_playButton->setIcon(QIcon(":/animator_resource/animator_play.svg"));
+        m_playButton->setToolTip("Play Animation");
+        m_updateRateTimer->stop();
+    }
  }
 
 
@@ -806,8 +1048,101 @@ AnimatorMode::showPackets(bool show)
  AnimatorMode::testSlot()
  {
     //AnimatorScene::getInstance()->test();
+
+    //AnimatorScene::getInstance()->test();
  }
 
+ void
+ AnimatorMode::updateNodeSizeSlot(QString value)
+ {
+ }
+
+ void
+ AnimatorMode::updatePacketPersistenceSlot(QString value)
+ {
+    /* persistTimes << "10ms"
+                  << "50ms"
+                  << "100ms"
+                  << "250ms"
+                  << "500ms"
+                  << "1s";*/
+     if(value == "1ms")
+         m_packetPersistTime = 1;
+     if(value == "10ms")
+         m_packetPersistTime = 10;
+     if(value == "50ms")
+         m_packetPersistTime = 50;
+     if(value == "100ms")
+         m_packetPersistTime = 100;
+     if(value == "250ms")
+         m_packetPersistTime = 250;
+     if(value == "500ms")
+         m_packetPersistTime = 500;
+     if(value == "1s")
+         m_packetPersistTime = 2000;
+
+ }
+
+ void
+ AnimatorMode::showNodeIdSlot()
+ {
+    if(m_showNodeIdButton->isChecked())
+    {
+        m_showNodeIdButton->setToolTip("Don't show Node Id");
+    }
+    else
+    {
+        m_showNodeIdButton->setToolTip("Show Node Id");
+    }
+ }
+
+ void
+  AnimatorMode::showBatteryCapacitySlot()
+  {
+     if(m_batteryCapacityButton->isChecked())
+     {
+         m_batteryCapacityButton->setToolTip("Don't show remaining capacity");
+     }
+     else
+     {
+         m_batteryCapacityButton->setToolTip("Show remaining capacity");
+     }
+  }
+
+
+ void
+ AnimatorMode::showIpSlot()
+ {
+ }
+
+ void
+ AnimatorMode::showMacSlot()
+ {
+ }
+
+ void
+ AnimatorMode::showGridLinesSlot()
+ {
+     if(m_gridButton->isChecked())
+     {
+         m_gridButton->setToolTip("Turn OFF Grid");
+     }
+     else
+     {
+         m_gridButton->setToolTip("Turn ON Grid");
+     }
+ }
+
+ void
+ AnimatorMode::setUnicastMatchSlot()
+ {
+ }
+
+
+ void
+ AnimatorMode::updateGridLinesSlot(int value)
+ {
+ }
 
 
 

@@ -5,6 +5,7 @@
 #include "log.h"
 #include "netanim.h"
 
+using namespace ns3;
 using namespace netanim;
 
 int main(int argc, char *argv[])
