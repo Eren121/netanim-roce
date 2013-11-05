@@ -33,8 +33,8 @@ ResizeableItem::ResizeableItem():
     m_lastResizeDirection(RESIZE_NOTRESIZING),
     m_resizing(false),
     m_type(ResizeableItem::CIRCLE),
-    m_width(100),
-    m_height(100),
+    m_width(15),
+    m_height(15),
     m_pixmap(0)
 {
     NS_LOG_FUNCTION(m_mousePressed);
