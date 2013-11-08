@@ -75,8 +75,7 @@ AnimatorMode::init()
     m_mainSplitter = new QSplitter;
     m_mainSplitter->addWidget(m_verticalToolbar);
     m_mainSplitter->addWidget(AnimatorView::getInstance());
-    //m_mainSplitter->addWidget(Packetstatisticsdialog::getInstance());
-    //m_mainSplitter->addWidget(NodePositionStatisticsDialog::getInstance());
+
 
     m_vLayout = new QVBoxLayout;
     m_vLayout->setSpacing(0);
@@ -232,7 +231,7 @@ AnimatorMode::setTopToolbarWidgets()
     m_topToolBar->addWidget(m_showMacButton);
     m_topToolBar->addWidget(m_unicastMatchButton);
     //m_topToolBar->addWidget(m_showRoutePathButton);
-    //m_topToolBar->addWidget(m_testButton);
+    m_topToolBar->addWidget(m_testButton);
     m_topToolBar->addWidget(m_addCustomImageButton);
 }
 
@@ -993,7 +992,7 @@ AnimatorMode::showPacketStatsSlot()
 
     QFileDialog fileDialog;
     fileDialog.setFileMode(QFileDialog::ExistingFiles);
-    QString traceFileName = "/Users/john/ns3/netanim-3.104/dumbbell-animation.xml";
+    QString traceFileName = "/home/john/ns3/ns-3-dev/dumbbell-animation.xml";
     /*if(fileDialog.exec())
 =======
     QString traceFileName = "";

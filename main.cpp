@@ -15,7 +15,6 @@ int main(int argc, char *argv[])
   ns3::LogComponentEnable("AnimNode", ns3::LOG_LEVEL_ALL);
   ns3::LogComponentEnable("AnimPacket", ns3::LOG_LEVEL_ALL);
 
-  QApplication a(argc, argv);
   QApplication app(argc, argv);
   app.setApplicationName("NetAnim");
   NetAnim netAnim;

@@ -1,6 +1,8 @@
 #include "logqt.h"
 using namespace std;
 
+namespace netanim {
+
 std::ostream & operator << (std::ostream & os, QPointF pt)
 {
   os << "QPointF [x,y]:[" << pt.x() << "," << pt.y() << "]";
@@ -44,4 +46,6 @@ void
 logQString(bool b)
 {
     logQString(QString ("Bool:") + QString::number(b));
+}
+
 }

@@ -1,8 +1,10 @@
 #ifndef ANIMPACKET_H
 #define ANIMPACKET_H
-#include "common.h"
 #include "qglobal.h"
 #include <QGraphicsItem>
+#include "common.h"
+#include "timevalue.h"
+namespace netanim {
 
 class AnimPacket : public QGraphicsItem
 {
@@ -41,4 +43,19 @@ private:
   QPointF m_head;
   QRectF m_boundingRect;
 };
+
+class AnimPacketMgr
+{
+public:
+    static AnimPacketMgr * getInstance();
+    void add(uint32_t fromId, uint32_t toId, qreal fbTx, qreal fbRx);
+    uint32_t getCount();
+private:
+    AnimPacketMgr();
+    TimeValue<AnimPacket *> m_packets;
+
+
+};
+
+}
 #endif // ANIMPACKET_H

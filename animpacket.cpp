@@ -12,6 +12,9 @@
 #define PI 3.14159265
 NS_LOG_COMPONENT_DEFINE("AnimPacket");
 
+namespace netanim {
+AnimPacketMgr * pAnimPacketMgr = 0;
+
 AnimPacket::AnimPacket (uint32_t fromNodeId,
                         uint32_t toNodeId,
                         qreal firstBitTx,
@@ -123,3 +126,26 @@ AnimPacket::getHead ()
 {
   return m_head;
 }
+
+AnimPacketMgr::AnimPacketMgr()
+{
+}
+AnimPacketMgr *
+AnimPacketMgr::getInstance()
+{
+    if(!pAnimPacketMgr)
+    {
+        pAnimPacketMgr = new AnimPacketMgr;
+    }
+    return pAnimPacketMgr;
+}
+
+void
+AnimPacketMgr::add(uint32_t fromId, uint32_t toId, qreal fbTx, qreal fbRx)
+{
+    AnimPacket * pkt = new AnimPacket(fromId, toId, fbTx, 0, fbRx, 0);
+    m_packets.add(fbTx, pkt);
+}
+
+}
+

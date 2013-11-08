@@ -19,9 +19,11 @@
  */
 
 
+#include <stdint.h>
 #include "animxmlparser.h"
 #include "animatormode.h"
 #include "animatorscene.h"
+#include "animpacket.h"
 
 #include <QFile>
 #include <QRegExp>
@@ -169,7 +171,17 @@ Animxmlparser::doParse()
 
                break;
            }
+           case XML_PACKET_RX:
+           {
+               AnimPacketMgr::getInstance()->add(parsedElement.packetrx_fromId,
+                                                 parsedElement.packetrx_toId,
+                                                 parsedElement.packetrx_fbTx,
+                                                 parsedElement.packetrx_fbRx);
 
+               ++parsedElementCount;
+               break;
+
+           }
            case XML_INVALID:
            default:
            {
