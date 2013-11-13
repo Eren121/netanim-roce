@@ -23,7 +23,8 @@
 #include <map>
 #include <ostream>
 #include <sstream>
-
+#include <stdint.h>
+#include <stdio.h>
 #include "log.h"
 #include <QtGlobal>
 
@@ -55,6 +56,7 @@ public:
   std::ostringstream toString ();
   void setLookBack (qreal lookBack);
   bool isEnd ();
+  uint32_t getCount();
 
 private:
   TimeValue_t m_timeValues;
@@ -164,6 +166,8 @@ T
 TimeValue<T>::get (qreal tUpperBound, TimeValueResult_t & result)
 {
   //logQString (QString ("m_getIterator->first:") + QString::number (m_getIterator->first) + " t:" + QString::number (tUpperBound));
+    std::cout << "First:" << m_getIterator->first;
+    fflush(stdout);
   result = GOOD;
   T v = m_getIterator->second;
   if ((m_getIterator == m_timeValues.end ()) || (m_getIterator->first > tUpperBound))
@@ -281,6 +285,13 @@ TimeValue<T>::toString ()
       i = m_timeValues.upper_bound (i->first);
     }
   return os;
+}
+
+template <class T>
+uint32_t
+TimeValue<T>::getCount ()
+{
+    return m_timeValues.size();
 }
 
 } // namespace netanim

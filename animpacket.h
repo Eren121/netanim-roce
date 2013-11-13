@@ -4,6 +4,7 @@
 #include <QGraphicsItem>
 #include "common.h"
 #include "timevalue.h"
+
 namespace netanim {
 
 class AnimPacket : public QGraphicsItem
@@ -49,7 +50,7 @@ class AnimPacketMgr
 public:
     static AnimPacketMgr * getInstance();
     void add(uint32_t fromId, uint32_t toId, qreal fbTx, qreal fbRx);
-    uint32_t getCount();
+    TimeValue<AnimPacket *> * getPackets();
 private:
     AnimPacketMgr();
     TimeValue<AnimPacket *> m_packets;

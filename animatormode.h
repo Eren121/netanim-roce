@@ -74,6 +74,7 @@ public:
     bool keepAppResponsive();
     void showPopup(QString msg);
     void externalPauseEvent();
+    void start();
 
 private:
 
@@ -185,6 +186,7 @@ private:
     void showPackets(bool show);
     void setMaxSimulationTime(double maxTime);
     void resetBackground();
+    void displayPacket(qreal t);
 
 
 private slots:

@@ -44,6 +44,7 @@
 
 namespace netanim {
 
+NS_LOG_COMPONENT_DEFINE("AnimatorMode");
 
 AnimatorMode * pAnimatorMode = 0;
 
@@ -99,6 +100,13 @@ AnimatorMode::getInstance()
         pAnimatorMode = new AnimatorMode;
     }
     return pAnimatorMode;
+}
+
+void
+AnimatorMode::start()
+{
+    clickTraceFileOpenSlot();
+
 }
 
 void
@@ -373,6 +381,7 @@ AnimatorMode::initControls()
     m_qLcdNumber->setAutoFillBackground(true);
     m_qLcdNumber->setToolTip("Current simulation time");
     m_qLcdNumber->setStyleSheet("QLCDNumber {background:black; color: black;}");
+    m_qLcdNumber->setDigitCount(10);
 
     m_showWirelessCirclesButton = new QToolButton;
     m_showWirelessCirclesButton->setIcon(QIcon(":/animator_resource/animator_wirelesscircles.svg"));
@@ -711,6 +720,7 @@ AnimatorMode::postParse()
         AnimNode * animNode = AnimNodeMgr::getInstance()->getNode(i);
         AnimatorScene::getInstance()->addItem(animNode);
         animNode->setPos(animNode->getX(), animNode->getY());
+        AnimNodeMgr::getInstance()->getNode(i)->setNodeDescription(QString::number(i));
     }
 }
 
@@ -1044,11 +1054,43 @@ AnimatorMode::showPacketStatsSlot()
 
 
  void
+ AnimatorMode::displayPacket(qreal t)
+ {
+     NS_LOG_DEBUG("Diplaying packet at t:" << t);
+     TimeValue<AnimPacket*> * pPackets = AnimPacketMgr::getInstance()->getPackets();
+     pPackets->setCurrentTime(t);
+     TimeValue<AnimPacket*>::TimeValueResult_t result;
+     AnimPacket * p = pPackets->get(t, result);
+     while (result == pPackets->GOOD)
+     {
+         NS_LOG_DEBUG ("P from Id:" << p->getFromNodeId() << " to Id:" << p->getToNodeId());
+         AnimatorScene::getInstance()->addItem(p);
+         p->update (t);
+         //NS_LOG_DEBUG ("Pos:" << p->getHead ());
+         if(p->getFirstBitRx() > t)
+         {
+            p->setPos(p->getHead ());
+            p->setVisible(true);
+         }
+         else
+            p->setVisible(false);
+         p = pPackets->get(t, result);
+         update();
+     }
+
+ }
+
+
+ void
  AnimatorMode::testSlot()
  {
     //AnimatorScene::getInstance()->test();
 
     //AnimatorScene::getInstance()->test();
+    static qreal t = 0.144;
+    m_qLcdNumber->display(t);
+    displayPacket(t);
+    t += 0.00005;
  }
 
  void

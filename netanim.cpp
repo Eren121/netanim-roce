@@ -45,6 +45,7 @@ NetAnim::NetAnim():
     m_tabWidget->setGeometry(0, 0, minimumDimension, minimumDimension);
     m_tabWidget->showMaximized();
     m_tabWidget->show();
+    animatorTab->start();
 }
 
 

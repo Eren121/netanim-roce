@@ -28,13 +28,19 @@ AnimPacket::AnimPacket (uint32_t fromNodeId,
     m_firstBitRx (firstBitRx),
     m_lastBitRx (lastBitRx)
 {
-  m_fromPos = AnimNodeMgr::getInstance ()->getNode (fromNodeId)->getCenter ();
-  m_toPos = AnimNodeMgr::getInstance ()->getNode (toNodeId)->getCenter ();
+  //m_fromPos = AnimNodeMgr::getInstance ()->getNode (fromNodeId)->getCenter ();
+  m_fromPos = QPointF(AnimNodeMgr::getInstance ()->getNode (fromNodeId)->getX(), AnimNodeMgr::getInstance ()->getNode (fromNodeId)->getY());
+  m_toPos = QPointF(AnimNodeMgr::getInstance ()->getNode (toNodeId)->getX(), AnimNodeMgr::getInstance ()->getNode (toNodeId)->getY());
+
+  //m_toPos = AnimNodeMgr::getInstance ()->getNode (toNodeId)->getCenter ();
+  NS_LOG_DEBUG ("FromPos:" << m_fromPos);
+  NS_LOG_DEBUG ("ToPos:" << m_toPos);
   m_line = QLineF (m_fromPos, m_toPos);
   qreal propDelay = m_firstBitRx - m_firstBitTx;
   m_velocity = m_line.length ()/propDelay;
   m_cos = cos ((360 - m_line.angle ()) * PI/180);
   m_sin = sin ((360 - m_line.angle ()) * PI/180);
+  setVisible(false);
 }
 
 uint32_t
@@ -82,6 +88,7 @@ AnimPacket::update (qreal t)
   qreal x = m_distanceTraveled * m_cos;
   qreal y = m_distanceTraveled * m_sin;
   m_head = QPointF (m_fromPos.x () + x,  m_fromPos.y () + y);
+  NS_LOG_DEBUG ("Upd Time:" << t << " Head:" << m_head << " Distance traveled:" << m_distanceTraveled << " time elapsed:" << timeElapsed  << " velocity:" << m_velocity);
 }
 
 QRectF
@@ -116,7 +123,9 @@ AnimPacket::paint (QPainter *painter, const QStyleOptionGraphicsItem *option, QW
   else
     painter->rotate (180-textAngle);
 
-  painter->drawText (0, 0, QString::number (m_line.angle ()));
+  QString trajectory = QString::number(m_fromNodeId) + ":" + QString::number(m_toNodeId);
+  painter->drawText(0, 0, trajectory);
+  //painter->drawText (0, 0, QString::number (m_line.angle ()));
   painter->restore ();
 }
 
@@ -129,6 +138,7 @@ AnimPacket::getHead ()
 
 AnimPacketMgr::AnimPacketMgr()
 {
+    m_packets.setLookBack(2);
 }
 AnimPacketMgr *
 AnimPacketMgr::getInstance()
@@ -143,9 +153,25 @@ AnimPacketMgr::getInstance()
 void
 AnimPacketMgr::add(uint32_t fromId, uint32_t toId, qreal fbTx, qreal fbRx)
 {
+    if (fromId == toId)
+        return;
+   /* if (fromId != 9)
+        return;
+    if (toId != 1)
+        return;
+    if (m_packets.getCount())
+        return;*/
     AnimPacket * pkt = new AnimPacket(fromId, toId, fbTx, 0, fbRx, 0);
     m_packets.add(fbTx, pkt);
 }
+
+
+TimeValue<AnimPacket *> *
+AnimPacketMgr::getPackets()
+{
+    return &m_packets;
+}
+
 
 }
 
