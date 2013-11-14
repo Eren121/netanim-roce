@@ -96,6 +96,8 @@ QRectF
 AnimPacket::boundingRect () const
 {
   return m_boundingRect;
+  //QRectF r = QRectF(0, 0, m_boundingRect.width() * 2, m_boundingRect.height() * 2);
+  //return r;
 }
 
 
@@ -104,9 +106,16 @@ AnimPacket::paint (QPainter *painter, const QStyleOptionGraphicsItem *option, QW
 {
   QPainterPath path;
   painter->save ();
-  path.lineTo (-5 * sin (PI/4), -10 * sin (PI/4));
+  path.lineTo (-5 * cos (PI/8), -5 * sin (PI/8));
   path.moveTo (0, 0);
-  path.lineTo (-5 * sin (PI/4), 10 * sin (PI/4));
+  path.lineTo (-5 * cos (PI/8), 5 * sin (PI/8));
+  path.moveTo (0, 0);
+  QTransform viewTransform = AnimatorView::getInstance()->getTransform();
+
+  QFont f = painter->font();
+  //NS_LOG_DEBUG ("PointSize:" << f.pointSizeF());
+  f.setPointSizeF(10/viewTransform.m22());
+  //path.addText(-15, 0, f, "Jo");
   path.moveTo (0, 0);
   path.lineTo (-15, 0);
   painter->restore ();
@@ -114,9 +123,12 @@ AnimPacket::paint (QPainter *painter, const QStyleOptionGraphicsItem *option, QW
   painter->rotate (360 - m_line.angle ());
   painter->drawPath (path);
   m_boundingRect = path.boundingRect ();
+  painter->restore();
+  painter->save();
 
-  painter->restore ();
-  painter->save ();
+
+
+
   qreal textAngle = m_line.angle ();
   if(textAngle < 90)
       painter->rotate (360-textAngle);
@@ -124,19 +136,12 @@ AnimPacket::paint (QPainter *painter, const QStyleOptionGraphicsItem *option, QW
       painter->rotate (360-textAngle);
   else
     painter->rotate (180-textAngle);
-
-  QString trajectory = QString::number(m_fromNodeId) + ":" + QString::number(m_toNodeId);
+  QPainterPath textPath;
+  textPath.addText(0, 0, f, "Jo");
+  painter->drawPath(textPath);
   painter->restore ();
-  painter->save();
 
-  QTransform viewTransform = AnimatorView::getInstance()->getTransform();
-  QFont f = painter->font();
-  //NS_LOG_DEBUG ("PointSize:" << f.pointSizeF());
-  f.setPointSizeF(10/viewTransform.m22());
-  painter->setFont(f);
-  painter->drawText(0, 0, trajectory);
-  //painter->drawText (0, 0, QString::number (m_line.angle ()));
-  painter->restore();
+
 }
 
 
@@ -165,13 +170,14 @@ AnimPacketMgr::add(uint32_t fromId, uint32_t toId, qreal fbTx, qreal fbRx)
 {
     if (fromId == toId)
         return;
-   /* if (fromId != 9)
+    /*if (fromId != 0)
         return;
-    if (toId != 1)
+    if (toId != 3)
         return;
     if (m_packets.getCount())
         return;*/
     AnimPacket * pkt = new AnimPacket(fromId, toId, fbTx, 0, fbRx, 0);
+    NS_LOG_DEBUG ("FbTx:" << fbTx);
     m_packets.add(fbTx, pkt);
 }
 

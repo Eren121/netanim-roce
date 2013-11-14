@@ -1076,6 +1076,7 @@ AnimatorMode::showPacketStatsSlot()
             p->setVisible(false);
          p = pPackets->get(t, result);
          update();
+         //AnimatorView::getInstance()->repaint();
      }
 
  }
@@ -1087,7 +1088,7 @@ AnimatorMode::showPacketStatsSlot()
     //AnimatorScene::getInstance()->test();
 
     //AnimatorScene::getInstance()->test();
-    static qreal t = 0.144;
+    static qreal t = 0.659;
     m_qLcdNumber->display(t);
     displayPacket(t);
     t += 0.00005;
