@@ -37,6 +37,7 @@ public:
     void fitSceneWithinView();
     void postParse();
     int  getCurrentZoomFactor();
+    QTransform getTransform();
 
 protected:
     void paintEvent(QPaintEvent * event);

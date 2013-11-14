@@ -58,14 +58,15 @@ public:
     void setPixmap(QPixmap pix);
     void setType(ResizeableItemType_t t);
 
+protected:
+    qreal m_width;
+    qreal m_height;
 private:
     bool m_mousePressed;
     ResizeDirection_t m_currentResizeDirection;
     ResizeDirection_t m_lastResizeDirection;
     bool m_resizing;
     ResizeableItemType_t m_type;
-    qreal m_width;
-    qreal m_height;
     QPixmap * m_pixmap;
     bool isResizing();
     void setResizingDirection(ResizeDirection_t direction);

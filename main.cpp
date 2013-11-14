@@ -11,7 +11,7 @@ using namespace netanim;
 int main(int argc, char *argv[])
 {
   ns3::LogComponentEnable("AnimatorScene", ns3::LOG_LEVEL_ALL);
-  ns3::LogComponentEnable("MyView", ns3::LOG_LEVEL_ALL);
+  ns3::LogComponentEnable("AnimatorView", ns3::LOG_LEVEL_ALL);
   ns3::LogComponentEnable("AnimNode", ns3::LOG_LEVEL_ALL);
   ns3::LogComponentEnable("AnimPacket", ns3::LOG_LEVEL_ALL);
   ns3::LogComponentEnable("AnimatorMode", ns3::LOG_LEVEL_ALL);

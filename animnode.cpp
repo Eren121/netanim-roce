@@ -1,6 +1,7 @@
 #include <QPainter>
 #include <QGraphicsScene>
 #include "animnode.h"
+#include "animatorview.h"
 #include "logqt.h"
 #include "log.h"
 #include "fatal-error.h"
@@ -8,6 +9,8 @@
 
 NS_LOG_COMPONENT_DEFINE("AnimNode");
 
+
+namespace netanim {
 
 AnimNodeMgr * pAnimNodeMgr = 0;
 
@@ -43,14 +46,13 @@ void AnimNode::setNodeDescription(QString description)
     {
         m_nodeDescription = new QGraphicsTextItem(description);
     }
-    //m_textItem->setFlags(QGraphicsItem::ItemIgnoresTransformations);
     QGraphicsScene * s = scene();
     if(!s)
     {
         return;
     }
     s->addItem(m_nodeDescription);
-    m_nodeDescription->setPos(boundingRect().bottomRight());
+    m_nodeDescription->setVisible(false);
 }
 
 void AnimNode::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -58,7 +60,14 @@ void AnimNode::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
     ResizeableItem::paint(painter, option, widget);
     if(m_nodeDescription)
     {
-        m_nodeDescription->setPos(sceneBoundingRect().bottomRight());
+        painter->save();
+        QTransform viewTransform = AnimatorView::getInstance()->getTransform();
+        QFont f = painter->font();
+        //NS_LOG_DEBUG ("PointSize:" << f.pointSizeF());
+        f.setPointSizeF(10/viewTransform.m22());
+        painter->setFont(f);
+        painter->drawText(m_width, m_height, m_nodeDescription->toPlainText());
+        painter->restore();
     }
 }
 
@@ -115,3 +124,7 @@ AnimNodeMgr::getCount()
 {
     return m_nodes.size();
 }
+
+
+}
+

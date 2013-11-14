@@ -19,7 +19,7 @@
 
 #include "animatorview.h"
 #include "animatorscene.h"
-
+#include "logqt.h"
 
 #include <QtGui/QGraphicsScene>
 #include <QPaintEvent>
@@ -28,6 +28,7 @@
 
 namespace netanim {
 
+NS_LOG_COMPONENT_DEFINE ("AnimatorView");
 AnimatorView * pAnimatorView = 0;
 
 AnimatorView::AnimatorView(QGraphicsScene * scene) :
@@ -126,7 +127,14 @@ void
 AnimatorView::postParse()
 {
     fitInView(AnimatorScene::getInstance()->sceneRect());
+    NS_LOG_DEBUG ("View Transform:" << transform());
 
+}
+
+QTransform
+AnimatorView::getTransform()
+{
+    return transform();
 }
 
 int

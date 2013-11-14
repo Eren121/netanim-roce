@@ -5,6 +5,7 @@
 #include <QPainterPath>
 #include "animpacket.h"
 #include "animnode.h"
+#include "animatorview.h"
 #include "log.h"
 #include "logqt.h"
 
@@ -33,8 +34,8 @@ AnimPacket::AnimPacket (uint32_t fromNodeId,
   m_toPos = QPointF(AnimNodeMgr::getInstance ()->getNode (toNodeId)->getX(), AnimNodeMgr::getInstance ()->getNode (toNodeId)->getY());
 
   //m_toPos = AnimNodeMgr::getInstance ()->getNode (toNodeId)->getCenter ();
-  NS_LOG_DEBUG ("FromPos:" << m_fromPos);
-  NS_LOG_DEBUG ("ToPos:" << m_toPos);
+  //NS_LOG_DEBUG ("FromPos:" << m_fromPos);
+  //NS_LOG_DEBUG ("ToPos:" << m_toPos);
   m_line = QLineF (m_fromPos, m_toPos);
   qreal propDelay = m_firstBitRx - m_firstBitTx;
   m_velocity = m_line.length ()/propDelay;
@@ -103,16 +104,17 @@ AnimPacket::paint (QPainter *painter, const QStyleOptionGraphicsItem *option, QW
 {
   QPainterPath path;
   painter->save ();
-  path.lineTo (-10 * sin (PI/4), -10 * sin (PI/4));
+  path.lineTo (-5 * sin (PI/4), -10 * sin (PI/4));
   path.moveTo (0, 0);
-  path.lineTo (-10 * sin (PI/4), 10 * sin (PI/4));
+  path.lineTo (-5 * sin (PI/4), 10 * sin (PI/4));
   path.moveTo (0, 0);
   path.lineTo (-15, 0);
   painter->restore ();
-  m_boundingRect = path.boundingRect ();
   painter->save ();
   painter->rotate (360 - m_line.angle ());
   painter->drawPath (path);
+  m_boundingRect = path.boundingRect ();
+
   painter->restore ();
   painter->save ();
   qreal textAngle = m_line.angle ();
@@ -124,9 +126,17 @@ AnimPacket::paint (QPainter *painter, const QStyleOptionGraphicsItem *option, QW
     painter->rotate (180-textAngle);
 
   QString trajectory = QString::number(m_fromNodeId) + ":" + QString::number(m_toNodeId);
+  painter->restore ();
+  painter->save();
+
+  QTransform viewTransform = AnimatorView::getInstance()->getTransform();
+  QFont f = painter->font();
+  //NS_LOG_DEBUG ("PointSize:" << f.pointSizeF());
+  f.setPointSizeF(10/viewTransform.m22());
+  painter->setFont(f);
   painter->drawText(0, 0, trajectory);
   //painter->drawText (0, 0, QString::number (m_line.angle ()));
-  painter->restore ();
+  painter->restore();
 }
 
 

@@ -7,6 +7,7 @@
 
 #include <map>
 
+namespace netanim {
 
 
 class AnimNode: public ResizeableItem
@@ -43,4 +44,6 @@ private:
 
 };
 
+
+}
 #endif // ANIMNODE_H
