@@ -29,11 +29,11 @@ AnimPacket::AnimPacket (uint32_t fromNodeId,
     m_firstBitRx (firstBitRx),
     m_lastBitRx (lastBitRx)
 {
-  //m_fromPos = AnimNodeMgr::getInstance ()->getNode (fromNodeId)->getCenter ();
-  m_fromPos = QPointF(AnimNodeMgr::getInstance ()->getNode (fromNodeId)->getX(), AnimNodeMgr::getInstance ()->getNode (fromNodeId)->getY());
-  m_toPos = QPointF(AnimNodeMgr::getInstance ()->getNode (toNodeId)->getX(), AnimNodeMgr::getInstance ()->getNode (toNodeId)->getY());
+  m_fromPos = AnimNodeMgr::getInstance ()->getNode (fromNodeId)->getCenter ();
+  //m_fromPos = QPointF(AnimNodeMgr::getInstance ()->getNode (fromNodeId)->getX(), AnimNodeMgr::getInstance ()->getNode (fromNodeId)->getY());
+  //m_toPos = QPointF(AnimNodeMgr::getInstance ()->getNode (toNodeId)->getX(), AnimNodeMgr::getInstance ()->getNode (toNodeId)->getY());
 
-  //m_toPos = AnimNodeMgr::getInstance ()->getNode (toNodeId)->getCenter ();
+  m_toPos = AnimNodeMgr::getInstance ()->getNode (toNodeId)->getCenter ();
   //NS_LOG_DEBUG ("FromPos:" << m_fromPos);
   //NS_LOG_DEBUG ("ToPos:" << m_toPos);
   m_line = QLineF (m_fromPos, m_toPos);
@@ -89,14 +89,14 @@ AnimPacket::update (qreal t)
   qreal x = m_distanceTraveled * m_cos;
   qreal y = m_distanceTraveled * m_sin;
   m_head = QPointF (m_fromPos.x () + x,  m_fromPos.y () + y);
-  NS_LOG_DEBUG ("Upd Time:" << t << " Head:" << m_head << " Distance traveled:" << m_distanceTraveled << " time elapsed:" << timeElapsed  << " velocity:" << m_velocity);
+  //NS_LOG_DEBUG ("Upd Time:" << t << " Head:" << m_head << " Distance traveled:" << m_distanceTraveled << " time elapsed:" << timeElapsed  << " velocity:" << m_velocity);
 }
 
 QRectF
 AnimPacket::boundingRect () const
 {
   return m_boundingRect;
-  //QRectF r = QRectF(0, 0, m_boundingRect.width() * 2, m_boundingRect.height() * 2);
+  //QRectF r = QRectF(-m_boundingRect.width(),  -m_boundingRect.height(), m_boundingRect.width(), m_boundingRect.height());
   //return r;
 }
 
@@ -123,11 +123,16 @@ AnimPacket::paint (QPainter *painter, const QStyleOptionGraphicsItem *option, QW
   painter->rotate (360 - m_line.angle ());
   painter->drawPath (path);
   m_boundingRect = path.boundingRect ();
+  QTransform t;
+  t.rotate(360 - m_line.angle ());
+  //t.translate(0, 0);
+  m_boundingRect = t.mapRect(m_boundingRect);
   painter->restore();
+  NS_LOG_DEBUG ("PacketRect:" << m_boundingRect);
   painter->save();
 
 
-
+/*
 
   qreal textAngle = m_line.angle ();
   if(textAngle < 90)
@@ -138,8 +143,10 @@ AnimPacket::paint (QPainter *painter, const QStyleOptionGraphicsItem *option, QW
     painter->rotate (180-textAngle);
   QPainterPath textPath;
   textPath.addText(0, 0, f, "Jo");
+  NS_LOG_DEBUG ("TextRect:" << textPath.boundingRect());
   painter->drawPath(textPath);
-  painter->restore ();
+
+  painter->restore ();*/
 
 
 }

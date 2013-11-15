@@ -1063,7 +1063,7 @@ AnimatorMode::showPacketStatsSlot()
      AnimPacket * p = pPackets->get(t, result);
      while (result == pPackets->GOOD)
      {
-         NS_LOG_DEBUG ("P from Id:" << p->getFromNodeId() << " to Id:" << p->getToNodeId());
+         //NS_LOG_DEBUG ("P from Id:" << p->getFromNodeId() << " to Id:" << p->getToNodeId());
          AnimatorScene::getInstance()->addItem(p);
          p->update (t);
          //NS_LOG_DEBUG ("Pos:" << p->getHead ());
