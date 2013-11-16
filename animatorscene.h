@@ -7,7 +7,9 @@
 #include "timevalue.h"
 #include "animpacket.h"
 #include <QGraphicsScene>
+#include <QGraphicsProxyWidget>
 #include <QPushButton>
+#include <QLabel>
 
 
 namespace netanim
@@ -44,6 +46,8 @@ private:
     qreal m_userAreadWidth;
     qreal m_userAreaHeight;
     TimeValue<AnimPacket *> m_testTimeValue;
+    QLabel * m_mousePositionLabel;
+    QGraphicsProxyWidget * m_mousePositionProxyWidget;
 };
 
 } // namespace netanim

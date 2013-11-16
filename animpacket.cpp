@@ -106,18 +106,16 @@ AnimPacket::paint (QPainter *painter, const QStyleOptionGraphicsItem *option, QW
 {
   QPainterPath path;
   painter->save ();
-  path.lineTo (-5 * cos (PI/8), -5 * sin (PI/8));
+  path.lineTo (-2 * cos (PI/10), -2 * sin (PI/10));
   path.moveTo (0, 0);
-  path.lineTo (-5 * cos (PI/8), 5 * sin (PI/8));
+  path.lineTo (-2 * cos (PI/10), 2 * sin (PI/10));
   path.moveTo (0, 0);
   QTransform viewTransform = AnimatorView::getInstance()->getTransform();
 
-  QFont f = painter->font();
-  //NS_LOG_DEBUG ("PointSize:" << f.pointSizeF());
-  f.setPointSizeF(10/viewTransform.m22());
+
   //path.addText(-15, 0, f, "Jo");
   path.moveTo (0, 0);
-  path.lineTo (-15, 0);
+  path.lineTo (-5, 0);
   painter->restore ();
   painter->save ();
   painter->rotate (360 - m_line.angle ());
@@ -128,26 +126,50 @@ AnimPacket::paint (QPainter *painter, const QStyleOptionGraphicsItem *option, QW
   //t.translate(0, 0);
   m_boundingRect = t.mapRect(m_boundingRect);
   painter->restore();
-  NS_LOG_DEBUG ("PacketRect:" << m_boundingRect);
+  //NS_LOG_DEBUG ("PacketRect:" << m_boundingRect);
   painter->save();
 
 
-/*
 
+  QTransform textTransform;
   qreal textAngle = m_line.angle ();
   if(textAngle < 90)
-      painter->rotate (360-textAngle);
+  {
+      textAngle = 360-textAngle;
+  }
   else if (textAngle > 270)
-      painter->rotate (360-textAngle);
+  {
+      textAngle = 360-textAngle;
+  }
   else
-    painter->rotate (180-textAngle);
+  {
+    textAngle = 180-textAngle;
+  }
+  painter->rotate(textAngle);
+  textTransform.rotate(textAngle);
   QPainterPath textPath;
+  QFont f ("Helvetica");//= painter->font();
+  f.setStyleHint(QFont::Helvetica);
+  f.setPointSizeF(10/viewTransform.m22());
+  painter->setFont(f);
   textPath.addText(0, 0, f, "Jo");
-  NS_LOG_DEBUG ("TextRect:" << textPath.boundingRect());
-  painter->drawPath(textPath);
+  painter->drawText(0, 0, "Jo");
+  //textPath.addText();
+  //NS_LOG_DEBUG ("TextRect:" << textPath.boundingRect());
 
-  painter->restore ();*/
+  //painter->drawPath(textPath);
+  QRectF textBoundingRect = textTransform.mapRect(textPath.boundingRect());
 
+  painter->restore ();
+  //NS_LOG_DEBUG ("Packet Rect:" << m_boundingRect);
+  //NS_LOG_DEBUG ("Text Rect:" << textBoundingRect);
+  //NS_LOG_DEBUG ("P:" << m_boundingRect.bottom() << " T:" << textBoundingRect.bottom());
+  //NS_LOG_DEBUG ("Qmax:" <<qMax (m_boundingRect.bottom(), textBoundingRect.bottom()));
+  m_boundingRect = QRectF(QPointF(qMin (m_boundingRect.left(), textBoundingRect.left()),
+                          qMin (m_boundingRect.top(), textBoundingRect.top())),
+                          QPointF(qMax (m_boundingRect.right(), textBoundingRect.right()),
+                          qMax (m_boundingRect.bottom(), textBoundingRect.bottom())));
+  //NS_LOG_DEBUG ("Final Rect:" << m_boundingRect);
 
 }
 

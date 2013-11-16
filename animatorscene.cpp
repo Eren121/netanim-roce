@@ -6,6 +6,7 @@
 #include <QGraphicsSceneHoverEvent>
 #include <QGraphicsView>
 #include <QGraphicsLineItem>
+#include <QLabel>
 #include "timevalue.h"
 #include <math.h>
 #include <string.h>
@@ -37,6 +38,12 @@ AnimatorScene::AnimatorScene():QGraphicsScene(0, 0, ANIMATORSCENE_USERAREA_WIDTH
     addLine(m_userAreadWidth/2, 0, m_userAreadWidth/2, m_userAreaHeight);
     addLine(0, m_userAreaHeight/2, m_userAreadWidth, m_userAreaHeight/2);
     prepareTimeValueData();*/
+
+    m_mousePositionLabel = new QLabel ("");
+    m_mousePositionLabel->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+    m_mousePositionProxyWidget = addWidget(m_mousePositionLabel, Qt::ToolTip);
+    m_mousePositionProxyWidget->setFlag(QGraphicsItem::ItemIgnoresTransformations);
+    //addItem(m_mousePositionLabel);
 
 }
 
@@ -126,6 +133,11 @@ void AnimatorScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     QPoint viewP = view->mapFromScene(event->scenePos());
     QPoint globalP = view->viewport()->mapToGlobal(viewP);
     //NS_LOG_DEBUG("Scene Mouse Move ViewPos:" << globalP);
+    QPointF sp = event->scenePos();
+    QString s = "  " + QString::number(sp.x()) + "," + QString::number(sp.y());
+    m_mousePositionLabel->setText(s);
+    m_mousePositionProxyWidget->setPos(sp);
+    m_mousePositionLabel->adjustSize();
     return QGraphicsScene::mouseMoveEvent(event);
 }
 
