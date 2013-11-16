@@ -81,6 +81,27 @@ void AnimatorScene::setUserAreaWidth(qreal w)
     m_userAreadWidth = w;
 }
 
+void
+AnimatorScene::purgeAnimatedPackets()
+{
+    for(QVector <AnimPacket *>::const_iterator i = m_animatedPackets.begin();
+        i != m_animatedPackets.end();
+        ++i)
+    {
+        AnimPacket * p = *i;
+        p->setVisible(false);
+        removeItem(p);
+    }
+    m_animatedPackets.clear();
+}
+
+void
+AnimatorScene::addPacket(AnimPacket *p)
+{
+    addItem(p);
+    m_animatedPackets.push_back(p);
+}
+
 void AnimatorScene::addPix()
 {
     static int i = 0;
@@ -164,12 +185,14 @@ AnimPacket * AnimatorScene::getTestPacket(uint32_t fromNodeId, uint32_t toNodeId
 
 void AnimatorScene::displayPacket(qreal t)
 {
+    purgeAnimatedPackets();
     NS_LOG_DEBUG("Diplaying packet at t:" << t);
     m_testTimeValue.setCurrentTime(t);
     TimeValue<AnimPacket*>::TimeValueResult_t result;
     AnimPacket * p = m_testTimeValue.get(t, result);
     while (result == m_testTimeValue.GOOD)
     {
+        m_animatedPackets.push_back(p);
         p->update (t);
         //NS_LOG_DEBUG ("Pos:" << p->getHead ());
         p->setPos(p->getHead ());

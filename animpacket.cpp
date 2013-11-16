@@ -105,32 +105,31 @@ void
 AnimPacket::paint (QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
   QPainterPath path;
-  painter->save ();
   path.lineTo (-2 * cos (PI/10), -2 * sin (PI/10));
   path.moveTo (0, 0);
   path.lineTo (-2 * cos (PI/10), 2 * sin (PI/10));
   path.moveTo (0, 0);
+
+
+  painter->save ();
+  QPen p(Qt::blue);
   QTransform viewTransform = AnimatorView::getInstance()->getTransform();
-
-
-  //path.addText(-15, 0, f, "Jo");
   path.moveTo (0, 0);
   path.lineTo (-5, 0);
-  painter->restore ();
-  painter->save ();
+  painter->setPen(p);
   painter->rotate (360 - m_line.angle ());
   painter->drawPath (path);
   m_boundingRect = path.boundingRect ();
   QTransform t;
   t.rotate(360 - m_line.angle ());
-  //t.translate(0, 0);
   m_boundingRect = t.mapRect(m_boundingRect);
   painter->restore();
-  //NS_LOG_DEBUG ("PacketRect:" << m_boundingRect);
+
+
+
+
+
   painter->save();
-
-
-
   QTransform textTransform;
   qreal textAngle = m_line.angle ();
   if(textAngle < 90)
@@ -149,27 +148,20 @@ AnimPacket::paint (QPainter *painter, const QStyleOptionGraphicsItem *option, QW
   textTransform.rotate(textAngle);
   QPainterPath textPath;
   QFont f ("Helvetica");//= painter->font();
-  f.setStyleHint(QFont::Helvetica);
+  f.setStyleHint(QFont::Times);
   f.setPointSizeF(10/viewTransform.m22());
   painter->setFont(f);
   textPath.addText(0, 0, f, "Jo");
   painter->drawText(0, 0, "Jo");
-  //textPath.addText();
-  //NS_LOG_DEBUG ("TextRect:" << textPath.boundingRect());
 
-  //painter->drawPath(textPath);
   QRectF textBoundingRect = textTransform.mapRect(textPath.boundingRect());
 
   painter->restore ();
-  //NS_LOG_DEBUG ("Packet Rect:" << m_boundingRect);
-  //NS_LOG_DEBUG ("Text Rect:" << textBoundingRect);
-  //NS_LOG_DEBUG ("P:" << m_boundingRect.bottom() << " T:" << textBoundingRect.bottom());
-  //NS_LOG_DEBUG ("Qmax:" <<qMax (m_boundingRect.bottom(), textBoundingRect.bottom()));
   m_boundingRect = QRectF(QPointF(qMin (m_boundingRect.left(), textBoundingRect.left()),
                           qMin (m_boundingRect.top(), textBoundingRect.top())),
                           QPointF(qMax (m_boundingRect.right(), textBoundingRect.right()),
                           qMax (m_boundingRect.bottom(), textBoundingRect.bottom())));
-  //NS_LOG_DEBUG ("Final Rect:" << m_boundingRect);
+  //NS_LOG_DEBUG ("m_boundingRect:" << m_boundingRect);
 
 }
 
@@ -206,7 +198,7 @@ AnimPacketMgr::add(uint32_t fromId, uint32_t toId, qreal fbTx, qreal fbRx)
     if (m_packets.getCount())
         return;*/
     AnimPacket * pkt = new AnimPacket(fromId, toId, fbTx, 0, fbRx, 0);
-    NS_LOG_DEBUG ("FbTx:" << fbTx);
+    //NS_LOG_DEBUG ("FbTx:" << fbTx);
     m_packets.add(fbTx, pkt);
 }
 

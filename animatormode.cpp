@@ -1056,6 +1056,7 @@ AnimatorMode::showPacketStatsSlot()
  void
  AnimatorMode::displayPacket(qreal t)
  {
+     AnimatorScene::getInstance()->purgeAnimatedPackets();
      NS_LOG_DEBUG("Diplaying packet at t:" << t);
      TimeValue<AnimPacket*> * pPackets = AnimPacketMgr::getInstance()->getPackets();
      pPackets->setCurrentTime(t);
@@ -1063,8 +1064,9 @@ AnimatorMode::showPacketStatsSlot()
      AnimPacket * p = pPackets->get(t, result);
      while (result == pPackets->GOOD)
      {
+
          //NS_LOG_DEBUG ("P from Id:" << p->getFromNodeId() << " to Id:" << p->getToNodeId());
-         AnimatorScene::getInstance()->addItem(p);
+         AnimatorScene::getInstance()->addPacket(p);
          p->update (t);
          //NS_LOG_DEBUG ("Pos:" << p->getHead ());
          if(p->getFirstBitRx() > t)

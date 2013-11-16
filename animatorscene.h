@@ -10,6 +10,7 @@
 #include <QGraphicsProxyWidget>
 #include <QPushButton>
 #include <QLabel>
+#include <QVector>
 
 
 namespace netanim
@@ -39,6 +40,9 @@ public:
     void prepareTimeValueData();
     AnimPacket * getTestPacket(uint32_t fromNodeId, uint32_t toNodeId, qreal firstBitTx, qreal propDelay, qreal bitRate);
     void displayPacket(qreal t);
+    void addPacket (AnimPacket * p);
+    void purgeAnimatedPackets();
+
 
 public slots:
     void testSlot();
@@ -48,6 +52,7 @@ private:
     TimeValue<AnimPacket *> m_testTimeValue;
     QLabel * m_mousePositionLabel;
     QGraphicsProxyWidget * m_mousePositionProxyWidget;
+    QVector <AnimPacket *> m_animatedPackets;
 };
 
 } // namespace netanim

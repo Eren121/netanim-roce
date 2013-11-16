@@ -2,6 +2,7 @@
 #define ANIMPACKET_H
 #include "qglobal.h"
 #include <QGraphicsItem>
+#include "animatorconstants.h"
 #include "common.h"
 #include "timevalue.h"
 
@@ -16,6 +17,11 @@ public:
              qreal lastBitTx,
              qreal firstBitRx,
              qreal lastBitRx);
+  enum { Type = ANIMPACKET_TYPE };
+  int type () const
+  {
+      return Type;
+  }
   qreal getFirstBitTx ();
   qreal getFirstBitRx ();
   qreal getLastBitTx ();
