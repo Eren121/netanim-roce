@@ -26,7 +26,7 @@ AnimatorScene::AnimatorScene():QGraphicsScene(0, 0, ANIMATORSCENE_USERAREA_WIDTH
     m_testButton = new QPushButton("Test");
     connect(m_testButton, SIGNAL(clicked()), this, SLOT(testSlot()));
     addWidget(m_testButton)->setPos(500, 500);
-    QPixmap pix(":/new/prefix1/ns3logo2.png","png");
+    QPixmap pix(":/resources/ns3logo2.png","png");
 
     m_background = new ResizeablePixmap(pix);
     m_background->setFlags(QGraphicsItem::ItemIsMovable|QGraphicsItem::ItemIsSelectable);

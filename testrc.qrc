@@ -1,5 +1,6 @@
 <RCC>
-    <qresource prefix="/new/prefix1">
+    <qresource prefix="/resources">
         <file>ns3logo2.png</file>
+        <file>animator_play.svg</file>
     </qresource>
 </RCC>

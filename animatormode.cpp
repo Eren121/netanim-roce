@@ -359,7 +359,7 @@ AnimatorMode::initControls()
     connect(m_batteryCapacityButton, SIGNAL(clicked()), this, SLOT(showBatteryCapacitySlot()));
 
     m_playButton = new QToolButton;
-    m_playButton->setIcon(QIcon(":/animator_resource/animator_play.svg"));
+    m_playButton->setIcon(QIcon(":/resources/animator_play.svg"));
     m_playButton->setToolTip("Play Animation");
     connect(m_playButton, SIGNAL(clicked()), this, SLOT(clickPlaySlot()));
 
@@ -875,7 +875,7 @@ AnimatorMode::clickSaveSlot()
  {
     timerCleanup();
     m_playing = false;
-    m_playButton->setIcon(QIcon(":/animator_resource/animator_play.svg"));
+    m_playButton->setIcon(QIcon(":/resources/animator_play.svg"));
     m_playButton->setToolTip("Play Animation");
     m_playButton->setEnabled(true);
  }
@@ -937,14 +937,12 @@ AnimatorMode::showPacketStatsSlot()
  {
      AnimatorScene::getInstance()->invalidate();
      m_updateRateTimer->stop();
-     m_simulationTimeSlider->setValue(m_currentTime);
-     m_qLcdNumber->display(m_currentTime);
-     fflush(stdout);
      if(m_playing)
      {
+         displayPacket(m_currentTime);
+         m_simulationTimeSlider->setValue(m_currentTime);
+         m_qLcdNumber->display(m_currentTime);
          keepAppResponsive();
-
-         qreal lastTime = m_currentTime;
          if(m_state == SIMULATION_COMPLETE)
          {
              doSimulationCompleted();
@@ -952,14 +950,6 @@ AnimatorMode::showPacketStatsSlot()
          }
          checkSimulationCompleted();
          QApplication::processEvents();
-         if(lastTime == m_currentTime)
-         {
-             m_currentTime += 0.0001;
-         }
-         if(lastTime > m_currentTime)
-         {
-             m_currentTime = PACKET_TIME_MAX;
-         }
          m_updateRateTimer->start();
      }
  }
@@ -1002,8 +992,8 @@ AnimatorMode::showPacketStatsSlot()
 
     QFileDialog fileDialog;
     fileDialog.setFileMode(QFileDialog::ExistingFiles);
-    //QString traceFileName = "/home/john/ns3/ns-3-dev/dumbbell-animation.xml";
-    QString traceFileName = "/home/john/ns3/ns-3-dev/wireless-animation.xml";
+    QString traceFileName = "/home/john/ns3/ns-3-dev/dumbbell-animation.xml";
+    //QString traceFileName = "/home/john/ns3/ns-3-dev/wireless-animation.xml";
 
     /*if(fileDialog.exec())
 =======
@@ -1048,7 +1038,7 @@ AnimatorMode::showPacketStatsSlot()
     {
         m_state = PAUSING;
         m_bottomStatusLabel->setText("Not Playing");
-        m_playButton->setIcon(QIcon(":/animator_resource/animator_play.svg"));
+        m_playButton->setIcon(QIcon(":/resources/animator_play.svg"));
         m_playButton->setToolTip("Play Animation");
         m_updateRateTimer->stop();
     }
@@ -1078,6 +1068,7 @@ AnimatorMode::showPacketStatsSlot()
            p->setVisible(true);
            p->setPos(p->getHead ());
            AnimatorScene::getInstance()->update();
+           m_currentTime = j->first;
 
          }
      }

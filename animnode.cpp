@@ -106,7 +106,7 @@ AnimNode * AnimNodeMgr::add(uint32_t nodeId, qreal x, qreal y)
     {
         NS_FATAL_ERROR("NodeId:" << nodeId << " Already exists");
     }
-    QPixmap pix(":/new/prefix1/ns3logo2.png","png");
+    QPixmap pix(":/resources/ns3logo2.png","png");
     AnimNode * node = new AnimNode(nodeId, x, y);
     node->setPos(x, y);
     node->setPixmap(pix);
