@@ -1002,7 +1002,9 @@ AnimatorMode::showPacketStatsSlot()
 
     QFileDialog fileDialog;
     fileDialog.setFileMode(QFileDialog::ExistingFiles);
-    QString traceFileName = "/home/john/ns3/ns-3-dev/dumbbell-animation.xml";
+    //QString traceFileName = "/home/john/ns3/ns-3-dev/dumbbell-animation.xml";
+    QString traceFileName = "/home/john/ns3/ns-3-dev/wireless-animation.xml";
+
     /*if(fileDialog.exec())
 =======
     QString traceFileName = "";
@@ -1072,7 +1074,6 @@ AnimatorMode::showPacketStatsSlot()
            //NS_LOG_DEBUG ("fbTx:" << j->first);
            AnimPacket * p = static_cast<AnimPacket *> (j->second);
            AnimatorScene::getInstance()->addPacket(p);
-
            p->update(t);
            p->setVisible(true);
            p->setPos(p->getHead ());
