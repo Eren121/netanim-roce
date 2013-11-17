@@ -36,7 +36,8 @@ HEADERS += \
     animatormode.h \
     animatorview.h \
     mode.h \
-    animxmlparser.h
+    animxmlparser.h \
+    animevent.h
 
 DEFINES += NS3_LOG_ENABLE
 

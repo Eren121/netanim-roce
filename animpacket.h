@@ -5,10 +5,11 @@
 #include "animatorconstants.h"
 #include "common.h"
 #include "timevalue.h"
+#include "animevent.h"
 
 namespace netanim {
 
-class AnimPacket : public QGraphicsItem
+class AnimPacket : public QGraphicsItem, public AnimEvent
 {
 public:
   AnimPacket(uint32_t fromNodeId,
@@ -56,10 +57,13 @@ class AnimPacketMgr
 public:
     static AnimPacketMgr * getInstance();
     void add(uint32_t fromId, uint32_t toId, qreal fbTx, qreal fbRx);
-    TimeValue<AnimPacket *> * getPackets();
+    //TimeValue<AnimPacket *> * getPackets();
+    TimeValue<AnimEvent *> * getPackets();
+
 private:
     AnimPacketMgr();
-    TimeValue<AnimPacket *> m_packets;
+   // TimeValue<AnimPacket *> m_packets;
+    TimeValue<AnimEvent *> m_packets;
 
 
 };

@@ -42,6 +42,7 @@ AnimPacket::AnimPacket (uint32_t fromNodeId,
   m_cos = cos ((360 - m_line.angle ()) * PI/180);
   m_sin = sin ((360 - m_line.angle ()) * PI/180);
   setVisible(false);
+  m_type = PacketEvent;
 }
 
 uint32_t
@@ -80,6 +81,7 @@ AnimPacket::getLastBitTx ()
   return m_lastBitTx;
 }
 
+#if 0
 void
 AnimPacket::update (qreal t)
 {
@@ -92,6 +94,18 @@ AnimPacket::update (qreal t)
   //NS_LOG_DEBUG ("Upd Time:" << t << " Head:" << m_head << " Distance traveled:" << m_distanceTraveled << " time elapsed:" << timeElapsed  << " velocity:" << m_velocity);
 }
 
+#else
+void
+AnimPacket::update (qreal t)
+{
+  qreal midPointX = (m_toPos.x() + m_fromPos.x())/2;
+  qreal midPointY = (m_toPos.y() + m_fromPos.y())/2;
+  m_head = QPointF (midPointX, midPointY);
+  //m_head = QPointF (100,100);
+  //NS_LOG_DEBUG ("m_head:" << m_head);
+}
+
+#endif
 QRectF
 AnimPacket::boundingRect () const
 {
@@ -163,6 +177,7 @@ AnimPacket::paint (QPainter *painter, const QStyleOptionGraphicsItem *option, QW
                           qMax (m_boundingRect.bottom(), textBoundingRect.bottom())));
   //NS_LOG_DEBUG ("m_boundingRect:" << m_boundingRect);
 
+
 }
 
 
@@ -203,7 +218,9 @@ AnimPacketMgr::add(uint32_t fromId, uint32_t toId, qreal fbTx, qreal fbRx)
 }
 
 
-TimeValue<AnimPacket *> *
+//TimeValue<AnimPacket *> *
+TimeValue<AnimEvent *> *
+
 AnimPacketMgr::getPackets()
 {
     return &m_packets;

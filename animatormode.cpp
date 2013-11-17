@@ -1053,15 +1053,51 @@ AnimatorMode::showPacketStatsSlot()
  }
 
 
+
+
+ void
+ AnimatorMode::displayPacket(qreal t)
+ {
+     AnimatorScene::getInstance()->purgeAnimatedPackets();
+     TimeValue<AnimEvent*> * pPackets = AnimPacketMgr::getInstance()->getPackets();
+     TimeValue<AnimEvent*>::TimeValueResult_t result;
+     TimeValue<AnimEvent*>::TimeValueIteratorPair_t pp = pPackets->getNext(result);
+     //NS_LOG_DEBUG ("Now:" << pp.first->first);
+     if (result == pPackets->GOOD)
+     {
+         for(typename TimeValue<AnimEvent*>::TimeValue_t::const_iterator j = pp.first;
+             j != pp.second;
+             ++j)
+         {
+           //NS_LOG_DEBUG ("fbTx:" << j->first);
+           AnimPacket * p = static_cast<AnimPacket *> (j->second);
+           AnimatorScene::getInstance()->addPacket(p);
+
+           p->update(t);
+           p->setVisible(true);
+           p->setPos(p->getHead ());
+           AnimatorScene::getInstance()->update();
+
+         }
+     }
+ }
+
+
+
+#if 0
  void
  AnimatorMode::displayPacket(qreal t)
  {
      AnimatorScene::getInstance()->purgeAnimatedPackets();
      NS_LOG_DEBUG("Diplaying packet at t:" << t);
-     TimeValue<AnimPacket*> * pPackets = AnimPacketMgr::getInstance()->getPackets();
+     //TimeValue<AnimPacket*> * pPackets = AnimPacketMgr::getInstance()->getPackets();
+     TimeValue<AnimEvent*> * pPackets = AnimPacketMgr::getInstance()->getPackets();
+
      pPackets->setCurrentTime(t);
-     TimeValue<AnimPacket*>::TimeValueResult_t result;
-     AnimPacket * p = pPackets->get(t, result);
+     //TimeValue<AnimPacket*>::TimeValueResult_t result;
+     TimeValue<AnimEvent*>::TimeValueResult_t result;
+
+     AnimPacket * p = static_cast<AnimPacket *> (pPackets->get(t, result));
      while (result == pPackets->GOOD)
      {
 
@@ -1076,12 +1112,11 @@ AnimatorMode::showPacketStatsSlot()
          }
          else
             p->setVisible(false);
-         p = pPackets->get(t, result);
+         p = static_cast <AnimPacket *> (pPackets->get(t, result));
          update();
-         //AnimatorView::getInstance()->repaint();
      }
-
  }
+#endif
 
 
  void

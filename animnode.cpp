@@ -19,6 +19,7 @@ AnimNode::AnimNode(uint32_t nodeId, qreal x, qreal y):m_nodeDescription(0),
     m_x(x),
     m_y(y)
 {
+    //setVisible(false);
 }
 
 AnimNode::~AnimNode()

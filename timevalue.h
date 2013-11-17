@@ -53,6 +53,7 @@ public:
   T getCurrent ();
   T get (qreal tUpperBound, TimeValueResult_t & result);
   TimeValueIteratorPair_t getRange (qreal lowerBound, qreal upperBound);
+  TimeValueIteratorPair_t getNext (TimeValueResult_t & result);
   std::ostringstream toString ();
   void setLookBack (qreal lookBack);
   bool isEnd ();
@@ -121,6 +122,7 @@ TimeValue<T>::add (qreal t, T value)
   if (wasEmpty)
     {
         m_currentIterator = m_timeValues.begin ();
+        m_getIterator = m_timeValues.begin ();
     }
 }
 
@@ -161,13 +163,35 @@ TimeValue<T>::getRange (qreal lowerBound, qreal upperBound)
 }
 
 
+
+template <class T>
+typename TimeValue<T>::TimeValueIteratorPair_t
+TimeValue<T>::getNext (TimeValueResult_t & result)
+{
+    result = GOOD;
+    TimeValueIteratorPair_t pp =  m_timeValues.equal_range (m_getIterator->first);
+      //std::cout << "First:" << m_getIterator->first;
+      //fflush(stdout);
+    if (m_getIterator == m_timeValues.end ())
+      {
+        result = OVERRUN;
+      }
+      else
+      {
+        m_getIterator = m_timeValues.upper_bound(m_getIterator->first);
+      }
+    return pp;
+
+}
+
+
 template <class T>
 T
 TimeValue<T>::get (qreal tUpperBound, TimeValueResult_t & result)
 {
   //logQString (QString ("m_getIterator->first:") + QString::number (m_getIterator->first) + " t:" + QString::number (tUpperBound));
-    std::cout << "First:" << m_getIterator->first;
-    fflush(stdout);
+  //  std::cout << "First:" << m_getIterator->first;
+  //  fflush(stdout);
   result = GOOD;
   T v = m_getIterator->second;
   if ((m_getIterator == m_timeValues.end ()) || (m_getIterator->first > tUpperBound))
@@ -275,7 +299,7 @@ TimeValue<T>::toString ()
       i != m_timeValues.end ();
       )
     {
-      std::pair<typename TimeValue_t::const_iterator, typename TimeValue_t::const_iterator> pp =  m_timeValues.equal_range (i->first);
+      TimeValueIteratorPair_t pp =  m_timeValues.equal_range (i->first);
       for(typename TimeValue<T>::TimeValue_t::const_iterator j = pp.first;
             j != pp.second;
             ++j)
