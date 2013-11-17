@@ -6,11 +6,13 @@
 #include "common.h"
 #include "timevalue.h"
 #include "animevent.h"
-
 namespace netanim {
 
-class AnimPacket : public QGraphicsItem, public AnimEvent
+class AnimPacket : public QObject, public QGraphicsItem, public AnimEvent
 {
+Q_OBJECT
+
+    Q_PROPERTY (QPointF pos READ pos WRITE setPos)
 public:
   AnimPacket(uint32_t fromNodeId,
              uint32_t toNodeId,
@@ -29,10 +31,13 @@ public:
   qreal getLastBitRx ();
   uint32_t getFromNodeId ();
   uint32_t getToNodeId ();
+  QPointF getFromPos ();
+  QPointF getToPos ();
   void update (qreal t);
   virtual QRectF boundingRect () const;
   void paint (QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);
   QPointF getHead ();
+
 
 private:
   uint32_t m_fromNodeId;

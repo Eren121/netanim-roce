@@ -40,6 +40,7 @@
 #include <QApplication>
 #include <QDesktopWidget>
 #include <QThread>
+#include <QPropertyAnimation>
 
 
 namespace netanim {
@@ -1067,6 +1068,11 @@ AnimatorMode::showPacketStatsSlot()
            p->update(t);
            p->setVisible(true);
            p->setPos(p->getHead ());
+           QPropertyAnimation  * propAnimation = new QPropertyAnimation (p, "pos");
+           propAnimation->setDuration(2000);
+           propAnimation->setStartValue(p->getFromPos());
+           propAnimation->setEndValue(p->getToPos());
+           propAnimation->start();
            AnimatorScene::getInstance()->update();
            m_currentTime = j->first;
 

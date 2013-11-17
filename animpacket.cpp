@@ -187,6 +187,18 @@ AnimPacket::getHead ()
   return m_head;
 }
 
+QPointF
+AnimPacket::getFromPos()
+{
+    return m_fromPos;
+}
+
+QPointF
+AnimPacket::getToPos()
+{
+    return m_toPos;
+}
+
 AnimPacketMgr::AnimPacketMgr()
 {
     m_packets.setLookBack(2);
