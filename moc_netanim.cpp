@@ -1,15 +1,15 @@
 /****************************************************************************
-** Meta object code from reading C++ file 'animatorscene.h'
+** Meta object code from reading C++ file 'netanim.h'
 **
-** Created: Mon Nov 18 09:42:05 2013
+** Created: Sun Nov 17 11:24:16 2013
 **      by: The Qt Meta Object Compiler version 63 (Qt 4.8.1)
 **
 ** WARNING! All changes made in this file will be lost!
 *****************************************************************************/
 
-#include "animatorscene.h"
+#include "netanim.h"
 #if !defined(Q_MOC_OUTPUT_REVISION)
-#error "The header file 'animatorscene.h' doesn't include <QObject>."
+#error "The header file 'netanim.h' doesn't include <QObject>."
 #elif Q_MOC_OUTPUT_REVISION != 63
 #error "This file was generated using the moc from 4.8.1. It"
 #error "cannot be used with the include files from this version of Qt."
@@ -17,7 +17,7 @@
 #endif
 
 QT_BEGIN_MOC_NAMESPACE
-static const uint qt_meta_data_netanim__AnimatorScene[] = {
+static const uint qt_meta_data_netanim__NetAnim[] = {
 
  // content:
        6,       // revision
@@ -31,57 +31,57 @@ static const uint qt_meta_data_netanim__AnimatorScene[] = {
        0,       // signalCount
 
  // slots: signature, parameters, type, tag, flags
-      24,   23,   23,   23, 0x0a,
+      31,   18,   17,   17, 0x08,
 
        0        // eod
 };
 
-static const char qt_meta_stringdata_netanim__AnimatorScene[] = {
-    "netanim::AnimatorScene\0\0testSlot()\0"
+static const char qt_meta_stringdata_netanim__NetAnim[] = {
+    "netanim::NetAnim\0\0currentIndex\0"
+    "currentTabChangedSlot(int)\0"
 };
 
-void netanim::AnimatorScene::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
+void netanim::NetAnim::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
 {
     if (_c == QMetaObject::InvokeMetaMethod) {
         Q_ASSERT(staticMetaObject.cast(_o));
-        AnimatorScene *_t = static_cast<AnimatorScene *>(_o);
+        NetAnim *_t = static_cast<NetAnim *>(_o);
         switch (_id) {
-        case 0: _t->testSlot(); break;
+        case 0: _t->currentTabChangedSlot((*reinterpret_cast< int(*)>(_a[1]))); break;
         default: ;
         }
     }
-    Q_UNUSED(_a);
 }
 
-const QMetaObjectExtraData netanim::AnimatorScene::staticMetaObjectExtraData = {
+const QMetaObjectExtraData netanim::NetAnim::staticMetaObjectExtraData = {
     0,  qt_static_metacall 
 };
 
-const QMetaObject netanim::AnimatorScene::staticMetaObject = {
-    { &QGraphicsScene::staticMetaObject, qt_meta_stringdata_netanim__AnimatorScene,
-      qt_meta_data_netanim__AnimatorScene, &staticMetaObjectExtraData }
+const QMetaObject netanim::NetAnim::staticMetaObject = {
+    { &QObject::staticMetaObject, qt_meta_stringdata_netanim__NetAnim,
+      qt_meta_data_netanim__NetAnim, &staticMetaObjectExtraData }
 };
 
 #ifdef Q_NO_DATA_RELOCATION
-const QMetaObject &netanim::AnimatorScene::getStaticMetaObject() { return staticMetaObject; }
+const QMetaObject &netanim::NetAnim::getStaticMetaObject() { return staticMetaObject; }
 #endif //Q_NO_DATA_RELOCATION
 
-const QMetaObject *netanim::AnimatorScene::metaObject() const
+const QMetaObject *netanim::NetAnim::metaObject() const
 {
     return QObject::d_ptr->metaObject ? QObject::d_ptr->metaObject : &staticMetaObject;
 }
 
-void *netanim::AnimatorScene::qt_metacast(const char *_clname)
+void *netanim::NetAnim::qt_metacast(const char *_clname)
 {
     if (!_clname) return 0;
-    if (!strcmp(_clname, qt_meta_stringdata_netanim__AnimatorScene))
-        return static_cast<void*>(const_cast< AnimatorScene*>(this));
-    return QGraphicsScene::qt_metacast(_clname);
+    if (!strcmp(_clname, qt_meta_stringdata_netanim__NetAnim))
+        return static_cast<void*>(const_cast< NetAnim*>(this));
+    return QObject::qt_metacast(_clname);
 }
 
-int netanim::AnimatorScene::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
+int netanim::NetAnim::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
 {
-    _id = QGraphicsScene::qt_metacall(_c, _id, _a);
+    _id = QObject::qt_metacall(_c, _id, _a);
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {

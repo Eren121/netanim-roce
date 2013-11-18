@@ -20,7 +20,7 @@
 #include "animatorscene.h"
 #include "animatorview.h"
 #include "animxmlparser.h"
-
+#include "animlink.h"
 #include <QFile>
 #include <QtCore/QDebug>
 #include <QtCore/QtPlugin>
@@ -251,19 +251,19 @@ AnimatorMode::initControls()
     initLabels();
     m_fileOpenButton = new QToolButton;
     m_fileOpenButton->setToolTip("Open XML trace file");
-    m_fileOpenButton->setIcon(QIcon(":/animator_resource/animator_fileopen.svg"));
+    m_fileOpenButton->setIcon(QIcon(":/resources/animator_fileopen.svg"));
     connect(m_fileOpenButton,SIGNAL(clicked()), this, SLOT(clickTraceFileOpenSlot()));
 
 
     m_zoomInButton = new QToolButton;
     m_zoomInButton->setToolTip("Zoom in");
-    m_zoomInButton->setIcon(QIcon(":/animator_resource/animator_zoomin.svg"));
+    m_zoomInButton->setIcon(QIcon(":/resources/animator_zoomin.svg"));
     connect(m_zoomInButton, SIGNAL(clicked()), this, SLOT(clickZoomInSlot()));
 
 
     m_zoomOutButton = new QToolButton;
     m_zoomOutButton->setToolTip("Zoom out");
-    m_zoomOutButton->setIcon(QIcon(":/animator_resource/animator_zoomout.svg"));
+    m_zoomOutButton->setIcon(QIcon(":/resources/animator_zoomout.svg"));
     connect(m_zoomOutButton, SIGNAL(clicked()), this, SLOT(clickZoomOutSlot()));
 
 
@@ -723,6 +723,23 @@ AnimatorMode::postParse()
         animNode->setPos(animNode->getX(), animNode->getY());
         AnimNodeMgr::getInstance()->getNode(i)->setNodeDescription(QString::number(i));
     }
+
+    AnimLinkMgr::NodeIdAnimLinkVectorMap_t * pLinks = AnimLinkMgr::getInstance()->getLinks();
+    for (AnimLinkMgr::NodeIdAnimLinkVectorMap_t::const_iterator i = (*pLinks).begin();
+         i != (*pLinks).end();
+         ++i)
+    {
+        AnimLinkMgr::AnimLinkVector_t animLinks = i->second;
+        for(AnimLinkMgr::AnimLinkVector_t::const_iterator j = animLinks.begin();
+            j != animLinks.end();
+            ++j)
+        {
+            AnimLink * animLink = *j;
+            AnimatorScene::getInstance()->addItem(animLink);
+        }
+    }
+
+
 }
 
 void
@@ -1030,7 +1047,7 @@ AnimatorMode::showPacketStatsSlot()
             m_simulationCompleted = false;
         }
         m_appResponsiveTimer.restart();
-        m_playButton->setIcon(QIcon(":/animator_resource/animator_pause.svg"));
+        m_playButton->setIcon(QIcon(":/resources/animator_pause.svg"));
         m_playButton->setToolTip("Pause Animation");
         m_updateRateTimer->start();
 
@@ -1072,6 +1089,7 @@ AnimatorMode::showPacketStatsSlot()
            propAnimation->setDuration(2000);
            propAnimation->setStartValue(p->getFromPos());
            propAnimation->setEndValue(p->getToPos());
+           //propAnimation->setEasingCurve(QEasingCurve::InOutElastic);
            propAnimation->start();
            AnimatorScene::getInstance()->update();
            m_currentTime = j->first;

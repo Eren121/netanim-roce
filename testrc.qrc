@@ -2,5 +2,9 @@
     <qresource prefix="/resources">
         <file>ns3logo2.png</file>
         <file>animator_play.svg</file>
+        <file>animator_pause.svg</file>
+        <file>animator_zoomin.svg</file>
+        <file>animator_zoomout.svg</file>
+        <file>animator_fileopen.svg</file>
     </qresource>
 </RCC>

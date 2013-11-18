@@ -24,6 +24,7 @@
 #include "animatormode.h"
 #include "animatorscene.h"
 #include "animpacket.h"
+#include "animlink.h"
 
 #include <QFile>
 #include <QRegExp>
@@ -124,7 +125,6 @@ Animxmlparser::isParsingComplete()
 void
 Animxmlparser::doParse()
 {
-    qreal currentNodeSize = AnimatorMode::getInstance()->getCurrentNodeSize();
     uint64_t parsedElementCount = 0;
     while(!isParsingComplete())
     {
@@ -142,33 +142,9 @@ Animxmlparser::doParse()
                //qDebug(QString("XML Version:") + QString::number(version));
                break;
            }
-
-           case XML_TOPOLOGY:
-           {
-               qreal maxValue = qMax(parsedElement.topo_width, parsedElement.topo_height);
-               //AnimatorScene::getInstance()->setWidth(maxValue);
-               //AnimatorScene::getInstance()->setHeight(maxValue);
-               break;
-           }
            case XML_NODE:
            {
-               QColor * pColor = 0;
-               uint8_t r = parsedElement.node_r;
-               uint8_t g = parsedElement.node_g;
-               uint8_t b = parsedElement.node_b;
-               if (!(r == 255 && g == 0 && b == 0)) //If it is RED ignore it
-               {
-                   if(m_version < 3.102)  // Color is not supported in version < 3.101
-                   {
-                       pColor = new QColor(255, 0, 0);
-                   }
-                   else
-                   {
-                       pColor = new QColor(r, g, b);
-                   }
-               }
                AnimNodeMgr::getInstance()->add(parsedElement.nodeId, parsedElement.node_x, parsedElement.node_y);
-
                break;
            }
            case XML_PACKET_RX:
@@ -181,6 +157,11 @@ Animxmlparser::doParse()
                ++parsedElementCount;
                break;
 
+           }
+           case XML_LINK:
+           {
+           AnimLinkMgr::getInstance()->add(parsedElement.link_fromId, parsedElement.link_toId);
+                break;
            }
            case XML_INVALID:
            default:

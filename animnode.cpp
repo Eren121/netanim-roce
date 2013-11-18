@@ -2,6 +2,7 @@
 #include <QGraphicsScene>
 #include "animnode.h"
 #include "animatorview.h"
+#include "animatorconstants.h"
 #include "logqt.h"
 #include "log.h"
 #include "fatal-error.h"
@@ -20,6 +21,7 @@ AnimNode::AnimNode(uint32_t nodeId, qreal x, qreal y):m_nodeDescription(0),
     m_y(y)
 {
     //setVisible(false);
+    setZValue(ANIMNODE_ZVALUE);
 }
 
 AnimNode::~AnimNode()

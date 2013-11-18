@@ -14,7 +14,8 @@ SOURCES += \
     animatormode.cpp \
     mode.cpp \
     animxmlparser.cpp \
-    animatorview.cpp
+    animatorview.cpp \
+    animlink.cpp
 
 HEADERS += \
     myview.h \
@@ -37,7 +38,8 @@ HEADERS += \
     animatorview.h \
     mode.h \
     animxmlparser.h \
-    animevent.h
+    animevent.h \
+    animlink.h
 
 DEFINES += NS3_LOG_ENABLE
 

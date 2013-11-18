@@ -43,6 +43,7 @@ AnimPacket::AnimPacket (uint32_t fromNodeId,
   m_sin = sin ((360 - m_line.angle ()) * PI/180);
   setVisible(false);
   m_type = PacketEvent;
+  setZValue(ANIMPACKET_ZVAVLUE);
 }
 
 uint32_t
