@@ -125,17 +125,20 @@ AnimPacket::paint (QPainter *painter, const QStyleOptionGraphicsItem *option, QW
     QPainterPath arrowTailPath;
     arrowTailPath.moveTo(0, 0);
     arrowTailPath.lineTo (-5, 0);
-    p.setColor(Qt::blue);
+    p.setColor(Qt::red);
     painter->setPen(p);
-    p.setWidthF(1.0);
+    //p.setWidthF(1.0);
     painter->setPen(p);
     painter->rotate (360 - m_line.angle ());
     painter->drawPath(arrowTailPath);
     painter->restore();
 
 
+    QPolygonF arrowHeadPolygon;
 
   QPainterPath arrowHeadPath;
+  arrowHeadPolygon << QPointF (0, 0) << QPointF (-2 * cos (PI/6), -2 * sin (PI/6)) << QPointF (-2 * cos (PI/6), 2 * sin (PI/6));
+
   arrowHeadPath.lineTo (-2 * cos (PI/10), -2 * sin (PI/10));
   arrowHeadPath.moveTo (0, 0);
   arrowHeadPath.lineTo (-2 * cos (PI/10), 2 * sin (PI/10));
@@ -143,11 +146,16 @@ AnimPacket::paint (QPainter *painter, const QStyleOptionGraphicsItem *option, QW
   QTransform viewTransform = AnimatorView::getInstance()->getTransform();
   arrowHeadPath.moveTo (0, 0);
   painter->save();
-  p.setColor(Qt::black);
-  p.setWidthF(1.1);
-  painter->setPen(p);
+  QPen arrowHeadPen;
+  arrowHeadPen.setColor(Qt::black);
+  //p.setWidthF(1.1);
+  painter->setPen(arrowHeadPen);
   painter->rotate (360 - m_line.angle ());
-  painter->drawPath(arrowHeadPath);
+  QBrush brush;
+  brush.setStyle(Qt::SolidPattern);
+  painter->setBrush(brush);
+  painter->drawPolygon(arrowHeadPolygon);
+  //painter->drawPath(arrowHeadPath);
   painter->restore();
 
 
@@ -194,11 +202,13 @@ AnimPacket::paint (QPainter *painter, const QStyleOptionGraphicsItem *option, QW
   QPainterPath textPath;
   QFont f ("Helvetica");//= painter->font();
   f.setStyleHint(QFont::Times);
-  f.setPointSizeF(8/viewTransform.m22());
+  //f.setPointSizeF(8/viewTransform.m22());
+  f.setPixelSize(5);
+  //NS_LOG_DEBUG ("ViewT:" <<viewTransform );
   painter->setFont(f);
-  textPath.addText(0, 0, f, "Jo");
+  textPath.addText(0, -1, f, "Jo");
   p.setColor(Qt::black);
-  p.setWidthF(0.5);
+  //p.setWidthF(0.5);
   painter->drawText(0, -1, "Jo");
 
   QRectF textBoundingRect = textTransform.mapRect(textPath.boundingRect());
