@@ -119,26 +119,56 @@ AnimPacket::boundingRect () const
 void
 AnimPacket::paint (QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
-  QPainterPath path;
-  path.lineTo (-2 * cos (PI/10), -2 * sin (PI/10));
-  path.moveTo (0, 0);
-  path.lineTo (-2 * cos (PI/10), 2 * sin (PI/10));
-  path.moveTo (0, 0);
+    QPen p;
+
+    painter->save();
+    QPainterPath arrowTailPath;
+    arrowTailPath.moveTo(0, 0);
+    arrowTailPath.lineTo (-5, 0);
+    p.setColor(Qt::blue);
+    painter->setPen(p);
+    p.setWidthF(1.0);
+    painter->setPen(p);
+    painter->rotate (360 - m_line.angle ());
+    painter->drawPath(arrowTailPath);
+    painter->restore();
 
 
-  painter->save ();
-  QPen p(Qt::blue);
+
+  QPainterPath arrowHeadPath;
+  arrowHeadPath.lineTo (-2 * cos (PI/10), -2 * sin (PI/10));
+  arrowHeadPath.moveTo (0, 0);
+  arrowHeadPath.lineTo (-2 * cos (PI/10), 2 * sin (PI/10));
+  arrowHeadPath.moveTo (0, 0);
   QTransform viewTransform = AnimatorView::getInstance()->getTransform();
-  path.moveTo (0, 0);
-  path.lineTo (-5, 0);
+  arrowHeadPath.moveTo (0, 0);
+  painter->save();
+  p.setColor(Qt::black);
+  p.setWidthF(1.1);
   painter->setPen(p);
   painter->rotate (360 - m_line.angle ());
-  painter->drawPath (path);
+  painter->drawPath(arrowHeadPath);
+  painter->restore();
+
+
+
+
+
+
+  QPainterPath path;
+  path.moveTo(0, 0);
+  path.addPath(arrowHeadPath);
+  path.moveTo(0, 0);
+  path.addPath(arrowTailPath);
+
+
+
+
+
   m_boundingRect = path.boundingRect ();
   QTransform t;
   t.rotate(360 - m_line.angle ());
   m_boundingRect = t.mapRect(m_boundingRect);
-  painter->restore();
 
 
 
@@ -164,10 +194,12 @@ AnimPacket::paint (QPainter *painter, const QStyleOptionGraphicsItem *option, QW
   QPainterPath textPath;
   QFont f ("Helvetica");//= painter->font();
   f.setStyleHint(QFont::Times);
-  f.setPointSizeF(10/viewTransform.m22());
+  f.setPointSizeF(8/viewTransform.m22());
   painter->setFont(f);
   textPath.addText(0, 0, f, "Jo");
-  painter->drawText(0, 0, "Jo");
+  p.setColor(Qt::black);
+  p.setWidthF(0.5);
+  painter->drawText(0, -1, "Jo");
 
   QRectF textBoundingRect = textTransform.mapRect(textPath.boundingRect());
 
