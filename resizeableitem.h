@@ -20,8 +20,11 @@
 #ifndef RESIZEABLEITEM_H
 #define RESIZEABLEITEM_H
 
+#include <stdint.h>
+
 #include <QGraphicsItem>
 #include <QGraphicsSceneMouseEvent>
+
 
 
 #define PIXMAP_RESIZING_BORDER 5
@@ -68,6 +71,10 @@ private:
     bool m_resizing;
     ResizeableItemType_t m_type;
     QPixmap * m_pixmap;
+    uint8_t m_r;
+    uint8_t m_g;
+    uint8_t m_b;
+    uint8_t m_alpha;
     bool isResizing();
     void setResizingDirection(ResizeDirection_t direction);
 

@@ -35,7 +35,11 @@ ResizeableItem::ResizeableItem():
     m_type(ResizeableItem::CIRCLE),
     m_width(15),
     m_height(15),
-    m_pixmap(0)
+    m_pixmap(0),
+    m_r(255),
+    m_g(0),
+    m_b(0),
+    m_alpha(240)
 {
     NS_LOG_FUNCTION(m_mousePressed);
     setAcceptsHoverEvents(true);
@@ -81,7 +85,13 @@ void ResizeableItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
             painter->drawRect(0, 0, m_width, m_height);
             break;
         case ResizeableItem::CIRCLE:
+            {
+            QBrush brush;
+            brush.setStyle(Qt::SolidPattern);
+            brush.setColor(QColor (m_r, m_g, m_b, m_alpha));
+            painter->setBrush(brush);
             painter->drawEllipse(0, 0, m_width, m_height);
+            }
             break;
         case ResizeableItem::PIXMAP:
             if (m_pixmap)

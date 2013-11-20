@@ -27,6 +27,7 @@ private:
     qreal m_x;
     qreal m_y;
 
+
 };
 
 
