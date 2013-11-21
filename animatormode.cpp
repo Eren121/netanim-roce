@@ -1100,6 +1100,7 @@ AnimatorMode::showPacketStatsSlot()
                        AnimNodeMgr::getInstance()->getNode(animNode->getNodeId())->setNodeDescription(QString::number(animNode->getNodeId()));
                        m_currentTime = j->first;
                        AnimatorScene::getInstance()->setSceneRect(QRectF (AnimNodeMgr::getInstance()->getMinPoint(), AnimNodeMgr::getInstance()->getMaxPoint()));
+                       AnimatorView::getInstance()->postParse();
                        break;
                     }
                 case AnimEvent::PACKET_EVENT:

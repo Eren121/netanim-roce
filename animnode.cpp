@@ -154,7 +154,8 @@ AnimNodeMgr::getMinPoint()
 QPointF
 AnimNodeMgr::getMaxPoint()
 {
-    return QPointF (m_maxX, m_maxY);
+    qreal m = qMax (m_maxX, m_maxY);
+    return QPointF (m, m);
 }
 
 
