@@ -126,6 +126,7 @@ void
 Animxmlparser::doParse()
 {
     uint64_t parsedElementCount = 0;
+    AnimatorMode * pAnimatorMode = AnimatorMode::getInstance();
     while(!isParsingComplete())
     {
         if(AnimatorMode::getInstance()->keepAppResponsive())
@@ -144,25 +145,31 @@ Animxmlparser::doParse()
            }
            case XML_NODE:
            {
-               AnimNodeMgr::getInstance()->add(parsedElement.nodeId, parsedElement.node_x, parsedElement.node_y);
+
+               AnimNodeAddEvent * ev = new AnimNodeAddEvent(parsedElement.nodeId, parsedElement.node_x, parsedElement.node_y);
+               pAnimatorMode->addAnimEvent(0, ev);
                break;
            }
            case XML_PACKET_RX:
            {
-               AnimPacketMgr::getInstance()->add(parsedElement.packetrx_fromId,
+               /*AnimPacketMgr::getInstance()->add(parsedElement.packetrx_fromId,
                                                  parsedElement.packetrx_toId,
                                                  parsedElement.packetrx_fbTx,
-                                                 parsedElement.packetrx_fbRx);
-
+                                                 parsedElement.packetrx_fbRx);*/
                ++parsedElementCount;
                break;
-
            }
            case XML_LINK:
            {
-           AnimLinkMgr::getInstance()->add(parsedElement.link_fromId, parsedElement.link_toId);
+                //AnimLinkMgr::getInstance()->add(parsedElement.link_fromId, parsedElement.link_toId);
                 break;
            }
+            case XML_NODEUPDATE:
+            {
+
+                break;
+
+            }
            case XML_INVALID:
            default:
            {
@@ -235,6 +242,10 @@ Animxmlparser::parseNext()
             parsedElement = parseLinkUpdate();
         }
         if(m_reader->name() == "nodeupdate")
+        {
+            parsedElement = parseNodeUpdate();
+        }
+        if(m_reader->name() == "nu")
         {
             parsedElement = parseNodeUpdate();
         }
@@ -338,16 +349,20 @@ Animxmlparser::parseNodeUpdate()
 {
     ParsedElement parsedElement;
     parsedElement.type = XML_NODEUPDATE;
-    parsedElement.nodeId = m_reader->attributes().value("id").toString().toUInt();
-    parsedElement.nodeDescription = m_reader->attributes().value("descr").toString();
-    parsedElement.node_r = m_reader->attributes().value("r").toString().toUInt();
-    parsedElement.node_g = m_reader->attributes().value("g").toString().toUInt();
-    parsedElement.node_b = m_reader->attributes().value("b").toString().toUInt();
-    parsedElement.visible = m_reader->attributes().value("visible").toString().toInt();
-    parsedElement.updateTime = m_reader->attributes().value("t").toString().toDouble();
-    parsedElement.hasColorUpdate = !m_reader->attributes().value("r").isEmpty();
-    parsedElement.node_batteryCapacity = m_reader->attributes().value("rc").toString().toDouble();
-    parsedElement.hasBattery = !m_reader->attributes().value("rc").isEmpty();
+    QString nodeUpdateString = m_reader->attributes().value("p").toString();
+    if(nodeUpdateString == "p")
+        parsedElement.nodeUpdateType = ParsedElement::POSITION;
+    switch(parsedElement.nodeUpdateType)
+    {
+        case ParsedElement::POSITION:
+            parsedElement.updateTime = m_reader->attributes().value("t").toString().toDouble();
+            parsedElement.node_x = m_reader->attributes().value("x").toString().toDouble();
+            parsedElement.node_y = m_reader->attributes().value("y").toString().toDouble();
+            parsedElement.nodeId = m_reader->attributes().value("id").toString().toUInt();
+        break;
+
+    }
+
     return parsedElement;
 }
 

@@ -23,6 +23,8 @@
 #include "animatorscene.h"
 #include "animatorview.h"
 #include "mode.h"
+#include "timevalue.h"
+#include "animevent.h"
 
 #include <QWidget>
 #include <QtGui/QToolButton>
@@ -68,6 +70,7 @@ public:
     void setWPacketDetected();
     void setFocus(bool focus);
     void setCurrentTime(qreal currentTime);
+    void addAnimEvent (qreal t, AnimEvent *);
 
     // Actions
 
@@ -105,7 +108,7 @@ private:
     qreal m_packetPersistTime;
     bool m_wPacketDetected;
     uint64_t m_rxCount;
-
+    TimeValue<AnimEvent *> m_events;
 
 
     //controls
@@ -157,6 +160,7 @@ private:
     QToolButton * m_showRoutePathButton;
     QGraphicsPixmapItem * m_background;
 
+
     //functions
     AnimatorMode();
     bool parseXMLTraceFile(QString traceFileName);
@@ -187,6 +191,7 @@ private:
     void setMaxSimulationTime(double maxTime);
     void resetBackground();
     void displayPacket(qreal t);
+    void dispatchEvents ();
 
 
 private slots:

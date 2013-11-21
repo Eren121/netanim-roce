@@ -21,6 +21,7 @@ public:
     QPointF getCenter();
     qreal getX();
     qreal getY();
+    uint32_t getNodeId();
 private:
     QGraphicsTextItem * m_nodeDescription;
     uint32_t m_nodeId;

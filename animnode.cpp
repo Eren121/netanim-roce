@@ -39,6 +39,13 @@ AnimNode::getY()
 {
     return m_y;
 }
+
+uint32_t
+AnimNode::getNodeId()
+{
+    return m_nodeId;
+}
+
 QPointF AnimNode::getCenter()
 {
     return sceneBoundingRect().center();

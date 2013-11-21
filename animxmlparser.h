@@ -27,6 +27,8 @@
 #include <QLabel>
 #include <QTableWidget>
 
+#include "animevent.h"
+
 namespace netanim {
 
 enum ParsedElementType
@@ -95,6 +97,14 @@ struct ParsedElement
     // Has Color update
     bool hasColorUpdate;
     bool hasBattery; //!< Has battery with possible capacity
+
+
+    typedef enum {
+        POSITION
+    } NodeUpdate_Type;
+    // node update type
+    NodeUpdate_Type nodeUpdateType;
+
 };
 
 

@@ -22,6 +22,7 @@ AnimPacket::AnimPacket (uint32_t fromNodeId,
                         qreal lastBitTx,
                         qreal firstBitRx,
                         qreal lastBitRx):
+    AnimEvent(PACKET_EVENT),
     m_fromNodeId (fromNodeId),
     m_toNodeId (toNodeId),
     m_firstBitTx (firstBitTx),
@@ -42,7 +43,6 @@ AnimPacket::AnimPacket (uint32_t fromNodeId,
   m_cos = cos ((360 - m_line.angle ()) * PI/180);
   m_sin = sin ((360 - m_line.angle ()) * PI/180);
   setVisible(false);
-  m_type = PacketEvent;
   setZValue(ANIMPACKET_ZVAVLUE);
 }
 

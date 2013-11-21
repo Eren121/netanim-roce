@@ -664,6 +664,12 @@ AnimatorMode::setMaxSimulationTime(double maxTime)
     m_simulationTimeSlider->setRange(0, m_parsedMaxSimulationTime);
 }
 
+void
+AnimatorMode::addAnimEvent(qreal t, AnimEvent * event)
+{
+    m_events.add(t, event);
+}
+
 bool
 AnimatorMode::parseXMLTraceFile(QString traceFileName)
 {
@@ -698,6 +704,8 @@ AnimatorMode::preParse()
     //AnimatorScene::getInstance()->preParse();
 }
 
+
+
 void
 AnimatorMode::postParse()
 {
@@ -715,6 +723,10 @@ AnimatorMode::postParse()
     m_parseProgressBar->reset();
     //m_showMetaButton->setChecked(AnimPktMgr::getInstance()->getMetaInfoSeen());
     resetBackground();
+
+    dispatchEvents();
+
+    /*
     uint32_t nodeCount = AnimNodeMgr::getInstance()->getCount();
     for (uint32_t i = 0; i < nodeCount; ++i)
     {
@@ -737,7 +749,7 @@ AnimatorMode::postParse()
             AnimLink * animLink = *j;
             AnimatorScene::getInstance()->addItem(animLink);
         }
-    }
+    }*/
 
 
 }
@@ -1010,8 +1022,8 @@ AnimatorMode::showPacketStatsSlot()
 
     QFileDialog fileDialog;
     fileDialog.setFileMode(QFileDialog::ExistingFiles);
-    QString traceFileName = "/home/john/ns3/ns-3-dev/dumbbell-animation.xml";
-    //QString traceFileName = "/home/john/ns3/ns-3-dev/wireless-animation.xml";
+    //QString traceFileName = "/home/john/ns3/ns-3-dev/dumbbell-animation.xml";
+    QString traceFileName = "/home/john/ns3/ns-3-dev/wireless-animation.xml";
    // QString traceFileName = "C:\\Users\\jabraham\\Downloads\\dumbbell-animation.xml";
 
     /*if(fileDialog.exec())
@@ -1063,8 +1075,57 @@ AnimatorMode::showPacketStatsSlot()
     }
  }
 
+ void
+ AnimatorMode::dispatchEvents()
+ {
+     TimeValue<AnimEvent*>::TimeValueResult_t result;
+     TimeValue<AnimEvent*>::TimeValueIteratorPair_t pp = m_events.getNext(result);
+     //NS_LOG_DEBUG ("Now:" << pp.first->first);
+     if (result == m_events.GOOD)
+     {
+         for(TimeValue<AnimEvent*>::TimeValue_t::const_iterator j = pp.first;
+             j != pp.second;
+             ++j)
+         {
+               //NS_LOG_DEBUG ("fbTx:" << j->first);
+               AnimEvent * ev = j->second;
+               switch (ev->m_type)
+               {
+                   case AnimEvent::ADD_NODE_EVENT:
+                    {
+                       AnimNodeAddEvent * addEvent = static_cast<AnimNodeAddEvent *> (ev);
+                       AnimNode * animNode = AnimNodeMgr::getInstance()->add(addEvent->m_nodeId, addEvent->m_x, addEvent->m_y);
+                       AnimatorScene::getInstance()->addItem(animNode);
+                       animNode->setPos(animNode->getX(), animNode->getY());
+                       AnimNodeMgr::getInstance()->getNode(animNode->getNodeId())->setNodeDescription(QString::number(animNode->getNodeId()));
+                       m_currentTime = j->first;
+                       break;
+                    }
+                case AnimEvent::PACKET_EVENT:
+                   {
+                       AnimPacket * p = static_cast<AnimPacket *> (j->second);
+                       AnimatorScene::getInstance()->addPacket(p);
+                       p->update(m_currentTime);
+                       p->setVisible(true);
+                       p->setPos(p->getHead ());
+                       QPropertyAnimation  * propAnimation = new QPropertyAnimation (p, "pos");
+                       propAnimation->setDuration(2000);
+                       propAnimation->setStartValue(p->getFromPos());
+                       propAnimation->setEndValue(p->getToPos());
+                       //propAnimation->setEasingCurve(QEasingCurve::InOutElastic);
+                       propAnimation->start();
+                       AnimatorScene::getInstance()->update();
+                       m_currentTime = j->first;
+                       break;
+
+                   }
+                } //switch
+            } // for loop
+
+    } // if result == good
 
 
+ }
 
  void
  AnimatorMode::displayPacket(qreal t)
