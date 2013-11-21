@@ -1099,20 +1099,25 @@ AnimatorMode::showPacketStatsSlot()
                        animNode->setPos(animNode->getX(), animNode->getY());
                        AnimNodeMgr::getInstance()->getNode(animNode->getNodeId())->setNodeDescription(QString::number(animNode->getNodeId()));
                        m_currentTime = j->first;
+                       AnimatorScene::getInstance()->setSceneRect(QRectF (AnimNodeMgr::getInstance()->getMinPoint(), AnimNodeMgr::getInstance()->getMaxPoint()));
                        break;
                     }
                 case AnimEvent::PACKET_EVENT:
                    {
-                       AnimPacket * p = static_cast<AnimPacket *> (j->second);
-                       AnimatorScene::getInstance()->addPacket(p);
-                       p->update(m_currentTime);
-                       p->setVisible(true);
-                       p->setPos(p->getHead ());
-                       QPropertyAnimation  * propAnimation = new QPropertyAnimation (p, "pos");
+                       AnimatorScene::getInstance()->purgeAnimatedPackets();
+                       AnimPacketEvent * packetEvent = static_cast<AnimPacketEvent *> (j->second);
+                       AnimPacket * animPacket = AnimPacketMgr::getInstance()->add(packetEvent->m_fromId,
+                                                                                   packetEvent->m_toId,
+                                                                                   packetEvent->m_fbTx,
+                                                                                   packetEvent->m_fbRx);
+                       AnimatorScene::getInstance()->addPacket(animPacket);
+                       animPacket->update(m_currentTime);
+                       animPacket->setVisible(true);
+                       animPacket->setPos(animPacket->getHead ());
+                       QPropertyAnimation  * propAnimation = new QPropertyAnimation (animPacket, "pos");
                        propAnimation->setDuration(2000);
-                       propAnimation->setStartValue(p->getFromPos());
-                       propAnimation->setEndValue(p->getToPos());
-                       //propAnimation->setEasingCurve(QEasingCurve::InOutElastic);
+                       propAnimation->setStartValue(animPacket->getFromPos());
+                       propAnimation->setEndValue(animPacket->getToPos());
                        propAnimation->start();
                        AnimatorScene::getInstance()->update();
                        m_currentTime = j->first;
@@ -1130,34 +1135,6 @@ AnimatorMode::showPacketStatsSlot()
  void
  AnimatorMode::displayPacket(qreal t)
  {
-     AnimatorScene::getInstance()->purgeAnimatedPackets();
-     TimeValue<AnimEvent*> * pPackets = AnimPacketMgr::getInstance()->getPackets();
-     TimeValue<AnimEvent*>::TimeValueResult_t result;
-     TimeValue<AnimEvent*>::TimeValueIteratorPair_t pp = pPackets->getNext(result);
-     //NS_LOG_DEBUG ("Now:" << pp.first->first);
-     if (result == pPackets->GOOD)
-     {
-         for(TimeValue<AnimEvent*>::TimeValue_t::const_iterator j = pp.first;
-             j != pp.second;
-             ++j)
-         {
-           //NS_LOG_DEBUG ("fbTx:" << j->first);
-           AnimPacket * p = static_cast<AnimPacket *> (j->second);
-           AnimatorScene::getInstance()->addPacket(p);
-           p->update(t);
-           p->setVisible(true);
-           p->setPos(p->getHead ());
-           QPropertyAnimation  * propAnimation = new QPropertyAnimation (p, "pos");
-           propAnimation->setDuration(2000);
-           propAnimation->setStartValue(p->getFromPos());
-           propAnimation->setEndValue(p->getToPos());
-           //propAnimation->setEasingCurve(QEasingCurve::InOutElastic);
-           propAnimation->start();
-           AnimatorScene::getInstance()->update();
-           m_currentTime = j->first;
-
-         }
-     }
  }
 
 
@@ -1205,7 +1182,8 @@ AnimatorMode::showPacketStatsSlot()
     //AnimatorScene::getInstance()->test();
     static qreal t = 0.659;
     m_qLcdNumber->display(t);
-    displayPacket(t);
+    //displayPacket(t);
+    dispatchEvents();
     t += 0.00005;
  }
 

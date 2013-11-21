@@ -61,14 +61,9 @@ class AnimPacketMgr
 {
 public:
     static AnimPacketMgr * getInstance();
-    void add(uint32_t fromId, uint32_t toId, qreal fbTx, qreal fbRx);
-    //TimeValue<AnimPacket *> * getPackets();
-    TimeValue<AnimEvent *> * getPackets();
-
+    AnimPacket * add(uint32_t fromId, uint32_t toId, qreal fbTx, qreal fbRx);
 private:
     AnimPacketMgr();
-   // TimeValue<AnimPacket *> m_packets;
-    TimeValue<AnimEvent *> m_packets;
 
 
 };

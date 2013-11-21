@@ -244,7 +244,6 @@ AnimPacket::getToPos()
 
 AnimPacketMgr::AnimPacketMgr()
 {
-    m_packets.setLookBack(2);
 }
 AnimPacketMgr *
 AnimPacketMgr::getInstance()
@@ -256,11 +255,10 @@ AnimPacketMgr::getInstance()
     return pAnimPacketMgr;
 }
 
-void
+AnimPacket *
 AnimPacketMgr::add(uint32_t fromId, uint32_t toId, qreal fbTx, qreal fbRx)
 {
-    if (fromId == toId)
-        return;
+
     /*if (fromId != 0)
         return;
     if (toId != 3)
@@ -269,17 +267,10 @@ AnimPacketMgr::add(uint32_t fromId, uint32_t toId, qreal fbTx, qreal fbRx)
         return;*/
     AnimPacket * pkt = new AnimPacket(fromId, toId, fbTx, 0, fbRx, 0);
     //NS_LOG_DEBUG ("FbTx:" << fbTx);
-    m_packets.add(fbTx, pkt);
+    //m_packets.add(fbTx, pkt);
+    return pkt;
 }
 
-
-//TimeValue<AnimPacket *> *
-TimeValue<AnimEvent *> *
-
-AnimPacketMgr::getPackets()
-{
-    return &m_packets;
-}
 
 
 }

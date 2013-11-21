@@ -40,9 +40,15 @@ public:
     AnimNode * getNode(uint32_t nodeId);
     AnimNode * add(uint32_t nodeId, qreal x, qreal y);
     uint32_t getCount();
+    QPointF getMinPoint ();
+    QPointF getMaxPoint ();
 private:
     AnimNodeMgr();
     NodeIdAnimNodeMap_t m_nodes;
+    qreal m_minX;
+    qreal m_minY;
+    qreal m_maxX;
+    qreal m_maxY;
 
 };
 

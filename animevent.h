@@ -39,6 +39,26 @@ public:
 };
 
 
+class AnimPacketEvent: public AnimEvent
+{
+public:
+    AnimPacketEvent(uint32_t fromId, uint32_t toId, qreal fbTx, qreal fbRx):
+        AnimEvent(PACKET_EVENT),
+        m_fromId(fromId),
+        m_toId(toId),
+        m_fbTx(fbTx),
+        m_fbRx(fbRx)
+    {
+    }
+    uint32_t m_fromId;
+    uint32_t m_toId;
+    qreal m_fbTx;
+    qreal m_fbRx;
+
+
+};
+
+
 
 
 } // namespace netanim

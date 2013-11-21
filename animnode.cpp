@@ -94,7 +94,11 @@ void AnimNode::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
 
 
-AnimNodeMgr::AnimNodeMgr()
+AnimNodeMgr::AnimNodeMgr():
+    m_minX(0),
+    m_minY(0),
+    m_maxX(0),
+    m_maxY(0)
 {
 
 }
@@ -120,6 +124,11 @@ AnimNode * AnimNodeMgr::add(uint32_t nodeId, qreal x, qreal y)
     node->setPos(x, y);
     //node->setPixmap(pix);
     m_nodes[nodeId] = node;
+    m_minX = qMin (m_minX, x);
+    m_minY = qMin (m_minY, y);
+    m_maxX = qMax (m_maxX, x);
+    m_maxY = qMax (m_maxY, y);
+
     return node;
 }
 
@@ -134,6 +143,20 @@ AnimNodeMgr::getCount()
 {
     return m_nodes.size();
 }
+
+
+QPointF
+AnimNodeMgr::getMinPoint()
+{
+    return QPointF (m_minX, m_minY);
+}
+
+QPointF
+AnimNodeMgr::getMaxPoint()
+{
+    return QPointF (m_maxX, m_maxY);
+}
+
 
 
 }

@@ -152,10 +152,13 @@ Animxmlparser::doParse()
            }
            case XML_PACKET_RX:
            {
-               /*AnimPacketMgr::getInstance()->add(parsedElement.packetrx_fromId,
-                                                 parsedElement.packetrx_toId,
-                                                 parsedElement.packetrx_fbTx,
-                                                 parsedElement.packetrx_fbRx);*/
+               if (parsedElement.packetrx_fromId == parsedElement.packetrx_toId)
+                    break;
+               AnimPacketEvent * ev = new AnimPacketEvent(parsedElement.packetrx_fromId,
+                                                      parsedElement.packetrx_toId,
+                                                      parsedElement.packetrx_fbTx,
+                                                      parsedElement.packetrx_fbRx);
+               pAnimatorMode->addAnimEvent(parsedElement.packetrx_fbTx, ev);
                ++parsedElementCount;
                break;
            }
