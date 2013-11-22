@@ -42,18 +42,20 @@ public:
 class AnimPacketEvent: public AnimEvent
 {
 public:
-    AnimPacketEvent(uint32_t fromId, uint32_t toId, qreal fbTx, qreal fbRx):
+    AnimPacketEvent(uint32_t fromId, uint32_t toId, qreal fbTx, qreal fbRx, bool isWPacket):
         AnimEvent(PACKET_EVENT),
         m_fromId(fromId),
         m_toId(toId),
         m_fbTx(fbTx),
-        m_fbRx(fbRx)
+        m_fbRx(fbRx),
+        m_isWPacket(isWPacket)
     {
     }
     uint32_t m_fromId;
     uint32_t m_toId;
     qreal m_fbTx;
     qreal m_fbRx;
+    bool m_isWPacket;
 
 
 };

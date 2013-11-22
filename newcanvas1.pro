@@ -15,9 +15,7 @@ SOURCES += \
     mode.cpp \
     animxmlparser.cpp \
     animatorview.cpp \
-    animlink.cpp \
-    animevent.cpp
-
+    animlink.cpp
 HEADERS += \
     myview.h \
     log.h \

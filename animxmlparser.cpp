@@ -157,7 +157,8 @@ Animxmlparser::doParse()
                AnimPacketEvent * ev = new AnimPacketEvent(parsedElement.packetrx_fromId,
                                                       parsedElement.packetrx_toId,
                                                       parsedElement.packetrx_fbTx,
-                                                      parsedElement.packetrx_fbRx);
+                                                      parsedElement.packetrx_fbRx,
+                                                      parsedElement.isWpacket);
                pAnimatorMode->addAnimEvent(parsedElement.packetrx_fbTx, ev);
                ++parsedElementCount;
                break;
@@ -188,6 +189,7 @@ Animxmlparser::parseNext()
     ParsedElement parsedElement;
     parsedElement.type = XML_INVALID;
     parsedElement.version = m_version;
+    parsedElement.isWpacket = false;
 
     if(m_reader->atEnd() || m_reader->hasError())
     {

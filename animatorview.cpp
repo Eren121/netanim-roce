@@ -127,7 +127,7 @@ void
 AnimatorView::postParse()
 {
     fitInView(AnimatorScene::getInstance()->sceneRect());
-    NS_LOG_DEBUG ("View Transform:" << transform());
+    //NS_LOG_DEBUG ("View Transform:" << transform());
 
 }
 

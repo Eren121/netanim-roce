@@ -19,16 +19,14 @@ AnimPacketMgr * pAnimPacketMgr = 0;
 AnimPacket::AnimPacket (uint32_t fromNodeId,
                         uint32_t toNodeId,
                         qreal firstBitTx,
-                        qreal lastBitTx,
                         qreal firstBitRx,
-                        qreal lastBitRx):
+                        bool isWPacket):
     AnimEvent(PACKET_EVENT),
     m_fromNodeId (fromNodeId),
     m_toNodeId (toNodeId),
     m_firstBitTx (firstBitTx),
-    m_lastBitTx (lastBitTx),
     m_firstBitRx (firstBitRx),
-    m_lastBitRx (lastBitRx)
+    m_isWPacket (isWPacket)
 {
   m_fromPos = AnimNodeMgr::getInstance ()->getNode (fromNodeId)->getCenter ();
   //m_fromPos = QPointF(AnimNodeMgr::getInstance ()->getNode (fromNodeId)->getX(), AnimNodeMgr::getInstance ()->getNode (fromNodeId)->getY());
@@ -70,18 +68,6 @@ AnimPacket::getFirstBitRx ()
   return m_firstBitRx;
 }
 
-qreal
-AnimPacket::getLastBitRx ()
-{
-  return m_lastBitRx;
-}
-
-qreal
-AnimPacket::getLastBitTx ()
-{
-  return m_lastBitTx;
-}
-
 #if 0
 void
 AnimPacket::update (qreal t)
@@ -120,11 +106,12 @@ void
 AnimPacket::paint (QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
     QPen p;
+    QTransform viewTransform = AnimatorView::getInstance()->getTransform();
 
     painter->save();
     QPainterPath arrowTailPath;
     arrowTailPath.moveTo(0, 0);
-    arrowTailPath.lineTo (-5, 0);
+    arrowTailPath.lineTo (-5 * (10/viewTransform.m22()) , 0);
     p.setColor(Qt::red);
     painter->setPen(p);
     //p.setWidthF(1.0);
@@ -137,13 +124,14 @@ AnimPacket::paint (QPainter *painter, const QStyleOptionGraphicsItem *option, QW
     QPolygonF arrowHeadPolygon;
 
   QPainterPath arrowHeadPath;
-  arrowHeadPolygon << QPointF (0, 0) << QPointF (-2 * cos (PI/6), -2 * sin (PI/6)) << QPointF (-2 * cos (PI/6), 2 * sin (PI/6));
+  qreal arrowHeadLength = 2 * (10/viewTransform.m22());
+  arrowHeadPolygon << QPointF (0, 0) << QPointF (-arrowHeadLength * cos (PI/10), -arrowHeadLength * sin (PI/10)) << QPointF (-arrowHeadLength * cos (PI/10), arrowHeadLength * sin (PI/10));
 
-  arrowHeadPath.lineTo (-2 * cos (PI/10), -2 * sin (PI/10));
+  arrowHeadPath.lineTo (-arrowHeadLength * cos (PI/10), -arrowHeadLength * sin (PI/10));
   arrowHeadPath.moveTo (0, 0);
-  arrowHeadPath.lineTo (-2 * cos (PI/10), 2 * sin (PI/10));
+  arrowHeadPath.lineTo (-arrowHeadLength * cos (PI/10), arrowHeadLength * sin (PI/10));
   arrowHeadPath.moveTo (0, 0);
-  QTransform viewTransform = AnimatorView::getInstance()->getTransform();
+
   arrowHeadPath.moveTo (0, 0);
   painter->save();
   QPen arrowHeadPen;
@@ -161,16 +149,11 @@ AnimPacket::paint (QPainter *painter, const QStyleOptionGraphicsItem *option, QW
 
 
 
-
-
   QPainterPath path;
   path.moveTo(0, 0);
   path.addPath(arrowHeadPath);
   path.moveTo(0, 0);
   path.addPath(arrowTailPath);
-
-
-
 
 
   m_boundingRect = path.boundingRect ();
@@ -203,7 +186,8 @@ AnimPacket::paint (QPainter *painter, const QStyleOptionGraphicsItem *option, QW
   QFont f ("Helvetica");//= painter->font();
   f.setStyleHint(QFont::Times);
   //f.setPointSizeF(8/viewTransform.m22());
-  f.setPixelSize(5);
+  //f.setPixelSize(5);
+  f.setPointSizeF(10/viewTransform.m22());
   //NS_LOG_DEBUG ("ViewT:" <<viewTransform );
   painter->setFont(f);
   textPath.addText(0, -1, f, "Jo");
@@ -218,6 +202,8 @@ AnimPacket::paint (QPainter *painter, const QStyleOptionGraphicsItem *option, QW
                           qMin (m_boundingRect.top(), textBoundingRect.top())),
                           QPointF(qMax (m_boundingRect.right(), textBoundingRect.right()),
                           qMax (m_boundingRect.bottom(), textBoundingRect.bottom())));
+
+
   //NS_LOG_DEBUG ("m_boundingRect:" << m_boundingRect);
 
 
@@ -256,7 +242,7 @@ AnimPacketMgr::getInstance()
 }
 
 AnimPacket *
-AnimPacketMgr::add(uint32_t fromId, uint32_t toId, qreal fbTx, qreal fbRx)
+AnimPacketMgr::add(uint32_t fromId, uint32_t toId, qreal fbTx, qreal fbRx, bool isWPacket)
 {
 
     /*if (fromId != 0)
@@ -265,7 +251,7 @@ AnimPacketMgr::add(uint32_t fromId, uint32_t toId, qreal fbTx, qreal fbRx)
         return;
     if (m_packets.getCount())
         return;*/
-    AnimPacket * pkt = new AnimPacket(fromId, toId, fbTx, 0, fbRx, 0);
+    AnimPacket * pkt = new AnimPacket(fromId, toId, fbTx, fbRx, isWPacket);
     //NS_LOG_DEBUG ("FbTx:" << fbTx);
     //m_packets.add(fbTx, pkt);
     return pkt;

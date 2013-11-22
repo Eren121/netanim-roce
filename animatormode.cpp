@@ -1023,8 +1023,9 @@ AnimatorMode::showPacketStatsSlot()
     QFileDialog fileDialog;
     fileDialog.setFileMode(QFileDialog::ExistingFiles);
     //QString traceFileName = "/home/john/ns3/ns-3-dev/dumbbell-animation.xml";
-    QString traceFileName = "/home/john/ns3/ns-3-dev/wireless-animation.xml";
-   // QString traceFileName = "C:\\Users\\jabraham\\Downloads\\dumbbell-animation.xml";
+    //QString traceFileName = "/home/john/ns3/ns-3-dev/wireless-animation.xml";
+    QString traceFileName = "C:\\Users\\jabraham\\Downloads\\wireless-animation.xml";
+    //QString traceFileName = "C:\\Users\\jabraham\\Downloads\\dumbbell-animation.xml";
 
     /*if(fileDialog.exec())
 =======
@@ -1083,6 +1084,7 @@ AnimatorMode::showPacketStatsSlot()
      //NS_LOG_DEBUG ("Now:" << pp.first->first);
      if (result == m_events.GOOD)
      {
+         QVector <AnimPacket *> packetsToAnimate;
          for(TimeValue<AnimEvent*>::TimeValue_t::const_iterator j = pp.first;
              j != pp.second;
              ++j)
@@ -1110,23 +1112,36 @@ AnimatorMode::showPacketStatsSlot()
                        AnimPacket * animPacket = AnimPacketMgr::getInstance()->add(packetEvent->m_fromId,
                                                                                    packetEvent->m_toId,
                                                                                    packetEvent->m_fbTx,
-                                                                                   packetEvent->m_fbRx);
-                       AnimatorScene::getInstance()->addPacket(animPacket);
-                       animPacket->update(m_currentTime);
-                       animPacket->setVisible(true);
-                       animPacket->setPos(animPacket->getHead ());
-                       QPropertyAnimation  * propAnimation = new QPropertyAnimation (animPacket, "pos");
-                       propAnimation->setDuration(2000);
-                       propAnimation->setStartValue(animPacket->getFromPos());
-                       propAnimation->setEndValue(animPacket->getToPos());
-                       propAnimation->start();
-                       AnimatorScene::getInstance()->update();
-                       m_currentTime = j->first;
+                                                                                   packetEvent->m_fbRx,
+                                                                                   packetEvent->m_isWPacket);
+                       packetsToAnimate.push_back(animPacket);
                        break;
 
                    }
                 } //switch
             } // for loop
+         for (QVector <AnimPacket *>::const_iterator i = packetsToAnimate.begin();
+              i != packetsToAnimate.end();
+              ++i)
+         {
+            AnimPacket * animPacket = *i;
+            AnimatorScene::getInstance()->addPacket(animPacket);
+            animPacket->update(m_currentTime);
+            animPacket->setVisible(true);
+            animPacket->setPos(animPacket->getHead ());
+
+
+
+            QPropertyAnimation  * propAnimation = new QPropertyAnimation (animPacket, "pos");
+            propAnimation->setDuration(2000);
+            propAnimation->setStartValue(animPacket->getFromPos());
+            propAnimation->setEndValue(animPacket->getToPos());
+            propAnimation->start();
+
+
+            AnimatorScene::getInstance()->update();
+            m_currentTime = pp.first->first;
+         }
 
     } // if result == good
 

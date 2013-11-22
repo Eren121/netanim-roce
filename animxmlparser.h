@@ -78,6 +78,9 @@ struct ParsedElement
     QString toNodeDescription;
     QString linkDescription;
 
+    // Is Wpacket
+    bool isWpacket;
+
     // Packet Rx
     double packetrx_fbTx;
     double packetrx_lbTx;

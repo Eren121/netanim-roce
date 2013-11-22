@@ -172,14 +172,14 @@ AnimPacket * AnimatorScene::getTestPacket(uint32_t fromNodeId, uint32_t toNodeId
     qreal firstBitRx = firstBitTx + propDelay;
     qreal lastBitRx = firstBitRx + lastBitDelta;
 
-    AnimPacket * p = new AnimPacket(fromNodeId,
+   /* AnimPacket * p = new AnimPacket(fromNodeId,
                                     toNodeId,
                                     l_firstBitTx,
                                     lastBitTx,
                                     firstBitRx,
-                                    lastBitRx);
-    addItem (p);
-    return p;
+                                    lastBitRx);*/
+    //addItem (p);
+    return 0;
 
 }
 
