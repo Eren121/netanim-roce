@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'animatormode.h'
 **
-** Created: Thu Nov 21 09:51:42 2013
+** Created: Fri Nov 22 09:17:04 2013
 **      by: The Qt Meta Object Compiler version 63 (Qt 4.8.1)
 **
 ** WARNING! All changes made in this file will be lost!

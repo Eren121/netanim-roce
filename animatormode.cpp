@@ -969,7 +969,8 @@ AnimatorMode::showPacketStatsSlot()
      m_updateRateTimer->stop();
      if(m_playing)
      {
-         displayPacket(m_currentTime);
+         //displayPacket(m_currentTime);
+         dispatchEvents();
          m_simulationTimeSlider->setValue(m_currentTime);
          m_qLcdNumber->display(m_currentTime);
          keepAppResponsive();
@@ -1023,8 +1024,8 @@ AnimatorMode::showPacketStatsSlot()
     QFileDialog fileDialog;
     fileDialog.setFileMode(QFileDialog::ExistingFiles);
     //QString traceFileName = "/home/john/ns3/ns-3-dev/dumbbell-animation.xml";
-    //QString traceFileName = "/home/john/ns3/ns-3-dev/wireless-animation.xml";
-    QString traceFileName = "C:\\Users\\jabraham\\Downloads\\wireless-animation.xml";
+    QString traceFileName = "/home/john/ns3/ns-3-dev/wireless-animation.xml";
+    //QString traceFileName = "C:\\Users\\jabraham\\Downloads\\wireless-animation.xml";
     //QString traceFileName = "C:\\Users\\jabraham\\Downloads\\dumbbell-animation.xml";
 
     /*if(fileDialog.exec())

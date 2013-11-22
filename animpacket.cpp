@@ -3,6 +3,8 @@
 #include <QPointF>
 #include <QPainter>
 #include <QPainterPath>
+#include <QStaticText>
+#include <QTextItem>
 #include "animpacket.h"
 #include "animnode.h"
 #include "animatorview.h"
@@ -42,6 +44,25 @@ AnimPacket::AnimPacket (uint32_t fromNodeId,
   m_sin = sin ((360 - m_line.angle ()) * PI/180);
   setVisible(false);
   setZValue(ANIMPACKET_ZVAVLUE);
+  m_testTextItem = new QGraphicsTextItem (this);
+  m_testTextItem->setPlainText("hola");
+  m_testTextItem->setFlag(QGraphicsItem::ItemIgnoresTransformations);
+
+  qreal textAngle = m_line.angle ();
+  if(textAngle < 90)
+  {
+      textAngle = 360-textAngle;
+  }
+  else if (textAngle > 270)
+  {
+      textAngle = 360-textAngle;
+  }
+  else
+  {
+    textAngle = 180-textAngle;
+  }
+  m_testTextItem->rotate( textAngle);
+
 }
 
 uint32_t
@@ -105,6 +126,9 @@ AnimPacket::boundingRect () const
 void
 AnimPacket::paint (QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
+    NS_LOG_DEBUG ("Packet Transform:" << transform());
+    NS_LOG_DEBUG ("Device Transform:" << painter->deviceTransform());
+    NS_LOG_DEBUG ("Scene Transform:" << sceneTransform());
     QPen p;
     QTransform viewTransform = AnimatorView::getInstance()->getTransform();
 
@@ -137,6 +161,8 @@ AnimPacket::paint (QPainter *painter, const QStyleOptionGraphicsItem *option, QW
   QPen arrowHeadPen;
   arrowHeadPen.setColor(Qt::black);
   //p.setWidthF(1.1);
+
+
   painter->setPen(arrowHeadPen);
   painter->rotate (360 - m_line.angle ());
   QBrush brush;
@@ -183,17 +209,42 @@ AnimPacket::paint (QPainter *painter, const QStyleOptionGraphicsItem *option, QW
   painter->rotate(textAngle);
   textTransform.rotate(textAngle);
   QPainterPath textPath;
-  QFont f ("Helvetica");//= painter->font();
+  QFont f ;//("Helvetica");//= painter->font();
+  f.setKerning(false);
   f.setStyleHint(QFont::Times);
   //f.setPointSizeF(8/viewTransform.m22());
   //f.setPixelSize(5);
-  f.setPointSizeF(10/viewTransform.m22());
+  f.setPointSizeF(15/viewTransform.m22());
+  f.setFixedPitch(true);
+  //f.s
+  //f.setPointSizeF(10);
+
+
   //NS_LOG_DEBUG ("ViewT:" <<viewTransform );
-  painter->setFont(f);
-  textPath.addText(0, -1, f, "Jo");
-  p.setColor(Qt::black);
+  QPen p1 = painter->pen();
+  p1.setColor(Qt::red);
+  p1.setStyle(Qt::SolidLine);
+  QBrush brush2 = painter->brush();
+  brush2.setStyle(Qt::SolidPattern);
+  brush2.setColor(Qt::black);
+  p1.setWidthF(1/viewTransform.m22());
+  p1.setBrush(brush2);
+  //p1.setCosmetic(true);
+  painter->setBrush(brush2);
+  painter->setPen(p1);
+  //painter->setFont(f);
+  textPath.addText(0, -2/viewTransform.m22(), f, "Jo");
+  //p.setColor(Qt::black);
   //p.setWidthF(0.5);
-  painter->drawText(0, -1, "Jo");
+  //GraphicsItemFlags fl = flags();
+  //setFlag(QGraphicsItem::ItemIgnoresTransformations);
+
+  painter->setTransform(m_testTextItem->transform());
+  //painter->drawPath(textPath);
+  //setFlags(fl);
+  painter->drawText(0, 0, "Jo");
+ // QStaticText st("mo");
+  //painter->drawStaticText(QPoint (0, 0), st);
 
   QRectF textBoundingRect = textTransform.mapRect(textPath.boundingRect());
 

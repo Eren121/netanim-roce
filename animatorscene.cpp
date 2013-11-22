@@ -99,6 +99,7 @@ void
 AnimatorScene::addPacket(AnimPacket *p)
 {
     addItem(p);
+    addItem(p->m_testTextItem);
     m_animatedPackets.push_back(p);
 }
 
@@ -147,7 +148,7 @@ void AnimatorScene::addPix()
 }
 void AnimatorScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
-    QGraphicsView * view = views().last();
+    /*QGraphicsView * view = views().last();
     //NS_LOG_DEBUG("Scene Mouse Move ScenePos:" << event->scenePos());
     //NS_LOG_DEBUG("Scene Mouse Move ScreenPos:" << event->screenPos());
 
@@ -158,7 +159,7 @@ void AnimatorScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     QString s = "  " + QString::number(sp.x()) + "," + QString::number(sp.y());
     m_mousePositionLabel->setText(s);
     m_mousePositionProxyWidget->setPos(sp);
-    m_mousePositionLabel->adjustSize();
+    m_mousePositionLabel->adjustSize();*/
     return QGraphicsScene::mouseMoveEvent(event);
 }
 

@@ -34,6 +34,7 @@ public:
   virtual QRectF boundingRect () const;
   void paint (QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);
   QPointF getHead ();
+  QGraphicsTextItem * m_testTextItem;
 
 
 private:

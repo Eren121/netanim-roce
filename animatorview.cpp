@@ -126,8 +126,38 @@ AnimatorView::systemReset()
 void
 AnimatorView::postParse()
 {
-    fitInView(AnimatorScene::getInstance()->sceneRect());
+
+    //fitInView(AnimatorScene::getInstance()->sceneRect());
     //NS_LOG_DEBUG ("View Transform:" << transform());
+
+
+
+         QTransform t;
+
+
+
+         qreal minDimension = qMin(getAnimatorScene()->width(), getAnimatorScene()->height());
+
+
+
+         qreal xScale = width()/minDimension;
+
+         qreal yScale = height()/minDimension;
+
+         //qDebug(width(), "Width");
+
+         //qDebug(height(), "height");
+
+         qreal minScale = qMin(xScale, yScale);
+
+         t.scale(minScale, minScale);
+
+        // getAnimatorScene()->setCurrentScale(minScale, minScale);
+
+         setTransform(t);
+         NS_LOG_DEBUG ("View Transform:" << transform());
+
+
 
 }
 
