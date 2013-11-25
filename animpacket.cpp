@@ -44,9 +44,9 @@ AnimPacket::AnimPacket (uint32_t fromNodeId,
   m_sin = sin ((360 - m_line.angle ()) * PI/180);
   setVisible(false);
   setZValue(ANIMPACKET_ZVAVLUE);
-  m_testTextItem = new QGraphicsTextItem (this);
-  m_testTextItem->setPlainText("hola");
-  m_testTextItem->setFlag(QGraphicsItem::ItemIgnoresTransformations);
+  m_infoText = new QGraphicsSimpleTextItem (this);
+  m_infoText->setText("hola");
+  m_infoText->setFlag(QGraphicsItem::ItemIgnoresTransformations);
 
   qreal textAngle = m_line.angle ();
   if(textAngle < 90)
@@ -61,7 +61,7 @@ AnimPacket::AnimPacket (uint32_t fromNodeId,
   {
     textAngle = 180-textAngle;
   }
-  m_testTextItem->rotate( textAngle);
+  m_infoText->rotate(textAngle);
 
 }
 
@@ -87,6 +87,12 @@ qreal
 AnimPacket::getFirstBitRx ()
 {
   return m_firstBitRx;
+}
+
+QGraphicsSimpleTextItem *
+AnimPacket::getInfoTextItem()
+{
+    return m_infoText;
 }
 
 #if 0
@@ -239,7 +245,7 @@ AnimPacket::paint (QPainter *painter, const QStyleOptionGraphicsItem *option, QW
   //GraphicsItemFlags fl = flags();
   //setFlag(QGraphicsItem::ItemIgnoresTransformations);
 
-  painter->setTransform(m_testTextItem->transform());
+  painter->setTransform(m_infoText->transform());
   //painter->drawPath(textPath);
   //setFlags(fl);
   painter->drawText(0, 0, "Jo");

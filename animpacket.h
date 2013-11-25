@@ -34,8 +34,7 @@ public:
   virtual QRectF boundingRect () const;
   void paint (QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);
   QPointF getHead ();
-  QGraphicsTextItem * m_testTextItem;
-
+  QGraphicsSimpleTextItem * getInfoTextItem();
 
 private:
   uint32_t m_fromNodeId;
@@ -52,6 +51,8 @@ private:
   QPointF m_toPos;
   QPointF m_head;
   QRectF m_boundingRect;
+  QGraphicsSimpleTextItem * m_infoText;
+
 };
 
 class AnimPacketMgr

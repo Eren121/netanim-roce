@@ -99,7 +99,8 @@ void
 AnimatorScene::addPacket(AnimPacket *p)
 {
     addItem(p);
-    addItem(p->m_testTextItem);
+    addItem(p->getInfoTextItem());
+    p->getInfoTextItem()->setPos(p->boundingRect().bottomLeft());
     m_animatedPackets.push_back(p);
 }
 
