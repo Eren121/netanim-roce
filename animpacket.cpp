@@ -165,13 +165,15 @@ AnimPacket::paint (QPainter *painter, const QStyleOptionGraphicsItem *option, QW
   arrowHeadPath.moveTo (0, 0);
   painter->save();
   QPen arrowHeadPen;
-  arrowHeadPen.setColor(Qt::black);
+  QColor black (0, 0, 5, 130);
+  arrowHeadPen.setColor(black);
   //p.setWidthF(1.1);
 
 
   painter->setPen(arrowHeadPen);
   painter->rotate (360 - m_line.angle ());
   QBrush brush;
+  brush.setColor(black);
   brush.setStyle(Qt::SolidPattern);
   painter->setBrush(brush);
   painter->drawPolygon(arrowHeadPolygon);

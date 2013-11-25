@@ -1024,8 +1024,8 @@ AnimatorMode::showPacketStatsSlot()
     QFileDialog fileDialog;
     fileDialog.setFileMode(QFileDialog::ExistingFiles);
     //QString traceFileName = "/home/john/ns3/ns-3-dev/dumbbell-animation.xml";
-    //QString traceFileName = "/home/john/ns3/ns-3-dev/wireless-animation.xml";
-    QString traceFileName = "C:\\Users\\jabraham\\Downloads\\wireless-animation2.xml";
+    QString traceFileName = "/home/john/ns3/ns-3-dev/wireless-animation.xml";
+    //QString traceFileName = "C:\\Users\\jabraham\\Downloads\\wireless-animation2.xml";
     //QString traceFileName = "C:\\Users\\jabraham\\Downloads\\dumbbell-animation.xml";
 
     /*if(fileDialog.exec())

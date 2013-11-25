@@ -122,7 +122,7 @@ AnimNode * AnimNodeMgr::add(uint32_t nodeId, qreal x, qreal y)
     QPixmap pix(":/resources/ns3logo2.png","png");
     AnimNode * node = new AnimNode(nodeId, x, y);
     node->setPos(x, y);
-    //node->setPixmap(pix);
+    node->setPixmap(pix);
     m_nodes[nodeId] = node;
     m_minX = qMin (m_minX, x);
     m_minY = qMin (m_minY, y);

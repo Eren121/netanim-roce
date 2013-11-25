@@ -122,7 +122,8 @@ void ResizeableItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         }
         if(xScale > 0)
         {
-            scale(xScale, 1);
+            //scale(xScale, 1);
+            m_width = eventPosX;
         }
 
     }
@@ -139,6 +140,8 @@ void ResizeableItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         if(xScale > 0)
         {
             scale(xScale, 1);
+            m_width = m_width * xScale;
+
             setPos(QPointF(mapToScene(event->pos())).x(), savedY);
         }
 
@@ -221,7 +224,8 @@ qreal ResizeableItem::getBorderWidth()
     QGraphicsView * view = scene()->views().last();
     QPointF scenePos1 = view->mapToScene(QPointF(0, 0).toPoint());
     QPointF scenePos2 = view->mapToScene(QPointF(PIXMAP_RESIZING_BORDER, 0).toPoint());
-    return qAbs(scenePos2.x() - scenePos1.x());
+    //return qAbs(scenePos2.x() - scenePos1.x());
+    return qAbs (sceneBoundingRect().width() * 0.1);
 }
 
 void ResizeableItem::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
