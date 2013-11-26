@@ -146,7 +146,10 @@ Animxmlparser::doParse()
            case XML_NODE:
            {
 
-               AnimNodeAddEvent * ev = new AnimNodeAddEvent(parsedElement.nodeId, parsedElement.node_x, parsedElement.node_y);
+               AnimNodeAddEvent * ev = new AnimNodeAddEvent(parsedElement.nodeId,
+                                                            parsedElement.node_x,
+                                                            parsedElement.node_y,
+                                                            parsedElement.nodeDescription);
                pAnimatorMode->addAnimEvent(0, ev);
                break;
            }

@@ -24,16 +24,18 @@ public:
 class AnimNodeAddEvent: public AnimEvent
 {
 public:
-    AnimNodeAddEvent(uint32_t nodeId, qreal x, qreal y):
+    AnimNodeAddEvent(uint32_t nodeId, qreal x, qreal y, QString nodeDescription):
         AnimEvent(ADD_NODE_EVENT),
         m_nodeId(nodeId),
         m_x(x),
-        m_y(y)
+        m_y(y),
+        m_nodeDescription(nodeDescription)
     {
     }
     uint32_t m_nodeId;
     qreal m_x;
     qreal m_y;
+    QString m_nodeDescription;
 
 
 };

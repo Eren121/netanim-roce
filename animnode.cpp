@@ -15,17 +15,34 @@ namespace netanim {
 
 AnimNodeMgr * pAnimNodeMgr = 0;
 
-AnimNode::AnimNode(uint32_t nodeId, qreal x, qreal y):m_nodeDescription(0),
+AnimNode::AnimNode(uint32_t nodeId, qreal x, qreal y, QString nodeDescription):m_nodeDescription(0),
     m_nodeId(nodeId),
     m_x(x),
     m_y(y)
 {
     //setVisible(false);
     setZValue(ANIMNODE_ZVALUE);
+    if (nodeDescription != "")
+    {
+        m_nodeDescription = new QGraphicsTextItem(nodeDescription);
+        m_nodeDescription->setFlag(QGraphicsItem::ItemIgnoresTransformations);
+    }
 }
 
 AnimNode::~AnimNode()
 {
+}
+
+void
+AnimNode::setWidth(qreal width)
+{
+    m_width = width;
+}
+
+void
+AnimNode::setHeight(qreal height)
+{
+    m_height = height;
 }
 
 qreal
@@ -46,6 +63,12 @@ AnimNode::getNodeId()
     return m_nodeId;
 }
 
+QGraphicsTextItem *
+AnimNode::getDescription()
+{
+    return m_nodeDescription;
+}
+
 QPointF AnimNode::getCenter()
 {
     return sceneBoundingRect().center();
@@ -55,30 +78,13 @@ void AnimNode::setNodeDescription(QString description)
     if(!m_nodeDescription)
     {
         m_nodeDescription = new QGraphicsTextItem(description);
+        m_nodeDescription->setFlag(QGraphicsItem::ItemIgnoresTransformations);
     }
-    QGraphicsScene * s = scene();
-    if(!s)
-    {
-        return;
-    }
-    s->addItem(m_nodeDescription);
-    m_nodeDescription->setVisible(false);
 }
 
 void AnimNode::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
     ResizeableItem::paint(painter, option, widget);
-    if(m_nodeDescription)
-    {
-        painter->save();
-        QTransform viewTransform = AnimatorView::getInstance()->getTransform();
-        QFont f = painter->font();
-        //NS_LOG_DEBUG ("PointSize:" << f.pointSizeF());
-        f.setPointSizeF(10/viewTransform.m22());
-        painter->setFont(f);
-        painter->drawText(m_width, m_height, m_nodeDescription->toPlainText());
-        painter->restore();
-    }
 }
 
 
@@ -113,14 +119,14 @@ AnimNodeMgr * AnimNodeMgr::getInstance()
 }
 
 
-AnimNode * AnimNodeMgr::add(uint32_t nodeId, qreal x, qreal y)
+AnimNode * AnimNodeMgr::add(uint32_t nodeId, qreal x, qreal y, QString nodeDescription)
 {
     if(m_nodes.find(nodeId) != m_nodes.end())
     {
         //NS_FATAL_ERROR("NodeId:" << nodeId << " Already exists");
     }
     QPixmap pix(":/resources/ns3logo2.png","png");
-    AnimNode * node = new AnimNode(nodeId, x, y);
+    AnimNode * node = new AnimNode(nodeId, x, y, nodeDescription);
     node->setPos(x, y);
     node->setPixmap(pix);
     m_nodes[nodeId] = node;

@@ -13,15 +13,18 @@ namespace netanim {
 class AnimNode: public ResizeableItem
 {
 public:
-    AnimNode(uint32_t nodeId, qreal x, qreal y);
+    AnimNode(uint32_t nodeId, qreal x, qreal y, QString nodeDescription);
     ~AnimNode();
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
     void setNodeDescription(QString description);
     QPointF getCenter();
+    QGraphicsTextItem * getDescription();
     qreal getX();
     qreal getY();
     uint32_t getNodeId();
+    void setWidth(qreal width);
+    void setHeight(qreal height);
 private:
     QGraphicsTextItem * m_nodeDescription;
     uint32_t m_nodeId;
@@ -38,7 +41,7 @@ public:
     typedef std::map <uint32_t, AnimNode *> NodeIdAnimNodeMap_t;
     static AnimNodeMgr * getInstance();
     AnimNode * getNode(uint32_t nodeId);
-    AnimNode * add(uint32_t nodeId, qreal x, qreal y);
+    AnimNode * add(uint32_t nodeId, qreal x, qreal y, QString nodeDescription);
     uint32_t getCount();
     QPointF getMinPoint ();
     QPointF getMaxPoint ();

@@ -1097,10 +1097,15 @@ AnimatorMode::showPacketStatsSlot()
                    case AnimEvent::ADD_NODE_EVENT:
                     {
                        AnimNodeAddEvent * addEvent = static_cast<AnimNodeAddEvent *> (ev);
-                       AnimNode * animNode = AnimNodeMgr::getInstance()->add(addEvent->m_nodeId, addEvent->m_x, addEvent->m_y);
+                       AnimNode * animNode = AnimNodeMgr::getInstance()->add(addEvent->m_nodeId,
+                                                                             addEvent->m_x,
+                                                                             addEvent->m_y,
+                                                                             addEvent->m_nodeDescription);
                        AnimatorScene::getInstance()->addItem(animNode);
                        animNode->setPos(animNode->getX(), animNode->getY());
-                       AnimNodeMgr::getInstance()->getNode(animNode->getNodeId())->setNodeDescription(QString::number(animNode->getNodeId()));
+                       AnimatorScene::getInstance()->addItem(animNode->getDescription());
+                       animNode->getDescription()->setPos(animNode->sceneBoundingRect().bottomRight());
+                       //AnimNodeMgr::getInstance()->getNode(animNode->getNodeId())->setNodeDescription(QString::number(animNode->getNodeId()));
                        m_currentTime = j->first;
                        AnimatorScene::getInstance()->setSceneRect(QRectF (AnimNodeMgr::getInstance()->getMinPoint(), AnimNodeMgr::getInstance()->getMaxPoint()));
                        AnimatorView::getInstance()->postParse();
