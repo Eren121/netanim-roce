@@ -67,6 +67,7 @@ public:
     void setPixmap(QPixmap pix);
     void setType(ResizeableItemType_t t);
     void setWidth(qreal width);
+    void setColor(uint8_t r, uint8_t g, uint8_t b);
 
 protected:
     qreal m_width;

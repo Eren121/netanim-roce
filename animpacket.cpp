@@ -139,9 +139,9 @@ AnimPacket::boundingRect () const
 void
 AnimPacket::paint (QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
-    NS_LOG_DEBUG ("Packet Transform:" << transform());
-    NS_LOG_DEBUG ("Device Transform:" << painter->deviceTransform());
-    NS_LOG_DEBUG ("Scene Transform:" << sceneTransform());
+    //NS_LOG_DEBUG ("Packet Transform:" << transform());
+    //NS_LOG_DEBUG ("Device Transform:" << painter->deviceTransform());
+    //NS_LOG_DEBUG ("Scene Transform:" << sceneTransform());
     QPen p;
     QTransform viewTransform = AnimatorView::getInstance()->getTransform();
 

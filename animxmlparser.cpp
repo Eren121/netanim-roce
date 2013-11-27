@@ -31,6 +31,8 @@
 
 namespace netanim {
 
+NS_LOG_COMPONENT_DEFINE("Animxmlparser");
+
 Animxmlparser::Animxmlparser(QString traceFileName):
     m_traceFileName(traceFileName),
     m_parsingComplete(false),
@@ -149,7 +151,10 @@ Animxmlparser::doParse()
                AnimNodeAddEvent * ev = new AnimNodeAddEvent(parsedElement.nodeId,
                                                             parsedElement.node_x,
                                                             parsedElement.node_y,
-                                                            parsedElement.nodeDescription);
+                                                            parsedElement.nodeDescription,
+                                                            parsedElement.node_r,
+                                                            parsedElement.node_g,
+                                                            parsedElement.node_b);
                pAnimatorMode->addAnimEvent(0, ev);
                break;
            }
@@ -174,7 +179,30 @@ Animxmlparser::doParse()
            }
             case XML_NODEUPDATE:
             {
+                if (parsedElement.nodeUpdateType == ParsedElement::POSITION)
+                {
+                    AnimNodePositionUpdateEvent * ev = new AnimNodePositionUpdateEvent(parsedElement.nodeId,
+                                                                                  parsedElement.node_x,
+                                                                                  parsedElement.node_y);
+                    pAnimatorMode->addAnimEvent(parsedElement.updateTime, ev);
+                }
+                if (parsedElement.nodeUpdateType == ParsedElement::COLOR)
+                {
+                    AnimNodeColorUpdateEvent * ev = new AnimNodeColorUpdateEvent(parsedElement.nodeId,
+                                                                                  parsedElement.node_r,
+                                                                                  parsedElement.node_g,
+                                                                                  parsedElement.node_b);
 
+                    pAnimatorMode->addAnimEvent(parsedElement.updateTime, ev);
+                }
+                if (parsedElement.nodeUpdateType == ParsedElement::DESCRIPTION)
+                {
+                    AnimNodeDescriptionUpdateEvent * ev = new AnimNodeDescriptionUpdateEvent(parsedElement.nodeId,
+                                                                                             parsedElement.nodeDescription);
+                    NS_LOG_DEBUG ("Ev Desc:" << ev->m_description.toAscii().data());
+                    pAnimatorMode->addAnimEvent(parsedElement.updateTime, ev);
+
+                }
                 break;
 
             }
@@ -249,10 +277,6 @@ Animxmlparser::parseNext()
         if(m_reader->name() == "linkupdate")
         {
             parsedElement = parseLinkUpdate();
-        }
-        if(m_reader->name() == "nodeupdate")
-        {
-            parsedElement = parseNodeUpdate();
         }
         if(m_reader->name() == "nu")
         {
@@ -361,6 +385,10 @@ Animxmlparser::parseNodeUpdate()
     QString nodeUpdateString = m_reader->attributes().value("p").toString();
     if(nodeUpdateString == "p")
         parsedElement.nodeUpdateType = ParsedElement::POSITION;
+    if(nodeUpdateString == "c")
+        parsedElement.nodeUpdateType = ParsedElement::COLOR;
+    if(nodeUpdateString == "d")
+        parsedElement.nodeUpdateType = ParsedElement::DESCRIPTION;
     switch(parsedElement.nodeUpdateType)
     {
         case ParsedElement::POSITION:
@@ -368,6 +396,19 @@ Animxmlparser::parseNodeUpdate()
             parsedElement.node_x = m_reader->attributes().value("x").toString().toDouble();
             parsedElement.node_y = m_reader->attributes().value("y").toString().toDouble();
             parsedElement.nodeId = m_reader->attributes().value("id").toString().toUInt();
+        break;
+        case ParsedElement::COLOR:
+            parsedElement.updateTime = m_reader->attributes().value("t").toString().toDouble();
+            parsedElement.node_r = m_reader->attributes().value("r").toString().toUInt();
+            parsedElement.node_g = m_reader->attributes().value("g").toString().toUInt();
+            parsedElement.node_b = m_reader->attributes().value("b").toString().toUInt();
+            parsedElement.nodeId = m_reader->attributes().value("id").toString().toUInt();
+        break;
+        case ParsedElement::DESCRIPTION:
+            parsedElement.updateTime = m_reader->attributes().value("t").toString().toDouble();
+            parsedElement.nodeDescription = m_reader->attributes().value("descr").toString();
+            parsedElement.nodeId = m_reader->attributes().value("id").toString().toUInt();
+
         break;
 
     }
@@ -397,6 +438,7 @@ ParsedElement
 Animxmlparser::parseP()
 {
     ParsedElement parsedElement;
+    parsedElement.isWpacket = false;
     parsedElement.type = XML_PACKET_RX;
     parseGeneric(parsedElement);
     return parsedElement;

@@ -65,6 +65,14 @@ void ResizeableItem::setType(ResizeableItemType_t t)
     m_type = t;
 }
 
+
+void
+ResizeableItem::setColor(uint8_t r, uint8_t g, uint8_t b)
+{
+    m_r = r;
+    m_g = g;
+    m_b = b;
+}
 void
 ResizeableItem::setWidth(qreal width)
 {

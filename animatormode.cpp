@@ -983,6 +983,7 @@ AnimatorMode::showPacketStatsSlot()
          checkSimulationCompleted();
          QApplication::processEvents();
          m_updateRateTimer->start();
+         //updateRateTimeoutSlot();
      }
  }
 
@@ -1026,7 +1027,9 @@ AnimatorMode::showPacketStatsSlot()
     fileDialog.setFileMode(QFileDialog::ExistingFiles);
     //QString traceFileName = "/home/john/ns3/ns-3-dev/dumbbell-animation.xml";
     //QString traceFileName = "/home/john/ns3/ns-3-dev/wireless-animation.xml";
-    QString traceFileName = "C:\\Users\\jabraham\\Downloads\\wireless-animation2.xml";
+    QString traceFileName = "/home/john/ns3/ns-3-dev/dynamic_linknode.xml";
+
+    //QString traceFileName = "C:\\Users\\jabraham\\Downloads\\wireless-animation2.xml";
     //QString traceFileName = "C:\\Users\\jabraham\\Downloads\\dumbbell-animation.xml";
 
     /*if(fileDialog.exec())
@@ -1093,6 +1096,8 @@ AnimatorMode::showPacketStatsSlot()
          {
                //NS_LOG_DEBUG ("fbTx:" << j->first);
                AnimEvent * ev = j->second;
+               AnimatorScene::getInstance()->purgeAnimatedPackets();
+
                switch (ev->m_type)
                {
                    case AnimEvent::ADD_NODE_EVENT:
@@ -1120,9 +1125,8 @@ AnimatorMode::showPacketStatsSlot()
                        AnimatorView::getInstance()->postParse();
                        break;
                     }
-                case AnimEvent::PACKET_EVENT:
+                   case AnimEvent::PACKET_EVENT:
                    {
-                       AnimatorScene::getInstance()->purgeAnimatedPackets();
                        AnimPacketEvent * packetEvent = static_cast<AnimPacketEvent *> (j->second);
                        AnimPacket * animPacket = AnimPacketMgr::getInstance()->add(packetEvent->m_fromId,
                                                                                    packetEvent->m_toId,
@@ -1133,6 +1137,35 @@ AnimatorMode::showPacketStatsSlot()
                        break;
 
                    }
+                    case AnimEvent::UPDATE_NODE_POS_EVENT:
+                   {
+
+                        AnimNodePositionUpdateEvent * ev = static_cast<AnimNodePositionUpdateEvent *> (j->second);
+                        AnimNode * animNode = AnimNodeMgr::getInstance()->getNode(ev->m_nodeId);
+                        animNode->setX(ev->m_x);
+                        animNode->setY(ev->m_y);
+                        animNode->setPos(animNode->getX(), animNode->getY());
+                        animNode->getDescription()->setPos(animNode->sceneBoundingRect().bottomRight());
+
+                        break;
+                   }
+                    case AnimEvent::UPDATE_NODE_COLOR_EVENT:
+                    {
+                        AnimNodeColorUpdateEvent * ev = static_cast<AnimNodeColorUpdateEvent *> (j->second);
+                        AnimNode * animNode = AnimNodeMgr::getInstance()->getNode(ev->m_nodeId);
+                        animNode->setColor(ev->m_r, ev->m_g, ev->m_b);
+                        break;
+
+                    }
+                    case AnimEvent::UPDATE_NODE_DESCRIPTION_EVENT:
+                    {
+                        AnimNodeDescriptionUpdateEvent * ev = static_cast<AnimNodeDescriptionUpdateEvent *> (j->second);
+                        AnimNode * animNode = AnimNodeMgr::getInstance()->getNode(ev->m_nodeId);
+                        animNode->setNodeDescription(ev->m_description);
+                        break;
+                    }
+
+
                 } //switch
             } // for loop
          QParallelAnimationGroup * animationGroup = new QParallelAnimationGroup;
@@ -1157,7 +1190,7 @@ AnimatorMode::showPacketStatsSlot()
                 AnimatorScene::getInstance()->addWirelessCircle(pAnimWirelessCircle);
 
                 QPropertyAnimation * wirelessAnimation = new QPropertyAnimation (pAnimWirelessCircle, "rect");
-                wirelessAnimation->setDuration(2000);
+                wirelessAnimation->setDuration(m_updateRates[UPDATE_RATE_SLIDER_DEFAULT] * 1000);
                 wirelessAnimation->setStartValue(QRectF (fromNodePos, fromNodePos));
                 QLineF l (fromNodePos, toNodePos);
                 qreal length = l.length();
@@ -1172,7 +1205,7 @@ AnimatorMode::showPacketStatsSlot()
 
 
             QPropertyAnimation  * propAnimation = new QPropertyAnimation (animPacket, "pos");
-            propAnimation->setDuration(2000);
+            propAnimation->setDuration(m_updateRates[UPDATE_RATE_SLIDER_DEFAULT] * 1000);
             propAnimation->setStartValue(animPacket->getFromPos());
             propAnimation->setEndValue(animPacket->getToPos());
             //propAnimation->start();
@@ -1181,7 +1214,7 @@ AnimatorMode::showPacketStatsSlot()
             AnimatorScene::getInstance()->update();
             m_currentTime = pp.first->first;
          }
-         NS_LOG_DEBUG ("Animation duration:" << animationGroup->duration());
+         //NS_LOG_DEBUG ("Animation duration:" << animationGroup->duration());
 
          animationGroup->start(QAbstractAnimation::DeleteWhenStopped);
          //delete animationGroup;

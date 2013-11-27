@@ -18,19 +18,33 @@ AnimNodeMgr * pAnimNodeMgr = 0;
 AnimNode::AnimNode(uint32_t nodeId, qreal x, qreal y, QString nodeDescription):m_nodeDescription(0),
     m_nodeId(nodeId),
     m_x(x),
-    m_y(y)
+    m_y(y),
+    m_r(255),
+    m_g(0),
+    m_b(0)
 {
     //setVisible(false);
     setZValue(ANIMNODE_ZVALUE);
-    if (nodeDescription != "")
+    if (nodeDescription == "")
     {
-        m_nodeDescription = new QGraphicsTextItem(nodeDescription);
-        m_nodeDescription->setFlag(QGraphicsItem::ItemIgnoresTransformations);
+        nodeDescription = QString::number(nodeId);
     }
+    m_nodeDescription = new QGraphicsTextItem(nodeDescription);
+    m_nodeDescription->setFlag(QGraphicsItem::ItemIgnoresTransformations);
+
 }
 
 AnimNode::~AnimNode()
 {
+}
+
+void
+AnimNode::setColor(uint8_t r, uint8_t g, uint8_t b)
+{
+    m_r = r;
+    m_g = g;
+    m_b = b;
+    ResizeableItem::setColor(r, g, b);
 }
 
 void
@@ -57,6 +71,18 @@ AnimNode::getY()
     return m_y;
 }
 
+void
+AnimNode::setX(qreal x)
+{
+    m_x = x;
+}
+
+void
+AnimNode::setY(qreal y)
+{
+    m_y = y;
+}
+
 uint32_t
 AnimNode::getNodeId()
 {
@@ -75,11 +101,7 @@ QPointF AnimNode::getCenter()
 }
 void AnimNode::setNodeDescription(QString description)
 {
-    if(!m_nodeDescription)
-    {
-        m_nodeDescription = new QGraphicsTextItem(description);
-        m_nodeDescription->setFlag(QGraphicsItem::ItemIgnoresTransformations);
-    }
+    m_nodeDescription->setPlainText(description);
 }
 
 void AnimNode::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -128,7 +150,7 @@ AnimNode * AnimNodeMgr::add(uint32_t nodeId, qreal x, qreal y, QString nodeDescr
     QPixmap pix(":/resources/ns3logo2.png","png");
     AnimNode * node = new AnimNode(nodeId, x, y, nodeDescription);
     node->setPos(x, y);
-    node->setPixmap(pix);
+    //node->setPixmap(pix);
     m_nodes[nodeId] = node;
     m_minX = qMin (m_minX, x);
     m_minY = qMin (m_minY, y);

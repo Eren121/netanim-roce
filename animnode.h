@@ -22,14 +22,20 @@ public:
     QGraphicsTextItem * getDescription();
     qreal getX();
     qreal getY();
+    void setX(qreal x);
+    void setY(qreal y);
     uint32_t getNodeId();
     void setWidth(qreal width);
     void setHeight(qreal height);
+    void setColor(uint8_t r, uint8_t g, uint8_t b);
 private:
     QGraphicsTextItem * m_nodeDescription;
     uint32_t m_nodeId;
     qreal m_x;
     qreal m_y;
+    uint8_t m_r;
+    uint8_t m_g;
+    uint8_t m_b;
 
 
 };

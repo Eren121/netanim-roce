@@ -97,6 +97,7 @@ AnimatorScene::purgeAnimatedPackets()
     {
         AnimPacket * p = *i;
         p->setVisible(false);
+        removeItem (p->getInfoTextItem());
         removeItem(p);
     }
     m_animatedPackets.clear();
@@ -116,7 +117,7 @@ void
 AnimatorScene::addPacket(AnimPacket *p)
 {
     addItem(p);
-    addItem(p->getInfoTextItem());
+    //addItem(p->getInfoTextItem());
     p->getInfoTextItem()->setPos(p->boundingRect().bottomLeft());
     m_animatedPackets.push_back(p);
 }

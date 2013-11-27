@@ -103,7 +103,9 @@ struct ParsedElement
 
 
     typedef enum {
-        POSITION
+        POSITION,
+        COLOR,
+        DESCRIPTION
     } NodeUpdate_Type;
     // node update type
     NodeUpdate_Type nodeUpdateType;
