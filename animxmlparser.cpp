@@ -153,6 +153,7 @@ Animxmlparser::doParse()
                pAnimatorMode->addAnimEvent(0, ev);
                break;
            }
+           case XML_WPACKET_RX:
            case XML_PACKET_RX:
            {
                if (parsedElement.packetrx_fromId == parsedElement.packetrx_toId)
@@ -406,6 +407,7 @@ Animxmlparser::parseWp()
 {
     ParsedElement parsedElement;
     parsedElement.type = XML_WPACKET_RX;
+    parsedElement.isWpacket = true;
     parseGeneric(parsedElement);
     return parsedElement;
 }

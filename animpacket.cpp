@@ -89,6 +89,13 @@ AnimPacket::getFirstBitRx ()
   return m_firstBitRx;
 }
 
+
+bool
+AnimPacket::getIsWPacket()
+{
+    return m_isWPacket;
+}
+
 QGraphicsSimpleTextItem *
 AnimPacket::getInfoTextItem()
 {
@@ -224,11 +231,7 @@ AnimPacket::paint (QPainter *painter, const QStyleOptionGraphicsItem *option, QW
   //f.setPixelSize(5);
   f.setPointSizeF(15/viewTransform.m22());
   f.setFixedPitch(true);
-  //f.s
-  //f.setPointSizeF(10);
 
-
-  //NS_LOG_DEBUG ("ViewT:" <<viewTransform );
   QPen p1 = painter->pen();
   p1.setColor(Qt::red);
   p1.setStyle(Qt::SolidLine);
@@ -240,19 +243,14 @@ AnimPacket::paint (QPainter *painter, const QStyleOptionGraphicsItem *option, QW
   //p1.setCosmetic(true);
   painter->setBrush(brush2);
   painter->setPen(p1);
-  //painter->setFont(f);
   textPath.addText(0, -2/viewTransform.m22(), f, "Jo");
-  //p.setColor(Qt::black);
-  //p.setWidthF(0.5);
-  //GraphicsItemFlags fl = flags();
-  //setFlag(QGraphicsItem::ItemIgnoresTransformations);
+
 
   painter->setTransform(m_infoText->transform());
-  //painter->drawPath(textPath);
-  //setFlags(fl);
-  painter->drawText(0, 0, "Jo");
- // QStaticText st("mo");
-  //painter->drawStaticText(QPoint (0, 0), st);
+  //QLineF l (m_fromPos, m_toPos);
+  //painter->drawEllipse(m_fromPos, l.length(), l.length());
+  //painter->drawText(0, 0, "Jo");
+
 
   QRectF textBoundingRect = textTransform.mapRect(textPath.boundingRect());
 

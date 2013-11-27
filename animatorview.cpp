@@ -25,6 +25,7 @@
 #include <QPaintEvent>
 #include <QMouseEvent>
 #include <QFileDialog>
+#include "resizeableitem.h"
 
 namespace netanim {
 
@@ -33,7 +34,10 @@ AnimatorView * pAnimatorView = 0;
 
 AnimatorView::AnimatorView(QGraphicsScene * scene) :
     QGraphicsView(scene),
-    m_currentZoomFactor(1)
+    m_currentZoomFactor(1),
+    m_resizing(false),
+    m_resizeItemSceneWidth(0),
+    m_inResizingBoundary(false)
 {
     setRenderHint(QPainter::Antialiasing);
 }
@@ -63,10 +67,96 @@ AnimatorView::resizeEvent(QResizeEvent *event)
 }
 
 void
+AnimatorView::mousePressEvent(QMouseEvent *event)
+{
+    if (m_inResizingBoundary)
+    {
+        m_resizing = true;
+    }
+    QGraphicsView::mousePressEvent(event);
+}
+
+void
+AnimatorView::mouseReleaseEvent(QMouseEvent *event)
+{
+    if (m_resizing)
+    {
+        QPointF mouseReleasePos = mapToScene(event->pos());
+        QPointF itemCenter = m_resizeItemSceneRect.center();
+        qreal distance = qAbs (itemCenter.x() - mouseReleasePos.x());
+        ResizeableItem * resizeableItem = static_cast <ResizeableItem *> (m_resizingItem);
+        resizeableItem->setWidth(distance * 2);
+    }
+    m_resizing = false;
+    QGraphicsView::mouseReleaseEvent(event);
+}
+
+void
 AnimatorView::mouseMoveEvent(QMouseEvent * event)
 {
     scene()->invalidate();
+    if (m_resizing)
+    {
+        QPointF mouseReleasePos = mapToScene(event->pos());
+        QPointF itemCenter = m_resizeItemSceneRect.center();
+        qreal distance = qAbs (itemCenter.x() - mouseReleasePos.x());
+        ResizeableItem * resizeableItem = static_cast <ResizeableItem *> (m_resizingItem);
+        resizeableItem->setWidth(distance * 2);
+        m_resizeItemSceneRect = resizeableItem->sceneBoundingRect();
+        QGraphicsView::mouseMoveEvent(event);
+
+        return;
+    }
+//    QList <QGraphicsItem *> listOfItems = items(mapToScene ((event->pos())));
+    QPoint p (event->pos().x(), event->pos().y());
+    QPointF p3 = mapToScene(p);
+    QPoint p2 (p3.x(), p3.y());
+    QList <QGraphicsItem *> listOfItems = items(p);
+
+    foreach(QGraphicsItem * item, listOfItems)
+    {
+        if (item->type() == ANIMNODE_TYPE)
+        {
+            NS_LOG_DEBUG ("DblClicked AnimNode:" << item->sceneBoundingRect());
+            m_resizeItemSceneWidth = item->sceneBoundingRect().width();
+            m_resizeItemSceneRect = item->sceneBoundingRect();
+            m_resizingItem = item;
+            break;
+        }
+    }
+    QCursor c;
+
+        NS_LOG_DEBUG ("Mouse Move:" << mapToScene(event->pos()));
+        qreal eventPosX = mapToScene(event->pos()).x();
+        qreal itemRectRightX = m_resizeItemSceneRect.right();
+        qreal lowerBoundX = itemRectRightX - (m_resizeItemSceneWidth * 0.05);
+        qreal upperBoundX = itemRectRightX + (m_resizeItemSceneWidth * 0.05);
+        NS_LOG_DEBUG ("lower bound X:" << lowerBoundX << " upper bound X:" << upperBoundX);
+        if ( (eventPosX >= lowerBoundX) && (eventPosX <= upperBoundX) )
+        {
+            NS_LOG_DEBUG ("Setting cursor");
+            c.setShape(Qt::SizeHorCursor);
+            setCursor(c);
+            m_inResizingBoundary = true;
+        }
+        else
+        {
+            if (!m_resizing)
+            {
+                c.setShape(Qt::ArrowCursor);
+                setCursor(c);
+
+            }
+            m_inResizingBoundary = false;
+        }
+
     QGraphicsView::mouseMoveEvent(event);
+}
+
+void
+AnimatorView::mouseDoubleClickEvent(QMouseEvent *event)
+{
+    QGraphicsView::mouseDoubleClickEvent(event);
 }
 
 

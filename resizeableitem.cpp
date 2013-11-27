@@ -41,7 +41,7 @@ ResizeableItem::ResizeableItem():
     m_b(0),
     m_alpha(240)
 {
-    NS_LOG_FUNCTION(m_mousePressed);
+    //NS_LOG_FUNCTION(m_mousePressed);
     setAcceptsHoverEvents(true);
 }
 
@@ -65,6 +65,11 @@ void ResizeableItem::setType(ResizeableItemType_t t)
     m_type = t;
 }
 
+void
+ResizeableItem::setWidth(qreal width)
+{
+    m_width = width;
+}
 void ResizeableItem::setSize(qreal width, qreal height)
 {
     qreal xScale = width/sceneBoundingRect().width();
@@ -134,7 +139,7 @@ void ResizeableItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         {
             return;
         }
-        NS_LOG_DEBUG(xScale);
+        //NS_LOG_DEBUG(xScale);
 
         qreal savedY = pos().y();
         if(xScale > 0)
@@ -196,7 +201,7 @@ void ResizeableItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 }
 
 void ResizeableItem::setResizingDirection(ResizeDirection_t direction)
-{
+{/*
     QCursor c;
     switch (direction)
     {
@@ -216,7 +221,7 @@ void ResizeableItem::setResizingDirection(ResizeDirection_t direction)
             setFlags(QGraphicsItem::ItemIsMovable|QGraphicsItem::ItemIsSelectable);
     }
     setCursor(c);
-    m_currentResizeDirection = direction;
+    m_currentResizeDirection = direction;*/
 }
 
 qreal ResizeableItem::getBorderWidth()

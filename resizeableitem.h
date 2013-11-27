@@ -21,6 +21,7 @@
 #define RESIZEABLEITEM_H
 
 #include <stdint.h>
+#include "animatorconstants.h"
 
 #include <QGraphicsItem>
 #include <QGraphicsSceneMouseEvent>
@@ -46,6 +47,11 @@ public:
         CIRCLE,
         PIXMAP
     } ResizeableItemType_t;
+    enum { Type = ANIMNODE_TYPE };
+    int type () const
+    {
+        return Type;
+    }
     ResizeableItem();
     ~ResizeableItem();
     QRectF boundingRect() const;
@@ -60,6 +66,7 @@ public:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);
     void setPixmap(QPixmap pix);
     void setType(ResizeableItemType_t t);
+    void setWidth(qreal width);
 
 protected:
     qreal m_width;

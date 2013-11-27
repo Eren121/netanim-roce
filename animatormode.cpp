@@ -41,6 +41,7 @@
 #include <QDesktopWidget>
 #include <QThread>
 #include <QPropertyAnimation>
+#include <QParallelAnimationGroup>
 
 
 namespace netanim {
@@ -1024,8 +1025,8 @@ AnimatorMode::showPacketStatsSlot()
     QFileDialog fileDialog;
     fileDialog.setFileMode(QFileDialog::ExistingFiles);
     //QString traceFileName = "/home/john/ns3/ns-3-dev/dumbbell-animation.xml";
-    QString traceFileName = "/home/john/ns3/ns-3-dev/wireless-animation.xml";
-    //QString traceFileName = "C:\\Users\\jabraham\\Downloads\\wireless-animation2.xml";
+    //QString traceFileName = "/home/john/ns3/ns-3-dev/wireless-animation.xml";
+    QString traceFileName = "C:\\Users\\jabraham\\Downloads\\wireless-animation2.xml";
     //QString traceFileName = "C:\\Users\\jabraham\\Downloads\\dumbbell-animation.xml";
 
     /*if(fileDialog.exec())
@@ -1107,7 +1108,15 @@ AnimatorMode::showPacketStatsSlot()
                        animNode->getDescription()->setPos(animNode->sceneBoundingRect().bottomRight());
                        //AnimNodeMgr::getInstance()->getNode(animNode->getNodeId())->setNodeDescription(QString::number(animNode->getNodeId()));
                        m_currentTime = j->first;
-                       AnimatorScene::getInstance()->setSceneRect(QRectF (AnimNodeMgr::getInstance()->getMinPoint(), AnimNodeMgr::getInstance()->getMaxPoint()));
+                       qreal boundaryWidth = AnimNodeMgr::getInstance()->getMaxPoint().x() * 0.1;
+                       QPointF minPoint = QPointF(AnimNodeMgr::getInstance()->getMinPoint().x() - boundaryWidth,
+                                           AnimNodeMgr::getInstance()->getMinPoint().y() - boundaryWidth);
+
+                       QPointF maxPoint = QPointF(AnimNodeMgr::getInstance()->getMaxPoint().x() + boundaryWidth,
+                                           AnimNodeMgr::getInstance()->getMaxPoint().y() + boundaryWidth);
+
+                       AnimatorScene::getInstance()->setSceneRect(QRectF (minPoint,
+                                                                          maxPoint));
                        AnimatorView::getInstance()->postParse();
                        break;
                     }
@@ -1126,6 +1135,7 @@ AnimatorMode::showPacketStatsSlot()
                    }
                 } //switch
             } // for loop
+         QParallelAnimationGroup * animationGroup = new QParallelAnimationGroup;
          for (QVector <AnimPacket *>::const_iterator i = packetsToAnimate.begin();
               i != packetsToAnimate.end();
               ++i)
@@ -1136,18 +1146,45 @@ AnimatorMode::showPacketStatsSlot()
             animPacket->setVisible(true);
             animPacket->setPos(animPacket->getHead ());
 
+            if(animPacket->getIsWPacket())
+            {
+                uint32_t fromNodeId = animPacket->getFromNodeId();
+                uint32_t toNodeId = animPacket->getToNodeId();
+
+                QPointF fromNodePos = AnimNodeMgr::getInstance()->getNode(fromNodeId)->getCenter();
+                QPointF toNodePos = AnimNodeMgr::getInstance()->getNode(toNodeId)->getCenter();
+                AnimWirelessCircles * pAnimWirelessCircle = new AnimWirelessCircles;
+                AnimatorScene::getInstance()->addWirelessCircle(pAnimWirelessCircle);
+
+                QPropertyAnimation * wirelessAnimation = new QPropertyAnimation (pAnimWirelessCircle, "rect");
+                wirelessAnimation->setDuration(2000);
+                wirelessAnimation->setStartValue(QRectF (fromNodePos, fromNodePos));
+                QLineF l (fromNodePos, toNodePos);
+                qreal length = l.length();
+                qreal hypotenuse =length;// sqrt((length * length) *2);
+                QPointF topLeft = QPointF (fromNodePos.x() - hypotenuse, fromNodePos.y() - hypotenuse);
+                QPointF bottomRight = QPointF (fromNodePos.x() + hypotenuse, fromNodePos.y() + hypotenuse);
+                wirelessAnimation->setEndValue(QRectF (topLeft, bottomRight));
+                animationGroup->addAnimation(wirelessAnimation);
+
+            }
+
 
 
             QPropertyAnimation  * propAnimation = new QPropertyAnimation (animPacket, "pos");
             propAnimation->setDuration(2000);
             propAnimation->setStartValue(animPacket->getFromPos());
             propAnimation->setEndValue(animPacket->getToPos());
-            propAnimation->start();
-
+            //propAnimation->start();
+            animationGroup->addAnimation(propAnimation);
 
             AnimatorScene::getInstance()->update();
             m_currentTime = pp.first->first;
          }
+         NS_LOG_DEBUG ("Animation duration:" << animationGroup->duration());
+
+         animationGroup->start(QAbstractAnimation::DeleteWhenStopped);
+         //delete animationGroup;
 
     } // if result == good
 

@@ -81,6 +81,13 @@ void AnimatorScene::setUserAreaWidth(qreal w)
     m_userAreadWidth = w;
 }
 
+
+void
+AnimatorScene::addWirelessCircle(AnimWirelessCircles *w)
+{
+    addItem(w);
+    m_animatedWirelessCircles.push_back(w);
+}
 void
 AnimatorScene::purgeAnimatedPackets()
 {
@@ -93,6 +100,16 @@ AnimatorScene::purgeAnimatedPackets()
         removeItem(p);
     }
     m_animatedPackets.clear();
+
+    for(QVector <AnimWirelessCircles *>::const_iterator i = m_animatedWirelessCircles.begin();
+        i != m_animatedWirelessCircles.end();
+        ++i)
+    {
+        AnimWirelessCircles * w = *i;
+        w->setVisible(false);
+        removeItem(w);
+    }
+    m_animatedWirelessCircles.clear();
 }
 
 void

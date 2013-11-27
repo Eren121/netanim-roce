@@ -41,6 +41,7 @@ public:
     AnimPacket * getTestPacket(uint32_t fromNodeId, uint32_t toNodeId, qreal firstBitTx, qreal propDelay, qreal bitRate);
     void displayPacket(qreal t);
     void addPacket (AnimPacket * p);
+    void addWirelessCircle (AnimWirelessCircles * w);
     void purgeAnimatedPackets();
 
 
@@ -53,6 +54,8 @@ private:
     QLabel * m_mousePositionLabel;
     QGraphicsProxyWidget * m_mousePositionProxyWidget;
     QVector <AnimPacket *> m_animatedPackets;
+    QVector <AnimWirelessCircles *> m_animatedWirelessCircles;
+
 };
 
 } // namespace netanim

@@ -8,6 +8,14 @@
 #include "animevent.h"
 namespace netanim {
 
+
+class AnimWirelessCircles : public QObject, public QGraphicsEllipseItem
+{
+Q_OBJECT
+    Q_PROPERTY(QRectF rect READ rect WRITE setRect)
+
+};
+
 class AnimPacket : public QObject, public QGraphicsItem, public AnimEvent
 {
 Q_OBJECT
@@ -35,6 +43,7 @@ public:
   void paint (QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);
   QPointF getHead ();
   QGraphicsSimpleTextItem * getInfoTextItem();
+  bool getIsWPacket ();
 
 private:
   uint32_t m_fromNodeId;
