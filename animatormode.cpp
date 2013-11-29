@@ -21,6 +21,7 @@
 #include "animatorview.h"
 #include "animxmlparser.h"
 #include "animlink.h"
+#include "animresource.h"
 #include <QFile>
 #include <QtCore/QDebug>
 #include <QtCore/QtPlugin>
@@ -1163,6 +1164,26 @@ AnimatorMode::showPacketStatsSlot()
                         AnimNode * animNode = AnimNodeMgr::getInstance()->getNode(ev->m_nodeId);
                         animNode->setNodeDescription(ev->m_description);
                         break;
+                    }
+                    case AnimEvent::UPDATE_NODE_SIZE_EVENT:
+                    {
+                        AnimNodeSizeUpdateEvent * ev = static_cast<AnimNodeSizeUpdateEvent *> (j->second);
+                        AnimNode * animNode = AnimNodeMgr::getInstance()->getNode(ev->m_nodeId);
+                        animNode->setSize(ev->m_width, ev->m_height);
+                        animNode->getDescription()->setPos(animNode->sceneBoundingRect().bottomRight());
+                        break;
+                    }
+                    case AnimEvent::UPDATE_NODE_IMAGE_EVENT:
+                    {
+                        AnimNodeImageUpdateEvent * ev = static_cast<AnimNodeImageUpdateEvent *> (j->second);
+                        AnimNode * animNode = AnimNodeMgr::getInstance()->getNode(ev->m_nodeId);
+                        uint32_t resourceId = ev->m_resourceId;
+                        QString resourcePath = AnimResourceManager::getInstance()->get(resourceId);
+                        //NS_LOG_DEBUG ("Res:" << resourcePath.toAscii().data());
+                        QPixmap pix(resourcePath, "png");
+                        animNode->setPixmap(pix);
+                        break;
+
                     }
 
 

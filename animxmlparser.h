@@ -42,7 +42,8 @@ enum ParsedElementType
     XML_PACKET_RX,
     XML_WPACKET_RX,
     XML_LINKUPDATE,
-    XML_NODEUPDATE
+    XML_NODEUPDATE,
+    XML_RESOURCE
 };
 
 struct ParsedElement
@@ -65,6 +66,8 @@ struct ParsedElement
     uint8_t node_r;
     uint8_t node_g;
     uint8_t node_b;
+    qreal node_width;
+    qreal node_height;
     bool visible;
 
     // Link
@@ -102,10 +105,16 @@ struct ParsedElement
     bool hasBattery; //!< Has battery with possible capacity
 
 
+    // Resource
+    QString resourcePath;
+    uint32_t resourceId;
+
     typedef enum {
         POSITION,
         COLOR,
-        DESCRIPTION
+        DESCRIPTION,
+        SIZE,
+        IMAGE
     } NodeUpdate_Type;
     // node update type
     NodeUpdate_Type nodeUpdateType;
@@ -146,6 +155,7 @@ private:
     ParsedElement parseNodeUpdate();
     ParsedElement parseP();
     ParsedElement parseWp();
+    ParsedElement parseResource();
     void parseGeneric(ParsedElement &);
 
     void searchForVersion();

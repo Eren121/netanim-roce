@@ -25,6 +25,7 @@
 #include "animatorscene.h"
 #include "animpacket.h"
 #include "animlink.h"
+#include "animresource.h"
 
 #include <QFile>
 #include <QRegExp>
@@ -177,6 +178,11 @@ Animxmlparser::doParse()
                 //AnimLinkMgr::getInstance()->add(parsedElement.link_fromId, parsedElement.link_toId);
                 break;
            }
+            case XML_RESOURCE:
+            {
+                AnimResourceManager::getInstance()->add(parsedElement.resourceId, parsedElement.resourcePath);
+                break;
+            }
             case XML_NODEUPDATE:
             {
                 if (parsedElement.nodeUpdateType == ParsedElement::POSITION)
@@ -199,9 +205,22 @@ Animxmlparser::doParse()
                 {
                     AnimNodeDescriptionUpdateEvent * ev = new AnimNodeDescriptionUpdateEvent(parsedElement.nodeId,
                                                                                              parsedElement.nodeDescription);
-                    NS_LOG_DEBUG ("Ev Desc:" << ev->m_description.toAscii().data());
                     pAnimatorMode->addAnimEvent(parsedElement.updateTime, ev);
 
+                }
+                if (parsedElement.nodeUpdateType == ParsedElement::SIZE)
+                {
+                    AnimNodeSizeUpdateEvent * ev = new AnimNodeSizeUpdateEvent(parsedElement.nodeId,
+                                                                               parsedElement.node_width,
+                                                                               parsedElement.node_height);
+                    pAnimatorMode->addAnimEvent(parsedElement.updateTime, ev);
+
+                }
+                if (parsedElement.nodeUpdateType == ParsedElement::IMAGE)
+                {
+                    AnimNodeImageUpdateEvent * ev = new AnimNodeImageUpdateEvent(parsedElement.nodeId,
+                                                                                 parsedElement.resourceId);
+                    pAnimatorMode->addAnimEvent(parsedElement.updateTime, ev);
                 }
                 break;
 
@@ -281,6 +300,10 @@ Animxmlparser::parseNext()
         if(m_reader->name() == "nu")
         {
             parsedElement = parseNodeUpdate();
+        }
+        if(m_reader->name() == "res")
+        {
+            parsedElement = parseResource();
         }
         //qDebug(m_reader->name().toString());
     }
@@ -389,6 +412,10 @@ Animxmlparser::parseNodeUpdate()
         parsedElement.nodeUpdateType = ParsedElement::COLOR;
     if(nodeUpdateString == "d")
         parsedElement.nodeUpdateType = ParsedElement::DESCRIPTION;
+    if(nodeUpdateString == "s")
+        parsedElement.nodeUpdateType = ParsedElement::SIZE;
+    if(nodeUpdateString == "i")
+        parsedElement.nodeUpdateType = ParsedElement::IMAGE;
     switch(parsedElement.nodeUpdateType)
     {
         case ParsedElement::POSITION:
@@ -410,9 +437,30 @@ Animxmlparser::parseNodeUpdate()
             parsedElement.nodeId = m_reader->attributes().value("id").toString().toUInt();
 
         break;
+        case ParsedElement::SIZE:
+            parsedElement.updateTime =  m_reader->attributes().value("t").toString().toDouble();
+            parsedElement.nodeId = m_reader->attributes().value("id").toString().toUInt();
+            parsedElement.node_width = m_reader->attributes().value("w").toString().toDouble();
+            parsedElement.node_height = m_reader->attributes().value("h").toString().toDouble();
+        break;
 
+        case ParsedElement::IMAGE:
+            parsedElement.updateTime = m_reader->attributes().value("t").toString().toDouble();
+            parsedElement.resourceId = m_reader->attributes().value("rid").toString().toUInt();
+            parsedElement.nodeId = m_reader->attributes().value("id").toString().toUInt();
+        break;
     }
 
+    return parsedElement;
+}
+
+ParsedElement
+Animxmlparser::parseResource()
+{
+    ParsedElement parsedElement;
+    parsedElement.type = XML_RESOURCE;
+    parsedElement.resourceId = m_reader->attributes().value("rid").toString().toUInt();
+    parsedElement.resourcePath = m_reader->attributes().value("p").toString();
     return parsedElement;
 }
 

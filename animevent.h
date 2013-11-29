@@ -14,7 +14,9 @@ public:
         ADD_NODE_EVENT,
         UPDATE_NODE_POS_EVENT,
         UPDATE_NODE_COLOR_EVENT,
-        UPDATE_NODE_DESCRIPTION_EVENT
+        UPDATE_NODE_DESCRIPTION_EVENT,
+        UPDATE_NODE_SIZE_EVENT,
+        UPDATE_NODE_IMAGE_EVENT
     } AnimEventType_h;
     AnimEventType_h m_type;
     AnimEvent(AnimEventType_h type): m_type (type)
@@ -82,6 +84,23 @@ public:
 
 };
 
+
+class AnimNodeSizeUpdateEvent: public AnimEvent
+{
+public:
+    AnimNodeSizeUpdateEvent(uint32_t nodeId, double width, double height):
+        AnimEvent(UPDATE_NODE_SIZE_EVENT),
+        m_nodeId(nodeId),
+        m_width(width),
+        m_height(height)
+    {
+    }
+    uint32_t m_nodeId;
+    uint8_t m_width;
+    uint8_t m_height;
+
+};
+
 class AnimNodeDescriptionUpdateEvent: public AnimEvent
 {
 public:
@@ -95,6 +114,23 @@ public:
     QString m_description;
 
 };
+
+
+
+class AnimNodeImageUpdateEvent: public AnimEvent
+{
+public:
+    AnimNodeImageUpdateEvent(uint32_t nodeId, uint32_t resourceId):
+        AnimEvent(UPDATE_NODE_IMAGE_EVENT),
+        m_nodeId(nodeId),
+        m_resourceId(resourceId)
+    {
+    }
+    uint32_t m_nodeId;
+    uint32_t m_resourceId;
+
+};
+
 
 
 class AnimPacketEvent: public AnimEvent

@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'animatorscene.h'
 **
-** Created: Wed Nov 27 08:09:16 2013
+** Created: Thu Nov 28 19:59:08 2013
 **      by: The Qt Meta Object Compiler version 63 (Qt 4.8.1)
 **
 ** WARNING! All changes made in this file will be lost!

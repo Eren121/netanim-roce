@@ -117,7 +117,7 @@ AnimatorView::mouseMoveEvent(QMouseEvent * event)
     {
         if (item->type() == ANIMNODE_TYPE)
         {
-            NS_LOG_DEBUG ("DblClicked AnimNode:" << item->sceneBoundingRect());
+            //NS_LOG_DEBUG ("DblClicked AnimNode:" << item->sceneBoundingRect());
             m_resizeItemSceneWidth = item->sceneBoundingRect().width();
             m_resizeItemSceneRect = item->sceneBoundingRect();
             m_resizingItem = item;
@@ -126,15 +126,15 @@ AnimatorView::mouseMoveEvent(QMouseEvent * event)
     }
     QCursor c;
 
-        NS_LOG_DEBUG ("Mouse Move:" << mapToScene(event->pos()));
+        //NS_LOG_DEBUG ("Mouse Move:" << mapToScene(event->pos()));
         qreal eventPosX = mapToScene(event->pos()).x();
         qreal itemRectRightX = m_resizeItemSceneRect.right();
         qreal lowerBoundX = itemRectRightX - (m_resizeItemSceneWidth * 0.05);
         qreal upperBoundX = itemRectRightX + (m_resizeItemSceneWidth * 0.05);
-        NS_LOG_DEBUG ("lower bound X:" << lowerBoundX << " upper bound X:" << upperBoundX);
+        //NS_LOG_DEBUG ("lower bound X:" << lowerBoundX << " upper bound X:" << upperBoundX);
         if ( (eventPosX >= lowerBoundX) && (eventPosX <= upperBoundX) )
         {
-            NS_LOG_DEBUG ("Setting cursor");
+            //NS_LOG_DEBUG ("Setting cursor");
             c.setShape(Qt::SizeHorCursor);
             setCursor(c);
             m_inResizingBoundary = true;
