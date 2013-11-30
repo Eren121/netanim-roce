@@ -821,22 +821,14 @@ AnimatorMode::doSimulationCompleted()
     m_playButton->setEnabled(false);
     QApplication::processEvents();
     clickResetSlot();
+    m_events.rewind();
+    m_events.setCurrentTime(0);
     m_bottomStatusLabel->setText("Simulation Completed");
 }
 bool
 AnimatorMode::checkSimulationCompleted()
 {
-   // QDEBUG("Current Time:" + QString::number(m_currentTime));
-   // QDEBUG("Max Time:" + QString::number(m_parsedMaxSimulationTime));
-
-    if(m_currentTime > m_parsedMaxSimulationTime)
-    {
-       QApplication::processEvents();
-       m_simulationCompleted = true;
-       m_state = SIMULATION_COMPLETE;
-       return true;
-    }
-    return false;
+    return m_state == SIMULATION_COMPLETE;
 }
 
 void
@@ -919,6 +911,7 @@ AnimatorMode::clickSaveSlot()
          return;
     m_oldTimelineValue = value;
     m_currentTime = value;
+    m_events.setCurrentTime(value);
     if(m_nodePositionStatsButton->isChecked())
     {
         if(!m_playing)
@@ -964,27 +957,31 @@ AnimatorMode::showPacketStatsSlot()
      AnimatorView::getInstance()->setCurrentZoomFactor(--m_currentZoomFactor);
  }
 
+
+ void
+ AnimatorMode::setSimulationCompleted()
+ {
+     m_simulationCompleted = true;
+     m_state = SIMULATION_COMPLETE;
+     doSimulationCompleted();
+
+ }
+
  void
  AnimatorMode::updateRateTimeoutSlot()
  {
      AnimatorScene::getInstance()->invalidate();
      m_updateRateTimer->stop();
+     if(m_state == SIMULATION_COMPLETE)
+        return;
      if(m_playing)
      {
-         //displayPacket(m_currentTime);
          dispatchEvents();
          m_simulationTimeSlider->setValue(m_currentTime);
          m_qLcdNumber->display(m_currentTime);
          keepAppResponsive();
-         if(m_state == SIMULATION_COMPLETE)
-         {
-             doSimulationCompleted();
-             return;
-         }
-         checkSimulationCompleted();
          QApplication::processEvents();
          m_updateRateTimer->start();
-         //updateRateTimeoutSlot();
      }
  }
 
@@ -1090,6 +1087,7 @@ AnimatorMode::showPacketStatsSlot()
      //NS_LOG_DEBUG ("Now:" << pp.first->first);
      if (result == m_events.GOOD)
      {
+         m_currentTime = pp.first->first;
          QVector <AnimPacket *> packetsToAnimate;
          for(TimeValue<AnimEvent*>::TimeValue_t::const_iterator j = pp.first;
              j != pp.second;
@@ -1233,7 +1231,6 @@ AnimatorMode::showPacketStatsSlot()
             animationGroup->addAnimation(propAnimation);
 
             AnimatorScene::getInstance()->update();
-            m_currentTime = pp.first->first;
          }
          //NS_LOG_DEBUG ("Animation duration:" << animationGroup->duration());
 
@@ -1241,6 +1238,11 @@ AnimatorMode::showPacketStatsSlot()
          //delete animationGroup;
 
     } // if result == good
+    else
+    {
+         //showPopup("Result : BAD");
+         setSimulationCompleted();
+    }
 
 
  }

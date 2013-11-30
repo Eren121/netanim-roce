@@ -245,7 +245,7 @@ AnimatorView::postParse()
         // getAnimatorScene()->setCurrentScale(minScale, minScale);
 
          setTransform(t);
-         NS_LOG_DEBUG ("View Transform:" << transform());
+        // NS_LOG_DEBUG ("View Transform:" << transform());
 
 
 

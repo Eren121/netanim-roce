@@ -58,6 +58,7 @@ public:
   void setLookBack (qreal lookBack);
   bool isEnd ();
   uint32_t getCount();
+  void rewind();
 
 private:
   TimeValue_t m_timeValues;
@@ -309,6 +310,13 @@ TimeValue<T>::toString ()
       i = m_timeValues.upper_bound (i->first);
     }
   return os;
+}
+
+template <class T>
+void
+TimeValue<T>::rewind ()
+{
+  rewindCurrentIterator();
 }
 
 template <class T>

@@ -192,6 +192,7 @@ private:
     void resetBackground();
     void displayPacket(qreal t);
     void dispatchEvents ();
+    void setSimulationCompleted();
 
 
 private slots:
