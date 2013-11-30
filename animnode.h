@@ -51,6 +51,7 @@ public:
     uint32_t getCount();
     QPointF getMinPoint ();
     QPointF getMaxPoint ();
+    void systemReset();
 private:
     AnimNodeMgr();
     NodeIdAnimNodeMap_t m_nodes;

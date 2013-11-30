@@ -65,6 +65,14 @@ AnimPacket::AnimPacket (uint32_t fromNodeId,
 
 }
 
+AnimPacket::~AnimPacket()
+{
+    if(m_infoText)
+    {
+        delete m_infoText;
+    }
+}
+
 uint32_t
 AnimPacket::getFromNodeId ()
 {

@@ -41,8 +41,10 @@ public:
     AnimPacket * getTestPacket(uint32_t fromNodeId, uint32_t toNodeId, qreal firstBitTx, qreal propDelay, qreal bitRate);
     void displayPacket(qreal t);
     void addPacket (AnimPacket * p);
+    void addNode (AnimNode * animNode);
     void addWirelessCircle (AnimWirelessCircles * w);
     void purgeAnimatedPackets();
+    void purgeAnimatedNodes();
 
 
 public slots:
@@ -55,6 +57,8 @@ private:
     QGraphicsProxyWidget * m_mousePositionProxyWidget;
     QVector <AnimPacket *> m_animatedPackets;
     QVector <AnimWirelessCircles *> m_animatedWirelessCircles;
+    QVector<AnimNode *> m_animatedNodes;
+
 
 };
 

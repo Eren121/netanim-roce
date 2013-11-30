@@ -648,8 +648,11 @@ AnimatorMode::showParsingXmlDialog(bool show)
 void
 AnimatorMode::setCurrentTime(qreal currentTime)
 {
-    //qDebug(currentTime, "Setting current time");
+    //NS_LOG_DEBUG ("Setting current time:" << currentTime);
     m_currentTime = currentTime;
+    m_simulationTimeSlider->setValue(currentTime);
+    m_events.setCurrentTime(currentTime);
+
 }
 
 void
@@ -725,8 +728,9 @@ AnimatorMode::postParse()
     m_parseProgressBar->reset();
     //m_showMetaButton->setChecked(AnimPktMgr::getInstance()->getMetaInfoSeen());
     resetBackground();
+    updateRateTimeoutSlot();
 
-    dispatchEvents();
+    //dispatchEvents();
 
     /*
     uint32_t nodeCount = AnimNodeMgr::getInstance()->getCount();
@@ -822,7 +826,9 @@ AnimatorMode::doSimulationCompleted()
     QApplication::processEvents();
     clickResetSlot();
     m_events.rewind();
-    m_events.setCurrentTime(0);
+    setCurrentTime(0);
+    m_simulationTimeSlider->setEnabled(false);
+    //NS_LOG_DEBUG ("Simulation Completed");
     m_bottomStatusLabel->setText("Simulation Completed");
 }
 bool
@@ -835,7 +841,7 @@ void
 AnimatorMode::timerCleanup()
 {
     m_updateRateTimer->stop();
-    m_currentTime = 0;
+    setCurrentTime(0);
     m_qLcdNumber->display(0);
     fflush(stdout);
 }
@@ -910,14 +916,13 @@ AnimatorMode::clickSaveSlot()
     if(value == m_oldTimelineValue)
          return;
     m_oldTimelineValue = value;
-    m_currentTime = value;
-    m_events.setCurrentTime(value);
+    setCurrentTime(value);
     if(m_nodePositionStatsButton->isChecked())
     {
         if(!m_playing)
             clickPlaySlot();
     }
-    updateRateTimeoutSlot();
+    //updateRateTimeoutSlot();
  }
 
  void
@@ -967,6 +972,13 @@ AnimatorMode::showPacketStatsSlot()
 
  }
 
+
+void
+AnimatorMode::purgeAnimatedNodes()
+{
+
+}
+
  void
  AnimatorMode::updateRateTimeoutSlot()
  {
@@ -976,7 +988,7 @@ AnimatorMode::showPacketStatsSlot()
         return;
      if(m_playing)
      {
-         dispatchEvents();
+         dispatchEvents();             
          m_simulationTimeSlider->setValue(m_currentTime);
          m_qLcdNumber->display(m_currentTime);
          keepAppResponsive();
@@ -1056,6 +1068,10 @@ AnimatorMode::showPacketStatsSlot()
     m_playing = !m_playing;
     if(m_playing)
     {
+        if (m_state == SIMULATION_COMPLETE)
+        {
+            AnimatorScene::getInstance()->purgeAnimatedNodes();
+        }
         m_state = PLAYING;
         m_bottomStatusLabel->setText("Playing");
         if(m_simulationCompleted)
@@ -1087,7 +1103,12 @@ AnimatorMode::showPacketStatsSlot()
      //NS_LOG_DEBUG ("Now:" << pp.first->first);
      if (result == m_events.GOOD)
      {
+         //setCurrentTime(pp.first->first);
          m_currentTime = pp.first->first;
+         if (m_currentTime > 0)
+         {
+            m_simulationTimeSlider->setEnabled(true);
+         }
          QVector <AnimPacket *> packetsToAnimate;
          for(TimeValue<AnimEvent*>::TimeValue_t::const_iterator j = pp.first;
              j != pp.second;
@@ -1106,21 +1127,7 @@ AnimatorMode::showPacketStatsSlot()
                                                                              addEvent->m_x,
                                                                              addEvent->m_y,
                                                                              addEvent->m_nodeDescription);
-                       AnimatorScene::getInstance()->addItem(animNode);
-                       animNode->setPos(animNode->getX(), animNode->getY());
-                       AnimatorScene::getInstance()->addItem(animNode->getDescription());
-                       animNode->getDescription()->setPos(animNode->sceneBoundingRect().bottomRight());
-                       //AnimNodeMgr::getInstance()->getNode(animNode->getNodeId())->setNodeDescription(QString::number(animNode->getNodeId()));
-                       m_currentTime = j->first;
-                       qreal boundaryWidth = AnimNodeMgr::getInstance()->getMaxPoint().x() * 0.1;
-                       QPointF minPoint = QPointF(AnimNodeMgr::getInstance()->getMinPoint().x() - boundaryWidth,
-                                           AnimNodeMgr::getInstance()->getMinPoint().y() - boundaryWidth);
-
-                       QPointF maxPoint = QPointF(AnimNodeMgr::getInstance()->getMaxPoint().x() + boundaryWidth,
-                                           AnimNodeMgr::getInstance()->getMaxPoint().y() + boundaryWidth);
-
-                       AnimatorScene::getInstance()->setSceneRect(QRectF (minPoint,
-                                                                          maxPoint));
+                       AnimatorScene::getInstance()->addNode(animNode);
                        AnimatorView::getInstance()->postParse();
                        break;
                     }
@@ -1138,7 +1145,7 @@ AnimatorMode::showPacketStatsSlot()
                    }
                     case AnimEvent::UPDATE_NODE_POS_EVENT:
                    {
-
+                        NS_LOG_DEBUG ("Node Update POs");
                         AnimNodePositionUpdateEvent * ev = static_cast<AnimNodePositionUpdateEvent *> (j->second);
                         AnimNode * animNode = AnimNodeMgr::getInstance()->getNode(ev->m_nodeId);
                         animNode->setX(ev->m_x);
@@ -1209,11 +1216,11 @@ AnimatorMode::showPacketStatsSlot()
                 AnimatorScene::getInstance()->addWirelessCircle(pAnimWirelessCircle);
 
                 QPropertyAnimation * wirelessAnimation = new QPropertyAnimation (pAnimWirelessCircle, "rect");
-                wirelessAnimation->setDuration(m_updateRates[UPDATE_RATE_SLIDER_DEFAULT] * 1000);
+                wirelessAnimation->setDuration(m_currentUpdateRate * 1000);
                 wirelessAnimation->setStartValue(QRectF (fromNodePos, fromNodePos));
                 QLineF l (fromNodePos, toNodePos);
                 qreal length = l.length();
-                qreal hypotenuse =length;// sqrt((length * length) *2);
+                qreal hypotenuse = length;// sqrt((length * length) *2);
                 QPointF topLeft = QPointF (fromNodePos.x() - hypotenuse, fromNodePos.y() - hypotenuse);
                 QPointF bottomRight = QPointF (fromNodePos.x() + hypotenuse, fromNodePos.y() + hypotenuse);
                 wirelessAnimation->setEndValue(QRectF (topLeft, bottomRight));
@@ -1224,7 +1231,7 @@ AnimatorMode::showPacketStatsSlot()
 
 
             QPropertyAnimation  * propAnimation = new QPropertyAnimation (animPacket, "pos");
-            propAnimation->setDuration(m_updateRates[UPDATE_RATE_SLIDER_DEFAULT] * 1000);
+            propAnimation->setDuration(m_currentUpdateRate * 1000);
             propAnimation->setStartValue(animPacket->getFromPos());
             propAnimation->setEndValue(animPacket->getToPos());
             //propAnimation->start();
@@ -1241,6 +1248,7 @@ AnimatorMode::showPacketStatsSlot()
     else
     {
          //showPopup("Result : BAD");
+         //NS_LOG_DEBUG ("Set Simulation completed");
          setSimulationCompleted();
     }
 

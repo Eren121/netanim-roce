@@ -193,6 +193,7 @@ private:
     void displayPacket(qreal t);
     void dispatchEvents ();
     void setSimulationCompleted();
+    void purgeAnimatedNodes();
 
 
 private slots:

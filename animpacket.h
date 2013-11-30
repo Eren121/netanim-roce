@@ -27,6 +27,7 @@ public:
              qreal firstBitTx,
              qreal firstBitRx,
              bool isWPacket);
+  ~AnimPacket();
   enum { Type = ANIMPACKET_TYPE };
   int type () const
   {

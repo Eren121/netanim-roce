@@ -130,6 +130,7 @@ public:
     ParsedElement parseNext();
     bool isParsingComplete();
     double getMaxSimulationTime();
+    void setMaxSimulationTime(qreal t);
     bool isFileValid();
     uint64_t getRxCount();
     void doParse();

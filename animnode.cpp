@@ -36,6 +36,10 @@ AnimNode::AnimNode(uint32_t nodeId, qreal x, qreal y, QString nodeDescription):m
 
 AnimNode::~AnimNode()
 {
+    if(m_nodeDescription)
+    {
+        delete m_nodeDescription;
+    }
 }
 
 void
@@ -184,6 +188,13 @@ AnimNodeMgr::getMaxPoint()
 {
     qreal m = qMax (m_maxX, m_maxY);
     return QPointF (m, m);
+}
+
+
+void
+AnimNodeMgr::systemReset()
+{
+    m_nodes.clear();
 }
 
 

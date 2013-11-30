@@ -378,6 +378,7 @@ Animxmlparser::parseLinkUpdate()
     parsedElement.link_toId = m_reader->attributes().value("toId").toString().toDouble();
     parsedElement.linkDescription = m_reader->attributes().value("ld").toString();
     parsedElement.updateTime = m_reader->attributes().value("t").toString().toDouble();
+    setMaxSimulationTime(parsedElement.updateTime);
     return parsedElement;
 
 }
@@ -416,38 +417,33 @@ Animxmlparser::parseNodeUpdate()
         parsedElement.nodeUpdateType = ParsedElement::SIZE;
     if(nodeUpdateString == "i")
         parsedElement.nodeUpdateType = ParsedElement::IMAGE;
+    parsedElement.updateTime = m_reader->attributes().value("t").toString().toDouble();
+    setMaxSimulationTime(parsedElement.updateTime);
+    parsedElement.nodeId = m_reader->attributes().value("id").toString().toUInt();
+
+
     switch(parsedElement.nodeUpdateType)
     {
         case ParsedElement::POSITION:
-            parsedElement.updateTime = m_reader->attributes().value("t").toString().toDouble();
             parsedElement.node_x = m_reader->attributes().value("x").toString().toDouble();
             parsedElement.node_y = m_reader->attributes().value("y").toString().toDouble();
-            parsedElement.nodeId = m_reader->attributes().value("id").toString().toUInt();
         break;
         case ParsedElement::COLOR:
-            parsedElement.updateTime = m_reader->attributes().value("t").toString().toDouble();
             parsedElement.node_r = m_reader->attributes().value("r").toString().toUInt();
             parsedElement.node_g = m_reader->attributes().value("g").toString().toUInt();
             parsedElement.node_b = m_reader->attributes().value("b").toString().toUInt();
-            parsedElement.nodeId = m_reader->attributes().value("id").toString().toUInt();
         break;
         case ParsedElement::DESCRIPTION:
-            parsedElement.updateTime = m_reader->attributes().value("t").toString().toDouble();
             parsedElement.nodeDescription = m_reader->attributes().value("descr").toString();
-            parsedElement.nodeId = m_reader->attributes().value("id").toString().toUInt();
 
         break;
         case ParsedElement::SIZE:
-            parsedElement.updateTime =  m_reader->attributes().value("t").toString().toDouble();
-            parsedElement.nodeId = m_reader->attributes().value("id").toString().toUInt();
             parsedElement.node_width = m_reader->attributes().value("w").toString().toDouble();
             parsedElement.node_height = m_reader->attributes().value("h").toString().toDouble();
         break;
 
         case ParsedElement::IMAGE:
-            parsedElement.updateTime = m_reader->attributes().value("t").toString().toDouble();
             parsedElement.resourceId = m_reader->attributes().value("rid").toString().toUInt();
-            parsedElement.nodeId = m_reader->attributes().value("id").toString().toUInt();
         break;
     }
 
@@ -470,11 +466,11 @@ Animxmlparser::parseGeneric(ParsedElement & parsedElement)
     parsedElement.packetrx_fromId = m_reader->attributes().value("fId").toString().toUInt();
     parsedElement.packetrx_fbTx = m_reader->attributes().value("fbTx").toString().toDouble();
     parsedElement.packetrx_lbTx = m_reader->attributes().value("lbTx").toString().toDouble();
-    m_maxSimulationTime = std::max(m_maxSimulationTime,parsedElement.packetrx_lbTx);
+    setMaxSimulationTime(parsedElement.packetrx_lbTx);
     parsedElement.packetrx_toId = m_reader->attributes().value("tId").toString().toUInt();
     parsedElement.packetrx_fbRx = m_reader->attributes().value("fbRx").toString().toDouble();
     parsedElement.packetrx_lbRx = m_reader->attributes().value("lbRx").toString().toDouble();
-    m_maxSimulationTime = std::max(m_maxSimulationTime, parsedElement.packetrx_lbRx);
+    setMaxSimulationTime(parsedElement.packetrx_lbRx);
     parsedElement.meta_info = m_reader->attributes().value("meta-info").toString();
     if(parsedElement.meta_info == "")
     {
@@ -511,7 +507,7 @@ Animxmlparser::parsePacket()
     parsedElement.packetrx_fbTx = m_reader->attributes().value("fbTx").toString().toDouble();
     parsedElement.packetrx_lbTx = m_reader->attributes().value("lbTx").toString().toDouble();
     parsedElement.meta_info = "null";
-    m_maxSimulationTime = std::max(m_maxSimulationTime,parsedElement.packetrx_lbTx);
+    setMaxSimulationTime(parsedElement.packetrx_lbTx);
     while(m_reader->name() != "rx")
         m_reader->readNext();
 
@@ -525,7 +521,7 @@ Animxmlparser::parsePacket()
     parsedElement.packetrx_toId = m_reader->attributes().value("toId").toString().toUInt();
     parsedElement.packetrx_fbRx = m_reader->attributes().value("fbRx").toString().toDouble();
     parsedElement.packetrx_lbRx = m_reader->attributes().value("lbRx").toString().toDouble();
-    m_maxSimulationTime = std::max(m_maxSimulationTime, parsedElement.packetrx_lbRx);
+    setMaxSimulationTime(parsedElement.packetrx_lbRx);
 
     while(m_reader->name() == "rx")
         m_reader->readNext();
@@ -550,7 +546,7 @@ Animxmlparser::parseWPacket()
     parsedElement.packetrx_fbTx = m_reader->attributes().value("fbTx").toString().toDouble();
     parsedElement.packetrx_lbTx = m_reader->attributes().value("lbTx").toString().toDouble();
     parsedElement.meta_info = "null";
-    m_maxSimulationTime = std::max(m_maxSimulationTime,parsedElement.packetrx_lbTx);
+    setMaxSimulationTime(parsedElement.packetrx_lbTx);
     while(m_reader->name() != "rx")
         m_reader->readNext();
     if(m_reader->atEnd() || m_reader->hasError())
@@ -564,7 +560,7 @@ Animxmlparser::parseWPacket()
     parsedElement.packetrx_toId = m_reader->attributes().value("toId").toString().toUInt();
     parsedElement.packetrx_fbRx = m_reader->attributes().value("fbRx").toString().toDouble();
     parsedElement.packetrx_lbRx = m_reader->attributes().value("lbRx").toString().toDouble();
-    m_maxSimulationTime = std::max(m_maxSimulationTime, parsedElement.packetrx_lbRx);
+    setMaxSimulationTime(parsedElement.packetrx_lbRx);
     while(m_reader->name() == "rx")
         m_reader->readNext();
     if(m_reader->name() == "wpacket")
@@ -576,6 +572,12 @@ Animxmlparser::parseWPacket()
     //qDebug(parsedElement.meta_info);
     return parsedElement;
 
+}
+
+void
+Animxmlparser::setMaxSimulationTime(qreal t)
+{
+    m_maxSimulationTime = std::max(m_maxSimulationTime, t);
 }
 
 double

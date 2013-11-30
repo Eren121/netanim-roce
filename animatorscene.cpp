@@ -60,14 +60,6 @@ AnimatorScene::getInstance()
 
 void AnimatorScene::testSlot()
 {
-    //NS_LOG_DEBUG("Before:" << m_pItem->sceneBoundingRect() << " Pos:" << m_pItem->pos());
-    //m_pItem->scale(1.5, 1.5);
-    //NS_LOG_DEBUG("After:" << m_pItem->sceneBoundingRect() << " Pos:" << m_pItem->pos());
-    //m_pItem->setSize(150, 20);
-    //views().last()->scale(1.1, 1.1);
-    static qreal t = 0;
-    displayPacket(t);
-    t += 0.1;
 
 }
 
@@ -88,6 +80,26 @@ AnimatorScene::addWirelessCircle(AnimWirelessCircles *w)
     addItem(w);
     m_animatedWirelessCircles.push_back(w);
 }
+
+void
+AnimatorScene::purgeAnimatedNodes()
+{
+    for(QVector <AnimNode*>::const_iterator i = m_animatedNodes.begin();
+        i != m_animatedNodes.end();
+        ++i)
+    {
+        AnimNode * animNode = *i;
+        animNode->setVisible(false);
+        QGraphicsTextItem * ti = animNode->getDescription();
+        removeItem(animNode);
+        removeItem(ti);
+        delete animNode;
+    }
+    m_animatedNodes.clear();
+    AnimNodeMgr::getInstance()->systemReset();
+
+}
+
 void
 AnimatorScene::purgeAnimatedPackets()
 {
@@ -99,6 +111,7 @@ AnimatorScene::purgeAnimatedPackets()
         p->setVisible(false);
         removeItem (p->getInfoTextItem());
         removeItem(p);
+        delete p;
     }
     m_animatedPackets.clear();
 
@@ -109,8 +122,29 @@ AnimatorScene::purgeAnimatedPackets()
         AnimWirelessCircles * w = *i;
         w->setVisible(false);
         removeItem(w);
+        delete w;
     }
     m_animatedWirelessCircles.clear();
+}
+
+
+void
+AnimatorScene::addNode(AnimNode *animNode)
+{
+    addItem(animNode);
+    m_animatedNodes.push_back(animNode);
+    animNode->setPos(animNode->getX(), animNode->getY());
+    addItem(animNode->getDescription());
+    animNode->getDescription()->setPos(animNode->sceneBoundingRect().bottomRight());
+    qreal boundaryWidth = AnimNodeMgr::getInstance()->getMaxPoint().x() * 0.1;
+    QPointF minPoint = QPointF(AnimNodeMgr::getInstance()->getMinPoint().x() - boundaryWidth,
+                        AnimNodeMgr::getInstance()->getMinPoint().y() - boundaryWidth);
+
+    QPointF maxPoint = QPointF(AnimNodeMgr::getInstance()->getMaxPoint().x() + boundaryWidth,
+                        AnimNodeMgr::getInstance()->getMaxPoint().y() + boundaryWidth);
+    setSceneRect(QRectF (minPoint, maxPoint));
+
+
 }
 
 void
@@ -124,61 +158,10 @@ AnimatorScene::addPacket(AnimPacket *p)
 
 void AnimatorScene::addPix()
 {
-    static int i = 0;
-    addEllipse(i++, 15, 4, 4);
-
-    /*AnimNodeMgr::getInstance()->add(0, this, m_userAreadWidth/2, m_userAreaHeight/2);
-    AnimNodeMgr::getInstance()->getNode(0)->setNodeDescription("Item0");
-
-    AnimNodeMgr::getInstance()->add(1, this, 7 *m_userAreadWidth/8, m_userAreaHeight/2);
-    AnimNodeMgr::getInstance()->getNode(1)->setNodeDescription("Item1");
-
-    AnimNodeMgr::getInstance()->add(2, this, 6 * m_userAreadWidth/8.5, m_userAreaHeight/4.5);
-    AnimNodeMgr::getInstance()->getNode(2)->setNodeDescription("Item2");
-
-    AnimNodeMgr::getInstance()->add(3, this, m_userAreadWidth/2, m_userAreaHeight/8);
-    AnimNodeMgr::getInstance()->getNode(3)->setNodeDescription("Item3");
-
-    AnimNodeMgr::getInstance()->add(4, this, m_userAreadWidth/4, m_userAreaHeight/8);
-    AnimNodeMgr::getInstance()->getNode(4)->setNodeDescription("Item4");
-
-    AnimNodeMgr::getInstance()->add(5, this, m_userAreadWidth/8, m_userAreaHeight/2);
-    AnimNodeMgr::getInstance()->getNode(5)->setNodeDescription("Item5");
-
-    AnimNodeMgr::getInstance()->add(6, this, m_userAreadWidth/4, 6 * m_userAreaHeight/8);
-    AnimNodeMgr::getInstance()->getNode(6)->setNodeDescription("Item6");
-
-    AnimNodeMgr::getInstance()->add(7, this, m_userAreadWidth/2, 7* m_userAreaHeight/8);
-    AnimNodeMgr::getInstance()->getNode(7)->setNodeDescription("Item7");
-
-    AnimNodeMgr::getInstance()->add(8, this, 6 *m_userAreadWidth/8, 6* m_userAreaHeight/8);
-    AnimNodeMgr::getInstance()->getNode(8)->setNodeDescription("Item8");*/
-
-
-    /*for (uint32_t i = 1; i <=8; ++i)
-    {
-        AnimNode * n0 =  AnimNodeMgr::getInstance()->getNode(0);
-        AnimNode * n1 =  AnimNodeMgr::getInstance()->getNode(i);
-        QLineF line(n0->getCenter(), n1->getCenter());
-        QGraphicsLineItem * lineItem = new QGraphicsLineItem(line);
-       // addItem(lineItem);
-    }*/
 
 }
 void AnimatorScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
-    /*QGraphicsView * view = views().last();
-    //NS_LOG_DEBUG("Scene Mouse Move ScenePos:" << event->scenePos());
-    //NS_LOG_DEBUG("Scene Mouse Move ScreenPos:" << event->screenPos());
-
-    QPoint viewP = view->mapFromScene(event->scenePos());
-    QPoint globalP = view->viewport()->mapToGlobal(viewP);
-    //NS_LOG_DEBUG("Scene Mouse Move ViewPos:" << globalP);
-    QPointF sp = event->scenePos();
-    QString s = "  " + QString::number(sp.x()) + "," + QString::number(sp.y());
-    m_mousePositionLabel->setText(s);
-    m_mousePositionProxyWidget->setPos(sp);
-    m_mousePositionLabel->adjustSize();*/
     return QGraphicsScene::mouseMoveEvent(event);
 }
 
