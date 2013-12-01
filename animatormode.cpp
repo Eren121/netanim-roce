@@ -272,7 +272,7 @@ AnimatorMode::initControls()
 
 
     m_gridButton = new QToolButton;
-    m_gridButton->setIcon(QIcon(":/animator_resource/animator_grid.svg"));
+    m_gridButton->setIcon(QIcon(":/resources/animator_grid.svg"));
     m_gridButton->setCheckable(true);
     connect(m_gridButton, SIGNAL(clicked()), this, SLOT(showGridLinesSlot()));
 
@@ -762,37 +762,16 @@ AnimatorMode::postParse()
     update();
     m_bottomStatusLabel->setText("Parsing complete:Click Play");
     m_parseProgressBar->reset();
+
     //m_showMetaButton->setChecked(AnimPktMgr::getInstance()->getMetaInfoSeen());
     resetBackground();
-    //updateRateTimeoutSlot();
 
     dispatchEvents();
-
-    /*
-    uint32_t nodeCount = AnimNodeMgr::getInstance()->getCount();
-    for (uint32_t i = 0; i < nodeCount; ++i)
-    {
-        AnimNode * animNode = AnimNodeMgr::getInstance()->getNode(i);
-        AnimatorScene::getInstance()->addItem(animNode);
-        animNode->setPos(animNode->getX(), animNode->getY());
-        AnimNodeMgr::getInstance()->getNode(i)->setNodeDescription(QString::number(i));
-    }
-
-    AnimLinkMgr::NodeIdAnimLinkVectorMap_t * pLinks = AnimLinkMgr::getInstance()->getLinks();
-    for (AnimLinkMgr::NodeIdAnimLinkVectorMap_t::const_iterator i = (*pLinks).begin();
-         i != (*pLinks).end();
-         ++i)
-    {
-        AnimLinkMgr::AnimLinkVector_t animLinks = i->second;
-        for(AnimLinkMgr::AnimLinkVector_t::const_iterator j = animLinks.begin();
-            j != animLinks.end();
-            ++j)
-        {
-            AnimLink * animLink = *j;
-            AnimatorScene::getInstance()->addItem(animLink);
-        }
-    }*/
-
+    m_gridButton->setChecked(false);
+    showGridLinesSlot();
+    m_gridButton->setChecked(true);
+    showGridLinesSlot();
+    AnimatorView::getInstance()->postParse();
 
 }
 
@@ -994,7 +973,16 @@ AnimatorMode::showPacketStatsSlot()
  void
  AnimatorMode::clickZoomInSlot()
  {
+     //if(m_animationGroup->state() != m_animationGroup->Stopped)
+     //    return;
+     AnimatorScene::getInstance()->purgeAnimatedPackets();
+     if(m_playing)
+     {
+    //     clickPlaySlot();
+     }
     AnimatorView::getInstance()->setCurrentZoomFactor(++m_currentZoomFactor);
+
+
  }
 
  void
@@ -1002,7 +990,20 @@ AnimatorMode::showPacketStatsSlot()
  {
      if(m_currentZoomFactor == 1)
          return;
+     //if(m_animationGroup->state() != m_animationGroup->Stopped)
+     //    return;
+     AnimatorScene::getInstance()->purgeAnimatedPackets();
+
+     if(m_playing)
+     {
+      //   clickPlaySlot();
+     }
+     AnimatorScene::getInstance()->invalidate();
+     AnimatorView::getInstance()->invalidateScene();
      AnimatorView::getInstance()->setCurrentZoomFactor(--m_currentZoomFactor);
+     //m_animationGroup->stop();
+
+
  }
 
 
@@ -1035,7 +1036,6 @@ AnimatorMode::purgeAnimatedNodes()
          m_simulationTimeSlider->setValue(m_currentTime);
          m_qLcdNumber->display(m_currentTime);
          keepAppResponsive();
-         QApplication::processEvents();
          m_updateRateTimer->start();
      }
  }
@@ -1145,6 +1145,9 @@ AnimatorMode::purgeAnimatedNodes()
  {
      m_updateRateSlider->setEnabled(false);
      m_simulationTimeSlider->setEnabled(false);
+     //m_zoomInButton->setEnabled(false);
+     //m_zoomOutButton->setEnabled(false);
+
      TimeValue<AnimEvent*>::TimeValueResult_t result;
      TimeValue<AnimEvent*>::TimeValueIteratorPair_t pp = m_events.getNext(result);
      //NS_LOG_DEBUG ("Now:" << pp.first->first);
@@ -1248,7 +1251,8 @@ AnimatorMode::purgeAnimatedNodes()
                         AnimLinkAddEvent * ev = static_cast<AnimLinkAddEvent *> (j->second);
                         AnimLink * animLink = LinkManager::getInstance()->addLink(ev->m_fromNodeId, ev->m_toNodeId,
                                              ev->m_fromNodeDescription, ev->m_toNodeDescription,
-                                             ev->m_linkDescription);
+                                             ev->m_linkDescription,
+                                             ev->m_p2p);
                         AnimatorScene::getInstance()->addLink(animLink);
                     }
                     case AnimEvent::UPDATE_LINK_EVENT:
@@ -1310,11 +1314,18 @@ AnimatorMode::purgeAnimatedNodes()
             //propAnimation->start();
             m_animationGroup->addAnimation(propertyAnimation);
 
-            AnimatorScene::getInstance()->update();
+            //AnimatorScene::getInstance()->update();
          }
          //NS_LOG_DEBUG ("Animation duration:" << animationGroup->duration());
 
-         m_animationGroup->start(QPropertyAnimation::DeleteWhenStopped);
+         //m_animationGroup->start(QPropertyAnimation::DeleteWhenStopped);
+         m_animationGroup->start();
+
+         connect(m_animationGroup,
+                 SIGNAL(finished()),
+                 this,
+                 SLOT(animationGroupFinished()));
+
          //delete animationGroup;
          //AnimatorScene::getInstance()->setShowInterfaceTexts(true, true);
     } // if result == good
@@ -1328,7 +1339,22 @@ AnimatorMode::purgeAnimatedNodes()
      m_simulationTimeSlider->setEnabled(true);
 
 
+
  }
+
+ void
+ AnimatorMode::animationGroupFinished()
+{
+     //NS_LOG_DEBUG ("animationGroupStateChangedSlot");
+     //if (newState != QAbstractAnimation::Stopped)
+     //    return;
+     //m_animationGroup->deleteLater();
+     //m_updateRateTimer->start();
+     //m_updateRateSlider->setEnabled(true);
+     //m_simulationTimeSlider->setEnabled(true);
+     //m_zoomInButton->setEnabled(true);
+     //m_zoomOutButton->setEnabled(true);
+}
 
  void
  AnimatorMode::displayPacket(qreal t)
@@ -1471,12 +1497,15 @@ AnimatorMode::purgeAnimatedNodes()
  void
  AnimatorMode::showGridLinesSlot()
  {
+
      if(m_gridButton->isChecked())
      {
+         AnimatorScene::getInstance()->addGrid();
          m_gridButton->setToolTip("Turn OFF Grid");
      }
      else
      {
+         AnimatorScene::getInstance()->resetGrid();
          m_gridButton->setToolTip("Turn ON Grid");
      }
  }
@@ -1490,6 +1519,8 @@ AnimatorMode::purgeAnimatedNodes()
  void
  AnimatorMode::updateGridLinesSlot(int value)
  {
+     AnimatorScene::getInstance()->setGridLinesCount(value);
+
  }
 
 

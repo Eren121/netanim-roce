@@ -57,13 +57,15 @@ class AnimLinkAddEvent: public AnimEvent
 {
 
 public:
-    AnimLinkAddEvent(uint32_t fromNodeId, uint32_t toNodeId, QString linkDescription, QString fromNodeDescription, QString toNodeDescription):
+    AnimLinkAddEvent(uint32_t fromNodeId, uint32_t toNodeId, QString linkDescription, QString fromNodeDescription, QString toNodeDescription,
+                     bool p2p=true):
         AnimEvent(ADD_LINK_EVENT),
         m_fromNodeId(fromNodeId),
         m_toNodeId(toNodeId),
         m_linkDescription(linkDescription),
         m_fromNodeDescription(fromNodeDescription),
-        m_toNodeDescription(toNodeDescription)
+        m_toNodeDescription(toNodeDescription),
+        m_p2p(p2p)
     {
     }
     uint32_t m_fromNodeId;
@@ -71,6 +73,7 @@ public:
     QString m_linkDescription;
     QString m_fromNodeDescription;
     QString m_toNodeDescription;
+    bool m_p2p;
 };
 
 class AnimLinkUpdateEvent: public AnimEvent

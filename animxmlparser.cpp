@@ -184,6 +184,19 @@ Animxmlparser::doParse()
                 pAnimatorMode->addAnimEvent(0, ev);
                 break;
            }
+           case XML_NONP2P_LINK:
+           {
+               AnimLinkAddEvent * ev = new AnimLinkAddEvent(parsedElement.link_fromId,
+                                                            parsedElement.link_toId,
+                                                            parsedElement.linkDescription,
+                                                            parsedElement.fromNodeDescription,
+                                                            parsedElement.toNodeDescription,
+                                                            false);
+               pAnimatorMode->addAnimEvent(0, ev);
+               break;
+
+
+            }
             case XML_LINKUPDATE:
             {
                 AnimLinkUpdateEvent * ev = new AnimLinkUpdateEvent(parsedElement.link_fromId,

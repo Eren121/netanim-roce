@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'animatormode.h'
 **
-** Created: Sat Nov 30 21:26:26 2013
+** Created: Sun Dec 1 09:27:43 2013
 **      by: The Qt Meta Object Compiler version 63 (Qt 4.8.1)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -23,7 +23,7 @@ static const uint qt_meta_data_netanim__AnimatorMode[] = {
        6,       // revision
        0,       // classname
        0,    0, // classinfo
-      26,   14, // methods
+      27,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -57,6 +57,7 @@ static const uint qt_meta_data_netanim__AnimatorMode[] = {
      513,   22,   22,   22, 0x08,
      535,   22,   22,   22, 0x08,
      555,   22,   22,   22, 0x08,
+     581,   22,   22,   22, 0x08,
 
        0        // eod
 };
@@ -78,6 +79,7 @@ static const char qt_meta_stringdata_netanim__AnimatorMode[] = {
     "showIpSlot()\0showMacSlot()\0"
     "setUnicastMatchSlot()\0showRoutePathSlot()\0"
     "showBatteryCapacitySlot()\0"
+    "animationGroupFinished()\0"
 };
 
 void netanim::AnimatorMode::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
@@ -112,6 +114,7 @@ void netanim::AnimatorMode::qt_static_metacall(QObject *_o, QMetaObject::Call _c
         case 23: _t->setUnicastMatchSlot(); break;
         case 24: _t->showRoutePathSlot(); break;
         case 25: _t->showBatteryCapacitySlot(); break;
+        case 26: _t->animationGroupFinished(); break;
         default: ;
         }
     }
@@ -149,9 +152,9 @@ int netanim::AnimatorMode::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 26)
+        if (_id < 27)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 26;
+        _id -= 27;
     }
     return _id;
 }

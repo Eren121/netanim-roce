@@ -37,6 +37,7 @@ AnimatorView::AnimatorView(QGraphicsScene * scene) :
     m_currentZoomFactor(1)
 {
     setRenderHint(QPainter::Antialiasing);
+    setViewportUpdateMode(BoundingRectViewportUpdate);
 }
 
 AnimatorView *
@@ -53,7 +54,13 @@ void
 AnimatorView::paintEvent(QPaintEvent *event)
 {
     //qDebug(transform);
-    QGraphicsView::paintEvent(event);
+    try{
+        QGraphicsView::paintEvent(event);
+    }
+    catch (...)
+    {
+
+    }
 }
 
 AnimatorScene *
@@ -65,6 +72,19 @@ AnimatorView::getAnimatorScene()
 void
 AnimatorView::updateTransform()
 {
+    QTransform transform;
+    QRectF sceneBoundaryRect = AnimatorScene::getInstance()->getBoundaryRect();
+
+    qreal minDimension = qMin(sceneBoundaryRect.width(),sceneBoundaryRect.height());
+
+    qreal xScale = viewport()->width()/minDimension;
+    qreal yScale = viewport()->height()/minDimension;
+    //qDebug(width(), "Width");
+    //qDebug(height(), "height");
+    qreal minScale = qMin(xScale, yScale);
+    transform.scale(minScale, minScale);
+    //getAnimatorScene()->setCurrentScale(minScale, minScale);
+    setTransform(transform);
 
 }
 
@@ -80,7 +100,7 @@ AnimatorView::setCurrentZoomFactor(qreal factor)
         scale(0.9, 0.9);
     }
     m_currentZoomFactor = factor;
-    update();
+    //update();
 }
 
 void
@@ -98,7 +118,9 @@ AnimatorView::save()
 void
 AnimatorView::fitSceneWithinView()
 {
+    //QGraphicsView::fitInView(sceneRect());
     updateTransform();
+
 }
 
 void
@@ -113,38 +135,7 @@ void
 AnimatorView::postParse()
 {
 
-    //fitInView(AnimatorScene::getInstance()->sceneRect());
-    //NS_LOG_DEBUG ("View Transform:" << transform());
-
-
-
-         QTransform t;
-
-
-
-         qreal minDimension = qMin(getAnimatorScene()->width(), getAnimatorScene()->height());
-
-
-
-         qreal xScale = width()/minDimension;
-
-         qreal yScale = height()/minDimension;
-
-         //qDebug(width(), "Width");
-
-         //qDebug(height(), "height");
-
-         qreal minScale = qMin(xScale, yScale);
-
-         t.scale(minScale, minScale);
-
-        // getAnimatorScene()->setCurrentScale(minScale, minScale);
-
-         setTransform(t);
-        // NS_LOG_DEBUG ("View Transform:" << transform());
-
-
-
+        fitSceneWithinView();
 }
 
 QTransform

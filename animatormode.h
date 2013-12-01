@@ -230,7 +230,7 @@ private slots:
     void setUnicastMatchSlot();
     void showRoutePathSlot();
     void showBatteryCapacitySlot();
-
+    void animationGroupFinished();
 };
 
 

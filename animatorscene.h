@@ -78,9 +78,14 @@ public:
     void addLink (AnimLink * animLink);
     void addWirelessCircle (AnimWirelessCircles * w);
     void purgeAnimatedPackets();
+    void showAnimatedPackets(bool show);
     void purgeAnimatedNodes();
     void purgeAnimatedLinks();
     void setShowInterfaceTexts(bool showIp, bool showMac);
+    void addGrid();
+    void resetGrid();
+    QRectF getBoundaryRect();
+    void setGridLinesCount(int nGridLines);
 
 
 
@@ -88,6 +93,9 @@ public slots:
     void testSlot();
 private:
     typedef QVector <AnimInterfaceText *>          AnimInterfaceTextVector_t;
+    typedef QVector <QGraphicsLineItem *>          LineItemVector_t;
+    typedef QVector <QGraphicsSimpleTextItem*>     GridCoordinatesVector_t;
+
     qreal m_userAreadWidth;
     qreal m_userAreaHeight;
     TimeValue<AnimPacket *> m_testTimeValue;
@@ -104,10 +112,27 @@ private:
     qreal m_leftTop;
     qreal m_rightTop;
     QList <QGraphicsItem *> getInterfaceTextCollisionList(AnimInterfaceText * text);
+    qreal           m_gridStep;
+    bool            m_showGrid;
+    int             m_nGridLines;
+    LineItemVector_t             m_gridLines;
+    GridCoordinatesVector_t      m_gridCoordinates;
+    QRectF m_boundaryRect;
+
+
     void repositionInterfaceText(AnimInterfaceText * textItem);
     void resetInterfaceTexts();
     void removeInterfaceTextCollision();
     void resetInterfaceTextTop();
+
+    void markGridCoordinates();
+    void initGridCoordinates();
+    QVector <QGraphicsSimpleTextItem *> getGridCoordinatesItems();
+    void setMousePositionLabel(QPointF pos);
+    void showMousePositionLabel(bool show);
+
+
+
 
 
 

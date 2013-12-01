@@ -36,9 +36,14 @@ AnimLink::AnimLink(uint32_t fromId, uint32_t toId,
     m_pointBDescription = 0;
     m_currentLinkDescription = 0;
 
-    QLineF line (AnimNodeMgr::getInstance()->getNode(fromId)->getCenter(),
-                 AnimNodeMgr::getInstance()->getNode(toId)->getCenter());
-    setLine(line);
+    if(!m_p2p)
+    {
+
+        m_toId = m_fromId;
+    }
+        QLineF line (AnimNodeMgr::getInstance()->getNode(m_fromId)->getCenter(),
+                     AnimNodeMgr::getInstance()->getNode(m_toId)->getCenter());
+        setLine(line);
 
     if (pointADescription != "")
     {
@@ -87,6 +92,8 @@ AnimLink::~AnimLink()
 void
 AnimLink::repairLink()
 {
+    if (!m_p2p)
+        return;
     QLineF line (AnimNodeMgr::getInstance()->getNode(m_fromId)->getCenter(),
                  AnimNodeMgr::getInstance()->getNode(m_toId)->getCenter());
     setLine(line);

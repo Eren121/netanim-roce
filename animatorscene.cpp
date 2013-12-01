@@ -46,6 +46,10 @@ AnimatorScene::AnimatorScene():QGraphicsScene(0, 0, ANIMATORSCENE_USERAREA_WIDTH
     m_mousePositionProxyWidget = addWidget(m_mousePositionLabel, Qt::ToolTip);
     m_mousePositionProxyWidget->setFlag(QGraphicsItem::ItemIgnoresTransformations);
     //addItem(m_mousePositionLabel);
+    m_nGridLines = GRID_LINES_DEFAULT;
+    m_showGrid = true;
+
+    initGridCoordinates();
 
 }
 
@@ -121,6 +125,27 @@ AnimatorScene::purgeAnimatedLinks()
 
 }
 
+
+void
+AnimatorScene::showAnimatedPackets(bool show)
+{
+    for(QVector <AnimPacket *>::const_iterator i = m_animatedPackets.begin();
+        i != m_animatedPackets.end();
+        ++i)
+    {
+        AnimPacket * p = *i;
+        p->setVisible(show);
+    }
+
+    for(QVector <AnimWirelessCircles *>::const_iterator i = m_animatedWirelessCircles.begin();
+        i != m_animatedWirelessCircles.end();
+        ++i)
+    {
+        AnimWirelessCircles * w = *i;
+        w->setVisible(show);
+    }
+}
+
 void
 AnimatorScene::purgeAnimatedPackets()
 {
@@ -167,8 +192,8 @@ AnimatorScene::addNode(AnimNode *animNode)
     QPointF minPoint = QPointF(AnimNodeMgr::getInstance()->getMinPoint().x() - boundaryWidth,
                         AnimNodeMgr::getInstance()->getMinPoint().y() - boundaryWidth);
 
-    QPointF maxPoint = QPointF(AnimNodeMgr::getInstance()->getMaxPoint().x() + boundaryWidth,
-                        AnimNodeMgr::getInstance()->getMaxPoint().y() + boundaryWidth);
+    QPointF maxPoint = QPointF(AnimNodeMgr::getInstance()->getMaxPoint().x() +  boundaryWidth,
+                        AnimNodeMgr::getInstance()->getMaxPoint().y() +  boundaryWidth);
     setSceneRect(QRectF (minPoint, maxPoint));
 
 
@@ -187,9 +212,159 @@ void AnimatorScene::addPix()
 {
 
 }
+
+void
+AnimatorScene::setMousePositionLabel(QPointF pos)
+{
+
+    QString string = "    (" + QString::number(qRound(pos.x())) + "," + QString::number(sceneRect().height()-qRound(pos.y())) + ")";
+    m_mousePositionLabel->setText(string);
+    m_mousePositionProxyWidget->setPos(pos.x(), pos.y());
+    m_mousePositionLabel->adjustSize();
+
+}
+
+void
+AnimatorScene::showMousePositionLabel(bool show)
+{
+    m_mousePositionProxyWidget->setVisible(show);
+}
+
 void AnimatorScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
+
+      QPointF scenePos = event->scenePos();
+ //   QString s = "Mouse:" + QString::number(event->scenePos().x()) + "," + QString::number(event->scenePos().y());
+ //   qDebug(s.toAscii().data());
+    setMousePositionLabel(scenePos);
+    if((scenePos.x() < 0) ||
+       (scenePos.y() < 0))
+    {
+        showMousePositionLabel(false);
+    }
+    else
+    {
+        showMousePositionLabel(true);
+    }
     return QGraphicsScene::mouseMoveEvent(event);
+}
+
+
+QVector <QGraphicsSimpleTextItem *>
+AnimatorScene::getGridCoordinatesItems()
+{
+    return m_gridCoordinates;
+}
+
+
+void
+AnimatorScene::initGridCoordinates()
+{
+    for (int i = 0; i < m_gridCoordinates.size(); ++i)
+    {
+        QGraphicsSimpleTextItem * item = m_gridCoordinates[i];
+        removeItem(item);
+        delete item;
+    }
+    m_gridCoordinates.clear();
+    for(int i = 0; i < 9; i++) // only 9 coordinates will be marked
+    {
+        QGraphicsSimpleTextItem * item = new QGraphicsSimpleTextItem;
+        item->setFlag(QGraphicsItem::ItemIgnoresTransformations);
+        m_gridCoordinates.push_back(item);
+        addItem(item);
+
+    }
+    markGridCoordinates();
+
+}
+
+void
+AnimatorScene::markGridCoordinates()
+{
+    int i = 0;
+    for (qreal x = 0; x <= sceneRect().width() ; x = x + (sceneRect().width()/2))
+    for (qreal y = 0; y <= sceneRect().height() ; y = y + (sceneRect().height()/2))
+    {
+        QString text = QString::number(qRound(x))
+                       + ","
+                       + QString::number( sceneRect().height()-qRound(y));
+        m_gridCoordinates[i]->setText(text);
+        m_gridCoordinates[i]->setPos(QPointF(x, y));
+        m_gridCoordinates[i]->setVisible(m_showGrid);
+        i++;
+    }
+
+}
+
+void
+AnimatorScene::addGrid()
+{
+    m_showGrid = true;
+    qreal xStep =  sceneRect().width()/(m_nGridLines-1);
+    qreal yStep = sceneRect().height()/(m_nGridLines-1);
+    QPen pen(QColor(100, 100, 155, 125));
+
+    // draw horizontal grid
+    qreal y;
+    qreal x;
+    for ( y = 0; y <= sceneRect().height(); y += yStep) {
+       m_gridLines.push_back(addLine(0, y, sceneRect().width(), y, pen));
+    }
+    // now draw vertical grid
+    for (x = 0; x <=  sceneRect().width(); x += xStep) {
+       m_gridLines.push_back(addLine(x, 0, x,  sceneRect().height(), pen));
+    }
+    initGridCoordinates();
+    markGridCoordinates();
+    m_boundaryRect = sceneRect();
+    m_boundaryRect.setBottom(y);
+    m_boundaryRect.setRight(x);
+
+}
+
+QRectF
+AnimatorScene::getBoundaryRect()
+{
+    return m_boundaryRect;
+}
+
+void
+AnimatorScene::setGridLinesCount(int nGridLines)
+{
+    m_nGridLines = nGridLines;
+    bool showGrid = m_showGrid;
+    resetGrid();
+    m_showGrid = showGrid;
+    if(m_showGrid)
+    {
+        addGrid();
+    }
+    update();
+}
+
+void
+AnimatorScene::resetGrid()
+{
+    m_showGrid = false;
+    for(LineItemVector_t::const_iterator i = m_gridLines.begin();
+        i != m_gridLines.end();
+        ++i)
+    {
+
+        removeItem(*i);
+        delete (*i);
+    }
+    m_gridLines.clear();
+
+    for(GridCoordinatesVector_t::const_iterator i = m_gridCoordinates.begin();
+        i != m_gridCoordinates.end();
+        ++i)
+    {
+        removeItem(*i);
+        delete (*i);
+    }
+    m_gridCoordinates.clear();
 }
 
 
