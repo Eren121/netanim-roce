@@ -64,7 +64,9 @@ AnimatorMode::AnimatorMode():
      m_packetPersistTime(500),
      m_wPacketDetected(false),
      m_parsingXMLDialog(0),
-     m_background(0)
+     m_background(0),
+     m_fastForwarding(false),
+     m_animationGroup(0)
 
 {
     init();
@@ -438,6 +440,8 @@ AnimatorMode::initControls()
     connect(m_addCustomImageButton, SIGNAL(clicked()), this, SLOT(clickAddCustomImageSlot()));
 
     m_parseProgressBar = new QProgressBar;
+    //m_animationGroup  = new QParallelAnimationGroup;
+
     setLabelStyleSheet();
 }
 
@@ -647,12 +651,43 @@ AnimatorMode::showParsingXmlDialog(bool show)
 }
 
 void
+AnimatorMode::fastForward(qreal t)
+{
+    while (m_currentTime <t)
+    {
+        //NS_LOG_DEBUG ("Fast Forwarding dispatch");
+        dispatchEvents();
+    }
+    m_fastForwarding = false;
+}
+
+
+void
+AnimatorMode::reset()
+{
+    m_updateRateTimer->stop();
+    m_events.rewind();
+    m_events.setCurrentTime(0);
+    AnimatorScene::getInstance()->purgeAnimatedNodes();
+    AnimatorScene::getInstance()->purgeAnimatedPackets();
+    AnimatorScene::getInstance()->purgeAnimatedLinks();
+    m_currentTime = 0;
+}
+
+void
 AnimatorMode::setCurrentTime(qreal currentTime)
 {
     //NS_LOG_DEBUG ("Setting current time:" << currentTime);
-    m_currentTime = currentTime;
+    m_simulationTimeSlider->setValue(currentTime);
+    m_qLcdNumber->display(currentTime);
+    fflush(stdout);
+    reset();
+    fastForward(currentTime);
+    if(m_playing)
+        m_updateRateTimer->start();
     m_simulationTimeSlider->setValue(currentTime);
     m_events.setCurrentTime(currentTime);
+    m_currentTime = currentTime;
 
 }
 
@@ -909,20 +944,27 @@ AnimatorMode::clickSaveSlot()
     m_playButton->setIcon(QIcon(":/resources/animator_play.svg"));
     m_playButton->setToolTip("Play Animation");
     m_playButton->setEnabled(true);
+    AnimatorScene::getInstance()->purgeAnimatedNodes();
+    AnimatorScene::getInstance()->purgeAnimatedPackets();
+
  }
 
  void
  AnimatorMode::updateTimelineSlot(int value)
  {
+   // if(m_animationGroup)
+   //     m_animationGroup->stop();
     if(value == m_oldTimelineValue)
          return;
     m_oldTimelineValue = value;
+    m_fastForwarding = true;
     setCurrentTime(value);
     if(m_nodePositionStatsButton->isChecked())
     {
         if(!m_playing)
             clickPlaySlot();
     }
+
     //updateRateTimeoutSlot();
  }
 
@@ -1001,6 +1043,8 @@ AnimatorMode::purgeAnimatedNodes()
  void
  AnimatorMode::updateUpdateRateSlot(int value)
  {
+     //if(m_animationGroup)
+     //   m_animationGroup->stop();
      m_currentUpdateRate = m_updateRates[value];
      if(m_updateRateTimer)
      {
@@ -1071,7 +1115,7 @@ AnimatorMode::purgeAnimatedNodes()
     {
         if (m_state == SIMULATION_COMPLETE)
         {
-            AnimatorScene::getInstance()->purgeAnimatedNodes();
+            reset();
         }
         m_state = PLAYING;
         m_bottomStatusLabel->setText("Playing");
@@ -1100,6 +1144,7 @@ AnimatorMode::purgeAnimatedNodes()
  AnimatorMode::dispatchEvents()
  {
      m_updateRateSlider->setEnabled(false);
+     m_simulationTimeSlider->setEnabled(false);
      TimeValue<AnimEvent*>::TimeValueResult_t result;
      TimeValue<AnimEvent*>::TimeValueIteratorPair_t pp = m_events.getNext(result);
      //NS_LOG_DEBUG ("Now:" << pp.first->first);
@@ -1135,6 +1180,8 @@ AnimatorMode::purgeAnimatedNodes()
                     }
                    case AnimEvent::PACKET_EVENT:
                    {
+                       if (m_fastForwarding)
+                            continue;
                        AnimPacketEvent * packetEvent = static_cast<AnimPacketEvent *> (j->second);
                        AnimPacket * animPacket = AnimPacketMgr::getInstance()->add(packetEvent->m_fromId,
                                                                                    packetEvent->m_toId,
@@ -1202,8 +1249,7 @@ AnimatorMode::purgeAnimatedNodes()
                         AnimLink * animLink = LinkManager::getInstance()->addLink(ev->m_fromNodeId, ev->m_toNodeId,
                                              ev->m_fromNodeDescription, ev->m_toNodeDescription,
                                              ev->m_linkDescription);
-                        AnimatorScene::getInstance()->addItem(animLink);
-                        break;
+                        AnimatorScene::getInstance()->addLink(animLink);
                     }
                     case AnimEvent::UPDATE_LINK_EVENT:
                     {
@@ -1215,7 +1261,7 @@ AnimatorMode::purgeAnimatedNodes()
 
                 } //switch
             } // for loop
-         QParallelAnimationGroup * animationGroup = new QParallelAnimationGroup;
+         m_animationGroup  = new QParallelAnimationGroup;
          for (QVector <AnimPacket *>::const_iterator i = packetsToAnimate.begin();
               i != packetsToAnimate.end();
               ++i)
@@ -1237,7 +1283,10 @@ AnimatorMode::purgeAnimatedNodes()
                 AnimatorScene::getInstance()->addWirelessCircle(pAnimWirelessCircle);
 
                 QPropertyAnimation * wirelessAnimation = new QPropertyAnimation (pAnimWirelessCircle, "rect");
-                wirelessAnimation->setDuration(m_currentUpdateRate * 1000);
+                qreal duration = m_currentUpdateRate * 1000;
+                wirelessAnimation->setDuration(duration);
+                if (m_fastForwarding)
+                    duration = 0;
                 wirelessAnimation->setStartValue(QRectF (fromNodePos, fromNodePos));
                 QLineF l (fromNodePos, toNodePos);
                 qreal length = l.length();
@@ -1245,24 +1294,27 @@ AnimatorMode::purgeAnimatedNodes()
                 QPointF topLeft = QPointF (fromNodePos.x() - hypotenuse, fromNodePos.y() - hypotenuse);
                 QPointF bottomRight = QPointF (fromNodePos.x() + hypotenuse, fromNodePos.y() + hypotenuse);
                 wirelessAnimation->setEndValue(QRectF (topLeft, bottomRight));
-                animationGroup->addAnimation(wirelessAnimation);
+                m_animationGroup->addAnimation(wirelessAnimation);
 
             }
 
 
 
-            QPropertyAnimation  * propAnimation = new QPropertyAnimation (animPacket, "pos");
-            propAnimation->setDuration(m_currentUpdateRate * 1000);
-            propAnimation->setStartValue(animPacket->getFromPos());
-            propAnimation->setEndValue(animPacket->getToPos());
+            QPropertyAnimation * propertyAnimation = new QPropertyAnimation (animPacket, "pos");
+            qreal duration = m_currentUpdateRate * 1000;
+            if (m_fastForwarding)
+                duration = 0;
+            propertyAnimation->setDuration(duration);
+            propertyAnimation->setStartValue(animPacket->getFromPos());
+            propertyAnimation->setEndValue(animPacket->getToPos());
             //propAnimation->start();
-            animationGroup->addAnimation(propAnimation);
+            m_animationGroup->addAnimation(propertyAnimation);
 
             AnimatorScene::getInstance()->update();
          }
          //NS_LOG_DEBUG ("Animation duration:" << animationGroup->duration());
 
-         animationGroup->start(QAbstractAnimation::DeleteWhenStopped);
+         m_animationGroup->start(QPropertyAnimation::DeleteWhenStopped);
          //delete animationGroup;
          //AnimatorScene::getInstance()->setShowInterfaceTexts(true, true);
     } // if result == good
@@ -1273,6 +1325,7 @@ AnimatorMode::purgeAnimatedNodes()
          setSimulationCompleted();
     }
      m_updateRateSlider->setEnabled(true);
+     m_simulationTimeSlider->setEnabled(true);
 
 
  }

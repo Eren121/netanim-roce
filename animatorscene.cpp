@@ -103,6 +103,25 @@ AnimatorScene::purgeAnimatedNodes()
 }
 
 void
+AnimatorScene::purgeAnimatedLinks()
+{
+
+    for(QVector <AnimLink *>::const_iterator i = m_animatedLinks.begin();
+        i != m_animatedLinks.end();
+        ++i)
+    {
+        AnimLink * animLink = *i;
+        animLink->setVisible(false);
+        removeItem(animLink);
+        delete animLink;
+
+    }
+    m_animatedLinks.clear();
+    LinkManager::getInstance()->systemReset();
+
+}
+
+void
 AnimatorScene::purgeAnimatedPackets()
 {
     for(QVector <AnimPacket *>::const_iterator i = m_animatedPackets.begin();
@@ -129,6 +148,12 @@ AnimatorScene::purgeAnimatedPackets()
     m_animatedWirelessCircles.clear();
 }
 
+void
+AnimatorScene::addLink(AnimLink *animLink)
+{
+    addItem(animLink);
+    m_animatedLinks.push_back(animLink);
+}
 
 void
 AnimatorScene::addNode(AnimNode *animNode)

@@ -2,6 +2,7 @@
 #define MYSCENE_H
 
 #include "animnode.h"
+#include "animlink.h"
 #include "resizeablepixmap.h"
 #include "resizeableitem.h"
 #include "timevalue.h"
@@ -74,9 +75,11 @@ public:
     void displayPacket(qreal t);
     void addPacket (AnimPacket * p);
     void addNode (AnimNode * animNode);
+    void addLink (AnimLink * animLink);
     void addWirelessCircle (AnimWirelessCircles * w);
     void purgeAnimatedPackets();
     void purgeAnimatedNodes();
+    void purgeAnimatedLinks();
     void setShowInterfaceTexts(bool showIp, bool showMac);
 
 
@@ -92,6 +95,7 @@ private:
     QGraphicsProxyWidget * m_mousePositionProxyWidget;
     QVector <AnimPacket *> m_animatedPackets;
     QVector <AnimWirelessCircles *> m_animatedWirelessCircles;
+    QVector <AnimLink *> m_animatedLinks;
     QVector<AnimNode *> m_animatedNodes;
     bool            m_showIpInterfaceTexts;
     bool            m_showMacInterfaceTexts;

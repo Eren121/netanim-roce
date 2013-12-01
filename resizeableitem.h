@@ -55,10 +55,6 @@ public:
     ResizeableItem();
     ~ResizeableItem();
     QRectF boundingRect() const;
-    void hoverMoveEvent(QGraphicsSceneHoverEvent *event);
-    void mousePressEvent(QGraphicsSceneMouseEvent *event);
-    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
-    void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
     qreal getItemWidth();
     qreal getItemHeight();
     qreal getBorderWidth();
@@ -73,18 +69,13 @@ protected:
     qreal m_width;
     qreal m_height;
 private:
-    bool m_mousePressed;
-    ResizeDirection_t m_currentResizeDirection;
-    ResizeDirection_t m_lastResizeDirection;
-    bool m_resizing;
     ResizeableItemType_t m_type;
     QPixmap * m_pixmap;
     uint8_t m_r;
     uint8_t m_g;
     uint8_t m_b;
     uint8_t m_alpha;
-    bool isResizing();
-    void setResizingDirection(ResizeDirection_t direction);
+
 
 };
 

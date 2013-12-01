@@ -41,6 +41,7 @@
 #include <QComboBox>
 #include <QProgressBar>
 #include <QGraphicsPixmapItem>
+#include <QParallelAnimationGroup>
 
 namespace netanim {
 
@@ -109,6 +110,7 @@ private:
     bool m_wPacketDetected;
     uint64_t m_rxCount;
     TimeValue<AnimEvent *> m_events;
+    bool m_fastForwarding;
 
 
     //controls
@@ -159,6 +161,7 @@ private:
     QToolButton * m_unicastMatchButton;
     QToolButton * m_showRoutePathButton;
     QGraphicsPixmapItem * m_background;
+    QParallelAnimationGroup * m_animationGroup;
 
 
     //functions
@@ -194,6 +197,8 @@ private:
     void dispatchEvents ();
     void setSimulationCompleted();
     void purgeAnimatedNodes();
+    void fastForward(qreal t);
+    void reset();
 
 
 private slots:

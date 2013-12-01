@@ -328,19 +328,6 @@ void
 LinkManager::systemReset()
 {
     // remove links
-    for(LinkManager::NodeIdAnimLinkVectorMap_t::const_iterator i = m_pointToPointLinks.begin();
-        i != m_pointToPointLinks.end();
-        ++i)
-    {
-        LinkManager::AnimLinkVector_t v = i->second;
-        for(LinkManager::AnimLinkVector_t::const_iterator j = v.begin();
-            j != v.end();
-            ++j)
-        {
-            //AnimatorScene::getInstance()->removeItem(*j);
-            delete (*j);
-        }
-    }
     m_pointToPointLinks.clear();
 
 }

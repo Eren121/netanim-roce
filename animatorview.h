@@ -41,22 +41,12 @@ public:
 
 protected:
     void paintEvent(QPaintEvent * event);
-    void mouseDoubleClickEvent(QMouseEvent *event);
-    void mouseMoveEvent(QMouseEvent * event);
-    void resizeEvent(QResizeEvent *event);
     void wheelEvent(QWheelEvent *event);
-    void mousePressEvent(QMouseEvent *event);
-    void mouseReleaseEvent(QMouseEvent *event);
+
 
 private:
     explicit AnimatorView(QGraphicsScene *);
     qreal m_currentZoomFactor;
-    bool m_resizing;
-    bool m_inResizingBoundary;
-    qreal m_resizeItemSceneWidth;
-    QRectF m_resizeItemSceneRect;
-    QGraphicsItem * m_resizingItem;
-
     AnimatorScene * getAnimatorScene();
     void updateTransform();
 signals:
