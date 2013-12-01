@@ -6,5 +6,7 @@
         <file>animator_zoomin.svg</file>
         <file>animator_zoomout.svg</file>
         <file>animator_fileopen.svg</file>
+        <file>animator_nodeid.svg</file>
+        <file>animator_wirelesscircles.svg</file>
     </qresource>
 </RCC>

@@ -28,7 +28,14 @@ public:
     void setWidth(qreal width);
     void setHeight(qreal height);
     void setColor(uint8_t r, uint8_t g, uint8_t b);
+    void addIpv4Address(QString ip);
+    void addMacAddress(QString mac);
+    bool hasIpv4(QString ip);
+    bool hasMac(QString mac);
+    void showNodeId(bool show);
 private:
+    typedef QVector <QString> Ipv4Vector_t;
+    typedef QVector <QString> MacVector_t;
     QGraphicsTextItem * m_nodeDescription;
     uint32_t m_nodeId;
     qreal m_x;
@@ -36,6 +43,9 @@ private:
     uint8_t m_r;
     uint8_t m_g;
     uint8_t m_b;
+    bool m_showNodeId;
+    Ipv4Vector_t m_ipv4Vector;
+    MacVector_t m_macVector;
 
 
 };
@@ -52,6 +62,10 @@ public:
     QPointF getMinPoint ();
     QPointF getMaxPoint ();
     void systemReset();
+    void addIpv4Address(uint32_t nodeId, QString ip);
+    void addMacAddress(uint32_t nodeId, QString mac);
+    void setSize(qreal width, qreal height);
+    void showNodeId(bool show);
 private:
     AnimNodeMgr();
     NodeIdAnimNodeMap_t m_nodes;

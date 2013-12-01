@@ -21,7 +21,8 @@ AnimNode::AnimNode(uint32_t nodeId, qreal x, qreal y, QString nodeDescription):m
     m_y(y),
     m_r(255),
     m_g(0),
-    m_b(0)
+    m_b(0),
+    m_showNodeId(true)
 {
     //setVisible(false);
     setZValue(ANIMNODE_ZVALUE);
@@ -41,6 +42,14 @@ AnimNode::~AnimNode()
         delete m_nodeDescription;
     }
 }
+
+void
+AnimNode::showNodeId(bool show)
+{
+    m_showNodeId = show;
+    m_nodeDescription->setVisible(m_showNodeId);
+}
+
 
 void
 AnimNode::setColor(uint8_t r, uint8_t g, uint8_t b)
@@ -124,6 +133,63 @@ void AnimNode::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     }
 }
 
+void
+AnimNode::addIpv4Address(QString ip)
+{
+    m_ipv4Vector.push_back(ip);
+}
+
+void
+AnimNode::addMacAddress(QString mac)
+{
+    m_macVector.push_back(mac);
+}
+
+bool
+AnimNode::hasIpv4(QString ip)
+{
+    bool result = false;
+    QStringList quads = ip.split(".");
+    if(quads.count() == 4)
+    {
+        if(quads.at(3) == "255")
+            return true;
+        for(Ipv4Vector_t::const_iterator i = m_ipv4Vector.begin();
+            i != m_ipv4Vector.end();
+            ++i)
+        {
+            if(*i == ip)
+            {
+                //QDEBUG(ip);
+                return true;
+            }
+        }
+    }
+
+    return result;
+}
+
+
+bool
+AnimNode::hasMac(QString mac)
+{
+    bool result = false;
+    QStringList bytes = mac.split(":");
+    if(bytes.count() == 6)
+    {
+        for(MacVector_t::const_iterator i = m_macVector.begin();
+            i != m_macVector.end();
+            ++i)
+        {
+            if(*i == mac)
+            {
+                return true;
+            }
+        }
+    }
+
+    return result;
+}
 
 
 AnimNodeMgr::AnimNodeMgr():
@@ -154,7 +220,7 @@ AnimNode * AnimNodeMgr::add(uint32_t nodeId, qreal x, qreal y, QString nodeDescr
     QPixmap pix(":/resources/ns3logo2.png","png");
     AnimNode * node = new AnimNode(nodeId, x, y, nodeDescription);
     node->setPos(x, y);
-    node->setPixmap(pix);
+    //node->setPixmap(pix);
     m_nodes[nodeId] = node;
     m_minX = qMin (m_minX, x);
     m_minY = qMin (m_minY, y);
@@ -164,6 +230,18 @@ AnimNode * AnimNodeMgr::add(uint32_t nodeId, qreal x, qreal y, QString nodeDescr
     return node;
 }
 
+
+void
+AnimNodeMgr::setSize(qreal width, qreal height)
+{
+    for(NodeIdAnimNodeMap_t::const_iterator i = m_nodes.begin();
+        i != m_nodes.end();
+        ++i)
+    {
+        AnimNode * animNode = i->second;
+        animNode->setSize(width, height);
+    }
+}
 
 AnimNode * AnimNodeMgr::getNode(uint32_t nodeId)
 {
@@ -195,6 +273,32 @@ void
 AnimNodeMgr::systemReset()
 {
     m_nodes.clear();
+}
+
+
+void
+AnimNodeMgr::addIpv4Address(uint32_t nodeId, QString ip)
+{
+    getNode(nodeId)->addIpv4Address(ip);
+}
+
+void
+AnimNodeMgr::addMacAddress(uint32_t nodeId, QString mac)
+{
+    getNode(nodeId)->addMacAddress(mac);
+}
+
+void
+AnimNodeMgr::showNodeId(bool show)
+{
+    for(NodeIdAnimNodeMap_t::const_iterator i = m_nodes.begin();
+        i != m_nodes.end();
+        ++i)
+    {
+        AnimNode * animNode = i->second;
+        animNode->showNodeId(show);
+    }
+
 }
 
 

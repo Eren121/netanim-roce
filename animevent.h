@@ -16,7 +16,9 @@ public:
         UPDATE_NODE_COLOR_EVENT,
         UPDATE_NODE_DESCRIPTION_EVENT,
         UPDATE_NODE_SIZE_EVENT,
-        UPDATE_NODE_IMAGE_EVENT
+        UPDATE_NODE_IMAGE_EVENT,
+        ADD_LINK_EVENT,
+        UPDATE_LINK_EVENT
     } AnimEventType_h;
     AnimEventType_h m_type;
     AnimEvent(AnimEventType_h type): m_type (type)
@@ -49,6 +51,47 @@ public:
 
 
 };
+
+
+class AnimLinkAddEvent: public AnimEvent
+{
+
+public:
+    AnimLinkAddEvent(uint32_t fromNodeId, uint32_t toNodeId, QString linkDescription, QString fromNodeDescription, QString toNodeDescription):
+        AnimEvent(ADD_LINK_EVENT),
+        m_fromNodeId(fromNodeId),
+        m_toNodeId(toNodeId),
+        m_linkDescription(linkDescription),
+        m_fromNodeDescription(fromNodeDescription),
+        m_toNodeDescription(toNodeDescription)
+    {
+    }
+    uint32_t m_fromNodeId;
+    uint32_t m_toNodeId;
+    QString m_linkDescription;
+    QString m_fromNodeDescription;
+    QString m_toNodeDescription;
+};
+
+class AnimLinkUpdateEvent: public AnimEvent
+{
+
+public:
+    AnimLinkUpdateEvent(uint32_t fromNodeId, uint32_t toNodeId, QString linkDescription):
+        AnimEvent(UPDATE_LINK_EVENT),
+        m_fromNodeId(fromNodeId),
+        m_toNodeId(toNodeId),
+        m_linkDescription(linkDescription)
+    {
+    }
+    uint32_t m_fromNodeId;
+    uint32_t m_toNodeId;
+    QString m_linkDescription;
+};
+
+
+
+
 
 class AnimNodePositionUpdateEvent: public AnimEvent
 {

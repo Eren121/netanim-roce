@@ -176,8 +176,23 @@ Animxmlparser::doParse()
            case XML_LINK:
            {
                 //AnimLinkMgr::getInstance()->add(parsedElement.link_fromId, parsedElement.link_toId);
+                AnimLinkAddEvent * ev = new AnimLinkAddEvent(parsedElement.link_fromId,
+                                                             parsedElement.link_toId,
+                                                             parsedElement.linkDescription,
+                                                             parsedElement.fromNodeDescription,
+                                                             parsedElement.toNodeDescription);
+                pAnimatorMode->addAnimEvent(0, ev);
                 break;
            }
+            case XML_LINKUPDATE:
+            {
+                AnimLinkUpdateEvent * ev = new AnimLinkUpdateEvent(parsedElement.link_fromId,
+                                                              parsedElement.link_toId,
+                                                              parsedElement.linkDescription);
+                pAnimatorMode->addAnimEvent(parsedElement.updateTime, ev);
+                break;
+            }
+
             case XML_RESOURCE:
             {
                 AnimResourceManager::getInstance()->add(parsedElement.resourceId, parsedElement.resourcePath);

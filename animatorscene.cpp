@@ -1,7 +1,9 @@
 #include "log.h"
 #include "logqt.h"
 #include "animatorscene.h"
+#include "animatorview.h"
 #include "animnode.h"
+#include "animlink.h"
 #include <QGraphicsProxyWidget>
 #include <QGraphicsSceneHoverEvent>
 #include <QGraphicsView>
@@ -205,6 +207,211 @@ void AnimatorScene::displayPacket(qreal t)
 
 }
 
+void
+AnimatorScene::setShowInterfaceTexts(bool showIp, bool showMac)
+{
+    resetInterfaceTexts();
+    m_showIpInterfaceTexts = showIp;
+    m_showMacInterfaceTexts = showMac;
+    if(!m_showIpInterfaceTexts && !m_showMacInterfaceTexts)
+    {
+        return;
+    }
+    if(!m_interfaceATexts.size())
+    {
+        for(LinkManager::NodeIdAnimLinkVectorMap_t::const_iterator i = LinkManager::getInstance()->getLinks()->begin();
+            i != LinkManager::getInstance()->getLinks()->end();
+            ++i)
+        {
+
+            LinkManager::AnimLinkVector_t linkVector = i->second;
+
+            for(LinkManager::AnimLinkVector_t::const_iterator j = linkVector.begin();
+                j != linkVector.end();
+                ++j)
+            {
+                AnimLink * animLink = *j;
+
+                QString pointADescription = animLink->getInterfaceADescription();
+                QPointF pointApos = animLink->getInterfacePosA();
+                AnimInterfaceText * interfaceAText = new AnimInterfaceText(pointADescription);
+                interfaceAText->setPos(pointApos);
+                addItem(interfaceAText);
+                m_interfaceATexts.push_back(interfaceAText);
+                interfaceAText->setMode(m_showIpInterfaceTexts, m_showMacInterfaceTexts);
+
+                QString pointBDescription = animLink->getInterfaceBDescription();
+                if(pointBDescription == "")
+                {
+                    continue;
+                }
+                QPointF pointBpos = animLink->getInterfacePosB();
+                AnimInterfaceText * interfaceBText = new AnimInterfaceText(pointBDescription, true);
+                interfaceBText->setMode(m_showIpInterfaceTexts, m_showMacInterfaceTexts);
+                addItem(interfaceBText);
+                interfaceBText->setPos(pointBpos);
+                m_interfaceBTexts.push_back(interfaceBText);
+            }
+        }
+        update();
+        removeInterfaceTextCollision();
+        return;
+     }
+    for(AnimInterfaceTextVector_t::const_iterator i = m_interfaceATexts.begin();
+        i != m_interfaceATexts.end();
+        ++i)
+    {
+        AnimInterfaceText * interfaceText = *i;
+        interfaceText->setMode(m_showIpInterfaceTexts, m_showMacInterfaceTexts);
+        QGraphicsLineItem * l = interfaceText->getLine();
+        if(l)
+        {
+            l->setVisible(showIp || showMac);
+        }
+        interfaceText->setVisible(showIp || showMac);
+    }
+    for(AnimInterfaceTextVector_t::const_iterator i = m_interfaceBTexts.begin();
+        i != m_interfaceBTexts.end();
+        ++i)
+    {
+        AnimInterfaceText * interfaceText = *i;
+        interfaceText->setMode(m_showIpInterfaceTexts, m_showMacInterfaceTexts);
+        QGraphicsLineItem * l = interfaceText->getLine();
+        if(l)
+        {
+            l->setVisible(showIp || showMac);
+        }
+        interfaceText->setVisible(showIp || showMac);
+    }
+    removeInterfaceTextCollision();
+    update();
+}
+
+
+QList <QGraphicsItem *>
+AnimatorScene::getInterfaceTextCollisionList(AnimInterfaceText * text)
+{
+    QList <QGraphicsItem *> l = text->collidingItems();
+    QList <QGraphicsItem *> collidingList;
+    for (QList <QGraphicsItem *>::const_iterator i = l.begin();
+         i != l.end();
+         ++i)
+    {
+        QGraphicsItem * item = *i;
+        if(item->type() == (ANIMINTERFACE_TEXT_TYPE))
+        {
+            collidingList.append(item);
+        }
+    }
+    return collidingList;
+}
+
+
+void
+AnimatorScene::repositionInterfaceText(AnimInterfaceText *textItem)
+{
+    bool isRight = textItem->pos().x() > (sceneRect().width()/2);
+    QPointF oldPos = textItem->pos();
+    QFontMetrics fm(font());
+    QPointF newPos;
+    if(!isRight)
+    {
+        textItem->setLeftAligned(false);
+        qreal y = m_leftTop + 1.5 * fm.height()/AnimatorView::getInstance()->transform().m11();
+        newPos = QPointF(-fm.width(textItem->getText())/AnimatorView::getInstance()->transform().m11(), y);
+        m_leftTop = newPos.y();
+    }
+    else
+    {
+        textItem->setLeftAligned(true);
+        qreal y = m_rightTop + 1.5 * fm.height()/AnimatorView::getInstance()->transform().m11();
+        newPos = QPointF(sceneRect().width() + fm.width(textItem->getText())/AnimatorView::getInstance()->transform().m11(), y);
+        m_rightTop = newPos.y();
+    }
+    textItem->setPos(newPos);
+    QLineF l(oldPos, newPos);
+    if(textItem->setLine(l))
+    {
+        addItem(textItem->getLine());
+    }
+
+}
+
+void
+AnimatorScene::resetInterfaceTexts()
+{
+    resetInterfaceTextTop();
+    for(AnimInterfaceTextVector_t::const_iterator i = m_interfaceATexts.begin();
+        i != m_interfaceATexts.end();
+        ++i)
+    {
+        AnimInterfaceText * text = *i;
+        QGraphicsLineItem * l = text->getLine();
+        if(l)
+        {
+            removeItem(l);
+        }
+        removeItem(*i);
+        delete (*i);
+    }
+    m_interfaceATexts.clear();
+    for(AnimInterfaceTextVector_t::const_iterator i = m_interfaceBTexts.begin();
+        i != m_interfaceBTexts.end();
+        ++i)
+    {
+        AnimInterfaceText * text = *i;
+        QGraphicsLineItem * l = text->getLine();
+        if(l)
+        {
+            removeItem(l);
+        }
+        removeItem(*i);
+        delete (*i);
+    }
+    m_interfaceBTexts.clear();
+    update();
+}
+
+void
+AnimatorScene::resetInterfaceTextTop()
+{
+    m_leftTop = 0;
+    m_rightTop = 0;
+}
+
+void
+AnimatorScene::removeInterfaceTextCollision()
+{
+
+
+    for(AnimInterfaceTextVector_t::iterator i = m_interfaceATexts.begin();
+        i != m_interfaceATexts.end();
+        ++i)
+    {
+        AnimInterfaceText * text = *i;
+        QList <QGraphicsItem *> collidingList = getInterfaceTextCollisionList(text);
+        //qDebug(collidingList.count(), "CL count");
+        if(collidingList.count())
+        {
+            repositionInterfaceText(text);
+        }
+
+    }
+    for(AnimInterfaceTextVector_t::iterator i = m_interfaceBTexts.begin();
+        i != m_interfaceBTexts.end();
+        ++i)
+    {
+        AnimInterfaceText * text = *i;
+        QList <QGraphicsItem *> collidingList = getInterfaceTextCollisionList(text);
+        //qDebug(collidingList.count(), "CL count");
+        if(collidingList.count())
+        {
+            repositionInterfaceText(text);
+        }
+    }
+
+}
+
 
 void AnimatorScene::prepareTimeValueData()
 {
@@ -285,5 +492,128 @@ void AnimatorScene::prepareTimeValueData()
     /*std::cout << m_testTimeValue.toString().str();*/
     fflush(stdout);
 }
+
+AnimInterfaceText::AnimInterfaceText(QString description, bool leftAligned):QGraphicsTextItem(description),
+    m_leftAligned(leftAligned),
+    m_line(0)
+{
+    setFlag(QGraphicsItem::ItemIgnoresTransformations);
+    setZValue(ANIMINTERFACE_TEXT_TYPE);
+}
+
+AnimInterfaceText::~AnimInterfaceText()
+{
+    if(m_line)
+    {
+        delete m_line;
+    }
+}
+
+void
+AnimInterfaceText::setLeftAligned(bool leftAligned)
+{
+    m_leftAligned = leftAligned;
+}
+
+QPainterPath
+AnimInterfaceText::shape() const
+{
+    QPainterPath p;
+    QFontMetrics fm(font());
+    QRectF r(0, 0, fm.width(getText())/AnimatorView::getInstance()->transform().m11(),
+             fm.height()/AnimatorView::getInstance()->transform().m11());
+    p.addRect(r);
+    return p;
+}
+
+QString
+AnimInterfaceText::getText() const
+{
+    QStringList parts = toPlainText().split('~');
+    if(m_mode == AnimInterfaceText::IPV4)
+    {
+        return parts.at(0);
+    }
+    if(m_mode == AnimInterfaceText::MAC)
+    {
+        if(parts.length() != 2)
+        {
+            return "";
+        }
+        return parts.at(1);
+    }
+    return toPlainText();
+}
+
+
+void
+AnimInterfaceText::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+{
+
+    Q_UNUSED(option)
+    Q_UNUSED(widget)
+    if(m_leftAligned)
+    {
+        QFontMetrics fm = painter->fontMetrics();
+        QPointF leftAlignPoint = QPointF(-fm.width(getText()), 0);
+        painter->save();
+        painter->translate(leftAlignPoint);
+        painter->drawText(QPointF(0, 0), getText());
+        //QGraphicsTextItem::paint(painter, option, widget);
+        painter->restore();
+    }
+    else
+    {
+        //QGraphicsTextItem::paint(painter, option, widget);
+        painter->drawText(QPointF(0, 0), getText());
+
+    }
+}
+
+bool
+AnimInterfaceText::setLine(QLineF l)
+{
+    bool newLine = false;
+    if(!m_line)
+    {
+        m_line = new QGraphicsLineItem;
+        newLine = true;
+    }
+    QPen p;
+
+    p.setColor(QColor(0, 0, 255, 50));
+    m_line->setPen(p);
+    m_line->setLine(l);
+    return newLine;
+}
+
+QGraphicsLineItem *
+AnimInterfaceText::getLine()
+{
+    return m_line;
+}
+
+void
+AnimInterfaceText::setMode(bool showIpv4, bool showMac)
+{
+    if(!showIpv4 && !showMac)
+    {
+        m_mode = AnimInterfaceText::NONE;
+    }
+    if(showIpv4 && !showMac)
+    {
+        m_mode = AnimInterfaceText::IPV4;
+    }
+    if(!showIpv4 && showMac)
+    {
+        m_mode = AnimInterfaceText::MAC;
+    }
+    if(showIpv4 && showMac)
+    {
+        m_mode = AnimInterfaceText::BOTH;
+    }
+}
+
+
 
 } // namespace netanim

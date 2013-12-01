@@ -139,7 +139,7 @@ AnimatorMode::setControlDefaults()
     showMetaSlot();
     m_packetStatsButton->setChecked(false);
     showPacketStatsSlot();
-    m_showWirelessCirclesButton->setChecked(m_wPacketDetected);
+    m_showWirelessCirclesButton->setChecked(true);
     showWirelessCirclesSlot();
 
 
@@ -285,20 +285,21 @@ AnimatorMode::initControls()
     m_nodeSizeComboBox = new QComboBox;
     m_nodeSizeComboBox->setToolTip("Node Size");
     QStringList nodeSizes;
-    nodeSizes << "20%"
-              << "40%"
-              << "50%"
-              << "60%"
-              << "80%"
-              << "100%"
-              << "200%"
-              << "300%"
-              << "400%"
-              << "500%"
-              << "600%"
-              << "900%"
-              << "1000%"
-              << "2000%";
+
+    nodeSizes << "0.2"
+              << "0.4"
+              << "0.5"
+              << "0.6"
+              << "0.8"
+              << "1"
+              << "2"
+              << "3"
+              << "4"
+              << "5"
+              << "6"
+              << "9"
+              << "10"
+              << "20";
     m_nodeSizeComboBox->addItems(nodeSizes);
     connect(m_nodeSizeComboBox, SIGNAL(currentIndexChanged(QString)), this, SLOT(updateNodeSizeSlot(QString)));
 
@@ -350,7 +351,7 @@ AnimatorMode::initControls()
 
 
     m_showNodeIdButton = new QToolButton;
-    m_showNodeIdButton->setIcon(QIcon(":/animator_resource/animator_nodeid.svg"));
+    m_showNodeIdButton->setIcon(QIcon(":/resources/animator_nodeid.svg"));
     m_showNodeIdButton->setToolTip("Show Node Id");
     m_showNodeIdButton->setCheckable(true);
     connect(m_showNodeIdButton, SIGNAL(clicked()), this, SLOT(showNodeIdSlot()));
@@ -387,7 +388,7 @@ AnimatorMode::initControls()
     m_qLcdNumber->setDigitCount(10);
 
     m_showWirelessCirclesButton = new QToolButton;
-    m_showWirelessCirclesButton->setIcon(QIcon(":/animator_resource/animator_wirelesscircles.svg"));
+    m_showWirelessCirclesButton->setIcon(QIcon(":/resources/animator_wirelesscircles.svg"));
     m_showWirelessCirclesButton->setToolTip("Toggle Show Wireless Circles Animation");
     m_showWirelessCirclesButton->setCheckable(true);
     connect(m_showWirelessCirclesButton, SIGNAL(clicked()), this, SLOT(showWirelessCirclesSlot()));
@@ -577,33 +578,33 @@ AnimatorMode::doWirelessDetectedAction()
 qreal
 AnimatorMode::nodeSizeStringToValue(QString nodeSize)
 {
-    if(nodeSize == "20%")
+    if(nodeSize == "0.2")
         return 0.2;
-    if(nodeSize == "40%")
+    if(nodeSize == "0.4")
         return 0.4;
-    if(nodeSize == "50%")
+    if(nodeSize == "0.5")
         return 0.5;
-    if(nodeSize == "60%")
+    if(nodeSize == "0.6")
         return 0.6;
-    if(nodeSize == "80%")
+    if(nodeSize == "0.8")
         return 0.8;
-    if(nodeSize == "100%")
+    if(nodeSize == "1")
         return 1;
-    if(nodeSize == "200%")
+    if(nodeSize == "2")
         return 2;
-    if(nodeSize == "300%")
+    if(nodeSize == "3")
         return 3;
-    if(nodeSize == "400%")
+    if(nodeSize == "4")
         return 4;
-    if(nodeSize == "500%")
+    if(nodeSize == "5")
         return 5;
-    if(nodeSize == "600%")
+    if(nodeSize == "6")
         return 6;
-    if(nodeSize == "900%")
+    if(nodeSize == "9")
         return 9;
-    if(nodeSize == "1000%")
+    if(nodeSize == "10")
         return 10;
-    if(nodeSize == "2000%")
+    if(nodeSize == "20")
         return 20;
     return 1;
 }
@@ -728,9 +729,9 @@ AnimatorMode::postParse()
     m_parseProgressBar->reset();
     //m_showMetaButton->setChecked(AnimPktMgr::getInstance()->getMetaInfoSeen());
     resetBackground();
-    updateRateTimeoutSlot();
+    //updateRateTimeoutSlot();
 
-    //dispatchEvents();
+    dispatchEvents();
 
     /*
     uint32_t nodeCount = AnimNodeMgr::getInstance()->getCount();
@@ -1036,8 +1037,8 @@ AnimatorMode::purgeAnimatedNodes()
     QFileDialog fileDialog;
     fileDialog.setFileMode(QFileDialog::ExistingFiles);
     //QString traceFileName = "/home/john/ns3/ns-3-dev/dumbbell-animation.xml";
-    //QString traceFileName = "/home/john/ns3/ns-3-dev/wireless-animation.xml";
-    QString traceFileName = "/home/john/ns3/ns-3-dev/dynamic_linknode.xml";
+    QString traceFileName = "/home/john/ns3/ns-3-dev/wireless-animation.xml";
+    //QString traceFileName = "/home/john/ns3/ns-3-dev/dynamic_linknode.xml";
 
     //QString traceFileName = "C:\\Users\\jabraham\\Downloads\\wireless-animation2.xml";
     //QString traceFileName = "C:\\Users\\jabraham\\Downloads\\dumbbell-animation.xml";
@@ -1098,6 +1099,7 @@ AnimatorMode::purgeAnimatedNodes()
  void
  AnimatorMode::dispatchEvents()
  {
+     m_updateRateSlider->setEnabled(false);
      TimeValue<AnimEvent*>::TimeValueResult_t result;
      TimeValue<AnimEvent*>::TimeValueIteratorPair_t pp = m_events.getNext(result);
      //NS_LOG_DEBUG ("Now:" << pp.first->first);
@@ -1145,13 +1147,14 @@ AnimatorMode::purgeAnimatedNodes()
                    }
                     case AnimEvent::UPDATE_NODE_POS_EVENT:
                    {
-                        NS_LOG_DEBUG ("Node Update POs");
+                        //NS_LOG_DEBUG ("Node Update POs");
                         AnimNodePositionUpdateEvent * ev = static_cast<AnimNodePositionUpdateEvent *> (j->second);
                         AnimNode * animNode = AnimNodeMgr::getInstance()->getNode(ev->m_nodeId);
                         animNode->setX(ev->m_x);
                         animNode->setY(ev->m_y);
                         animNode->setPos(animNode->getX(), animNode->getY());
                         animNode->getDescription()->setPos(animNode->sceneBoundingRect().bottomRight());
+                        LinkManager::getInstance()->repairLinks(animNode->getNodeId());
 
                         break;
                    }
@@ -1176,6 +1179,7 @@ AnimatorMode::purgeAnimatedNodes()
                         AnimNode * animNode = AnimNodeMgr::getInstance()->getNode(ev->m_nodeId);
                         animNode->setSize(ev->m_width, ev->m_height);
                         animNode->getDescription()->setPos(animNode->sceneBoundingRect().bottomRight());
+                        LinkManager::getInstance()->repairLinks(animNode->getNodeId());
                         break;
                     }
                     case AnimEvent::UPDATE_NODE_IMAGE_EVENT:
@@ -1187,8 +1191,25 @@ AnimatorMode::purgeAnimatedNodes()
                         //NS_LOG_DEBUG ("Res:" << resourcePath.toAscii().data());
                         QPixmap pix(resourcePath, "png");
                         animNode->setPixmap(pix);
+                        LinkManager::getInstance()->repairLinks(animNode->getNodeId());
                         break;
 
+                    }
+                    case AnimEvent::ADD_LINK_EVENT:
+                    {
+
+                        AnimLinkAddEvent * ev = static_cast<AnimLinkAddEvent *> (j->second);
+                        AnimLink * animLink = LinkManager::getInstance()->addLink(ev->m_fromNodeId, ev->m_toNodeId,
+                                             ev->m_fromNodeDescription, ev->m_toNodeDescription,
+                                             ev->m_linkDescription);
+                        AnimatorScene::getInstance()->addItem(animLink);
+                        break;
+                    }
+                    case AnimEvent::UPDATE_LINK_EVENT:
+                    {
+                        AnimLinkUpdateEvent * ev = static_cast<AnimLinkUpdateEvent *> (j->second);
+                        LinkManager::getInstance()->updateLink(ev->m_fromNodeId, ev->m_toNodeId, ev->m_linkDescription);
+                        break;
                     }
 
 
@@ -1205,7 +1226,7 @@ AnimatorMode::purgeAnimatedNodes()
             animPacket->setVisible(true);
             animPacket->setPos(animPacket->getHead ());
 
-            if(animPacket->getIsWPacket())
+            if(animPacket->getIsWPacket() && m_showWiressCircles)
             {
                 uint32_t fromNodeId = animPacket->getFromNodeId();
                 uint32_t toNodeId = animPacket->getToNodeId();
@@ -1243,7 +1264,7 @@ AnimatorMode::purgeAnimatedNodes()
 
          animationGroup->start(QAbstractAnimation::DeleteWhenStopped);
          //delete animationGroup;
-
+         //AnimatorScene::getInstance()->setShowInterfaceTexts(true, true);
     } // if result == good
     else
     {
@@ -1251,6 +1272,7 @@ AnimatorMode::purgeAnimatedNodes()
          //NS_LOG_DEBUG ("Set Simulation completed");
          setSimulationCompleted();
     }
+     m_updateRateSlider->setEnabled(true);
 
 
  }
@@ -1313,6 +1335,16 @@ AnimatorMode::purgeAnimatedNodes()
  void
  AnimatorMode::updateNodeSizeSlot(QString value)
  {
+     qreal size = nodeSizeStringToValue(value);
+     AnimNodeMgr::getInstance()->setSize(size, size);
+     uint32_t nodeCount = AnimNodeMgr::getInstance()->getCount();
+     for (uint32_t i = 0; i < nodeCount; ++i)
+     {
+        AnimNode * animNode = AnimNodeMgr::getInstance()->getNode(i);
+        animNode->getDescription()->setPos(animNode->sceneBoundingRect().bottomRight());
+        LinkManager::getInstance()->repairLinks(animNode->getNodeId());
+     }
+
  }
 
  void
@@ -1344,6 +1376,7 @@ AnimatorMode::purgeAnimatedNodes()
  void
  AnimatorMode::showNodeIdSlot()
  {
+    AnimNodeMgr::getInstance()->showNodeId(m_showNodeIdButton->isChecked());
     if(m_showNodeIdButton->isChecked())
     {
         m_showNodeIdButton->setToolTip("Don't show Node Id");
@@ -1371,11 +1404,15 @@ AnimatorMode::purgeAnimatedNodes()
  void
  AnimatorMode::showIpSlot()
  {
+     AnimatorScene::getInstance()->setShowInterfaceTexts(m_showIpButton->isChecked(), m_showMacButton->isChecked());
+
  }
 
  void
  AnimatorMode::showMacSlot()
  {
+     AnimatorScene::getInstance()->setShowInterfaceTexts(m_showIpButton->isChecked(), m_showMacButton->isChecked());
+
  }
 
  void
