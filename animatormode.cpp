@@ -1190,7 +1190,8 @@ AnimatorMode::purgeAnimatedNodes()
                                                                                    packetEvent->m_toId,
                                                                                    packetEvent->m_fbTx,
                                                                                    packetEvent->m_fbRx,
-                                                                                   packetEvent->m_isWPacket);
+                                                                                   packetEvent->m_isWPacket,
+                                                                                   packetEvent->m_metaInfo);
                        packetsToAnimate.push_back(animPacket);
                        break;
 
