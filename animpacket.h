@@ -27,7 +27,7 @@ struct ArpInfo
         destMac = "ff:ff:ff:ff:ff:ff";
         destIpv4 = "null";
     }
-    std::string toString()
+    QString toString()
     {
         return  " Arp "     + type       +
                 " SMac: "   + sourceMac  +
@@ -35,18 +35,26 @@ struct ArpInfo
                 " SrcIp : " + sourceIpv4 +
                 " DstIp : " + destIpv4;
     }
-    std::string type;
-    std::string sourceMac;
-    std::string sourceIpv4;
-    std::string destMac;
-    std::string destIpv4;
+    QString toShortString()
+    {
+        return QString("Arp:") + type + " DstIP=" + destIpv4;
+    }
+    QString type;
+    QString sourceMac;
+    QString sourceIpv4;
+    QString destMac;
+    QString destIpv4;
 };
 
 struct PppInfo
 {
-    std::string toString()
+    QString toString()
     {
         return " PPP";
+    }
+    QString toShortString()
+    {
+        return "PPP";
     }
 
 };
@@ -58,13 +66,17 @@ struct EthernetInfo
         sourceMac = "null";
         destMac = "null";
     }
-    std::string toString()
+    QString toString()
     {
         return  " Ethernet SMac: " + sourceMac +
                 " DMac: "          + destMac;
     }
-    std::string sourceMac;
-    std::string destMac;
+    QString toShortString()
+    {
+        return "Ethernet:" + sourceMac + " > " + destMac;
+    }
+    QString sourceMac;
+    QString destMac;
 };
 
 
@@ -84,7 +96,7 @@ struct WifiMacInfo
 
     }
 
-    std::string toString()
+    QString toString()
     {
         if(type == "CTL_ACK")
             return " Wifi CTL_ACK RA:" + Ra;
@@ -92,7 +104,7 @@ struct WifiMacInfo
             return " Wifi CTL_RTS RA:" + Ra + " TA:" + Sa;
         if(type == "CTL_CTS")
             return " Wifi CTL_CTS RA:" + Ra;
-        std::string temp = " Wifi " + type +
+        QString temp = " Wifi " + type +
                 " FromDS: " + fromDs +
                 " toDS: " + toDs +
                 " DA: " + Da +
@@ -105,15 +117,35 @@ struct WifiMacInfo
             temp += " status: " + assocResponseStatus;
         return temp;
     }
-    std::string type;
-    std::string toDs;
-    std::string fromDs;
-    std::string Da;
-    std::string Sa;
-    std::string Bssid;
-    std::string Ra;
-    std::string SSid;
-    std::string assocResponseStatus;
+
+    QString toShortString()
+    {
+        QString s = "";
+        if(type == "CTL_RTS")
+            s = "Wifi:CTL_RTS RA:" + Ra + " TA:" + Sa;
+        if(type == "CTL_CTS")
+            s = "Wifi:CTL_CTS RA:" + Ra;
+        if(type == "MGT_BEACON")
+            s =  "Wifi:BEACON ssid" + SSid;
+        if(type == "MGT_ASSOCIATION_REQUEST")
+            s =  "Wifi:ASSOC_REQ ssid" + SSid;
+        if(type == "CTL_ACK")
+            s = "Wifi:CTL_ACK RA:" + Ra;
+        else
+            s = "Wifi:" + type;
+        return s;
+
+
+    }
+    QString type;
+    QString toDs;
+    QString fromDs;
+    QString Da;
+    QString Sa;
+    QString Bssid;
+    QString Ra;
+    QString SSid;
+    QString assocResponseStatus;
 };
 
 
@@ -123,21 +155,25 @@ struct Ipv4Info
     {
 
     }
-    std::string toString ()
+    QString toString ()
     {
         return  " Ipv4 Proto:" + protocol +
                 " SrcIp: " + SrcIp +
                 " DstIp: " + DstIp;
     }
-    std::string tos;
-    std::string Dscp;
-    std::string Ecn;
-    std::string Ttl;
-    std::string Id;
-    std::string protocol;
-    std::string length;
-    std::string SrcIp;
-    std::string DstIp;
+    QString toShortString()
+    {
+        return "IPv4:" + SrcIp + " > " + DstIp;
+    }
+    QString tos;
+    QString Dscp;
+    QString Ecn;
+    QString Ttl;
+    QString Id;
+    QString protocol;
+    QString length;
+    QString SrcIp;
+    QString DstIp;
 
 };
 
@@ -148,9 +184,9 @@ struct IcmpInfo
     {
 
     }
-    std::string toString()
+    QString toString()
     {
-        std::string temp;
+        QString temp;
         temp += "ICMP type: " + type +
                 "code: " + code;
         if (type == "3" && code == "3")
@@ -158,8 +194,16 @@ struct IcmpInfo
         return temp;
 
     }
-    std::string type;
-    std::string code;
+    QString toShortString()
+    {
+        if ((type == "3") & (code == "3"))
+        {
+            return "ICMP: Dst Unreachable";
+        }
+        return "ICMP: type=" + type + " code="+ code;
+    }
+    QString type;
+    QString code;
 };
 
 
@@ -169,14 +213,19 @@ struct UdpInfo
     {
 
     }
-    std::string toString()
+    QString toString()
     {
         return " UDP " + SPort + " > " + DPort;
 
     }
-    std::string length;
-    std::string SPort;
-    std::string DPort;
+    QString toShortString()
+    {
+        return "UDP:" + SPort + " > " + DPort;
+
+    }
+    QString length;
+    QString SPort;
+    QString DPort;
 
 };
 
@@ -186,19 +235,24 @@ struct TcpInfo
     {
 
     }
-    std::string toString()
+    QString toString()
     {
         return " TCP " + SPort + " > " + DPort +
                 " " + flags +  " Seq=" + seq   +
                 " Ack=" + ack + " Win=" + window;
 
     }
-    std::string SPort;
-    std::string DPort;
-    std::string flags;
-    std::string seq;
-    std::string ack;
-    std::string window;
+    QString toShortString()
+    {
+        return  "TCP:[" + flags + "]" + " S=" + seq +
+                " A=" + ack;
+    }
+    QString SPort;
+    QString DPort;
+    QString flags;
+    QString seq;
+    QString ack;
+    QString window;
 
 };
 
@@ -208,7 +262,7 @@ struct AodvInfo
     {
 
     }
-    std::string toString()
+    QString toString()
     {
         if(type == "RERR")
         {
@@ -216,7 +270,7 @@ struct AodvInfo
         }
         return "AODV:" + type + " D=" + destination + " S=" + source + " Seq=" + seq;
     }
-    std::string toShortString()
+    QString toShortString()
     {
         if(type == "RERR")
         {
@@ -224,11 +278,11 @@ struct AodvInfo
         }
         return "AODV:" + type + " D=" + destination + " S=" + source + " Seq=" + seq;
     }
-    std::string type;
-    std::string destination;
-    std::string source;
-    std::string seq;
-    std::string rerrInfo;
+    QString type;
+    QString destination;
+    QString source;
+    QString seq;
+    QString rerrInfo;
 };
 
 struct DsdvInfo
@@ -237,11 +291,11 @@ struct DsdvInfo
     {
 
     }
-    std::string toString()
+    QString toString()
     {
         return "DSDV";
     }
-    std::string toShortString()
+    QString toShortString()
     {
         return "DSDV";
     }
@@ -253,11 +307,11 @@ struct OlsrInfo
     {
 
     }
-    std::string toString()
+    QString toString()
     {
         return "OLSR";
     }
-    std::string toShortString()
+    QString toShortString()
     {
         return "OLSR";
     }
@@ -315,17 +369,17 @@ private:
   QGraphicsSimpleTextItem * m_infoText;
 
 
-  ArpInfo parseArp(std::string metaInfo, bool & result);
-  PppInfo parsePpp(std::string metaInfo, bool & result);
-  EthernetInfo parseEthernet(std::string metaInfo, bool & result);
-  WifiMacInfo parseWifi(std::string metaInfo, bool & result);
-  Ipv4Info parseIpv4(std::string metaInfo, bool & result);
-  IcmpInfo parseIcmp(std::string metaInfo, bool & result);
-  UdpInfo parseUdp(std::string metaInfo, bool & result);
-  TcpInfo parseTcp(std::string metaInfo, bool & result);
-  AodvInfo parseAodv(std::string metaInfo, bool & result);
-  DsdvInfo parseDsdv(std::string metaInfo, bool & result);
-  OlsrInfo parseOlsr(std::string metaInfo, bool & result);
+  ArpInfo parseArp(QString metaInfo, bool & result);
+  PppInfo parsePpp(QString metaInfo, bool & result);
+  EthernetInfo parseEthernet(QString metaInfo, bool & result);
+  WifiMacInfo parseWifi(QString metaInfo, bool & result);
+  Ipv4Info parseIpv4(QString metaInfo, bool & result);
+  IcmpInfo parseIcmp(QString metaInfo, bool & result);
+  UdpInfo parseUdp(QString metaInfo, bool & result);
+  TcpInfo parseTcp(QString metaInfo, bool & result);
+  AodvInfo parseAodv(QString metaInfo, bool & result);
+  DsdvInfo parseDsdv(QString metaInfo, bool & result);
+  OlsrInfo parseOlsr(QString metaInfo, bool & result);
 
 };
 

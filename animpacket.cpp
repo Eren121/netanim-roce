@@ -46,7 +46,7 @@ AnimPacket::AnimPacket (uint32_t fromNodeId,
   setVisible(false);
   setZValue(ANIMPACKET_ZVAVLUE);
   m_infoText = new QGraphicsSimpleTextItem (this);
-  m_infoText->setText("hola");
+  m_infoText->setText("p");
   m_infoText->setFlag(QGraphicsItem::ItemIgnoresTransformations);
 
   qreal textAngle = m_line.angle ();
@@ -63,6 +63,7 @@ AnimPacket::AnimPacket (uint32_t fromNodeId,
     textAngle = 180-textAngle;
   }
   m_infoText->rotate(textAngle);
+  m_infoText->setText(getShortMeta(metaInfo));
 
 }
 
@@ -78,7 +79,7 @@ QString
 AnimPacket::getShortMeta(QString metaInfo)
 {
     bool result = false;
-    std::string metaInfoString = metaInfo.toAscii().data();
+    QString metaInfoString = metaInfo.toAscii().data();
     AodvInfo aodvInfo = parseAodv(metaInfoString, result);
     if (result)
     {
@@ -101,85 +102,74 @@ AnimPacket::getShortMeta(QString metaInfo)
         return dsdvInfo.toShortString();
     }
 
-    if(m_tcpInfo && (force || (flags & AnimPacket::Tcp)))
-    {
-        m_shortMeta =  "TCP:[" + m_tcpInfo->flags + "]" + " S=" + m_tcpInfo->seq +
-                " A=" + m_tcpInfo->ack;
-        return;
-    }
-    if(m_udpInfo && (force || (flags & AnimPacket::Udp)))
-    {
-        m_shortMeta = "UDP:" + m_udpInfo->SPort + " > " + m_udpInfo->DPort;
-        return;
 
-    }
-    if(m_arpInfo && (force || (flags & AnimPacket::Arp)))
-    {
-        m_shortMeta = "Arp:" + m_arpInfo->type + " DstIP=" + m_arpInfo->destIpv4;
-        return;
 
-    }
-    if(m_icmpInfo && (force || (flags & AnimPacket::Icmp)))
+    result = false;
+    TcpInfo tcpInfo = parseTcp(metaInfoString, result);
+    if(result)
     {
-        if ((m_icmpInfo->type == "3") & (m_icmpInfo->code == "3"))
-        {
-            m_shortMeta =  "ICMP: Dst Unreachable";
-            return;
-        }
-        m_shortMeta = "ICMP: type=" + m_icmpInfo->type + " code="+ m_icmpInfo->code;
-        return;
-
+        return tcpInfo.toShortString();
     }
-    if(m_ipv4Info && (force || (flags & AnimPacket::Ipv4)))
-    {
-        m_shortMeta =  "IPv4:" + m_ipv4Info->SrcIp + " > " + m_ipv4Info->DstIp;
-        return;
 
+
+
+    result = false;
+    UdpInfo udpInfo = parseUdp(metaInfoString, result);
+    if(result)
+    {
+        return udpInfo.toShortString();
     }
-    if(m_wifiMacInfo && (force || (flags & AnimPacket::Wifi)))
-    {
-        if(m_wifiMacInfo->type == "CTL_RTS")
-            m_shortMeta = "Wifi:CTL_RTS RA:" + m_wifiMacInfo->Ra + " TA:" + m_wifiMacInfo->Sa;
-        if(m_wifiMacInfo->type == "CTL_CTS")
-            m_shortMeta = "Wifi:CTL_CTS RA:" + m_wifiMacInfo->Ra;
-        if(m_wifiMacInfo->type == "MGT_BEACON")
-            m_shortMeta =  "Wifi:BEACON ssid" + m_wifiMacInfo->SSid;
-        if(m_wifiMacInfo->type == "MGT_ASSOCIATION_REQUEST")
-            m_shortMeta =  "Wifi:ASSOC_REQ ssid" + m_wifiMacInfo->SSid;
-        if(m_wifiMacInfo->type == "CTL_ACK")
-            m_shortMeta =  "Wifi:CTL_ACK RA:" + m_wifiMacInfo->Ra;
-        else
-            m_shortMeta =  "Wifi:" + m_wifiMacInfo->type;
-        return;
 
-    }
-    if(m_pppInfo && (force || (flags & AnimPacket::Ppp)))
-    {
-        m_shortMeta =  "PPP";
-        return;
 
-    }
-    if(m_ethernetInfo && (force || (flags & AnimPacket::Ethernet)))
-    {
-        m_shortMeta =  "Ethernet:" + m_ethernetInfo->sourceMac + " > " + m_ethernetInfo->destMac;
-        return;
 
+    result = false;
+    ArpInfo arpInfo = parseArp(metaInfoString, result);
+    if(result)
+    {
+        return arpInfo.toShortString();
     }
 
 
 
 
+    result = false;
+    IcmpInfo icmpInfo = parseIcmp(metaInfoString, result);
+    if(result)
+    {
+        return icmpInfo.toShortString();
+
+    }
 
 
+    result = false;
+    Ipv4Info ipv4Info = parseIpv4(metaInfoString, result);
+    if(result)
+    {
+        return ipv4Info.toShortString();
+    }
 
 
+    result = false;
+    WifiMacInfo wifiMacInfo = parseWifi(metaInfoString, result);
+    if(result)
+    {
+        return wifiMacInfo.toShortString();
+    }
 
 
+    result = false;
+    PppInfo pppInfo = parsePpp(metaInfoString, result);
+    if(result)
+    {
+        return pppInfo.toShortString();
+    }
 
-
-
-
-
+    result = false;
+    EthernetInfo ethernetInfo = parseEthernet(metaInfoString, result);
+    if(result)
+    {
+        return ethernetInfo.toShortString();
+    }
 
 }
 
@@ -223,12 +213,12 @@ AnimPacket::getInfoTextItem()
 
 
 PppInfo
-AnimPacket::parsePpp(std::string metaInfo, bool & result)
+AnimPacket::parsePpp(QString metaInfo, bool & result)
 {
     PppInfo pppInfo;
     QRegExp rx("ns3::PppHeader.*");
     int pos = 0;
-    if((pos = rx.indexIn(metaInfo.c_str())) == -1)
+    if((pos = rx.indexIn(metaInfo)) == -1)
     {
         result = true;
         return pppInfo;
@@ -240,13 +230,13 @@ AnimPacket::parsePpp(std::string metaInfo, bool & result)
 
 
 ArpInfo
-AnimPacket::parseArp(std::string metaInfo, bool & result)
+AnimPacket::parseArp(QString metaInfo, bool & result)
 {
     ArpInfo arpInfo;
 
     QRegExp rx("ns3::ArpHeader\\s+\\((request|reply) source mac: ..-..-(..:..:..:..:..:..) source ipv4: (\\S+) (?:dest mac: ..-..-)?(..:..:..:..:..:.. )?dest ipv4: (\\S+)\\)");
     int pos = 0;
-    if ((pos = rx.indexIn(metaInfo.c_str())) == -1)
+    if ((pos = rx.indexIn(metaInfo)) == -1)
     {
         result = false;
         return arpInfo;
@@ -269,12 +259,12 @@ AnimPacket::parseArp(std::string metaInfo, bool & result)
 }
 
 EthernetInfo
-AnimPacket::parseEthernet(std::string metaInfo, bool & result)
+AnimPacket::parseEthernet(QString metaInfo, bool & result)
 {
     EthernetInfo ethernetInfo;
     QRegExp rx("ns3::EthernetHeader \\( length/type\\S+ source=(..:..:..:..:..:..), destination=(..:..:..:..:..:..)\\)");
     int pos = 0;
-    if ((pos = rx.indexIn(metaInfo.c_str())) == -1)
+    if ((pos = rx.indexIn(metaInfo)) == -1)
     {
         result = false;
         return ethernetInfo;
@@ -287,13 +277,13 @@ AnimPacket::parseEthernet(std::string metaInfo, bool & result)
 
 
 IcmpInfo
-AnimPacket::parseIcmp(std::string metaInfo, bool & result)
+AnimPacket::parseIcmp(QString metaInfo, bool & result)
 {
     IcmpInfo icmpInfo;
 
     QRegExp rx("ns3::Icmpv4Header \\(type=(.*), code=([^\\)]*)");
     int pos = 0;
-    if ((pos = rx.indexIn(metaInfo.c_str())) == -1)
+    if ((pos = rx.indexIn(metaInfo)) == -1)
     {
         result = false;
         return icmpInfo;
@@ -306,13 +296,13 @@ AnimPacket::parseIcmp(std::string metaInfo, bool & result)
 }
 
 UdpInfo
-AnimPacket::parseUdp(std::string metaInfo, bool & result)
+AnimPacket::parseUdp(QString metaInfo, bool & result)
 {
     UdpInfo udpInfo;
 
     QRegExp rx("ns3::UdpHeader \\(length: (\\S+) (\\S+) > (\\S+)\\)");
     int pos = 0;
-    if ((pos = rx.indexIn(metaInfo.c_str())) == -1)
+    if ((pos = rx.indexIn(metaInfo)) == -1)
     {
         result = false;
         return udpInfo;
@@ -325,13 +315,13 @@ AnimPacket::parseUdp(std::string metaInfo, bool & result)
 }
 
 Ipv4Info
-AnimPacket::parseIpv4(std::string metaInfo, bool & result)
+AnimPacket::parseIpv4(QString metaInfo, bool & result)
 {
     Ipv4Info ipv4Info;
 
     QRegExp rx("ns3::Ipv4Header \\(tos (\\S+) DSCP (\\S+) ECN (\\S+) ttl (\\d+) id (\\d+) protocol (\\d+) .* length: (\\d+) (\\S+) > (\\S+)\\)");
     int pos = 0;
-    if ((pos = rx.indexIn(metaInfo.c_str())) == -1)
+    if ((pos = rx.indexIn(metaInfo)) == -1)
     {
         result = false;
         return ipv4Info;
@@ -350,13 +340,13 @@ AnimPacket::parseIpv4(std::string metaInfo, bool & result)
 }
 
 TcpInfo
-AnimPacket::parseTcp(std::string metaInfo, bool & result)
+AnimPacket::parseTcp(QString metaInfo, bool & result)
 {
     TcpInfo tcpInfo;
 
     QRegExp rx("ns3::TcpHeader \\((\\S+) > (\\S+) \\[([^\\]]*)\\] Seq=(\\S+) Ack=(\\S+) Win=(\\S+)\\)");
     int pos = 0;
-    if ((pos = rx.indexIn(metaInfo.c_str())) == -1)
+    if ((pos = rx.indexIn(metaInfo)) == -1)
     {
         result = false;
         return tcpInfo;
@@ -372,12 +362,12 @@ AnimPacket::parseTcp(std::string metaInfo, bool & result)
 }
 
 WifiMacInfo
-AnimPacket::parseWifi(std::string metaInfo, bool & result)
+AnimPacket::parseWifi(QString metaInfo, bool & result)
 {
     QRegExp rxCTL_ACK("ns3::WifiMacHeader \\(CTL_ACK .*RA=(..:..:..:..:..:..)");
     WifiMacInfo wifiMacInfo;
     int pos = 0;
-    if ((pos = rxCTL_ACK.indexIn(metaInfo.c_str())) != -1)
+    if ((pos = rxCTL_ACK.indexIn(metaInfo)) != -1)
     {
         wifiMacInfo.type = "CTL_ACK";
         wifiMacInfo.Ra = rxCTL_ACK.cap(1).toAscii().data();
@@ -387,7 +377,7 @@ AnimPacket::parseWifi(std::string metaInfo, bool & result)
     }
     QRegExp rxCTL_RTS("ns3::WifiMacHeader \\(CTL_RTS .*RA=(..:..:..:..:..:..), TA=(..:..:..:..:..:..)");
     pos = 0;
-    if ((pos = rxCTL_RTS.indexIn(metaInfo.c_str())) != -1)
+    if ((pos = rxCTL_RTS.indexIn(metaInfo)) != -1)
     {
         wifiMacInfo.type = "CTL_RTS";
         wifiMacInfo.Ra = rxCTL_RTS.cap(1).toAscii().data();
@@ -399,7 +389,7 @@ AnimPacket::parseWifi(std::string metaInfo, bool & result)
 
     QRegExp rxCTL_CTS("ns3::WifiMacHeader \\(CTL_CTS .*RA=(..:..:..:..:..:..)");
     pos = 0;
-    if ((pos = rxCTL_CTS.indexIn(metaInfo.c_str())) != -1)
+    if ((pos = rxCTL_CTS.indexIn(metaInfo)) != -1)
     {
         wifiMacInfo.type = "CTL_CTS";
         wifiMacInfo.Ra = rxCTL_CTS.cap(1).toAscii().data();
@@ -410,7 +400,7 @@ AnimPacket::parseWifi(std::string metaInfo, bool & result)
 
     QRegExp rx("ns3::WifiMacHeader \\((\\S+) ToDS=(0|1), FromDS=(0|1), .*DA=(..:..:..:..:..:..), SA=(..:..:..:..:..:..), BSSID=(..:..:..:..:..:..)");
     pos = 0;
-    if ((pos = rx.indexIn(metaInfo.c_str())) == -1)
+    if ((pos = rx.indexIn(metaInfo)) == -1)
     {
         result = false;
         return wifiMacInfo;
@@ -426,7 +416,7 @@ AnimPacket::parseWifi(std::string metaInfo, bool & result)
     {
         QRegExp rx("ns3::MgtAssocRequestHeader \\(ssid=(\\S+),");
         int pos = 0;
-        if ((pos = rx.indexIn(metaInfo.c_str())) == -1)
+        if ((pos = rx.indexIn(metaInfo)) == -1)
         {
             result = false;
             return wifiMacInfo;
@@ -437,7 +427,7 @@ AnimPacket::parseWifi(std::string metaInfo, bool & result)
     {
         QRegExp rx("ns3::MgtAssocResponseHeader \\(status code=(\\S+), rates");
         int pos = 0;
-        if ((pos = rx.indexIn(metaInfo.c_str())) == -1)
+        if ((pos = rx.indexIn(metaInfo)) == -1)
         {
             result = false;
             return wifiMacInfo;
@@ -449,13 +439,13 @@ AnimPacket::parseWifi(std::string metaInfo, bool & result)
 }
 
 AodvInfo
-AnimPacket::parseAodv(std::string metaInfo, bool & result)
+AnimPacket::parseAodv(QString metaInfo, bool & result)
 {
     AodvInfo aodvInfo;
 
     QRegExp rx("ns3::aodv::TypeHeader \\((\\S+)\\) ");
     int pos = 0;
-    if ((pos = rx.indexIn(metaInfo.c_str())) == -1)
+    if ((pos = rx.indexIn(metaInfo)) == -1)
     {
         result = false;
         return aodvInfo;
@@ -465,7 +455,7 @@ AnimPacket::parseAodv(std::string metaInfo, bool & result)
     {
         QRegExp rx("ns3::aodv::RreqHeader \\(RREQ ID \\d+ destination: ipv4 (\\S+) sequence number (\\d+) source: ipv4 (\\S+) sequence number \\d+");
         int pos = 0;
-        if ((pos = rx.indexIn(metaInfo.c_str())) == -1)
+        if ((pos = rx.indexIn(metaInfo)) == -1)
         {
             result = false;
             return aodvInfo;
@@ -479,7 +469,7 @@ AnimPacket::parseAodv(std::string metaInfo, bool & result)
     {
         QRegExp rx("ns3::aodv::RrepHeader \\(destination: ipv4 (\\S+) sequence number (\\d+) source ipv4 (\\S+) ");
         int pos = 0;
-        if ((pos = rx.indexIn(metaInfo.c_str())) == -1)
+        if ((pos = rx.indexIn(metaInfo)) == -1)
         {
             result = false;
             return aodvInfo;
@@ -492,7 +482,7 @@ AnimPacket::parseAodv(std::string metaInfo, bool & result)
     {
         QRegExp rx("ns3::aodv::RerrHeader \\(([^\\)]+) \\(ipv4 address, seq. number):(\\S+) ");
         int pos = 0;
-        if ((pos = rx.indexIn(metaInfo.c_str())) == -1)
+        if ((pos = rx.indexIn(metaInfo)) == -1)
         {
             result = false;
             return aodvInfo;
@@ -506,13 +496,13 @@ AnimPacket::parseAodv(std::string metaInfo, bool & result)
 }
 
 DsdvInfo
-AnimPacket::parseDsdv(std::string metaInfo, bool & result)
+AnimPacket::parseDsdv(QString metaInfo, bool & result)
 {
     DsdvInfo dsdvInfo;
 
     QRegExp rx("ns3::dsdv::DsdvHeader");
     int pos = 0;
-    if ((pos = rx.indexIn(metaInfo.c_str())) == -1)
+    if ((pos = rx.indexIn(metaInfo)) == -1)
     {
         result = false;
         return dsdvInfo;
@@ -523,13 +513,13 @@ AnimPacket::parseDsdv(std::string metaInfo, bool & result)
 }
 
 OlsrInfo
-AnimPacket::parseOlsr(std::string metaInfo, bool & result)
+AnimPacket::parseOlsr(QString metaInfo, bool & result)
 {
     OlsrInfo olsrInfo;
 
     QRegExp rx("ns3::olsr::MessageHeader");
     int pos = 0;
-    if ((pos = rx.indexIn(metaInfo.c_str())) == -1)
+    if ((pos = rx.indexIn(metaInfo)) == -1)
     {
         result = false;
         return olsrInfo;
