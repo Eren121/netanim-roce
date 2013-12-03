@@ -131,7 +131,7 @@ StatsMode::initTopToolbar()
     m_fileOpenButton = new QToolButton;
     m_fileOpenButton->setEnabled(false);
     m_fileOpenButton->setToolTip("Open Routing XML trace file");
-    m_fileOpenButton->setIcon(QIcon(":/animator_resource/animator_fileopen.svg"));
+    m_fileOpenButton->setIcon(QIcon(":/resources/animator_fileopen.svg"));
     connect(m_fileOpenButton,SIGNAL(clicked()), this, SLOT(clickRoutingTraceFileOpenSlot()));
     m_topToolbar->addWidget(m_fileOpenButton);
     QSize iconSize(ICON_WIDTH_DEFAULT, ICON_HEIGHT_DEFAULT);

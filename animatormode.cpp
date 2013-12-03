@@ -43,6 +43,7 @@
 #include <QThread>
 #include <QPropertyAnimation>
 #include <QParallelAnimationGroup>
+#include "statsmode.h"
 
 
 namespace netanim {
@@ -1078,6 +1079,8 @@ AnimatorMode::purgeAnimatedNodes()
  void
  AnimatorMode::clickTraceFileOpenSlot()
  {
+    StatsMode::getInstance()->systemReset();
+
     systemReset();
 
     QFileDialog fileDialog;
@@ -1105,6 +1108,8 @@ AnimatorMode::purgeAnimatedNodes()
     }*/
     parseXMLTraceFile(traceFileName);
     //}
+    StatsMode::getInstance()->systemReset();
+
     QApplication::processEvents();
  }
 
