@@ -66,7 +66,8 @@ AnimatorMode::AnimatorMode():
      m_parsingXMLDialog(0),
      m_background(0),
      m_fastForwarding(false),
-     m_animationGroup(0)
+     m_animationGroup(0),
+    m_showPacketMetaInfo(true)
 
 {
     init();
@@ -900,6 +901,7 @@ PacketPersistThread::msleep(unsigned long interval)
 void
 AnimatorMode::showMetaSlot()
 {
+    m_showPacketMetaInfo = m_showMetaButton->isChecked();
 
 }
 void
@@ -1191,7 +1193,8 @@ AnimatorMode::purgeAnimatedNodes()
                                                                                    packetEvent->m_fbTx,
                                                                                    packetEvent->m_fbRx,
                                                                                    packetEvent->m_isWPacket,
-                                                                                   packetEvent->m_metaInfo);
+                                                                                   packetEvent->m_metaInfo,
+                                                                                   m_showPacketMetaInfo);
                        packetsToAnimate.push_back(animPacket);
                        break;
 

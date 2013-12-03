@@ -23,13 +23,15 @@ AnimPacket::AnimPacket (uint32_t fromNodeId,
                         qreal firstBitTx,
                         qreal firstBitRx,
                         bool isWPacket,
-                        QString metaInfo):
+                        QString metaInfo,
+                        bool showMetaInfo):
     AnimEvent(PACKET_EVENT),
     m_fromNodeId (fromNodeId),
     m_toNodeId (toNodeId),
     m_firstBitTx (firstBitTx),
     m_firstBitRx (firstBitRx),
-    m_isWPacket (isWPacket)
+    m_isWPacket (isWPacket),
+    m_infoText(0)
 {
   m_fromPos = AnimNodeMgr::getInstance ()->getNode (fromNodeId)->getCenter ();
   //m_fromPos = QPointF(AnimNodeMgr::getInstance ()->getNode (fromNodeId)->getX(), AnimNodeMgr::getInstance ()->getNode (fromNodeId)->getY());
@@ -45,25 +47,30 @@ AnimPacket::AnimPacket (uint32_t fromNodeId,
   m_sin = sin ((360 - m_line.angle ()) * PI/180);
   setVisible(false);
   setZValue(ANIMPACKET_ZVAVLUE);
-  m_infoText = new QGraphicsSimpleTextItem (this);
-  m_infoText->setText("p");
-  m_infoText->setFlag(QGraphicsItem::ItemIgnoresTransformations);
 
-  qreal textAngle = m_line.angle ();
-  if(textAngle < 90)
-  {
-      textAngle = 360-textAngle;
+      m_infoText = new QGraphicsSimpleTextItem (this);
+      if(showMetaInfo)
+      {
+      m_infoText->setText("p");
+      m_infoText->setFlag(QGraphicsItem::ItemIgnoresTransformations);
+
+
+      qreal textAngle = m_line.angle ();
+      if(textAngle < 90)
+      {
+          textAngle = 360-textAngle;
+      }
+      else if (textAngle > 270)
+      {
+          textAngle = 360-textAngle;
+      }
+      else
+      {
+        textAngle = 180-textAngle;
+      }
+      m_infoText->rotate(textAngle);
+      m_infoText->setText(getShortMeta(metaInfo));
   }
-  else if (textAngle > 270)
-  {
-      textAngle = 360-textAngle;
-  }
-  else
-  {
-    textAngle = 180-textAngle;
-  }
-  m_infoText->rotate(textAngle);
-  m_infoText->setText(getShortMeta(metaInfo));
 
 }
 
@@ -731,7 +738,7 @@ AnimPacketMgr::getInstance()
 }
 
 AnimPacket *
-AnimPacketMgr::add(uint32_t fromId, uint32_t toId, qreal fbTx, qreal fbRx, bool isWPacket, QString metaInfo)
+AnimPacketMgr::add(uint32_t fromId, uint32_t toId, qreal fbTx, qreal fbRx, bool isWPacket, QString metaInfo, bool showMetaInfo)
 {
 
     /*if (fromId != 0)
@@ -740,7 +747,7 @@ AnimPacketMgr::add(uint32_t fromId, uint32_t toId, qreal fbTx, qreal fbRx, bool 
         return;
     if (m_packets.getCount())
         return;*/
-    AnimPacket * pkt = new AnimPacket(fromId, toId, fbTx, fbRx, isWPacket, metaInfo);
+    AnimPacket * pkt = new AnimPacket(fromId, toId, fbTx, fbRx, isWPacket, metaInfo, showMetaInfo);
     //NS_LOG_DEBUG ("FbTx:" << fbTx);
     //m_packets.add(fbTx, pkt);
     return pkt;

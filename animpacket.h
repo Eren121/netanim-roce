@@ -330,7 +330,8 @@ public:
              qreal firstBitTx,
              qreal firstBitRx,
              bool isWPacket,
-             QString metaInfo);
+             QString metaInfo,
+             bool showMetaInfo);
   ~AnimPacket();
   enum { Type = ANIMPACKET_TYPE };
   int type () const
@@ -387,7 +388,7 @@ class AnimPacketMgr
 {
 public:
     static AnimPacketMgr * getInstance();
-    AnimPacket * add(uint32_t fromId, uint32_t toId, qreal fbTx, qreal fbRx, bool isWPacket, QString metaInfo);
+    AnimPacket * add(uint32_t fromId, uint32_t toId, qreal fbTx, qreal fbRx, bool isWPacket, QString metaInfo, bool showMetaInfo);
 private:
     AnimPacketMgr();
 

@@ -111,6 +111,7 @@ private:
     uint64_t m_rxCount;
     TimeValue<AnimEvent *> m_events;
     bool m_fastForwarding;
+    bool m_showPacketMetaInfo;
 
 
     //controls
