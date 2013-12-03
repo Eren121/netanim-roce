@@ -17,6 +17,7 @@
  */
 #include "netanim.h"
 #include "animatormode.h"
+#include "statsmode.h"
 #ifdef WITH_NS3
 #include "designer/designermode.h"
 #endif
@@ -34,6 +35,9 @@ NetAnim::NetAnim():
     AnimatorMode * animatorTab = AnimatorMode::getInstance();
     m_tabWidget->addTab(animatorTab->getCentralWidget(), animatorTab->getTabName());
     m_TabMode[0] = animatorTab;
+    StatsMode * statsTab = StatsMode::getInstance();
+    m_tabWidget->addTab(statsTab->getCentralWidget(), statsTab->getTabName());
+    m_TabMode[1] = statsTab;
 #ifdef WITH_NS3
     DesignerMode * designerMode = new DesignerMode;
     m_tabWidget->addTab(designerMode->getCentralWidget(), designerMode->getTabName());

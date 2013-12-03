@@ -81,11 +81,13 @@ TimeValue<T>::TimeValue (const TimeValue & other)
        i != other.m_timeValues.end ();
        ++i)
     {
-      m_timeValues[i->first] = i->second;
+      m_timeValues.insert(TimeValuePair_t (i->first, i->second));
     }
     if (!m_timeValues.empty ())
     {
       m_currentIterator = m_timeValues.begin ();
+      m_getIterator = m_timeValues.begin ();
+
     }
 }
 
@@ -98,11 +100,14 @@ TimeValue<T>::operator= (const TimeValue <T> & other)
         i != other.m_timeValues.end ();
         ++i)
     {
-      m_timeValues[i->first] = i->second;
+      m_timeValues.insert(TimeValuePair_t (i->first, i->second));
+      //m_timeValues[i->first] = i->second;
     }
     if (!m_timeValues.empty ())
       {
         m_currentIterator = m_timeValues.begin ();
+        m_getIterator = m_timeValues.begin ();
+
       }
   return *this;
 }

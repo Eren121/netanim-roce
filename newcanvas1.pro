@@ -16,7 +16,15 @@ SOURCES += \
     animxmlparser.cpp \
     animatorview.cpp \
     animlink.cpp \
-    animresource.cpp
+    animresource.cpp \
+    statsview.cpp \
+    statsmode.cpp \
+    routingxmlparser.cpp \
+    routingstatsscene.cpp \
+    interfacestatsscene.cpp \
+    flowmonxmlparser.cpp \
+    flowmonstatsscene.cpp \
+    textbubble.cpp
 HEADERS += \
     myview.h \
     log.h \
@@ -40,7 +48,16 @@ HEADERS += \
     animxmlparser.h \
     animevent.h \
     animlink.h \
-    animresource.h
+    animresource.h \
+    statsview.h \
+    statsmode.h \
+    statisticsconstants.h \
+    routingxmlparser.h \
+    routingstatsscene.h \
+    interfacestatsscene.h \
+    flowmonxmlparser.h \
+    flowmonstatsscene.h \
+    textbubble.h
 
 DEFINES += NS3_LOG_ENABLE
 
