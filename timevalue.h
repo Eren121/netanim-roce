@@ -50,6 +50,9 @@ public:
   void add (qreal t, T value);
   void systemReset ();
   TimeValueResult_t setCurrentTime (qreal t);
+  typename TimeValue_t::const_iterator Begin();
+  typename TimeValue_t::const_iterator End();
+
   T getCurrent ();
   T get (qreal tUpperBound, TimeValueResult_t & result);
   TimeValueIteratorPair_t getRange (qreal lowerBound, qreal upperBound);
@@ -111,6 +114,21 @@ TimeValue<T>::operator= (const TimeValue <T> & other)
       }
   return *this;
 }
+
+template <class T>
+typename TimeValue<T>::TimeValue_t::const_iterator
+TimeValue<T>::Begin()
+{
+    return m_timeValues.begin();
+}
+
+template <class T>
+typename TimeValue<T>::TimeValue_t::const_iterator
+TimeValue<T>::End()
+{
+    return m_timeValues.end();
+}
+
 
 template <class T>
 void

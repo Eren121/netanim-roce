@@ -42,6 +42,7 @@
 #include <QProgressBar>
 #include <QGraphicsPixmapItem>
 #include <QParallelAnimationGroup>
+#include <QPropertyAnimation>
 
 namespace netanim {
 
@@ -112,6 +113,8 @@ private:
     TimeValue<AnimEvent *> m_events;
     bool m_fastForwarding;
     bool m_showPacketMetaInfo;
+    QString m_traceFileName;
+    bool m_showPackets;
 
 
     //controls
@@ -128,6 +131,7 @@ private:
     QToolButton * m_showNodeIdButton;
     QToolButton * m_playButton;
     QToolButton * m_fileOpenButton;
+    QToolButton * m_reloadFileButton;
     QToolButton * m_zoomInButton;
     QToolButton * m_zoomOutButton;
     QToolButton * m_showWirelessCirclesButton;
@@ -151,7 +155,6 @@ private:
     QToolButton * m_blockPacketsButton;
     QToolBar * m_bottomToolbar;
     QLabel * m_bottomStatusLabel;
-    QToolButton * m_saveButton;
     QToolButton * m_resetButton;
     QToolButton * m_showMetaButton;
     QComboBox * m_packetPersistenceComboBox;
@@ -162,7 +165,9 @@ private:
     QToolButton * m_unicastMatchButton;
     QToolButton * m_showRoutePathButton;
     QGraphicsPixmapItem * m_background;
-    QParallelAnimationGroup * m_animationGroup;
+    QParallelAnimationGroup * m_packetAnimationGroup;
+    QParallelAnimationGroup * m_buttonAnimationGroup;
+
 
 
     //functions
@@ -200,12 +205,14 @@ private:
     void purgeAnimatedNodes();
     void fastForward(qreal t);
     void reset();
+    QPropertyAnimation * getButtonAnimation(QToolButton * toolButton);
 
 
 private slots:
     void testSlot();
 
     void clickTraceFileOpenSlot();
+    void reloadFileSlot();
     void clickZoomInSlot();
     void clickZoomOutSlot();
     void clickSaveSlot();
@@ -231,7 +238,8 @@ private slots:
     void setUnicastMatchSlot();
     void showRoutePathSlot();
     void showBatteryCapacitySlot();
-    void animationGroupFinished();
+    void packetAnimationGroupFinishedSlot();
+    void buttonAnimationGroupFinishedSlot();
 };
 
 

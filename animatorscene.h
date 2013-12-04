@@ -84,6 +84,7 @@ public:
     void setShowInterfaceTexts(bool showIp, bool showMac);
     void addGrid();
     void resetGrid();
+    void systemReset();
     QRectF getBoundaryRect();
     void setGridLinesCount(int nGridLines);
 

@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'animatormode.h'
 **
-** Created: Tue Dec 3 08:22:25 2013
+** Created: Tue Dec 3 21:44:01 2013
 **      by: The Qt Meta Object Compiler version 63 (Qt 4.8.1)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -23,7 +23,7 @@ static const uint qt_meta_data_netanim__AnimatorMode[] = {
        6,       // revision
        0,       // classname
        0,    0, // classinfo
-      27,   14, // methods
+      29,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -34,41 +34,43 @@ static const uint qt_meta_data_netanim__AnimatorMode[] = {
       23,   22,   22,   22, 0x08,
       34,   22,   22,   22, 0x08,
       59,   22,   22,   22, 0x08,
-      77,   22,   22,   22, 0x08,
-      96,   22,   22,   22, 0x08,
-     112,   22,   22,   22, 0x08,
+      76,   22,   22,   22, 0x08,
+      94,   22,   22,   22, 0x08,
+     113,   22,   22,   22, 0x08,
      129,   22,   22,   22, 0x08,
-     145,   22,   22,   22, 0x08,
-     177,  171,   22,   22, 0x08,
-     214,  171,   22,   22, 0x08,
-     238,   22,   22,   22, 0x08,
-     262,  171,   22,   22, 0x08,
-     287,  171,   22,   22, 0x08,
-     315,   22,   22,   22, 0x08,
-     341,   22,   22,   22, 0x08,
-     361,   22,   22,   22, 0x08,
+     146,   22,   22,   22, 0x08,
+     162,   22,   22,   22, 0x08,
+     194,  188,   22,   22, 0x08,
+     231,  188,   22,   22, 0x08,
+     255,   22,   22,   22, 0x08,
+     279,  188,   22,   22, 0x08,
+     304,  188,   22,   22, 0x08,
+     332,   22,   22,   22, 0x08,
+     358,   22,   22,   22, 0x08,
      378,   22,   22,   22, 0x08,
-     393,   22,   22,   22, 0x08,
+     395,   22,   22,   22, 0x08,
      410,   22,   22,   22, 0x08,
-     436,   22,   22,   22, 0x08,
-     458,   22,   22,   22, 0x08,
-     486,   22,   22,   22, 0x08,
-     499,   22,   22,   22, 0x08,
-     513,   22,   22,   22, 0x08,
-     535,   22,   22,   22, 0x08,
-     555,   22,   22,   22, 0x08,
-     581,   22,   22,   22, 0x08,
+     427,   22,   22,   22, 0x08,
+     453,   22,   22,   22, 0x08,
+     475,   22,   22,   22, 0x08,
+     503,   22,   22,   22, 0x08,
+     516,   22,   22,   22, 0x08,
+     530,   22,   22,   22, 0x08,
+     552,   22,   22,   22, 0x08,
+     572,   22,   22,   22, 0x08,
+     598,   22,   22,   22, 0x08,
+     633,   22,   22,   22, 0x08,
 
        0        // eod
 };
 
 static const char qt_meta_stringdata_netanim__AnimatorMode[] = {
     "netanim::AnimatorMode\0\0testSlot()\0"
-    "clickTraceFileOpenSlot()\0clickZoomInSlot()\0"
-    "clickZoomOutSlot()\0clickSaveSlot()\0"
-    "clickResetSlot()\0clickPlaySlot()\0"
-    "clickAddCustomImageSlot()\0value\0"
-    "updatePacketPersistenceSlot(QString)\0"
+    "clickTraceFileOpenSlot()\0reloadFileSlot()\0"
+    "clickZoomInSlot()\0clickZoomOutSlot()\0"
+    "clickSaveSlot()\0clickResetSlot()\0"
+    "clickPlaySlot()\0clickAddCustomImageSlot()\0"
+    "value\0updatePacketPersistenceSlot(QString)\0"
     "updateTimelineSlot(int)\0updateRateTimeoutSlot()\0"
     "updateGridLinesSlot(int)\0"
     "updateNodeSizeSlot(QString)\0"
@@ -79,7 +81,8 @@ static const char qt_meta_stringdata_netanim__AnimatorMode[] = {
     "showIpSlot()\0showMacSlot()\0"
     "setUnicastMatchSlot()\0showRoutePathSlot()\0"
     "showBatteryCapacitySlot()\0"
-    "animationGroupFinished()\0"
+    "packetAnimationGroupFinishedSlot()\0"
+    "buttonAnimationGroupFinishedSlot()\0"
 };
 
 void netanim::AnimatorMode::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
@@ -90,31 +93,33 @@ void netanim::AnimatorMode::qt_static_metacall(QObject *_o, QMetaObject::Call _c
         switch (_id) {
         case 0: _t->testSlot(); break;
         case 1: _t->clickTraceFileOpenSlot(); break;
-        case 2: _t->clickZoomInSlot(); break;
-        case 3: _t->clickZoomOutSlot(); break;
-        case 4: _t->clickSaveSlot(); break;
-        case 5: _t->clickResetSlot(); break;
-        case 6: _t->clickPlaySlot(); break;
-        case 7: _t->clickAddCustomImageSlot(); break;
-        case 8: _t->updatePacketPersistenceSlot((*reinterpret_cast< QString(*)>(_a[1]))); break;
-        case 9: _t->updateTimelineSlot((*reinterpret_cast< int(*)>(_a[1]))); break;
-        case 10: _t->updateRateTimeoutSlot(); break;
-        case 11: _t->updateGridLinesSlot((*reinterpret_cast< int(*)>(_a[1]))); break;
-        case 12: _t->updateNodeSizeSlot((*reinterpret_cast< QString(*)>(_a[1]))); break;
-        case 13: _t->updateUpdateRateSlot((*reinterpret_cast< int(*)>(_a[1]))); break;
-        case 14: _t->showGridLinesSlot(); break;
-        case 15: _t->showNodeIdSlot(); break;
-        case 16: _t->showMetaSlot(); break;
-        case 17: _t->showPacketSlot(); break;
-        case 18: _t->showWirelessCirclesSlot(); break;
-        case 19: _t->showPacketStatsSlot(); break;
-        case 20: _t->showNodePositionStatsSlot(); break;
-        case 21: _t->showIpSlot(); break;
-        case 22: _t->showMacSlot(); break;
-        case 23: _t->setUnicastMatchSlot(); break;
-        case 24: _t->showRoutePathSlot(); break;
-        case 25: _t->showBatteryCapacitySlot(); break;
-        case 26: _t->animationGroupFinished(); break;
+        case 2: _t->reloadFileSlot(); break;
+        case 3: _t->clickZoomInSlot(); break;
+        case 4: _t->clickZoomOutSlot(); break;
+        case 5: _t->clickSaveSlot(); break;
+        case 6: _t->clickResetSlot(); break;
+        case 7: _t->clickPlaySlot(); break;
+        case 8: _t->clickAddCustomImageSlot(); break;
+        case 9: _t->updatePacketPersistenceSlot((*reinterpret_cast< QString(*)>(_a[1]))); break;
+        case 10: _t->updateTimelineSlot((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 11: _t->updateRateTimeoutSlot(); break;
+        case 12: _t->updateGridLinesSlot((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 13: _t->updateNodeSizeSlot((*reinterpret_cast< QString(*)>(_a[1]))); break;
+        case 14: _t->updateUpdateRateSlot((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 15: _t->showGridLinesSlot(); break;
+        case 16: _t->showNodeIdSlot(); break;
+        case 17: _t->showMetaSlot(); break;
+        case 18: _t->showPacketSlot(); break;
+        case 19: _t->showWirelessCirclesSlot(); break;
+        case 20: _t->showPacketStatsSlot(); break;
+        case 21: _t->showNodePositionStatsSlot(); break;
+        case 22: _t->showIpSlot(); break;
+        case 23: _t->showMacSlot(); break;
+        case 24: _t->setUnicastMatchSlot(); break;
+        case 25: _t->showRoutePathSlot(); break;
+        case 26: _t->showBatteryCapacitySlot(); break;
+        case 27: _t->packetAnimationGroupFinishedSlot(); break;
+        case 28: _t->buttonAnimationGroupFinishedSlot(); break;
         default: ;
         }
     }
@@ -152,9 +157,9 @@ int netanim::AnimatorMode::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 27)
+        if (_id < 29)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 27;
+        _id -= 29;
     }
     return _id;
 }

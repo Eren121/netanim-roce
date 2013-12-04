@@ -25,27 +25,16 @@ AnimatorScene::AnimatorScene():QGraphicsScene(0, 0, ANIMATORSCENE_USERAREA_WIDTH
 {
     m_userAreadWidth = ANIMATORSCENE_USERAREA_WIDTH;
     m_userAreaHeight = ANIMATORSCENE_USERAREA_HEIGHT;
-    m_testButton = new QPushButton("Test");
-    connect(m_testButton, SIGNAL(clicked()), this, SLOT(testSlot()));
-    addWidget(m_testButton)->setPos(500, 500);
-    QPixmap pix(":/resources/ns3logo2.png","png");
 
-    m_background = new ResizeablePixmap(pix);
+
+    /*m_background = new ResizeablePixmap(pix);
     m_background->setFlags(QGraphicsItem::ItemIsMovable|QGraphicsItem::ItemIsSelectable);
-    m_background->setZValue(-100);
-    //addItem(m_background);
-    //testSlot();
-    /*addPix();
-    addRect(0, 0, m_userAreadWidth, m_userAreaHeight);
-    addLine(m_userAreadWidth/2, 0, m_userAreadWidth/2, m_userAreaHeight);
-    addLine(0, m_userAreaHeight/2, m_userAreadWidth, m_userAreaHeight/2);
-    prepareTimeValueData();*/
+    m_background->setZValue(-100);*/
 
     m_mousePositionLabel = new QLabel ("");
     m_mousePositionLabel->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
     m_mousePositionProxyWidget = addWidget(m_mousePositionLabel, Qt::ToolTip);
     m_mousePositionProxyWidget->setFlag(QGraphicsItem::ItemIgnoresTransformations);
-    //addItem(m_mousePositionLabel);
     m_nGridLines = GRID_LINES_DEFAULT;
     m_showGrid = true;
 
@@ -62,6 +51,15 @@ AnimatorScene::getInstance()
         pAnimatorScene = new AnimatorScene;
     }
     return pAnimatorScene;
+}
+
+void
+AnimatorScene::systemReset()
+{
+    purgeAnimatedPackets();
+    purgeAnimatedNodes();
+    purgeAnimatedLinks();
+    resetInterfaceTexts();
 }
 
 void AnimatorScene::testSlot()

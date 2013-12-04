@@ -67,8 +67,9 @@ AnimatorMode::AnimatorMode():
      m_parsingXMLDialog(0),
      m_background(0),
      m_fastForwarding(false),
-     m_animationGroup(0),
-    m_showPacketMetaInfo(true)
+     m_packetAnimationGroup(0),
+     m_showPacketMetaInfo(true),
+     m_showPackets(true)
 
 {
     init();
@@ -160,6 +161,7 @@ AnimatorMode::setControlDefaults()
 
     enableAllToolButtons(false);
     m_fileOpenButton->setEnabled(true);
+
 }
 
 
@@ -179,7 +181,6 @@ AnimatorMode::setToolButtonVector()
     m_toolButtonVector.push_back(m_nodeSizeComboBox);
     m_toolButtonVector.push_back(m_showNodeIdButton);
     m_toolButtonVector.push_back(m_qLcdNumber);
-    m_toolButtonVector.push_back(m_saveButton);
     m_toolButtonVector.push_back(m_blockPacketsButton);
     m_toolButtonVector.push_back(m_resetButton);
     m_toolButtonVector.push_back(m_showIpButton);
@@ -212,7 +213,6 @@ AnimatorMode::setVerticalToolbarWidgets()
     m_verticalToolbar->addWidget(m_packetStatsButton);
     m_verticalToolbar->addWidget(m_nodePositionStatsButton);
     m_verticalToolbar->addWidget(m_blockPacketsButton);
-    m_verticalToolbar->addWidget(m_saveButton);
     m_verticalToolbar->addWidget(m_resetButton);
     m_verticalToolbar->addWidget(m_showMetaButton);
     m_verticalToolbar->addWidget(m_batteryCapacityButton);
@@ -222,6 +222,7 @@ void
 AnimatorMode::setTopToolbarWidgets()
 {
     m_topToolBar->addWidget(m_fileOpenButton);
+    m_topToolBar->addWidget(m_reloadFileButton);
     m_topToolBar->addSeparator();
     m_topToolBar->addWidget(m_playButton);
     m_topToolBar->addSeparator();
@@ -259,6 +260,12 @@ AnimatorMode::initControls()
     m_fileOpenButton->setToolTip("Open XML trace file");
     m_fileOpenButton->setIcon(QIcon(":/resources/animator_fileopen.svg"));
     connect(m_fileOpenButton,SIGNAL(clicked()), this, SLOT(clickTraceFileOpenSlot()));
+
+
+    m_reloadFileButton = new QToolButton;
+    m_reloadFileButton->setToolTip("Reload a file with the same file name as the previous XML");
+    m_reloadFileButton->setIcon(QIcon(":/resources/animator_fileopen.svg"));
+    connect(m_reloadFileButton,SIGNAL(clicked()), this, SLOT(reloadFileSlot()));
 
 
     m_zoomInButton = new QToolButton;
@@ -399,7 +406,7 @@ AnimatorMode::initControls()
 
 
     m_packetStatsButton = new QToolButton;
-    m_packetStatsButton->setIcon(QIcon(":/animator_resource/animator_packetstats.svg"));
+    m_packetStatsButton->setIcon(QIcon(":/resources/animator_packetstats.svg"));
     m_packetStatsButton->setToolTip("Packet filter and statistics");
     connect(m_packetStatsButton, SIGNAL(clicked()), this, SLOT(showPacketStatsSlot()));
     m_packetStatsButton->setCheckable(true);
@@ -413,17 +420,10 @@ AnimatorMode::initControls()
 
 
     m_blockPacketsButton = new QToolButton;
-    m_blockPacketsButton->setIcon(QIcon(":/animator_resource/animator_showpackets.svg"));
+    m_blockPacketsButton->setIcon(QIcon(":/resources/animator_showpackets.svg"));
     m_blockPacketsButton->setToolTip("Show packets");
     connect(m_blockPacketsButton, SIGNAL(clicked()), this, SLOT(showPacketSlot()));
     m_blockPacketsButton->setCheckable(true);
-
-
-    m_saveButton = new QToolButton;
-    m_saveButton->setIcon(QIcon(":/animator_resource/animator_save.svg"));
-    m_saveButton->setToolTip("Save canvas as an image in SVG format");
-    connect(m_saveButton, SIGNAL(clicked()), this, SLOT(clickSaveSlot()));
-
 
     m_resetButton = new QToolButton;
     m_resetButton->setText("R");
@@ -524,10 +524,15 @@ AnimatorMode::systemReset()
    m_state = SYSTEM_RESET_IN_PROGRESS;
    clickResetSlot();
    setControlDefaults();
-   //AnimatorView::getInstance()->systemReset();
-   //AnimatorScene::getInstance()->systemReset();
    AnimatorView::getInstance()->systemReset();
-   //AnimatorScene::getInstance()->systemReset();
+   AnimatorScene::getInstance()->systemReset();
+   for(TimeValue<AnimEvent *>::TimeValue_t::const_iterator i = m_events.Begin();
+       i != m_events.End();
+       ++i)
+   {
+        delete i->second;
+   }
+   m_events.systemReset();
    m_state = SYSTEM_RESET_COMPLETE;
 }
 
@@ -657,6 +662,8 @@ AnimatorMode::fastForward(qreal t)
 {
     while (m_currentTime <t)
     {
+        if(m_state == SIMULATION_COMPLETE)
+            break;
         //NS_LOG_DEBUG ("Fast Forwarding dispatch");
         dispatchEvents();
     }
@@ -670,9 +677,7 @@ AnimatorMode::reset()
     m_updateRateTimer->stop();
     m_events.rewind();
     m_events.setCurrentTime(0);
-    AnimatorScene::getInstance()->purgeAnimatedNodes();
-    AnimatorScene::getInstance()->purgeAnimatedPackets();
-    AnimatorScene::getInstance()->purgeAnimatedLinks();
+    AnimatorScene::getInstance()->systemReset();
     m_currentTime = 0;
 }
 
@@ -716,6 +721,7 @@ AnimatorMode::addAnimEvent(qreal t, AnimEvent * event)
 bool
 AnimatorMode::parseXMLTraceFile(QString traceFileName)
 {
+    NS_LOG_DEBUG ("parsing File:" << traceFileName.toAscii().data());
     m_wPacketDetected = false;
     m_rxCount = 0;
     Animxmlparser parser(traceFileName);
@@ -835,18 +841,49 @@ AnimatorMode::setParsingCount(uint64_t parsingCount)
     m_parseProgressBar->setValue(parsingCount);
 }
 
+QPropertyAnimation *
+AnimatorMode::getButtonAnimation(QToolButton * toolButton)
+{
+    QPropertyAnimation * propAnimation = new QPropertyAnimation(m_reloadFileButton, "geometry");
+
+    QRectF currentRect = toolButton->geometry();
+    qreal width = currentRect.width();
+    QRectF expandedRect = QRectF(currentRect.left()- width, currentRect.top() - width,
+                                 currentRect.right() + width, currentRect.bottom() + width);
+
+    propAnimation->setStartValue(expandedRect);
+    propAnimation->setEndValue(currentRect);
+    propAnimation->setEasingCurve(QEasingCurve::OutInQuad);
+    propAnimation->setDuration(1000);
+    return propAnimation;
+
+}
+
 void
 AnimatorMode::doSimulationCompleted()
 {
     m_updateRateTimer->stop();
     m_playButton->setEnabled(false);
+    m_simulationTimeSlider->setEnabled(false);
     QApplication::processEvents();
-    clickResetSlot();
+    //clickResetSlot();
     m_events.rewind();
-    setCurrentTime(0);
+    //setCurrentTime(0);
     m_simulationTimeSlider->setEnabled(false);
     //NS_LOG_DEBUG ("Simulation Completed");
     m_bottomStatusLabel->setText("Simulation Completed");
+
+    m_buttonAnimationGroup = new QParallelAnimationGroup;
+    //m_buttonAnimationGroup->addAnimation(getButtonAnimation(m_fileOpenButton));
+    m_buttonAnimationGroup->addAnimation(getButtonAnimation(m_reloadFileButton));
+
+    m_buttonAnimationGroup->start();
+
+    connect(m_buttonAnimationGroup,
+            SIGNAL(finished()),
+            this,
+            SLOT(buttonAnimationGroupFinishedSlot()));
+
 }
 bool
 AnimatorMode::checkSimulationCompleted()
@@ -914,7 +951,7 @@ AnimatorMode::clickSaveSlot()
  void
  AnimatorMode::showPacketSlot()
  {
-
+    m_showPackets = !m_blockPacketsButton->isChecked();
  }
 
 
@@ -1076,40 +1113,46 @@ AnimatorMode::purgeAnimatedNodes()
 
  }
 
+
+ void
+ AnimatorMode::reloadFileSlot()
+ {
+     if(m_traceFileName == "")
+     {
+         showPopup("FileName unknown");
+         return;
+     }
+
+     StatsMode::getInstance()->systemReset();
+     systemReset();
+     parseXMLTraceFile(m_traceFileName);
+     StatsMode::getInstance()->systemReset();
+
+     QApplication::processEvents();
+
+
+ }
  void
  AnimatorMode::clickTraceFileOpenSlot()
  {
     StatsMode::getInstance()->systemReset();
-
     systemReset();
-
     QFileDialog fileDialog;
     fileDialog.setFileMode(QFileDialog::ExistingFiles);
-    //QString traceFileName = "/home/john/ns3/ns-3-dev/dumbbell-animation.xml";
-    QString traceFileName = "/home/john/ns3/ns-3-dev/wireless-animation.xml";
-    //QString traceFileName = "/home/john/ns3/ns-3-dev/dynamic_linknode.xml";
 
-    //QString traceFileName = "C:\\Users\\jabraham\\Downloads\\wireless-animation2.xml";
-    //QString traceFileName = "C:\\Users\\jabraham\\Downloads\\dumbbell-animation.xml";
-
-    /*if(fileDialog.exec())
-=======
     QString traceFileName = "";
+    m_traceFileName = "";
     if(fileDialog.exec())
->>>>>>> other
     {
         traceFileName = fileDialog.selectedFiles().at(0);
-        //qDebug((traceFileName));
         if(traceFileName != "")
         {
+            m_traceFileName = traceFileName;
             if(parseXMLTraceFile(traceFileName))
                 m_fileOpenButton->setEnabled(true);
         }
-    }*/
-    parseXMLTraceFile(traceFileName);
-    //}
+    }
     StatsMode::getInstance()->systemReset();
-
     QApplication::processEvents();
  }
 
@@ -1190,7 +1233,7 @@ AnimatorMode::purgeAnimatedNodes()
                     }
                    case AnimEvent::PACKET_EVENT:
                    {
-                       if (m_fastForwarding)
+                       if (m_fastForwarding || !(m_showPackets))
                             continue;
                        AnimPacketEvent * packetEvent = static_cast<AnimPacketEvent *> (j->second);
                        AnimPacket * animPacket = AnimPacketMgr::getInstance()->add(packetEvent->m_fromId,
@@ -1274,7 +1317,7 @@ AnimatorMode::purgeAnimatedNodes()
 
                 } //switch
             } // for loop
-         m_animationGroup  = new QParallelAnimationGroup;
+         m_packetAnimationGroup  = new QParallelAnimationGroup;
          for (QVector <AnimPacket *>::const_iterator i = packetsToAnimate.begin();
               i != packetsToAnimate.end();
               ++i)
@@ -1307,7 +1350,7 @@ AnimatorMode::purgeAnimatedNodes()
                 QPointF topLeft = QPointF (fromNodePos.x() - hypotenuse, fromNodePos.y() - hypotenuse);
                 QPointF bottomRight = QPointF (fromNodePos.x() + hypotenuse, fromNodePos.y() + hypotenuse);
                 wirelessAnimation->setEndValue(QRectF (topLeft, bottomRight));
-                m_animationGroup->addAnimation(wirelessAnimation);
+                m_packetAnimationGroup->addAnimation(wirelessAnimation);
 
             }
 
@@ -1321,22 +1364,24 @@ AnimatorMode::purgeAnimatedNodes()
             propertyAnimation->setStartValue(animPacket->getFromPos());
             propertyAnimation->setEndValue(animPacket->getToPos());
             //propAnimation->start();
-            m_animationGroup->addAnimation(propertyAnimation);
+           // m_animationGroup->addAnimation(propertyAnimation);
 
             //AnimatorScene::getInstance()->update();
          }
          //NS_LOG_DEBUG ("Animation duration:" << animationGroup->duration());
 
          //m_animationGroup->start(QPropertyAnimation::DeleteWhenStopped);
-         m_animationGroup->start();
+         m_packetAnimationGroup->start();
 
-         connect(m_animationGroup,
+         connect(m_packetAnimationGroup,
                  SIGNAL(finished()),
                  this,
-                 SLOT(animationGroupFinished()));
+                 SLOT(packetAnimationGroupFinishedSlot()));
 
          //delete animationGroup;
          //AnimatorScene::getInstance()->setShowInterfaceTexts(true, true);
+         m_updateRateSlider->setEnabled(true);
+         m_simulationTimeSlider->setEnabled(true);
     } // if result == good
     else
     {
@@ -1344,26 +1389,41 @@ AnimatorMode::purgeAnimatedNodes()
          //NS_LOG_DEBUG ("Set Simulation completed");
          setSimulationCompleted();
     }
-     m_updateRateSlider->setEnabled(true);
-     m_simulationTimeSlider->setEnabled(true);
+
 
 
 
  }
 
  void
- AnimatorMode::animationGroupFinished()
+ AnimatorMode::packetAnimationGroupFinishedSlot()
 {
      //NS_LOG_DEBUG ("animationGroupStateChangedSlot");
      //if (newState != QAbstractAnimation::Stopped)
      //    return;
-     //m_animationGroup->deleteLater();
+     m_packetAnimationGroup->deleteLater();
      //m_updateRateTimer->start();
      //m_updateRateSlider->setEnabled(true);
      //m_simulationTimeSlider->setEnabled(true);
      //m_zoomInButton->setEnabled(true);
      //m_zoomOutButton->setEnabled(true);
 }
+
+
+ void
+ AnimatorMode::buttonAnimationGroupFinishedSlot()
+ {
+     if(m_state == SIMULATION_COMPLETE)
+     {
+        m_buttonAnimationGroup->start();
+     }
+     else
+     {
+        m_buttonAnimationGroup->deleteLater();
+     }
+
+ }
+
 
  void
  AnimatorMode::displayPacket(qreal t)
