@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'statsmode.h'
 **
-** Created: Tue Dec 3 08:22:26 2013
+** Created: Wed Dec 4 06:26:45 2013
 **      by: The Qt Meta Object Compiler version 63 (Qt 4.8.1)
 **
 ** WARNING! All changes made in this file will be lost!

@@ -10,5 +10,6 @@
         <file>animator_wirelesscircles.svg</file>
         <file>animator_grid.svg</file>
         <file>animator_showpackets.svg</file>
+        <file>animator_reload.svg</file>
     </qresource>
 </RCC>

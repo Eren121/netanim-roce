@@ -264,7 +264,7 @@ AnimatorMode::initControls()
 
     m_reloadFileButton = new QToolButton;
     m_reloadFileButton->setToolTip("Reload a file with the same file name as the previous XML");
-    m_reloadFileButton->setIcon(QIcon(":/resources/animator_fileopen.svg"));
+    m_reloadFileButton->setIcon(QIcon(":/resources/animator_reload.svg"));
     connect(m_reloadFileButton,SIGNAL(clicked()), this, SLOT(reloadFileSlot()));
 
 
@@ -854,7 +854,7 @@ AnimatorMode::getButtonAnimation(QToolButton * toolButton)
     propAnimation->setStartValue(expandedRect);
     propAnimation->setEndValue(currentRect);
     propAnimation->setEasingCurve(QEasingCurve::OutInQuad);
-    propAnimation->setDuration(1000);
+    propAnimation->setDuration(2000);
     return propAnimation;
 
 }
