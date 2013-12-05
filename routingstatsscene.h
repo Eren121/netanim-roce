@@ -25,22 +25,25 @@
 #include <QGraphicsScene>
 #include <QGraphicsProxyWidget>
 
-namespace netanim {
+namespace netanim
+{
 
 
-struct NodeIdDest_t {
-    uint32_t fromNodeId;
-    QString destination;
-    bool operator< (const NodeIdDest_t & rhs ) const
-    {
-        return ( fromNodeId < rhs.fromNodeId) ||
-               ( fromNodeId == rhs.fromNodeId && (destination.toAscii() < rhs.destination.toAscii()));
-    }
+struct NodeIdDest_t
+{
+  uint32_t fromNodeId;
+  QString destination;
+  bool operator< (const NodeIdDest_t & rhs ) const
+  {
+    return ( fromNodeId < rhs.fromNodeId) ||
+           ( fromNodeId == rhs.fromNodeId && (destination.toAscii() < rhs.destination.toAscii()));
+  }
 } ;
 
-typedef struct  {
-    NodeIdDest_t nodeIdDest;
-    RoutePathElementsVector_t elements;
+typedef struct
+{
+  NodeIdDest_t nodeIdDest;
+  RoutePathElementsVector_t elements;
 } RoutePath_t;
 
 typedef std::vector <RoutePath_t> RoutePathVector_t;
@@ -49,33 +52,33 @@ class RoutingStatsScene : public QGraphicsScene
 {
 
 public:
-    static RoutingStatsScene * getInstance();
-    void test();
-    void add(uint32_t nodeId, qreal time, QString rt);
-    void addRp(uint32_t nodeId, QString destination, qreal time, RoutePathElementsVector_t elements);
-    void adjustRect();
-    void systemReset();
-    void reloadContent(bool force = false);
-    uint32_t getNodeCount();
-    RoutePathVector_t getRoutePaths(qreal currentTime);
+  static RoutingStatsScene * getInstance();
+  void test();
+  void add(uint32_t nodeId, qreal time, QString rt);
+  void addRp(uint32_t nodeId, QString destination, qreal time, RoutePathElementsVector_t elements);
+  void adjustRect();
+  void systemReset();
+  void reloadContent(bool force = false);
+  uint32_t getNodeCount();
+  RoutePathVector_t getRoutePaths(qreal currentTime);
 private:
-    typedef std::map <uint32_t, QGraphicsProxyWidget *> NodeIdProxyWidgetMap_t;
-    typedef std::map <uint32_t, TimeValue <QString> > NodeIdTimeValueMap_t;
-    typedef std::map <NodeIdDest_t, TimeValue <RoutePathElementsVector_t> > NodeIdDestRPMap_t;
-    RoutingStatsScene();
-    void addToProxyWidgetsMap(uint32_t nodeId, QString title, QString content);
-    void clearProxyWidgetsMap();
-    void clearNodeIdTimeValues();
-    void showInfoWidget(bool show = true);
-    void updateContent(uint32_t nodeId, QGraphicsProxyWidget * pw);
-    qreal m_lastX;
-    qreal m_lastY;
-    qreal m_bottomY;
-    qreal m_lastTime;
-    QGraphicsProxyWidget * m_infoWidget;
-    NodeIdProxyWidgetMap_t m_nodeIdProxyWidgets;
-    NodeIdTimeValueMap_t m_nodeIdTimeValues;
-    NodeIdDestRPMap_t m_rps;
+  typedef std::map <uint32_t, QGraphicsProxyWidget *> NodeIdProxyWidgetMap_t;
+  typedef std::map <uint32_t, TimeValue <QString> > NodeIdTimeValueMap_t;
+  typedef std::map <NodeIdDest_t, TimeValue <RoutePathElementsVector_t> > NodeIdDestRPMap_t;
+  RoutingStatsScene();
+  void addToProxyWidgetsMap(uint32_t nodeId, QString title, QString content);
+  void clearProxyWidgetsMap();
+  void clearNodeIdTimeValues();
+  void showInfoWidget(bool show = true);
+  void updateContent(uint32_t nodeId, QGraphicsProxyWidget * pw);
+  qreal m_lastX;
+  qreal m_lastY;
+  qreal m_bottomY;
+  qreal m_lastTime;
+  QGraphicsProxyWidget * m_infoWidget;
+  NodeIdProxyWidgetMap_t m_nodeIdProxyWidgets;
+  NodeIdTimeValueMap_t m_nodeIdTimeValues;
+  NodeIdDestRPMap_t m_rps;
 
 };
 

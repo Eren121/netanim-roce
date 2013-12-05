@@ -26,42 +26,43 @@
 #include <QGraphicsScene>
 #include <QGraphicsProxyWidget>
 
-namespace netanim {
+namespace netanim
+{
 class FlowMonStatsScene : public QGraphicsScene
 {
 
 public:
-    static FlowMonStatsScene * getInstance();
-    void test();
-    void addFlowStat(uint32_t flowId, FlowStatsFlow_t flowStats);
-    void addIpv4Classifier(uint32_t flowId, Ipv4Classifier_t ipv4Classifier);
-    void addFlowProbes(FlowProbes_t flowProbes);
-    void adjustRect();
-    void systemReset();
-    void reloadContent(bool force = false);
-    uint32_t getNodeCount();
-    void showInfoWidget(bool show = true);
-    void clearProxyWidgetsMap();
-    void addProxyWidgets();
-    QString flowStatsToString(FlowStatsFlow_t flowStats);
-    QString ipv4ClassifierToString(Ipv4Classifier_t ipv4Classifier);
+  static FlowMonStatsScene * getInstance();
+  void test();
+  void addFlowStat(uint32_t flowId, FlowStatsFlow_t flowStats);
+  void addIpv4Classifier(uint32_t flowId, Ipv4Classifier_t ipv4Classifier);
+  void addFlowProbes(FlowProbes_t flowProbes);
+  void adjustRect();
+  void systemReset();
+  void reloadContent(bool force = false);
+  uint32_t getNodeCount();
+  void showInfoWidget(bool show = true);
+  void clearProxyWidgetsMap();
+  void addProxyWidgets();
+  QString flowStatsToString(FlowStatsFlow_t flowStats);
+  QString ipv4ClassifierToString(Ipv4Classifier_t ipv4Classifier);
 
 private:
-    typedef std::map<uint32_t, FlowStatsFlow_t> FlowIdFlowStatsMap_t;
-    typedef std::map<uint32_t, Ipv4Classifier_t> FlowIdIpv4ClassifierMap_t;
-    typedef std::map <uint32_t, QGraphicsProxyWidget *> FlowIdProxyWidgetMap_t;
+  typedef std::map<uint32_t, FlowStatsFlow_t> FlowIdFlowStatsMap_t;
+  typedef std::map<uint32_t, Ipv4Classifier_t> FlowIdIpv4ClassifierMap_t;
+  typedef std::map <uint32_t, QGraphicsProxyWidget *> FlowIdProxyWidgetMap_t;
 
-    FlowMonStatsScene();
-    void align();
-    QGraphicsProxyWidget * m_infoWidget;
-    FlowIdFlowStatsMap_t m_flowIdFlowStats;
-    FlowIdIpv4ClassifierMap_t m_flowIdIpv4Classifiers;
-    FlowIdProxyWidgetMap_t m_flowIdProxyWidgets;
-    QGraphicsProxyWidget * m_flowProbeWidget;
-    qreal m_lastX;
-    qreal m_lastY;
-    qreal m_bottomY;
-    FlowProbes_t m_flowProbes;
+  FlowMonStatsScene();
+  void align();
+  QGraphicsProxyWidget * m_infoWidget;
+  FlowIdFlowStatsMap_t m_flowIdFlowStats;
+  FlowIdIpv4ClassifierMap_t m_flowIdIpv4Classifiers;
+  FlowIdProxyWidgetMap_t m_flowIdProxyWidgets;
+  QGraphicsProxyWidget * m_flowProbeWidget;
+  qreal m_lastX;
+  qreal m_lastY;
+  qreal m_bottomY;
+  FlowProbes_t m_flowProbes;
 
 };
 

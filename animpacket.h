@@ -24,323 +24,324 @@
 #include "common.h"
 #include "timevalue.h"
 #include "animevent.h"
-namespace netanim {
+namespace netanim
+{
 
 
 class AnimWirelessCircles : public QObject, public QGraphicsEllipseItem
 {
-Q_OBJECT
-    Q_PROPERTY(QRectF rect READ rect WRITE setRect)
+  Q_OBJECT
+  Q_PROPERTY(QRectF rect READ rect WRITE setRect)
 
 };
 
 
 struct ArpInfo
 {
-    ArpInfo()
-    {
-        type = "null";
-        sourceMac = "null";
-        sourceIpv4 = "null";
-        destMac = "ff:ff:ff:ff:ff:ff";
-        destIpv4 = "null";
-    }
-    QString toString()
-    {
-        return  " Arp "     + type       +
-                " SMac: "   + sourceMac  +
-                " DMac: "   + destMac    +
-                " SrcIp : " + sourceIpv4 +
-                " DstIp : " + destIpv4;
-    }
-    QString toShortString()
-    {
-        return QString("Arp:") + type + " DstIP=" + destIpv4;
-    }
-    QString type;
-    QString sourceMac;
-    QString sourceIpv4;
-    QString destMac;
-    QString destIpv4;
+  ArpInfo()
+  {
+    type = "null";
+    sourceMac = "null";
+    sourceIpv4 = "null";
+    destMac = "ff:ff:ff:ff:ff:ff";
+    destIpv4 = "null";
+  }
+  QString toString()
+  {
+    return  " Arp "     + type       +
+            " SMac: "   + sourceMac  +
+            " DMac: "   + destMac    +
+            " SrcIp : " + sourceIpv4 +
+            " DstIp : " + destIpv4;
+  }
+  QString toShortString()
+  {
+    return QString("Arp:") + type + " DstIP=" + destIpv4;
+  }
+  QString type;
+  QString sourceMac;
+  QString sourceIpv4;
+  QString destMac;
+  QString destIpv4;
 };
 
 struct PppInfo
 {
-    QString toString()
-    {
-        return " PPP";
-    }
-    QString toShortString()
-    {
-        return "PPP";
-    }
+  QString toString()
+  {
+    return " PPP";
+  }
+  QString toShortString()
+  {
+    return "PPP";
+  }
 
 };
 
 struct EthernetInfo
 {
-    EthernetInfo()
-    {
-        sourceMac = "null";
-        destMac = "null";
-    }
-    QString toString()
-    {
-        return  " Ethernet SMac: " + sourceMac +
-                " DMac: "          + destMac;
-    }
-    QString toShortString()
-    {
-        return "Ethernet:" + sourceMac + " > " + destMac;
-    }
-    QString sourceMac;
-    QString destMac;
+  EthernetInfo()
+  {
+    sourceMac = "null";
+    destMac = "null";
+  }
+  QString toString()
+  {
+    return  " Ethernet SMac: " + sourceMac +
+            " DMac: "          + destMac;
+  }
+  QString toShortString()
+  {
+    return "Ethernet:" + sourceMac + " > " + destMac;
+  }
+  QString sourceMac;
+  QString destMac;
 };
 
 
 struct WifiMacInfo
 {
-    WifiMacInfo()
-    {
-        type = "null";
-        toDs = "null";
-        fromDs = "null";
-        Da = "null";
-        Sa = "null";
-        Bssid = "null";
-        Ra = "null";
-        SSid = "null";
-        assocResponseStatus = "null";
+  WifiMacInfo()
+  {
+    type = "null";
+    toDs = "null";
+    fromDs = "null";
+    Da = "null";
+    Sa = "null";
+    Bssid = "null";
+    Ra = "null";
+    SSid = "null";
+    assocResponseStatus = "null";
 
-    }
+  }
 
-    QString toString()
-    {
-        if(type == "CTL_ACK")
-            return " Wifi CTL_ACK RA:" + Ra;
-        if(type == "CTL_RTS")
-            return " Wifi CTL_RTS RA:" + Ra + " TA:" + Sa;
-        if(type == "CTL_CTS")
-            return " Wifi CTL_CTS RA:" + Ra;
-        QString temp = " Wifi " + type +
-                " FromDS: " + fromDs +
-                " toDS: " + toDs +
-                " DA: " + Da +
-                " SA: " + Sa +
-                " BSSId: " + Bssid;
-        if(type == "MGT_ASSOCIATION_REQUEST")
-            temp += " SSid: " + SSid;
+  QString toString()
+  {
+    if(type == "CTL_ACK")
+      return " Wifi CTL_ACK RA:" + Ra;
+    if(type == "CTL_RTS")
+      return " Wifi CTL_RTS RA:" + Ra + " TA:" + Sa;
+    if(type == "CTL_CTS")
+      return " Wifi CTL_CTS RA:" + Ra;
+    QString temp = " Wifi " + type +
+                   " FromDS: " + fromDs +
+                   " toDS: " + toDs +
+                   " DA: " + Da +
+                   " SA: " + Sa +
+                   " BSSId: " + Bssid;
+    if(type == "MGT_ASSOCIATION_REQUEST")
+      temp += " SSid: " + SSid;
 
-        if(type == "MGT_ASSOCIATION_RESPONSE")
-            temp += " status: " + assocResponseStatus;
-        return temp;
-    }
+    if(type == "MGT_ASSOCIATION_RESPONSE")
+      temp += " status: " + assocResponseStatus;
+    return temp;
+  }
 
-    QString toShortString()
-    {
-        QString s = "";
-        if(type == "CTL_RTS")
-            s = "Wifi:CTL_RTS RA:" + Ra + " TA:" + Sa;
-        if(type == "CTL_CTS")
-            s = "Wifi:CTL_CTS RA:" + Ra;
-        if(type == "MGT_BEACON")
-            s =  "Wifi:BEACON ssid" + SSid;
-        if(type == "MGT_ASSOCIATION_REQUEST")
-            s =  "Wifi:ASSOC_REQ ssid" + SSid;
-        if(type == "CTL_ACK")
-            s = "Wifi:CTL_ACK RA:" + Ra;
-        else
-            s = "Wifi:" + type;
-        return s;
+  QString toShortString()
+  {
+    QString s = "";
+    if(type == "CTL_RTS")
+      s = "Wifi:CTL_RTS RA:" + Ra + " TA:" + Sa;
+    if(type == "CTL_CTS")
+      s = "Wifi:CTL_CTS RA:" + Ra;
+    if(type == "MGT_BEACON")
+      s =  "Wifi:BEACON ssid" + SSid;
+    if(type == "MGT_ASSOCIATION_REQUEST")
+      s =  "Wifi:ASSOC_REQ ssid" + SSid;
+    if(type == "CTL_ACK")
+      s = "Wifi:CTL_ACK RA:" + Ra;
+    else
+      s = "Wifi:" + type;
+    return s;
 
 
-    }
-    QString type;
-    QString toDs;
-    QString fromDs;
-    QString Da;
-    QString Sa;
-    QString Bssid;
-    QString Ra;
-    QString SSid;
-    QString assocResponseStatus;
+  }
+  QString type;
+  QString toDs;
+  QString fromDs;
+  QString Da;
+  QString Sa;
+  QString Bssid;
+  QString Ra;
+  QString SSid;
+  QString assocResponseStatus;
 };
 
 
 struct Ipv4Info
 {
-    Ipv4Info()
-    {
+  Ipv4Info()
+  {
 
-    }
-    QString toString ()
-    {
-        return  " Ipv4 Proto:" + protocol +
-                " SrcIp: " + SrcIp +
-                " DstIp: " + DstIp;
-    }
-    QString toShortString()
-    {
-        return "IPv4:" + SrcIp + " > " + DstIp;
-    }
-    QString tos;
-    QString Dscp;
-    QString Ecn;
-    QString Ttl;
-    QString Id;
-    QString protocol;
-    QString length;
-    QString SrcIp;
-    QString DstIp;
+  }
+  QString toString ()
+  {
+    return  " Ipv4 Proto:" + protocol +
+            " SrcIp: " + SrcIp +
+            " DstIp: " + DstIp;
+  }
+  QString toShortString()
+  {
+    return "IPv4:" + SrcIp + " > " + DstIp;
+  }
+  QString tos;
+  QString Dscp;
+  QString Ecn;
+  QString Ttl;
+  QString Id;
+  QString protocol;
+  QString length;
+  QString SrcIp;
+  QString DstIp;
 
 };
 
 
 struct IcmpInfo
 {
-    IcmpInfo()
-    {
+  IcmpInfo()
+  {
 
-    }
-    QString toString()
-    {
-        QString temp;
-        temp += "ICMP type: " + type +
-                "code: " + code;
-        if (type == "3" && code == "3")
-            temp += " DstUnreachable";
-        return temp;
+  }
+  QString toString()
+  {
+    QString temp;
+    temp += "ICMP type: " + type +
+            "code: " + code;
+    if (type == "3" && code == "3")
+      temp += " DstUnreachable";
+    return temp;
 
-    }
-    QString toShortString()
-    {
-        if ((type == "3") & (code == "3"))
-        {
-            return "ICMP: Dst Unreachable";
-        }
-        return "ICMP: type=" + type + " code="+ code;
-    }
-    QString type;
-    QString code;
+  }
+  QString toShortString()
+  {
+    if ((type == "3") & (code == "3"))
+      {
+        return "ICMP: Dst Unreachable";
+      }
+    return "ICMP: type=" + type + " code="+ code;
+  }
+  QString type;
+  QString code;
 };
 
 
 struct UdpInfo
 {
-    UdpInfo()
-    {
+  UdpInfo()
+  {
 
-    }
-    QString toString()
-    {
-        return " UDP " + SPort + " > " + DPort;
+  }
+  QString toString()
+  {
+    return " UDP " + SPort + " > " + DPort;
 
-    }
-    QString toShortString()
-    {
-        return "UDP:" + SPort + " > " + DPort;
+  }
+  QString toShortString()
+  {
+    return "UDP:" + SPort + " > " + DPort;
 
-    }
-    QString length;
-    QString SPort;
-    QString DPort;
+  }
+  QString length;
+  QString SPort;
+  QString DPort;
 
 };
 
 struct TcpInfo
 {
-    TcpInfo()
-    {
+  TcpInfo()
+  {
 
-    }
-    QString toString()
-    {
-        return " TCP " + SPort + " > " + DPort +
-                " " + flags +  " Seq=" + seq   +
-                " Ack=" + ack + " Win=" + window;
+  }
+  QString toString()
+  {
+    return " TCP " + SPort + " > " + DPort +
+           " " + flags +  " Seq=" + seq   +
+           " Ack=" + ack + " Win=" + window;
 
-    }
-    QString toShortString()
-    {
-        return  "TCP:[" + flags + "]" + " S=" + seq +
-                " A=" + ack;
-    }
-    QString SPort;
-    QString DPort;
-    QString flags;
-    QString seq;
-    QString ack;
-    QString window;
+  }
+  QString toShortString()
+  {
+    return  "TCP:[" + flags + "]" + " S=" + seq +
+            " A=" + ack;
+  }
+  QString SPort;
+  QString DPort;
+  QString flags;
+  QString seq;
+  QString ack;
+  QString window;
 
 };
 
 struct AodvInfo
 {
-    AodvInfo()
-    {
+  AodvInfo()
+  {
 
-    }
-    QString toString()
-    {
-        if(type == "RERR")
-        {
-            return "RERR:" + rerrInfo + " " + destination;
-        }
-        return "AODV:" + type + " D=" + destination + " S=" + source + " Seq=" + seq;
-    }
-    QString toShortString()
-    {
-        if(type == "RERR")
-        {
-            return "RERR:" + rerrInfo + " " + destination;
-        }
-        return "AODV:" + type + " D=" + destination + " S=" + source + " Seq=" + seq;
-    }
-    QString type;
-    QString destination;
-    QString source;
-    QString seq;
-    QString rerrInfo;
+  }
+  QString toString()
+  {
+    if(type == "RERR")
+      {
+        return "RERR:" + rerrInfo + " " + destination;
+      }
+    return "AODV:" + type + " D=" + destination + " S=" + source + " Seq=" + seq;
+  }
+  QString toShortString()
+  {
+    if(type == "RERR")
+      {
+        return "RERR:" + rerrInfo + " " + destination;
+      }
+    return "AODV:" + type + " D=" + destination + " S=" + source + " Seq=" + seq;
+  }
+  QString type;
+  QString destination;
+  QString source;
+  QString seq;
+  QString rerrInfo;
 };
 
 struct DsdvInfo
 {
-    DsdvInfo()
-    {
+  DsdvInfo()
+  {
 
-    }
-    QString toString()
-    {
-        return "DSDV";
-    }
-    QString toShortString()
-    {
-        return "DSDV";
-    }
+  }
+  QString toString()
+  {
+    return "DSDV";
+  }
+  QString toShortString()
+  {
+    return "DSDV";
+  }
 };
 
 struct OlsrInfo
 {
-    OlsrInfo()
-    {
+  OlsrInfo()
+  {
 
-    }
-    QString toString()
-    {
-        return "OLSR";
-    }
-    QString toShortString()
-    {
-        return "OLSR";
-    }
+  }
+  QString toString()
+  {
+    return "OLSR";
+  }
+  QString toShortString()
+  {
+    return "OLSR";
+  }
 };
 
 
 
 class AnimPacket : public QGraphicsObject, public AnimEvent
 {
-Q_OBJECT
-Q_PROPERTY (QPointF pos READ pos WRITE setPos)
+  Q_OBJECT
+  Q_PROPERTY (QPointF pos READ pos WRITE setPos)
 public:
   AnimPacket(uint32_t fromNodeId,
              uint32_t toNodeId,
@@ -353,7 +354,7 @@ public:
   enum { Type = ANIMPACKET_TYPE };
   int type () const
   {
-      return Type;
+    return Type;
   }
   qreal getFirstBitTx ();
   qreal getFirstBitRx ();
@@ -404,10 +405,10 @@ private:
 class AnimPacketMgr
 {
 public:
-    static AnimPacketMgr * getInstance();
-    AnimPacket * add(uint32_t fromId, uint32_t toId, qreal fbTx, qreal fbRx, bool isWPacket, QString metaInfo, bool showMetaInfo);
+  static AnimPacketMgr * getInstance();
+  AnimPacket * add(uint32_t fromId, uint32_t toId, qreal fbTx, qreal fbRx, bool isWPacket, QString metaInfo, bool showMetaInfo);
 private:
-    AnimPacketMgr();
+  AnimPacketMgr();
 
 
 };

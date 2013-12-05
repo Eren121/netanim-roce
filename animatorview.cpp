@@ -27,38 +27,40 @@
 #include <QFileDialog>
 #include "resizeableitem.h"
 
-namespace netanim {
+namespace netanim
+{
 
 NS_LOG_COMPONENT_DEFINE ("AnimatorView");
 AnimatorView * pAnimatorView = 0;
 
 AnimatorView::AnimatorView(QGraphicsScene * scene) :
-    QGraphicsView(scene),
-    m_currentZoomFactor(1)
+  QGraphicsView(scene),
+  m_currentZoomFactor(1)
 
 {
-    setRenderHint(QPainter::Antialiasing);
-    setViewportUpdateMode(BoundingRectViewportUpdate);
+  setRenderHint(QPainter::Antialiasing);
+  setViewportUpdateMode(BoundingRectViewportUpdate);
 }
 
 AnimatorView *
 AnimatorView::getInstance()
 {
-    if(!pAnimatorView)
+  if(!pAnimatorView)
     {
-        pAnimatorView = new AnimatorView(AnimatorScene::getInstance());
+      pAnimatorView = new AnimatorView(AnimatorScene::getInstance());
     }
-    return pAnimatorView;
+  return pAnimatorView;
 }
 
 void
 AnimatorView::paintEvent(QPaintEvent *event)
 {
-    //qDebug(transform);
-    try{
-        QGraphicsView::paintEvent(event);
+  //qDebug(transform);
+  try
+    {
+      QGraphicsView::paintEvent(event);
     }
-    catch (...)
+  catch (...)
     {
 
     }
@@ -67,77 +69,77 @@ AnimatorView::paintEvent(QPaintEvent *event)
 AnimatorScene *
 AnimatorView::getAnimatorScene()
 {
-    return  AnimatorScene::getInstance();
+  return  AnimatorScene::getInstance();
 }
 
 void
 AnimatorView::updateTransform()
 {
-    QTransform transform;
-    QRectF sceneBoundaryRect = AnimatorScene::getInstance()->getBoundaryRect();
+  QTransform transform;
+  QRectF sceneBoundaryRect = AnimatorScene::getInstance()->getBoundaryRect();
 
-    qreal minDimension = qMin(sceneBoundaryRect.width(),sceneBoundaryRect.height());
+  qreal minDimension = qMin(sceneBoundaryRect.width(),sceneBoundaryRect.height());
 
-    qreal xScale = viewport()->width()/minDimension;
-    qreal yScale = viewport()->height()/minDimension;
-    //qDebug(width(), "Width");
-    //qDebug(height(), "height");
-    qreal minScale = qMin(xScale, yScale);
-    transform.scale(minScale, minScale);
-    //getAnimatorScene()->setCurrentScale(minScale, minScale);
-    setTransform(transform);
+  qreal xScale = viewport()->width()/minDimension;
+  qreal yScale = viewport()->height()/minDimension;
+  //qDebug(width(), "Width");
+  //qDebug(height(), "height");
+  qreal minScale = qMin(xScale, yScale);
+  transform.scale(minScale, minScale);
+  //getAnimatorScene()->setCurrentScale(minScale, minScale);
+  setTransform(transform);
 
 }
 
 void
 AnimatorView::setCurrentZoomFactor(qreal factor)
 {
-    if (m_currentZoomFactor < factor)
+  if (m_currentZoomFactor < factor)
     {
-        scale(1.1, 1.1);
+      scale(1.1, 1.1);
     }
-    else
+  else
     {
-        scale(0.9, 0.9);
+      scale(0.9, 0.9);
     }
-    m_currentZoomFactor = factor;
-    //update();
+  m_currentZoomFactor = factor;
+  //update();
 }
 
 void
 AnimatorView::wheelEvent(QWheelEvent *event)
 {
-    QGraphicsView::wheelEvent(event);
-    update();
+  QGraphicsView::wheelEvent(event);
+  update();
 }
 
 void
 AnimatorView::fitSceneWithinView()
 {
-    //QGraphicsView::fitInView(sceneRect());
-    updateTransform();
+  //QGraphicsView::fitInView(sceneRect());
+  updateTransform();
 
 }
 
 void
 AnimatorView::systemReset()
 {
-    m_currentZoomFactor = 1;
+  m_currentZoomFactor = 1;
 
-    resetTransform();
+  resetTransform();
 }
 
 void
 AnimatorView::postParse()
 {
 
-        fitSceneWithinView();
+  fitSceneWithinView();
 }
 
 QTransform
 AnimatorView::getTransform()
 {
-    return transform();
+  return transform();
 }
 
 

@@ -25,7 +25,8 @@
 #include <iostream>
 #include "animpacket.h"
 
-namespace netanim {
+namespace netanim
+{
 std::ostream & operator << (std::ostream & os, QPointF pt);
 std::ostream & operator << (std::ostream & os, QRectF r);
 std::ostream & operator << (std::ostream & os, QTransform t);

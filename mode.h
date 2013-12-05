@@ -24,6 +24,6 @@
 class Mode: public QWidget
 {
 public:
-    virtual void setFocus(bool focus) = 0;
+  virtual void setFocus(bool focus) = 0;
 };
 #endif // MODE_H

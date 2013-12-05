@@ -26,9 +26,11 @@
 #include <stdint.h>
 #include <map>
 
-namespace ns3 {
+namespace ns3
+{
 
-enum LogLevel {
+enum LogLevel
+{
   LOG_NONE           = 0x00000000, // no logging
 
   LOG_ERROR          = 0x00000001, // serious error messages only
@@ -150,13 +152,13 @@ void LogComponentDisableAll (enum LogLevel level);
       std::clog << g_log.Name () << ":" <<                      \
       __FUNCTION__ << "(): ";                                 \
     }                                                           \
-
+ 
 #define NS_LOG_APPEND_LEVEL_PREFIX(level)                       \
   if (g_log.IsEnabled (ns3::LOG_PREFIX_LEVEL))                  \
     {                                                           \
       std::clog << "[" << g_log.GetLevelLabel (level) << "] ";  \
     }                                                           \
-
+ 
 
 #ifndef NS_LOG_APPEND_CONTEXT
 #define NS_LOG_APPEND_CONTEXT
@@ -361,7 +363,8 @@ void LogComponentDisableAll (enum LogLevel level);
 
 #endif /* LOG_ENABLE */
 
-namespace ns3 {
+namespace ns3
+{
 
 /**
  * \ingroup logging
@@ -382,7 +385,8 @@ void LogSetNodePrinter (LogNodePrinter);
 LogNodePrinter LogGetNodePrinter (void);
 
 
-class LogComponent {
+class LogComponent
+{
 public:
   LogComponent (char const *name);
   void EnvVarCheck (char const *name);

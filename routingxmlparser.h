@@ -22,48 +22,50 @@
 #include <QXmlStreamReader>
 #include <QFile>
 
-namespace netanim {
+namespace netanim
+{
 
-typedef struct {
-    uint32_t nodeId;
-    QString nextHop;
+typedef struct
+{
+  uint32_t nodeId;
+  QString nextHop;
 } RoutePathElement;
 
 typedef std::vector <RoutePathElement> RoutePathElementsVector_t;
 struct RoutingParsedElement
 {
-    enum RoutingParsedElementType
-    {
-        XML_INVALID,
-        XML_ANIM,
-        XML_RT,
-        XML_RP,
-        XML_RPE
-    };
-    RoutingParsedElementType type;
+  enum RoutingParsedElementType
+  {
+    XML_INVALID,
+    XML_ANIM,
+    XML_RT,
+    XML_RP,
+    XML_RPE
+  };
+  RoutingParsedElementType type;
 
-    // Anim
+  // Anim
 
-    double version;
+  double version;
 
 
-    // Update time
+  // Update time
 
-    double updateTime;
+  double updateTime;
 
-    // Node
+  // Node
 
-    uint32_t nodeId;
+  uint32_t nodeId;
 
-    // Routing table
+  // Routing table
 
-    QString rt;
+  QString rt;
 
-    // Route Path
+  // Route Path
 
-    uint32_t rpElementCount;
-    RoutePathElementsVector_t rpes;
-    QString destination;
+  uint32_t rpElementCount;
+  RoutePathElementsVector_t rpes;
+  QString destination;
 
 };
 
@@ -71,34 +73,34 @@ struct RoutingParsedElement
 class RoutingXmlparser
 {
 public:
-    RoutingXmlparser(QString traceFileName);
-    ~RoutingXmlparser();
-    RoutingParsedElement parseNext();
-    bool isParsingComplete();
-    double getMaxSimulationTime();
-    double getMinSimulationTime();
-    bool isFileValid();
-    uint64_t getRtCount();
-    void doParse();
+  RoutingXmlparser(QString traceFileName);
+  ~RoutingXmlparser();
+  RoutingParsedElement parseNext();
+  bool isParsingComplete();
+  double getMaxSimulationTime();
+  double getMinSimulationTime();
+  bool isFileValid();
+  uint64_t getRtCount();
+  void doParse();
 
 
 private:
-    QString m_traceFileName;
-    bool m_parsingComplete;
-    QXmlStreamReader * m_reader;
-    QFile * m_traceFile;
-    double m_maxSimulationTime;
-    double m_minSimulationTime;
-    bool m_fileIsValid;
-    double m_version;
-    RoutingParsedElement parseAnim();
-    RoutingParsedElement parseRt();
-    RoutingParsedElement parseRp();
-    RoutePathElement parseRpe();
-    void parseGeneric(RoutingParsedElement &);
+  QString m_traceFileName;
+  bool m_parsingComplete;
+  QXmlStreamReader * m_reader;
+  QFile * m_traceFile;
+  double m_maxSimulationTime;
+  double m_minSimulationTime;
+  bool m_fileIsValid;
+  double m_version;
+  RoutingParsedElement parseAnim();
+  RoutingParsedElement parseRt();
+  RoutingParsedElement parseRp();
+  RoutePathElement parseRpe();
+  void parseGeneric(RoutingParsedElement &);
 
-    void searchForVersion();
-    void debugElement(RoutingParsedElement element);
+  void searchForVersion();
+  void debugElement(RoutingParsedElement element);
 };
 
 

@@ -33,7 +33,8 @@ namespace netanim
 {
 
 template <class T>
-class TimeValue {
+class TimeValue
+{
 public:
   TimeValue ();
   TimeValue (const TimeValue & other);
@@ -41,7 +42,8 @@ public:
   typedef std::multimap<qreal, T> TimeValue_t;
   typedef std::pair<qreal, T> TimeValuePair_t;
   typedef std::pair<typename TimeValue_t::const_iterator, typename TimeValue_t::const_iterator> TimeValueIteratorPair_t;
-  typedef enum {
+  typedef enum
+  {
     GOOD,
     UNDERRUN,
     OVERRUN
@@ -86,7 +88,7 @@ TimeValue<T>::TimeValue (const TimeValue & other)
     {
       m_timeValues.insert(TimeValuePair_t (i->first, i->second));
     }
-    if (!m_timeValues.empty ())
+  if (!m_timeValues.empty ())
     {
       m_currentIterator = m_timeValues.begin ();
       m_getIterator = m_timeValues.begin ();
@@ -100,18 +102,18 @@ TimeValue <T> &
 TimeValue<T>::operator= (const TimeValue <T> & other)
 {
   for(typename TimeValue<T>::TimeValue_t::const_iterator i = other.m_timeValues.begin ();
-        i != other.m_timeValues.end ();
-        ++i)
+      i != other.m_timeValues.end ();
+      ++i)
     {
       m_timeValues.insert(TimeValuePair_t (i->first, i->second));
       //m_timeValues[i->first] = i->second;
     }
-    if (!m_timeValues.empty ())
-      {
-        m_currentIterator = m_timeValues.begin ();
-        m_getIterator = m_timeValues.begin ();
+  if (!m_timeValues.empty ())
+    {
+      m_currentIterator = m_timeValues.begin ();
+      m_getIterator = m_timeValues.begin ();
 
-      }
+    }
   return *this;
 }
 
@@ -119,14 +121,14 @@ template <class T>
 typename TimeValue<T>::TimeValue_t::const_iterator
 TimeValue<T>::Begin()
 {
-    return m_timeValues.begin();
+  return m_timeValues.begin();
 }
 
 template <class T>
 typename TimeValue<T>::TimeValue_t::const_iterator
 TimeValue<T>::End()
 {
-    return m_timeValues.end();
+  return m_timeValues.end();
 }
 
 
@@ -145,8 +147,8 @@ TimeValue<T>::add (qreal t, T value)
   m_timeValues.insert(TimeValuePair_t (t, value));
   if (wasEmpty)
     {
-        m_currentIterator = m_timeValues.begin ();
-        m_getIterator = m_timeValues.begin ();
+      m_currentIterator = m_timeValues.begin ();
+      m_getIterator = m_timeValues.begin ();
     }
 }
 
@@ -192,19 +194,19 @@ template <class T>
 typename TimeValue<T>::TimeValueIteratorPair_t
 TimeValue<T>::getNext (TimeValueResult_t & result)
 {
-    result = GOOD;
-    TimeValueIteratorPair_t pp =  m_timeValues.equal_range (m_getIterator->first);
-      //std::cout << "First:" << m_getIterator->first;
-      //fflush(stdout);
-    if (m_getIterator == m_timeValues.end ())
-      {
-        result = OVERRUN;
-      }
-      else
-      {
-        m_getIterator = m_timeValues.upper_bound(m_getIterator->first);
-      }
-    return pp;
+  result = GOOD;
+  TimeValueIteratorPair_t pp =  m_timeValues.equal_range (m_getIterator->first);
+  //std::cout << "First:" << m_getIterator->first;
+  //fflush(stdout);
+  if (m_getIterator == m_timeValues.end ())
+    {
+      result = OVERRUN;
+    }
+  else
+    {
+      m_getIterator = m_timeValues.upper_bound(m_getIterator->first);
+    }
+  return pp;
 
 }
 
@@ -222,7 +224,7 @@ TimeValue<T>::get (qreal tUpperBound, TimeValueResult_t & result)
     {
       result = OVERRUN;
     }
-    else
+  else
     {
       ++m_getIterator;
     }
@@ -235,7 +237,7 @@ TimeValue<T>::getCurrent ()
 {
   if (m_currentIterator == m_timeValues.end ())
     {
-        return T(m_timeValues.rbegin ()->second);
+      return T(m_timeValues.rbegin ()->second);
     }
   return m_currentIterator->second;
 }
@@ -321,12 +323,12 @@ TimeValue<T>::toString ()
   std::ostringstream os;
   for(typename TimeValue<T>::TimeValue_t::const_iterator i = m_timeValues.begin ();
       i != m_timeValues.end ();
-      )
+     )
     {
       TimeValueIteratorPair_t pp =  m_timeValues.equal_range (i->first);
       for(typename TimeValue<T>::TimeValue_t::const_iterator j = pp.first;
-            j != pp.second;
-            ++j)
+          j != pp.second;
+          ++j)
         {
           os << j->second;
         }
@@ -346,7 +348,7 @@ template <class T>
 uint32_t
 TimeValue<T>::getCount ()
 {
-    return m_timeValues.size();
+  return m_timeValues.size();
 }
 
 } // namespace netanim

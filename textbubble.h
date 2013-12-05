@@ -22,19 +22,20 @@
 #include <QLabel>
 
 
-namespace netanim {
+namespace netanim
+{
 
 class TextBubble : public QLabel
 {
 public:
-    TextBubble(QString title, QString content);
-    ~TextBubble();
+  TextBubble(QString title, QString content);
+  ~TextBubble();
 
 private:
 signals:
 
 public slots:
-    
+
 };
 
 } // namespace netanim

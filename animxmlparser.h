@@ -27,95 +27,97 @@
 
 #include "animevent.h"
 
-namespace netanim {
+namespace netanim
+{
 
 enum ParsedElementType
 {
-    XML_INVALID,
-    XML_ANIM,
-    XML_TOPOLOGY,
-    XML_NODE,
-    XML_LINK,
-    XML_NONP2P_LINK,
-    XML_PACKET_RX,
-    XML_WPACKET_RX,
-    XML_LINKUPDATE,
-    XML_NODEUPDATE,
-    XML_RESOURCE
+  XML_INVALID,
+  XML_ANIM,
+  XML_TOPOLOGY,
+  XML_NODE,
+  XML_LINK,
+  XML_NONP2P_LINK,
+  XML_PACKET_RX,
+  XML_WPACKET_RX,
+  XML_LINKUPDATE,
+  XML_NODEUPDATE,
+  XML_RESOURCE
 };
 
 struct ParsedElement
 {
-    ParsedElementType type;
+  ParsedElementType type;
 
-    // Anim
-    double version;
+  // Anim
+  double version;
 
-    // Topology
-    qreal topo_width;
-    qreal topo_height;
+  // Topology
+  qreal topo_width;
+  qreal topo_height;
 
-    // Node
+  // Node
 
-    uint32_t nodeId;
-    qreal node_x;
-    qreal node_y;
-    qreal node_batteryCapacity;
-    uint8_t node_r;
-    uint8_t node_g;
-    uint8_t node_b;
-    qreal node_width;
-    qreal node_height;
-    bool visible;
+  uint32_t nodeId;
+  qreal node_x;
+  qreal node_y;
+  qreal node_batteryCapacity;
+  uint8_t node_r;
+  uint8_t node_g;
+  uint8_t node_b;
+  qreal node_width;
+  qreal node_height;
+  bool visible;
 
-    // Link
+  // Link
 
-    uint32_t link_fromId;
-    uint32_t link_toId;
+  uint32_t link_fromId;
+  uint32_t link_toId;
 
-    // Link description
+  // Link description
 
-    QString fromNodeDescription;
-    QString toNodeDescription;
-    QString linkDescription;
+  QString fromNodeDescription;
+  QString toNodeDescription;
+  QString linkDescription;
 
-    // Is Wpacket
-    bool isWpacket;
+  // Is Wpacket
+  bool isWpacket;
 
-    // Packet Rx
-    double packetrx_fbTx;
-    double packetrx_lbTx;
-    uint32_t packetrx_fromId;
-    double packetrx_toId;
-    double packetrx_fbRx;
-    double packetrx_lbRx;
+  // Packet Rx
+  double packetrx_fbTx;
+  double packetrx_lbTx;
+  uint32_t packetrx_fromId;
+  double packetrx_toId;
+  double packetrx_fbRx;
+  double packetrx_lbRx;
 
-    //meta-info
-    QString meta_info;
-    QString nodeDescription;
-
-
-    // Update time
-    double updateTime;
-
-    // Has Color update
-    bool hasColorUpdate;
-    bool hasBattery; //!< Has battery with possible capacity
+  //meta-info
+  QString meta_info;
+  QString nodeDescription;
 
 
-    // Resource
-    QString resourcePath;
-    uint32_t resourceId;
+  // Update time
+  double updateTime;
 
-    typedef enum {
-        POSITION,
-        COLOR,
-        DESCRIPTION,
-        SIZE,
-        IMAGE
-    } NodeUpdate_Type;
-    // node update type
-    NodeUpdate_Type nodeUpdateType;
+  // Has Color update
+  bool hasColorUpdate;
+  bool hasBattery; //!< Has battery with possible capacity
+
+
+  // Resource
+  QString resourcePath;
+  uint32_t resourceId;
+
+  typedef enum
+  {
+    POSITION,
+    COLOR,
+    DESCRIPTION,
+    SIZE,
+    IMAGE
+  } NodeUpdate_Type;
+  // node update type
+  NodeUpdate_Type nodeUpdateType;
 
 };
 
@@ -123,41 +125,41 @@ struct ParsedElement
 class Animxmlparser
 {
 public:
-    Animxmlparser(QString traceFileName);
-    ~Animxmlparser();
-    ParsedElement parseNext();
-    bool isParsingComplete();
-    double getMaxSimulationTime();
-    void setMaxSimulationTime(qreal t);
-    bool isFileValid();
-    uint64_t getRxCount();
-    void doParse();
+  Animxmlparser(QString traceFileName);
+  ~Animxmlparser();
+  ParsedElement parseNext();
+  bool isParsingComplete();
+  double getMaxSimulationTime();
+  void setMaxSimulationTime(qreal t);
+  bool isFileValid();
+  uint64_t getRxCount();
+  void doParse();
 
 
 private:
-    QString m_traceFileName;
-    bool m_parsingComplete;
-    QXmlStreamReader * m_reader;
-    QFile * m_traceFile;
-    double m_maxSimulationTime;
-    bool m_fileIsValid;
-    double m_version;
+  QString m_traceFileName;
+  bool m_parsingComplete;
+  QXmlStreamReader * m_reader;
+  QFile * m_traceFile;
+  double m_maxSimulationTime;
+  bool m_fileIsValid;
+  double m_version;
 
-    ParsedElement parseAnim();
-    ParsedElement parseTopology();
-    ParsedElement parseNode();
-    ParsedElement parseLink();
-    ParsedElement parseNonP2pLink();
-    ParsedElement parsePacket();
-    ParsedElement parseWPacket();
-    ParsedElement parseLinkUpdate();
-    ParsedElement parseNodeUpdate();
-    ParsedElement parseP();
-    ParsedElement parseWp();
-    ParsedElement parseResource();
-    void parseGeneric(ParsedElement &);
+  ParsedElement parseAnim();
+  ParsedElement parseTopology();
+  ParsedElement parseNode();
+  ParsedElement parseLink();
+  ParsedElement parseNonP2pLink();
+  ParsedElement parsePacket();
+  ParsedElement parseWPacket();
+  ParsedElement parseLinkUpdate();
+  ParsedElement parseNodeUpdate();
+  ParsedElement parseP();
+  ParsedElement parseWp();
+  ParsedElement parseResource();
+  void parseGeneric(ParsedElement &);
 
-    void searchForVersion();
+  void searchForVersion();
 };
 
 } // namespace netanim

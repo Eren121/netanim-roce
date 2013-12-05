@@ -40,12 +40,13 @@
 #include "ns3/uan-phy-gen.h"
 #include "ns3/rectangle.h"
 
-namespace ns3 {
+namespace ns3
+{
 
 #define MAX_PKTS_PER_TRACE_FILE 100000
 struct Rgb;
 struct NodeSize;
-typedef struct 
+typedef struct
 {
   uint32_t fromNode;
   uint32_t toNode;
@@ -61,32 +62,34 @@ typedef struct
 struct LinkPairCompare
 {
   bool operator () (P2pLinkNodeIdPair first, P2pLinkNodeIdPair second) const
-    {
-      //Check if they are the same node pairs but flipped
-      if (  ((first.fromNode == second.fromNode) && (first.toNode == second.toNode)) ||
-            ((first.fromNode == second.toNode) && (first.toNode == second.fromNode)) )
-        {
-          return false;
-        }
-      std::ostringstream oss1;
-      oss1 << first.fromNode << first.toNode;
-      std::ostringstream oss2;
-      oss2 << second.fromNode << second.toNode;
-      return oss1.str () < oss2.str ();
-    }
-   
+  {
+    //Check if they are the same node pairs but flipped
+    if (  ((first.fromNode == second.fromNode) && (first.toNode == second.toNode)) ||
+          ((first.fromNode == second.toNode) && (first.toNode == second.fromNode)) )
+      {
+        return false;
+      }
+    std::ostringstream oss1;
+    oss1 << first.fromNode << first.toNode;
+    std::ostringstream oss2;
+    oss2 << second.fromNode << second.toNode;
+    return oss1.str () < oss2.str ();
+  }
+
 };
 
-struct Ipv4RouteTrackElement {
+struct Ipv4RouteTrackElement
+{
   std::string destination;
   uint32_t fromNodeId;
 };
 
 
-typedef struct {
+typedef struct
+{
   uint32_t nodeId;
   std::string nextHop;
-  
+
 } Ipv4RoutePathElement;
 
 /**
@@ -111,15 +114,15 @@ public:
    * \brief Constructor
    * \param filename The Filename for the trace file used by the Animator
    * \param maxPktsPerFile The maximum number of packets per trace file.
-	    AnimationInterface will create trace files with the following 
+      AnimationInterface will create trace files with the following
             filenames : filename, filename-1, filename-2..., filename-N
-	    where each file contains packet info for 'maxPktPerFile' number of packets
+      where each file contains packet info for 'maxPktPerFile' number of packets
    * \param usingXML Set to true if XML output traces are required
    *
    */
-  AnimationInterface (const std::string filename, 
-	uint64_t maxPktsPerFile = MAX_PKTS_PER_TRACE_FILE, 
-	bool usingXML = true);
+  AnimationInterface (const std::string filename,
+                      uint64_t maxPktsPerFile = MAX_PKTS_PER_TRACE_FILE,
+                      bool usingXML = true);
 
   /**
    * \brief Destructor for the animator interface.
@@ -130,7 +133,7 @@ public:
   /**
    * \brief Enable tracking of the Ipv4 routing table for all Nodes
    *
-   * \param fileName Trace file for storing routing table information 
+   * \param fileName Trace file for storing routing table information
    * \param startTime Start time for capture
    * \param stopTime  End time for capture
    * \param pollInterval The periodic interval at which routing table information is polled
@@ -163,7 +166,7 @@ public:
 
   /**
    * \brief Specify the time at which capture should start
-   * 
+   *
    * \param t The time at which AnimationInterface should begin capture of traffic info
    *
    * \returns none
@@ -172,7 +175,7 @@ public:
 
   /**
    * \brief Specify the time at which capture should stop
-   * 
+   *
    * \param t The time at which AnimationInterface should stop capture of traffic info
    *
    * \returns none
@@ -180,7 +183,7 @@ public:
   void SetStopTime (Time t);
 
   /**
-   * \brief Set mobility poll interval:WARNING: setting a low interval can 
+   * \brief Set mobility poll interval:WARNING: setting a low interval can
    * cause slowness
    *
    * \param t Time interval between fetching mobility/position information
@@ -201,7 +204,7 @@ public:
   /**
    * \brief typedef for WriteCallBack used for listening to AnimationInterface
    * write messages
-   * 
+   *
    */
   typedef void (*AnimWriteCallback) (const char * str);
 
@@ -263,20 +266,20 @@ public:
    */
   void UpdateNodeDescription (uint32_t nodeId, std::string descr);
 
- /**
-  * \brief Helper function to show/hide a node
-  * \param nodeId Id of the node
-  * \param show Set to true to show node, set to false to hide
-  *
-  */
+  /**
+   * \brief Helper function to show/hide a node
+   * \param nodeId Id of the node
+   * \param show Set to true to show node, set to false to hide
+   *
+   */
   void ShowNode (uint32_t nodeId, bool show = true);
 
- /**
-  * \brief Helper function to show/hide a node
-  * \param n Ptr to the node
-  * \param show Set to true to show node, set to false to hide
-  *
-  */
+  /**
+   * \brief Helper function to show/hide a node
+   * \param n Ptr to the node
+   * \param show Set to true to show node, set to false to hide
+   *
+   */
   void ShowNode (Ptr <Node> n, bool show = true);
 
   /**
@@ -311,7 +314,7 @@ public:
    * \param height Height of the node
    *
    */
-  void UpdateNodeSize (uint32_t nodeId, double width, double height); 
+  void UpdateNodeSize (uint32_t nodeId, double width, double height);
   /**
    * \brief Helper function to update the node color
    * \param n Ptr to the node
@@ -335,7 +338,7 @@ public:
 
   /**
    * \brief Helper function to set the color of nodes in a container
-   * \param nc A Node Container of Nodes 
+   * \param nc A Node Container of Nodes
    * \param r Red component value (0-255)
    * \param g Green component value (0-255)
    * \param b Blue component value (0-255)
@@ -352,7 +355,7 @@ public:
    * \param toNodeDescription Description at the "to Node" end such as Ip address
    *
    */
-  static void SetLinkDescription (uint32_t fromNode, uint32_t toNode, 
+  static void SetLinkDescription (uint32_t fromNode, uint32_t toNode,
                                   std::string linkDescription,
                                   std::string fromNodeDescription = "",
                                   std::string toNodeDescription = "");
@@ -395,7 +398,7 @@ public:
   /**
    * \brief Helper function to print the routing path from a source node to destination IP
    * \param fromNodeId The source node
-   * \param destinationIpv4Address The destination Ipv4 Address 
+   * \param destinationIpv4Address The destination Ipv4 Address
    *
    * \returns reference to this AnimationInterface object
    */
@@ -434,14 +437,14 @@ public:
    */
   uint32_t AddResource (std::string resourcePath);
 
- /**
-  * Assign a fixed random variable stream number to the random variables
-  * used by this model.  Return the number of streams (possibly zero) that
-  * have been assigned.
-  *
-  * \param stream first stream index to use
-  * \return the number of stream indices assigned by this model
-  */
+  /**
+   * Assign a fixed random variable stream number to the random variables
+   * used by this model.  Return the number of streams (possibly zero) that
+   * have been assigned.
+   *
+   * \param stream first stream index to use
+   * \return the number of stream indices assigned by this model
+   */
   int64_t AssignStreams (int64_t stream);
 
 private:
@@ -457,7 +460,7 @@ private:
   bool m_randomPosition;
   AnimWriteCallback m_writeCallback;
   bool m_started;
-  bool m_enablePacketMetadata; 
+  bool m_enablePacketMetadata;
   Time m_startTime;
   Time m_stopTime;
   uint64_t m_maxPktsPerFile;
@@ -466,7 +469,7 @@ private:
   std::string m_routingFileName;
   Time m_routingPollInterval;
   NodeContainer m_routingNc;
-  
+
   void TrackIpv4Route ();
   void TrackIpv4RoutePaths ();
   std::string GetIpv4RoutingTable (Ptr <Node> n);
@@ -535,31 +538,31 @@ private:
                            Ptr<const Packet> p);
   void WimaxTxTrace (std::string context,
                      Ptr<const Packet> p,
-		     const Mac48Address &);
+                     const Mac48Address &);
   void WimaxRxTrace (std::string context,
                      Ptr<const Packet> p,
                      const Mac48Address &);
   void CsmaPhyTxBeginTrace (std::string context,
                             Ptr<const Packet> p);
   void CsmaPhyTxEndTrace (std::string context,
-                            Ptr<const Packet> p);
+                          Ptr<const Packet> p);
   void CsmaPhyRxEndTrace (std::string context,
                           Ptr<const Packet> p);
   void CsmaMacRxTrace (std::string context,
                        Ptr<const Packet> p);
 
   void LteTxTrace (std::string context,
-                      Ptr<const Packet> p,
-                      const Mac48Address &);
+                   Ptr<const Packet> p,
+                   const Mac48Address &);
 
   void LteRxTrace (std::string context,
-                      Ptr<const Packet> p,
-                      const Mac48Address &);
+                   Ptr<const Packet> p,
+                   const Mac48Address &);
 
   void LteSpectrumPhyTxStart (std::string context,
-                      Ptr<const PacketBurst> pb);
+                              Ptr<const PacketBurst> pb);
   void LteSpectrumPhyRxStart (std::string context,
-                      Ptr<const PacketBurst> pb);
+                              Ptr<const PacketBurst> pb);
 
   void UanPhyGenTxTrace (std::string context,
                          Ptr<const Packet>);
@@ -574,15 +577,15 @@ private:
   void OutputWirelessPacket (Ptr<const Packet> p, AnimPacketInfo& pktInfo, AnimRxInfo pktrxInfo);
   void OutputCsmaPacket (Ptr<const Packet> p, AnimPacketInfo& pktInfo, AnimRxInfo pktrxInfo);
   void MobilityAutoCheck ();
-  
+
 
   std::map<uint64_t, AnimPacketInfo> m_pendingWifiPackets;
   void AddPendingWifiPacket (uint64_t AnimUid, AnimPacketInfo&);
-  bool WifiPacketIsPending (uint64_t AnimUid); 
+  bool WifiPacketIsPending (uint64_t AnimUid);
 
   std::map<uint64_t, AnimPacketInfo> m_pendingWimaxPackets;
   void AddPendingWimaxPacket (uint64_t AnimUid, AnimPacketInfo&);
-  bool WimaxPacketIsPending (uint64_t AnimUid); 
+  bool WimaxPacketIsPending (uint64_t AnimUid);
 
   std::map<uint64_t, AnimPacketInfo> m_pendingLtePackets;
   void AddPendingLtePacket (uint64_t AnimUid, AnimPacketInfo&);
@@ -619,7 +622,7 @@ private:
   void ConnectLteUe (Ptr <Node> n, Ptr <LteUeNetDevice> nd, uint32_t devIndex);
   void ConnectLteEnb (Ptr <Node> n, Ptr <LteEnbNetDevice> nd, uint32_t devIndex);
 
-  
+
   std::map <std::string, uint32_t> m_macToNodeIdMap;
   std::map <std::string, uint32_t> m_ipv4ToNodeIdMap;
   void AddToIpv4AddressNodeIdTable (std::string, uint32_t);
@@ -679,7 +682,10 @@ private:
                                  std::string metaInfo = "", std::string auxInfo = "");
   std::string GetXMLOpenClose_rx (uint32_t toLp, uint32_t toId, double fbRx, double lbRx);
   std::string GetXMLOpen_wpacket (uint32_t fromLp, uint32_t fromId, double fbTx, double lbTx, double range);
-  std::string GetXMLClose (std::string name) {return "</" + name + ">\n"; }
+  std::string GetXMLClose (std::string name)
+  {
+    return "</" + name + ">\n";
+  }
   std::string GetXMLOpenClose_meta (std::string metaInfo);
   std::string GetXMLOpenClose_NonP2pLinkProperties (uint32_t id, std::string ipv4Address, std::string channelType);
   std::string GetXMLOpenClose_routing (uint32_t id, std::string routingInfo);
@@ -688,7 +694,7 @@ private:
 
 
   /// Provides uniform random variables.
-  Ptr<UniformRandomVariable> m_uniformRandomVariable;  
+  Ptr<UniformRandomVariable> m_uniformRandomVariable;
 };
 
 /**
@@ -696,7 +702,7 @@ private:
  * \brief A structure to store red, blue and green components for entities such as nodes
  *
  */
-struct Rgb 
+struct Rgb
 {
   uint8_t r;
   uint8_t g;
@@ -705,10 +711,10 @@ struct Rgb
 
 /**
  * \ingroup netanim
- * \brief A structure to store the width and height of a node` 
+ * \brief A structure to store the width and height of a node`
  *
  */
-struct NodeSize 
+struct NodeSize
 {
   double width;
   double height;
@@ -721,8 +727,8 @@ struct NodeSize
  *
  * When Anim receives a Tx Notification we tag the packet with a unique global uint64_t identifier
  * before recording Tx information
- * When Anim receives Rx notifications the tag is used to retrieve Tx information recorded earlier 
- * 
+ * When Anim receives Rx notifications the tag is used to retrieve Tx information recorded earlier
+ *
  */
 
 class AnimByteTag : public Tag
@@ -735,7 +741,7 @@ public:
    *
    */
   static TypeId GetTypeId (void);
-  
+
   /**
    * \brief Get Instance Type Id
    * \returns Type Id

@@ -19,7 +19,8 @@
 #define STATISTICSCONSTANTS_H
 
 
-namespace netanim {
+namespace netanim
+{
 #define NODE_TOOLBAR_WIDTH_DEFAULT 87
 #define INTERSTATS_SPACE 10
 #define STATSSCENE_WIDTH_DEFAULT 1024

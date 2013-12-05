@@ -42,8 +42,10 @@
  * on the attempt to execute the flush() function.
  */
 
-namespace ns3 {
-namespace FatalImpl {
+namespace ns3
+{
+namespace FatalImpl
+{
 
 /**
  * \ingroup fatalHandler

@@ -17,7 +17,8 @@
  */
 #include "statsview.h"
 
-namespace netanim {
+namespace netanim
+{
 
 StatsView * pStatsView = 0;
 
@@ -29,11 +30,11 @@ StatsView::StatsView()
 StatsView *
 StatsView::getInstance()
 {
-    if(!pStatsView)
+  if(!pStatsView)
     {
-        pStatsView = new StatsView;
+      pStatsView = new StatsView;
     }
-    return pStatsView;
+  return pStatsView;
 }
 
 

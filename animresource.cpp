@@ -31,27 +31,27 @@ AnimResourceManager::AnimResourceManager()
 AnimResourceManager *
 AnimResourceManager::getInstance()
 {
-    if(!pResourceManager)
+  if(!pResourceManager)
     {
-        pResourceManager = new AnimResourceManager;
+      pResourceManager = new AnimResourceManager;
     }
-    return pResourceManager;
+  return pResourceManager;
 }
 
 
 void
 AnimResourceManager::add(uint32_t resourceId, QString resourcePath)
 {
-    m_resources[resourceId] = resourcePath;
+  m_resources[resourceId] = resourcePath;
 }
 
 
 QString
 AnimResourceManager::get(uint32_t resourceid)
 {
-    if(m_resources.find(resourceid) == m_resources.end())
+  if(m_resources.find(resourceid) == m_resources.end())
     {
-        NS_FATAL_ERROR ("Unable to find resource:" << resourceid);
+      NS_FATAL_ERROR ("Unable to find resource:" << resourceid);
     }
-    return m_resources[resourceid];
+  return m_resources[resourceid];
 }
