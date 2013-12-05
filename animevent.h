@@ -41,7 +41,7 @@ public:
     UPDATE_LINK_EVENT
   } AnimEventType_h;
   AnimEventType_h m_type;
-  AnimEvent(AnimEventType_h type): m_type (type)
+  AnimEvent (AnimEventType_h type): m_type (type)
   {
   }
 };
@@ -50,15 +50,15 @@ public:
 class AnimNodeAddEvent: public AnimEvent
 {
 public:
-  AnimNodeAddEvent(uint32_t nodeId, qreal x, qreal y, QString nodeDescription, uint8_t r, uint8_t g, uint8_t b):
-    AnimEvent(ADD_NODE_EVENT),
-    m_nodeId(nodeId),
-    m_x(x),
-    m_y(y),
-    m_nodeDescription(nodeDescription),
-    m_r(r),
-    m_g(g),
-    m_b(b)
+  AnimNodeAddEvent (uint32_t nodeId, qreal x, qreal y, QString nodeDescription, uint8_t r, uint8_t g, uint8_t b):
+    AnimEvent (ADD_NODE_EVENT),
+    m_nodeId (nodeId),
+    m_x (x),
+    m_y (y),
+    m_nodeDescription (nodeDescription),
+    m_r (r),
+    m_g (g),
+    m_b (b)
   {
   }
   uint32_t m_nodeId;
@@ -77,15 +77,15 @@ class AnimLinkAddEvent: public AnimEvent
 {
 
 public:
-  AnimLinkAddEvent(uint32_t fromNodeId, uint32_t toNodeId, QString linkDescription, QString fromNodeDescription, QString toNodeDescription,
+  AnimLinkAddEvent (uint32_t fromNodeId, uint32_t toNodeId, QString linkDescription, QString fromNodeDescription, QString toNodeDescription,
                    bool p2p=true):
-    AnimEvent(ADD_LINK_EVENT),
-    m_fromNodeId(fromNodeId),
-    m_toNodeId(toNodeId),
-    m_linkDescription(linkDescription),
-    m_fromNodeDescription(fromNodeDescription),
-    m_toNodeDescription(toNodeDescription),
-    m_p2p(p2p)
+    AnimEvent (ADD_LINK_EVENT),
+    m_fromNodeId (fromNodeId),
+    m_toNodeId (toNodeId),
+    m_linkDescription (linkDescription),
+    m_fromNodeDescription (fromNodeDescription),
+    m_toNodeDescription (toNodeDescription),
+    m_p2p (p2p)
   {
   }
   uint32_t m_fromNodeId;
@@ -100,11 +100,11 @@ class AnimLinkUpdateEvent: public AnimEvent
 {
 
 public:
-  AnimLinkUpdateEvent(uint32_t fromNodeId, uint32_t toNodeId, QString linkDescription):
-    AnimEvent(UPDATE_LINK_EVENT),
-    m_fromNodeId(fromNodeId),
-    m_toNodeId(toNodeId),
-    m_linkDescription(linkDescription)
+  AnimLinkUpdateEvent (uint32_t fromNodeId, uint32_t toNodeId, QString linkDescription):
+    AnimEvent (UPDATE_LINK_EVENT),
+    m_fromNodeId (fromNodeId),
+    m_toNodeId (toNodeId),
+    m_linkDescription (linkDescription)
   {
   }
   uint32_t m_fromNodeId;
@@ -119,11 +119,11 @@ public:
 class AnimNodePositionUpdateEvent: public AnimEvent
 {
 public:
-  AnimNodePositionUpdateEvent(uint32_t nodeId, qreal x, qreal y):
-    AnimEvent(UPDATE_NODE_POS_EVENT),
-    m_nodeId(nodeId),
-    m_x(x),
-    m_y(y)
+  AnimNodePositionUpdateEvent (uint32_t nodeId, qreal x, qreal y):
+    AnimEvent (UPDATE_NODE_POS_EVENT),
+    m_nodeId (nodeId),
+    m_x (x),
+    m_y (y)
   {
   }
   uint32_t m_nodeId;
@@ -135,12 +135,12 @@ public:
 class AnimNodeColorUpdateEvent: public AnimEvent
 {
 public:
-  AnimNodeColorUpdateEvent(uint32_t nodeId, uint8_t r, uint8_t g, uint8_t b):
-    AnimEvent(UPDATE_NODE_COLOR_EVENT),
-    m_nodeId(nodeId),
-    m_r(r),
-    m_g(g),
-    m_b(b)
+  AnimNodeColorUpdateEvent (uint32_t nodeId, uint8_t r, uint8_t g, uint8_t b):
+    AnimEvent (UPDATE_NODE_COLOR_EVENT),
+    m_nodeId (nodeId),
+    m_r (r),
+    m_g (g),
+    m_b (b)
   {
   }
   uint32_t m_nodeId;
@@ -154,11 +154,11 @@ public:
 class AnimNodeSizeUpdateEvent: public AnimEvent
 {
 public:
-  AnimNodeSizeUpdateEvent(uint32_t nodeId, double width, double height):
-    AnimEvent(UPDATE_NODE_SIZE_EVENT),
-    m_nodeId(nodeId),
-    m_width(width),
-    m_height(height)
+  AnimNodeSizeUpdateEvent (uint32_t nodeId, double width, double height):
+    AnimEvent (UPDATE_NODE_SIZE_EVENT),
+    m_nodeId (nodeId),
+    m_width (width),
+    m_height (height)
   {
   }
   uint32_t m_nodeId;
@@ -170,10 +170,10 @@ public:
 class AnimNodeDescriptionUpdateEvent: public AnimEvent
 {
 public:
-  AnimNodeDescriptionUpdateEvent(uint32_t nodeId, QString description):
-    AnimEvent(UPDATE_NODE_DESCRIPTION_EVENT),
-    m_nodeId(nodeId),
-    m_description(description)
+  AnimNodeDescriptionUpdateEvent (uint32_t nodeId, QString description):
+    AnimEvent (UPDATE_NODE_DESCRIPTION_EVENT),
+    m_nodeId (nodeId),
+    m_description (description)
   {
   }
   uint32_t m_nodeId;
@@ -186,10 +186,10 @@ public:
 class AnimNodeImageUpdateEvent: public AnimEvent
 {
 public:
-  AnimNodeImageUpdateEvent(uint32_t nodeId, uint32_t resourceId):
-    AnimEvent(UPDATE_NODE_IMAGE_EVENT),
-    m_nodeId(nodeId),
-    m_resourceId(resourceId)
+  AnimNodeImageUpdateEvent (uint32_t nodeId, uint32_t resourceId):
+    AnimEvent (UPDATE_NODE_IMAGE_EVENT),
+    m_nodeId (nodeId),
+    m_resourceId (resourceId)
   {
   }
   uint32_t m_nodeId;
@@ -202,15 +202,15 @@ public:
 class AnimPacketEvent: public AnimEvent
 {
 public:
-  AnimPacketEvent(uint32_t fromId, uint32_t toId, qreal fbTx, qreal fbRx, bool isWPacket,
+  AnimPacketEvent (uint32_t fromId, uint32_t toId, qreal fbTx, qreal fbRx, bool isWPacket,
                   QString metaInfo):
-    AnimEvent(PACKET_EVENT),
-    m_fromId(fromId),
-    m_toId(toId),
-    m_fbTx(fbTx),
-    m_fbRx(fbRx),
-    m_isWPacket(isWPacket),
-    m_metaInfo(metaInfo)
+    AnimEvent (PACKET_EVENT),
+    m_fromId (fromId),
+    m_toId (toId),
+    m_fbTx (fbTx),
+    m_fbRx (fbRx),
+    m_isWPacket (isWPacket),
+    m_metaInfo (metaInfo)
   {
   }
   uint32_t m_fromId;

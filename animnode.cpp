@@ -26,7 +26,7 @@
 #include "fatal-error.h"
 #include "assert.h"
 
-NS_LOG_COMPONENT_DEFINE("AnimNode");
+NS_LOG_COMPONENT_DEFINE ("AnimNode");
 
 
 namespace netanim
@@ -34,152 +34,152 @@ namespace netanim
 
 AnimNodeMgr * pAnimNodeMgr = 0;
 
-AnimNode::AnimNode(uint32_t nodeId, qreal x, qreal y, QString nodeDescription):m_nodeDescription(0),
-  m_nodeId(nodeId),
-  m_x(x),
-  m_y(y),
-  m_r(255),
-  m_g(0),
-  m_b(0),
-  m_showNodeId(true)
+AnimNode::AnimNode (uint32_t nodeId, qreal x, qreal y, QString nodeDescription):m_nodeDescription (0),
+  m_nodeId (nodeId),
+  m_x (x),
+  m_y (y),
+  m_r (255),
+  m_g (0),
+  m_b (0),
+  m_showNodeId (true)
 {
-  //setVisible(false);
-  setZValue(ANIMNODE_ZVALUE);
+  //setVisible (false);
+  setZValue (ANIMNODE_ZVALUE);
   if (nodeDescription == "")
     {
-      nodeDescription = QString::number(nodeId);
+      nodeDescription = QString::number (nodeId);
     }
-  m_nodeDescription = new QGraphicsTextItem(nodeDescription);
-  m_nodeDescription->setFlag(QGraphicsItem::ItemIgnoresTransformations);
+  m_nodeDescription = new QGraphicsTextItem (nodeDescription);
+  m_nodeDescription->setFlag (QGraphicsItem::ItemIgnoresTransformations);
 
 }
 
-AnimNode::~AnimNode()
+AnimNode::~AnimNode ()
 {
-  if(m_nodeDescription)
+  if (m_nodeDescription)
     {
       delete m_nodeDescription;
     }
 }
 
 void
-AnimNode::showNodeId(bool show)
+AnimNode::showNodeId (bool show)
 {
   m_showNodeId = show;
-  m_nodeDescription->setVisible(m_showNodeId);
+  m_nodeDescription->setVisible (m_showNodeId);
 }
 
 
 void
-AnimNode::setColor(uint8_t r, uint8_t g, uint8_t b)
+AnimNode::setColor (uint8_t r, uint8_t g, uint8_t b)
 {
   m_r = r;
   m_g = g;
   m_b = b;
-  ResizeableItem::setColor(r, g, b);
+  ResizeableItem::setColor (r, g, b);
 }
 
 void
-AnimNode::setWidth(qreal width)
+AnimNode::setWidth (qreal width)
 {
   m_width = width;
 }
 
 void
-AnimNode::setHeight(qreal height)
+AnimNode::setHeight (qreal height)
 {
   m_height = height;
 }
 
 qreal
-AnimNode::getX()
+AnimNode::getX ()
 {
   return m_x;
 }
 
 qreal
-AnimNode::getY()
+AnimNode::getY ()
 {
   return m_y;
 }
 
 void
-AnimNode::setX(qreal x)
+AnimNode::setX (qreal x)
 {
   m_x = x;
 }
 
 void
-AnimNode::setY(qreal y)
+AnimNode::setY (qreal y)
 {
   m_y = y;
 }
 
 uint32_t
-AnimNode::getNodeId()
+AnimNode::getNodeId ()
 {
   return m_nodeId;
 }
 
 QGraphicsTextItem *
-AnimNode::getDescription()
+AnimNode::getDescription ()
 {
   return m_nodeDescription;
 }
 
-QPointF AnimNode::getCenter()
+QPointF AnimNode::getCenter ()
 {
-  return sceneBoundingRect().center();
+  return sceneBoundingRect ().center ();
 }
-void AnimNode::setNodeDescription(QString description)
+void AnimNode::setNodeDescription (QString description)
 {
-  m_nodeDescription->setPlainText(description);
-}
-
-void AnimNode::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
-{
-  ResizeableItem::paint(painter, option, widget);
+  m_nodeDescription->setPlainText (description);
 }
 
-
-void AnimNode::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
+void AnimNode::paint (QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
-  ResizeableItem::mouseMoveEvent(event);
-  if(m_nodeDescription)
+  ResizeableItem::paint (painter, option, widget);
+}
+
+
+void AnimNode::mouseMoveEvent (QGraphicsSceneMouseEvent *event)
+{
+  ResizeableItem::mouseMoveEvent (event);
+  if (m_nodeDescription)
     {
-      m_nodeDescription->setPos(sceneBoundingRect().bottomRight());
-      update();
+      m_nodeDescription->setPos (sceneBoundingRect ().bottomRight ());
+      update ();
     }
 }
 
 void
-AnimNode::addIpv4Address(QString ip)
+AnimNode::addIpv4Address (QString ip)
 {
-  m_ipv4Vector.push_back(ip);
+  m_ipv4Vector.push_back (ip);
 }
 
 void
-AnimNode::addMacAddress(QString mac)
+AnimNode::addMacAddress (QString mac)
 {
-  m_macVector.push_back(mac);
+  m_macVector.push_back (mac);
 }
 
 bool
-AnimNode::hasIpv4(QString ip)
+AnimNode::hasIpv4 (QString ip)
 {
   bool result = false;
-  QStringList quads = ip.split(".");
-  if(quads.count() == 4)
+  QStringList quads = ip.split (".");
+  if (quads.count () == 4)
     {
-      if(quads.at(3) == "255")
+      if (quads.at (3) == "255")
         return true;
-      for(Ipv4Vector_t::const_iterator i = m_ipv4Vector.begin();
-          i != m_ipv4Vector.end();
+      for (Ipv4Vector_t::const_iterator i = m_ipv4Vector.begin ();
+          i != m_ipv4Vector.end ();
           ++i)
         {
-          if(*i == ip)
+          if (*i == ip)
             {
-              //QDEBUG(ip);
+              //QDEBUG (ip);
               return true;
             }
         }
@@ -190,17 +190,17 @@ AnimNode::hasIpv4(QString ip)
 
 
 bool
-AnimNode::hasMac(QString mac)
+AnimNode::hasMac (QString mac)
 {
   bool result = false;
-  QStringList bytes = mac.split(":");
-  if(bytes.count() == 6)
+  QStringList bytes = mac.split (":");
+  if (bytes.count () == 6)
     {
-      for(MacVector_t::const_iterator i = m_macVector.begin();
-          i != m_macVector.end();
+      for (MacVector_t::const_iterator i = m_macVector.begin ();
+          i != m_macVector.end ();
           ++i)
         {
-          if(*i == mac)
+          if (*i == mac)
             {
               return true;
             }
@@ -211,18 +211,18 @@ AnimNode::hasMac(QString mac)
 }
 
 
-AnimNodeMgr::AnimNodeMgr():
-  m_minX(0),
-  m_minY(0),
-  m_maxX(0),
-  m_maxY(0)
+AnimNodeMgr::AnimNodeMgr ():
+  m_minX (0),
+  m_minY (0),
+  m_maxX (0),
+  m_maxY (0)
 {
 
 }
 
-AnimNodeMgr * AnimNodeMgr::getInstance()
+AnimNodeMgr * AnimNodeMgr::getInstance ()
 {
-  if(!pAnimNodeMgr)
+  if (!pAnimNodeMgr)
     {
       pAnimNodeMgr = new AnimNodeMgr;
     }
@@ -230,16 +230,16 @@ AnimNodeMgr * AnimNodeMgr::getInstance()
 }
 
 
-AnimNode * AnimNodeMgr::add(uint32_t nodeId, qreal x, qreal y, QString nodeDescription)
+AnimNode * AnimNodeMgr::add (uint32_t nodeId, qreal x, qreal y, QString nodeDescription)
 {
-  if(m_nodes.find(nodeId) != m_nodes.end())
+  if (m_nodes.find (nodeId) != m_nodes.end ())
     {
-      //NS_FATAL_ERROR("NodeId:" << nodeId << " Already exists");
+      //NS_FATAL_ERROR ("NodeId:" << nodeId << " Already exists");
     }
-  QPixmap pix(":/resources/ns3logo2.png","png");
-  AnimNode * node = new AnimNode(nodeId, x, y, nodeDescription);
-  node->setPos(x, y);
-  //node->setPixmap(pix);
+  QPixmap pix (":/resources/ns3logo2.png","png");
+  AnimNode * node = new AnimNode (nodeId, x, y, nodeDescription);
+  node->setPos (x, y);
+  //node->setPixmap (pix);
   m_nodes[nodeId] = node;
   m_minX = qMin (m_minX, x);
   m_minY = qMin (m_minY, y);
@@ -251,37 +251,37 @@ AnimNode * AnimNodeMgr::add(uint32_t nodeId, qreal x, qreal y, QString nodeDescr
 
 
 void
-AnimNodeMgr::setSize(qreal width, qreal height)
+AnimNodeMgr::setSize (qreal width, qreal height)
 {
-  for(NodeIdAnimNodeMap_t::const_iterator i = m_nodes.begin();
-      i != m_nodes.end();
+  for (NodeIdAnimNodeMap_t::const_iterator i = m_nodes.begin ();
+      i != m_nodes.end ();
       ++i)
     {
       AnimNode * animNode = i->second;
-      animNode->setSize(width, height);
+      animNode->setSize (width, height);
     }
 }
 
-AnimNode * AnimNodeMgr::getNode(uint32_t nodeId)
+AnimNode * AnimNodeMgr::getNode (uint32_t nodeId)
 {
   return m_nodes[nodeId];
 }
 
 uint32_t
-AnimNodeMgr::getCount()
+AnimNodeMgr::getCount ()
 {
-  return m_nodes.size();
+  return m_nodes.size ();
 }
 
 
 QPointF
-AnimNodeMgr::getMinPoint()
+AnimNodeMgr::getMinPoint ()
 {
   return QPointF (m_minX, m_minY);
 }
 
 QPointF
-AnimNodeMgr::getMaxPoint()
+AnimNodeMgr::getMaxPoint ()
 {
   qreal m = qMax (m_maxX, m_maxY);
   return QPointF (m, m);
@@ -289,33 +289,33 @@ AnimNodeMgr::getMaxPoint()
 
 
 void
-AnimNodeMgr::systemReset()
+AnimNodeMgr::systemReset ()
 {
-  m_nodes.clear();
+  m_nodes.clear ();
 }
 
 
 void
-AnimNodeMgr::addIpv4Address(uint32_t nodeId, QString ip)
+AnimNodeMgr::addIpv4Address (uint32_t nodeId, QString ip)
 {
-  getNode(nodeId)->addIpv4Address(ip);
+  getNode (nodeId)->addIpv4Address (ip);
 }
 
 void
-AnimNodeMgr::addMacAddress(uint32_t nodeId, QString mac)
+AnimNodeMgr::addMacAddress (uint32_t nodeId, QString mac)
 {
-  getNode(nodeId)->addMacAddress(mac);
+  getNode (nodeId)->addMacAddress (mac);
 }
 
 void
-AnimNodeMgr::showNodeId(bool show)
+AnimNodeMgr::showNodeId (bool show)
 {
-  for(NodeIdAnimNodeMap_t::const_iterator i = m_nodes.begin();
-      i != m_nodes.end();
+  for (NodeIdAnimNodeMap_t::const_iterator i = m_nodes.begin ();
+      i != m_nodes.end ();
       ++i)
     {
       AnimNode * animNode = i->second;
-      animNode->showNodeId(show);
+      animNode->showNodeId (show);
     }
 
 }

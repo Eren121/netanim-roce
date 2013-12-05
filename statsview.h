@@ -27,9 +27,9 @@ namespace netanim
 class StatsView : public QGraphicsView
 {
 public:
-  static StatsView * getInstance();
+  static StatsView * getInstance ();
 private:
-  StatsView();
+  StatsView ();
 
 };
 

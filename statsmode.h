@@ -44,12 +44,12 @@ class NodeButton: public QPushButton
 {
   Q_OBJECT
 public:
-  NodeButton(uint32_t nodeId);
+  NodeButton (uint32_t nodeId);
 private:
   uint32_t m_nodeId;
-  void setNodeActive(bool active);
+  void setNodeActive (bool active);
 public slots:
-  void buttonClickedSlot();
+  void buttonClickedSlot ();
 
 };
 
@@ -65,20 +65,20 @@ class StatsMode: public Mode
   } StatType_t;
 public:
   // Getters
-  static StatsMode * getInstance();
-  QWidget * getCentralWidget();
-  QString getTabName();
-  bool isNodeActive(uint32_t nodeId);
-  qreal getCurrentTime();
-  qreal getCurrentFontSize();
+  static StatsMode * getInstance ();
+  QWidget * getCentralWidget ();
+  QString getTabName ();
+  bool isNodeActive (uint32_t nodeId);
+  qreal getCurrentTime ();
+  qreal getCurrentFontSize ();
 
   // Setters
-  void setFocus(bool focus);
-  void systemReset();
-  void setNodeActive(uint32_t nodeId, bool active);
-  void showPopup(QString message);
-  void setProgressBarRange(uint64_t rxCount);
-  void setParsingCount(uint64_t parsingCount);
+  void setFocus (bool focus);
+  void systemReset ();
+  void setNodeActive (uint32_t nodeId, bool active);
+  void showPopup (QString message);
+  void setProgressBarRange (uint64_t rxCount);
+  void setParsingCount (uint64_t parsingCount);
 
 
 
@@ -125,44 +125,44 @@ private:
   qreal m_currentFontSize;
 
 
-  StatsMode();
-  void init();
-  void initControls();
-  void initToolbars();
-  void initNodeToolbar();
-  void initTopToolbar();
-  void initBottomToolbar();
-  void addNodesToToolbar(bool zeroIndexed = true);
-  bool parseRoutingXMLTraceFile(QString traceFileName);
-  bool parseFlowMonXMLTraceFile(QString traceFileName);
-  void showParsingXmlDialog(bool show);
-  void routingPreParse();
-  void routingPostParse();
-  void flowMonPreParse();
-  void flowMonPostParse();
-  uint32_t getCurrentNodeCount();
-  void setMaxSimulationTime(double maxTime);
-  void setMinSimulationTime(double minTime);
-  void enableControlsForState();
-  void enableFlowMonControls(bool enable);
-  void enableIpMacControls(bool enable);
-  void enableRoutingStatsControls(bool enable);
+  StatsMode ();
+  void init ();
+  void initControls ();
+  void initToolbars ();
+  void initNodeToolbar ();
+  void initTopToolbar ();
+  void initBottomToolbar ();
+  void addNodesToToolbar (bool zeroIndexed = true);
+  bool parseRoutingXMLTraceFile (QString traceFileName);
+  bool parseFlowMonXMLTraceFile (QString traceFileName);
+  void showParsingXmlDialog (bool show);
+  void routingPreParse ();
+  void routingPostParse ();
+  void flowMonPreParse ();
+  void flowMonPostParse ();
+  uint32_t getCurrentNodeCount ();
+  void setMaxSimulationTime (double maxTime);
+  void setMinSimulationTime (double minTime);
+  void enableControlsForState ();
+  void enableFlowMonControls (bool enable);
+  void enableIpMacControls (bool enable);
+  void enableRoutingStatsControls (bool enable);
 
 
 
 
 
 public slots:
-  void testSlot();
+  void testSlot ();
 
 private slots:
-  void clickRoutingTraceFileOpenSlot();
-  void selectAllNodesSlot();
-  void deselectAllNodesSlot();
-  void statTypeChangedSlot(int index);
-  void updateTimelineSlot(int value);
-  void fontSizeSlot(int value);
-  void clickFlowMonTraceFileOpenSlot();
+  void clickRoutingTraceFileOpenSlot ();
+  void selectAllNodesSlot ();
+  void deselectAllNodesSlot ();
+  void statTypeChangedSlot (int index);
+  void updateTimelineSlot (int value);
+  void fontSizeSlot (int value);
+  void clickFlowMonTraceFileOpenSlot ();
 
 
 

@@ -29,44 +29,44 @@
 namespace netanim
 {
 
-NetAnim::NetAnim():
-  m_tabWidget(new QTabWidget)
+NetAnim::NetAnim ():
+  m_tabWidget (new QTabWidget)
 {
 
-  AnimatorMode * animatorTab = AnimatorMode::getInstance();
-  m_tabWidget->addTab(animatorTab->getCentralWidget(), animatorTab->getTabName());
+  AnimatorMode * animatorTab = AnimatorMode::getInstance ();
+  m_tabWidget->addTab (animatorTab->getCentralWidget (), animatorTab->getTabName ());
   m_TabMode[0] = animatorTab;
-  StatsMode * statsTab = StatsMode::getInstance();
-  m_tabWidget->addTab(statsTab->getCentralWidget(), statsTab->getTabName());
+  StatsMode * statsTab = StatsMode::getInstance ();
+  m_tabWidget->addTab (statsTab->getCentralWidget (), statsTab->getTabName ());
   m_TabMode[1] = statsTab;
 #ifdef WITH_NS3
   DesignerMode * designerMode = new DesignerMode;
-  m_tabWidget->addTab(designerMode->getCentralWidget(), designerMode->getTabName());
+  m_tabWidget->addTab (designerMode->getCentralWidget (), designerMode->getTabName ());
 #endif
-  QObject::connect(m_tabWidget, SIGNAL(currentChanged(int)), this, SLOT(currentTabChangedSlot(int)));
-  m_tabWidget->setCurrentIndex(0);
-  QRect geometry = QApplication::desktop()->screenGeometry();
-  int minimumDimension = std::min(geometry.width(), geometry.height());
-  m_tabWidget->setGeometry(0, 0, minimumDimension, minimumDimension);
-  m_tabWidget->showMaximized();
-  m_tabWidget->show();
-  animatorTab->start();
+  QObject::connect (m_tabWidget, SIGNAL (currentChanged (int)), this, SLOT (currentTabChangedSlot (int)));
+  m_tabWidget->setCurrentIndex (0);
+  QRect geometry = QApplication::desktop ()->screenGeometry ();
+  int minimumDimension = std::min (geometry.width (), geometry.height ());
+  m_tabWidget->setGeometry (0, 0, minimumDimension, minimumDimension);
+  m_tabWidget->showMaximized ();
+  m_tabWidget->show ();
+  animatorTab->start ();
 }
 
 
 void
-NetAnim::currentTabChangedSlot(int currentIndex)
+NetAnim::currentTabChangedSlot (int currentIndex)
 {
-  for(TabIndexModeMap_t::const_iterator i = m_TabMode.begin();
-      i != m_TabMode.end();
+  for (TabIndexModeMap_t::const_iterator i = m_TabMode.begin ();
+      i != m_TabMode.end ();
       ++i)
     {
-      if(currentIndex == i->first)
+      if (currentIndex == i->first)
         {
-          i->second->setFocus(true);
+          i->second->setFocus (true);
           continue;
         }
-      i->second->setFocus(false);
+      i->second->setFocus (false);
     }
 
 }

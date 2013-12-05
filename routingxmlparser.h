@@ -73,15 +73,15 @@ struct RoutingParsedElement
 class RoutingXmlparser
 {
 public:
-  RoutingXmlparser(QString traceFileName);
-  ~RoutingXmlparser();
-  RoutingParsedElement parseNext();
-  bool isParsingComplete();
-  double getMaxSimulationTime();
-  double getMinSimulationTime();
-  bool isFileValid();
-  uint64_t getRtCount();
-  void doParse();
+  RoutingXmlparser (QString traceFileName);
+  ~RoutingXmlparser ();
+  RoutingParsedElement parseNext ();
+  bool isParsingComplete ();
+  double getMaxSimulationTime ();
+  double getMinSimulationTime ();
+  bool isFileValid ();
+  uint64_t getRtCount ();
+  void doParse ();
 
 
 private:
@@ -93,14 +93,14 @@ private:
   double m_minSimulationTime;
   bool m_fileIsValid;
   double m_version;
-  RoutingParsedElement parseAnim();
-  RoutingParsedElement parseRt();
-  RoutingParsedElement parseRp();
-  RoutePathElement parseRpe();
-  void parseGeneric(RoutingParsedElement &);
+  RoutingParsedElement parseAnim ();
+  RoutingParsedElement parseRt ();
+  RoutingParsedElement parseRp ();
+  RoutePathElement parseRpe ();
+  void parseGeneric (RoutingParsedElement &);
 
-  void searchForVersion();
-  void debugElement(RoutingParsedElement element);
+  void searchForVersion ();
+  void debugElement (RoutingParsedElement element);
 };
 
 

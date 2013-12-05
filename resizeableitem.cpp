@@ -24,23 +24,23 @@
 #include "logqt.h"
 #include "log.h"
 
-NS_LOG_COMPONENT_DEFINE("ResizeableItem");
+NS_LOG_COMPONENT_DEFINE ("ResizeableItem");
 
-ResizeableItem::ResizeableItem():
-  m_type(ResizeableItem::CIRCLE),
-  m_r(255),
-  m_g(0),
-  m_b(0),
-  m_alpha(240),
-  m_pixmap(0),
-  m_width(1),
-  m_height(1)
+ResizeableItem::ResizeableItem ():
+  m_type (ResizeableItem::CIRCLE),
+  m_r (255),
+  m_g (0),
+  m_b (0),
+  m_alpha (240),
+  m_pixmap (0),
+  m_width (1),
+  m_height (1)
 {
-  //NS_LOG_FUNCTION(m_mousePressed);
-  setAcceptsHoverEvents(true);
+  //NS_LOG_FUNCTION (m_mousePressed);
+  setAcceptsHoverEvents (true);
 }
 
-ResizeableItem::~ResizeableItem()
+ResizeableItem::~ResizeableItem ()
 {
   if (m_pixmap)
     {
@@ -49,60 +49,60 @@ ResizeableItem::~ResizeableItem()
 
 }
 
-void ResizeableItem::setPixmap(QPixmap pix)
+void ResizeableItem::setPixmap (QPixmap pix)
 {
-  m_pixmap = new QPixmap(pix);
-  setType(ResizeableItem::PIXMAP);
+  m_pixmap = new QPixmap (pix);
+  setType (ResizeableItem::PIXMAP);
 }
 
-void ResizeableItem::setType(ResizeableItemType_t t)
+void ResizeableItem::setType (ResizeableItemType_t t)
 {
   m_type = t;
 }
 
 
 void
-ResizeableItem::setColor(uint8_t r, uint8_t g, uint8_t b)
+ResizeableItem::setColor (uint8_t r, uint8_t g, uint8_t b)
 {
   m_r = r;
   m_g = g;
   m_b = b;
 }
 void
-ResizeableItem::setWidth(qreal width)
+ResizeableItem::setWidth (qreal width)
 {
   m_width = width;
 }
-void ResizeableItem::setSize(qreal width, qreal height)
+void ResizeableItem::setSize (qreal width, qreal height)
 {
-  qreal xScale = width/sceneBoundingRect().width();
-  qreal yScale = height/sceneBoundingRect().height();
-  scale(xScale, yScale);
+  qreal xScale = width/sceneBoundingRect ().width ();
+  qreal yScale = height/sceneBoundingRect ().height ();
+  scale (xScale, yScale);
 }
 
-void ResizeableItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+void ResizeableItem::paint (QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
-  Q_UNUSED(option)
-  Q_UNUSED(widget)
-  switch(m_type)
+  Q_UNUSED (option)
+  Q_UNUSED (widget)
+  switch (m_type)
     {
     case ResizeableItem::RECTANGLE:
-      painter->drawRect(0, 0, m_width, m_height);
+      painter->drawRect (0, 0, m_width, m_height);
       break;
     case ResizeableItem::CIRCLE:
     {
       QBrush brush;
-      brush.setStyle(Qt::SolidPattern);
-      brush.setColor(QColor (m_r, m_g, m_b, m_alpha));
-      painter->setBrush(brush);
-      painter->drawEllipse(0, 0, m_width, m_height);
+      brush.setStyle (Qt::SolidPattern);
+      brush.setColor (QColor (m_r, m_g, m_b, m_alpha));
+      painter->setBrush (brush);
+      painter->drawEllipse (0, 0, m_width, m_height);
     }
     break;
     case ResizeableItem::PIXMAP:
       if (m_pixmap)
         {
-          painter->drawPixmap(0, 0, m_width, m_height, *m_pixmap);
-          painter->drawRect(0, 0, m_width, m_height);
+          painter->drawPixmap (0, 0, m_width, m_height, *m_pixmap);
+          painter->drawRect (0, 0, m_width, m_height);
         }
       break;
     }
@@ -110,22 +110,22 @@ void ResizeableItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
 
 
 
-qreal ResizeableItem::getItemWidth()
+qreal ResizeableItem::getItemWidth ()
 {
-  return sceneBoundingRect().width();
+  return sceneBoundingRect ().width ();
 }
 
-qreal ResizeableItem::getItemHeight()
+qreal ResizeableItem::getItemHeight ()
 {
-  return sceneBoundingRect().height();
+  return sceneBoundingRect ().height ();
 }
 
 
 
 
-QRectF ResizeableItem::boundingRect() const
+QRectF ResizeableItem::boundingRect () const
 {
-  return QRectF(0, 0, m_width, m_height);
+  return QRectF (0, 0, m_width, m_height);
 }
 
 

@@ -52,8 +52,8 @@ public:
   void add (qreal t, T value);
   void systemReset ();
   TimeValueResult_t setCurrentTime (qreal t);
-  typename TimeValue_t::const_iterator Begin();
-  typename TimeValue_t::const_iterator End();
+  typename TimeValue_t::const_iterator Begin ();
+  typename TimeValue_t::const_iterator End ();
 
   T getCurrent ();
   T get (qreal tUpperBound, TimeValueResult_t & result);
@@ -62,8 +62,8 @@ public:
   std::ostringstream toString ();
   void setLookBack (qreal lookBack);
   bool isEnd ();
-  uint32_t getCount();
-  void rewind();
+  uint32_t getCount ();
+  void rewind ();
 
 private:
   TimeValue_t m_timeValues;
@@ -74,7 +74,7 @@ private:
 };
 
 template <class T>
-TimeValue<T>::TimeValue(): m_lookBack(0)
+TimeValue<T>::TimeValue (): m_lookBack (0)
 {
 
 }
@@ -86,7 +86,7 @@ TimeValue<T>::TimeValue (const TimeValue & other)
        i != other.m_timeValues.end ();
        ++i)
     {
-      m_timeValues.insert(TimeValuePair_t (i->first, i->second));
+      m_timeValues.insert (TimeValuePair_t (i->first, i->second));
     }
   if (!m_timeValues.empty ())
     {
@@ -101,11 +101,11 @@ template <class T>
 TimeValue <T> &
 TimeValue<T>::operator= (const TimeValue <T> & other)
 {
-  for(typename TimeValue<T>::TimeValue_t::const_iterator i = other.m_timeValues.begin ();
+  for (typename TimeValue<T>::TimeValue_t::const_iterator i = other.m_timeValues.begin ();
       i != other.m_timeValues.end ();
       ++i)
     {
-      m_timeValues.insert(TimeValuePair_t (i->first, i->second));
+      m_timeValues.insert (TimeValuePair_t (i->first, i->second));
       //m_timeValues[i->first] = i->second;
     }
   if (!m_timeValues.empty ())
@@ -119,16 +119,16 @@ TimeValue<T>::operator= (const TimeValue <T> & other)
 
 template <class T>
 typename TimeValue<T>::TimeValue_t::const_iterator
-TimeValue<T>::Begin()
+TimeValue<T>::Begin ()
 {
-  return m_timeValues.begin();
+  return m_timeValues.begin ();
 }
 
 template <class T>
 typename TimeValue<T>::TimeValue_t::const_iterator
-TimeValue<T>::End()
+TimeValue<T>::End ()
 {
-  return m_timeValues.end();
+  return m_timeValues.end ();
 }
 
 
@@ -144,7 +144,7 @@ void
 TimeValue<T>::add (qreal t, T value)
 {
   bool wasEmpty = m_timeValues.empty ();
-  m_timeValues.insert(TimeValuePair_t (t, value));
+  m_timeValues.insert (TimeValuePair_t (t, value));
   if (wasEmpty)
     {
       m_currentIterator = m_timeValues.begin ();
@@ -197,14 +197,14 @@ TimeValue<T>::getNext (TimeValueResult_t & result)
   result = GOOD;
   TimeValueIteratorPair_t pp =  m_timeValues.equal_range (m_getIterator->first);
   //std::cout << "First:" << m_getIterator->first;
-  //fflush(stdout);
+  //fflush (stdout);
   if (m_getIterator == m_timeValues.end ())
     {
       result = OVERRUN;
     }
   else
     {
-      m_getIterator = m_timeValues.upper_bound(m_getIterator->first);
+      m_getIterator = m_timeValues.upper_bound (m_getIterator->first);
     }
   return pp;
 
@@ -217,10 +217,10 @@ TimeValue<T>::get (qreal tUpperBound, TimeValueResult_t & result)
 {
   //logQString (QString ("m_getIterator->first:") + QString::number (m_getIterator->first) + " t:" + QString::number (tUpperBound));
   //  std::cout << "First:" << m_getIterator->first;
-  //  fflush(stdout);
+  //  fflush (stdout);
   result = GOOD;
   T v = m_getIterator->second;
-  if ((m_getIterator == m_timeValues.end ()) || (m_getIterator->first > tUpperBound))
+  if ( (m_getIterator == m_timeValues.end ()) || (m_getIterator->first > tUpperBound))
     {
       result = OVERRUN;
     }
@@ -237,7 +237,7 @@ TimeValue<T>::getCurrent ()
 {
   if (m_currentIterator == m_timeValues.end ())
     {
-      return T(m_timeValues.rbegin ()->second);
+      return T (m_timeValues.rbegin ()->second);
     }
   return m_currentIterator->second;
 }
@@ -266,11 +266,11 @@ TimeValue<T>::setCurrentTime (qreal t)
     {
       t = t - m_lookBack;
       t = qMax (t, 0.0);
-      if ((!t) || (t < m_currentIterator->first))
+      if ( (!t) || (t < m_currentIterator->first))
         {
           skipIteration = true;
           //logQString (QString ("m_currentIterator->first:") + QString::number (m_currentIterator->first) + " t:" + QString::number (t));
-          rewindCurrentIterator();
+          rewindCurrentIterator ();
           if (t < m_currentIterator->first)
             {
               result = UNDERRUN;
@@ -285,7 +285,7 @@ TimeValue<T>::setCurrentTime (qreal t)
     {
       typename TimeValue<T>::TimeValue_t::const_iterator i = m_currentIterator;
       for ( ;
-            i != m_timeValues.end();
+            i != m_timeValues.end ();
             ++i)
         {
           //logQString (QString ("i->first:") + QString::number (i->first) + " t:" + QString::number (t));
@@ -311,8 +311,8 @@ TimeValue<T>::setCurrentTime (qreal t)
         }
     }
   m_getIterator = m_currentIterator;
-  //logQString (QString ("ENd m_currentIterator->first:") + QString::number( m_currentIterator->first) + " t:" + QString::number(t));
-  //logQString (QString ("ENd m_getIterator->first:") + QString::number( m_getIterator->first) + " t:" + QString::number(t));
+  //logQString (QString ("ENd m_currentIterator->first:") + QString::number ( m_currentIterator->first) + " t:" + QString::number (t));
+  //logQString (QString ("ENd m_getIterator->first:") + QString::number ( m_getIterator->first) + " t:" + QString::number (t));
   return result;
 }
 
@@ -321,12 +321,12 @@ std::ostringstream
 TimeValue<T>::toString ()
 {
   std::ostringstream os;
-  for(typename TimeValue<T>::TimeValue_t::const_iterator i = m_timeValues.begin ();
+  for (typename TimeValue<T>::TimeValue_t::const_iterator i = m_timeValues.begin ();
       i != m_timeValues.end ();
      )
     {
       TimeValueIteratorPair_t pp =  m_timeValues.equal_range (i->first);
-      for(typename TimeValue<T>::TimeValue_t::const_iterator j = pp.first;
+      for (typename TimeValue<T>::TimeValue_t::const_iterator j = pp.first;
           j != pp.second;
           ++j)
         {
@@ -341,14 +341,14 @@ template <class T>
 void
 TimeValue<T>::rewind ()
 {
-  rewindCurrentIterator();
+  rewindCurrentIterator ();
 }
 
 template <class T>
 uint32_t
 TimeValue<T>::getCount ()
 {
-  return m_timeValues.size();
+  return m_timeValues.size ();
 }
 
 } // namespace netanim

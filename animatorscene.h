@@ -43,19 +43,19 @@ public:
     BOTH
   } TextMode_t;
 
-  AnimInterfaceText(QString description, bool leftAligned=false);
-  ~AnimInterfaceText();
+  AnimInterfaceText (QString description, bool leftAligned=false);
+  ~AnimInterfaceText ();
   enum { Type = ANIMINTERFACE_TEXT_TYPE };
   int type () const
   {
     return Type;
   }
-  QPainterPath shape() const;
-  bool setLine(QLineF l);
-  QGraphicsLineItem * getLine();
-  void setMode(bool showIpv4, bool showMac);
-  QString getText() const;
-  void setLeftAligned(bool leftAligned);
+  QPainterPath shape () const;
+  bool setLine (QLineF l);
+  QGraphicsLineItem * getLine ();
+  void setMode (bool showIpv4, bool showMac);
+  QString getText () const;
+  void setLeftAligned (bool leftAligned);
 
 private:
   bool m_leftAligned;
@@ -63,7 +63,7 @@ private:
   TextMode_t m_mode;
 
 protected:
-  void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
+  void paint (QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 };
 
 
@@ -72,28 +72,28 @@ class AnimatorScene : public QGraphicsScene
 {
   Q_OBJECT
 public:
-  static AnimatorScene * getInstance();
-  AnimatorScene();
-  void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
+  static AnimatorScene * getInstance ();
+  AnimatorScene ();
+  void mouseMoveEvent (QGraphicsSceneMouseEvent *event);
   void addPacket (AnimPacket * p);
   void addNode (AnimNode * animNode);
   void addLink (AnimLink * animLink);
   void addWirelessCircle (AnimWirelessCircles * w);
-  void purgeAnimatedPackets();
-  void showAnimatedPackets(bool show);
-  void purgeAnimatedNodes();
-  void purgeAnimatedLinks();
-  void setShowInterfaceTexts(bool showIp, bool showMac);
-  void addGrid();
-  void resetGrid();
-  void systemReset();
-  QRectF getBoundaryRect();
-  void setGridLinesCount(int nGridLines);
+  void purgeAnimatedPackets ();
+  void showAnimatedPackets (bool show);
+  void purgeAnimatedNodes ();
+  void purgeAnimatedLinks ();
+  void setShowInterfaceTexts (bool showIp, bool showMac);
+  void addGrid ();
+  void resetGrid ();
+  void systemReset ();
+  QRectF getBoundaryRect ();
+  void setGridLinesCount (int nGridLines);
 
 
 
 public slots:
-  void testSlot();
+  void testSlot ();
 private:
   typedef QVector <AnimInterfaceText *>          AnimInterfaceTextVector_t;
   typedef QVector <QGraphicsLineItem *>          LineItemVector_t;
@@ -112,7 +112,7 @@ private:
   AnimInterfaceTextVector_t    m_interfaceBTexts;
   qreal m_leftTop;
   qreal m_rightTop;
-  QList <QGraphicsItem *> getInterfaceTextCollisionList(AnimInterfaceText * text);
+  QList <QGraphicsItem *> getInterfaceTextCollisionList (AnimInterfaceText * text);
   qreal           m_gridStep;
   bool            m_showGrid;
   int             m_nGridLines;
@@ -121,16 +121,16 @@ private:
   QRectF m_boundaryRect;
 
 
-  void repositionInterfaceText(AnimInterfaceText * textItem);
-  void resetInterfaceTexts();
-  void removeInterfaceTextCollision();
-  void resetInterfaceTextTop();
+  void repositionInterfaceText (AnimInterfaceText * textItem);
+  void resetInterfaceTexts ();
+  void removeInterfaceTextCollision ();
+  void resetInterfaceTextTop ();
 
-  void markGridCoordinates();
-  void initGridCoordinates();
-  QVector <QGraphicsSimpleTextItem *> getGridCoordinatesItems();
-  void setMousePositionLabel(QPointF pos);
-  void showMousePositionLabel(bool show);
+  void markGridCoordinates ();
+  void initGridCoordinates ();
+  QVector <QGraphicsSimpleTextItem *> getGridCoordinatesItems ();
+  void setMousePositionLabel (QPointF pos);
+  void showMousePositionLabel (bool show);
 
 };
 

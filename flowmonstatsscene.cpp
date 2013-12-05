@@ -28,18 +28,18 @@ namespace netanim
 
 FlowMonStatsScene * pFlowMonStatsScene = 0;
 
-FlowMonStatsScene::FlowMonStatsScene():QGraphicsScene(100, 0, STATSSCENE_WIDTH_DEFAULT, STATSSCENE_HEIGHT_DEFAULT),
-  m_flowProbeWidget(0)
+FlowMonStatsScene::FlowMonStatsScene ():QGraphicsScene (100, 0, STATSSCENE_WIDTH_DEFAULT, STATSSCENE_HEIGHT_DEFAULT),
+  m_flowProbeWidget (0)
 {
-  m_infoWidget = addWidget(new TextBubble("Info:", "No data available\nDid you load the XML file?"));
-  showInfoWidget();
+  m_infoWidget = addWidget (new TextBubble ("Info:", "No data available\nDid you load the XML file?"));
+  showInfoWidget ();
 
 }
 
 FlowMonStatsScene *
-FlowMonStatsScene::getInstance()
+FlowMonStatsScene::getInstance ()
 {
-  if(!pFlowMonStatsScene)
+  if (!pFlowMonStatsScene)
     {
       pFlowMonStatsScene = new FlowMonStatsScene;
     }
@@ -47,69 +47,69 @@ FlowMonStatsScene::getInstance()
 }
 
 void
-FlowMonStatsScene::systemReset()
+FlowMonStatsScene::systemReset ()
 {
   m_lastX = 0;
   m_lastY = 0;
   m_bottomY = 0;
-  clearProxyWidgetsMap();
-  m_flowIdFlowStats.clear();
-  m_flowIdIpv4Classifiers.clear();
-  showInfoWidget();
+  clearProxyWidgetsMap ();
+  m_flowIdFlowStats.clear ();
+  m_flowIdIpv4Classifiers.clear ();
+  showInfoWidget ();
 }
 
 void
-FlowMonStatsScene::addFlowStat(uint32_t flowId, FlowStatsFlow_t flowStats)
+FlowMonStatsScene::addFlowStat (uint32_t flowId, FlowStatsFlow_t flowStats)
 {
   m_flowIdFlowStats[flowId] = flowStats;
 }
 
 void
-FlowMonStatsScene::addIpv4Classifier(uint32_t flowId, Ipv4Classifier_t ipv4Classifier)
+FlowMonStatsScene::addIpv4Classifier (uint32_t flowId, Ipv4Classifier_t ipv4Classifier)
 {
   m_flowIdIpv4Classifiers[flowId] = ipv4Classifier;
 }
 
 void
-FlowMonStatsScene::addFlowProbes(FlowProbes_t flowProbes)
+FlowMonStatsScene::addFlowProbes (FlowProbes_t flowProbes)
 {
   m_flowProbes = flowProbes;
 }
 
 void
-FlowMonStatsScene::showInfoWidget(bool show)
+FlowMonStatsScene::showInfoWidget (bool show)
 {
-  m_infoWidget->setVisible(show);
-  m_infoWidget->setPos(sceneRect().width()/2, sceneRect().height()/2);
+  m_infoWidget->setVisible (show);
+  m_infoWidget->setPos (sceneRect ().width ()/2, sceneRect ().height ()/2);
 }
 
 
 void
-FlowMonStatsScene::clearProxyWidgetsMap()
+FlowMonStatsScene::clearProxyWidgetsMap ()
 {
-  showInfoWidget();
-  for(FlowIdProxyWidgetMap_t::const_iterator i = m_flowIdProxyWidgets.begin();
-      i != m_flowIdProxyWidgets.end();
+  showInfoWidget ();
+  for (FlowIdProxyWidgetMap_t::const_iterator i = m_flowIdProxyWidgets.begin ();
+      i != m_flowIdProxyWidgets.end ();
       ++i)
     {
-      removeItem(i->second);
-      delete(i->second);
+      removeItem (i->second);
+      delete (i->second);
     }
-  m_flowIdProxyWidgets.clear();
-  m_flowProbes.clear();
-  if(m_flowProbeWidget)
+  m_flowIdProxyWidgets.clear ();
+  m_flowProbes.clear ();
+  if (m_flowProbeWidget)
     {
-      removeItem(m_flowProbeWidget);
-      delete(m_flowProbeWidget);
+      removeItem (m_flowProbeWidget);
+      delete (m_flowProbeWidget);
       m_flowProbeWidget = 0;
     }
-  m_flowIdFlowStats.clear();
-  m_flowIdIpv4Classifiers.clear();
+  m_flowIdFlowStats.clear ();
+  m_flowIdIpv4Classifiers.clear ();
 }
 
-QString dropReasonToString(int reasonCode)
+QString dropReasonToString (int reasonCode)
 {
-  switch(reasonCode)
+  switch (reasonCode)
     {
     case 0:
       return "No Route";
@@ -131,93 +131,93 @@ QString dropReasonToString(int reasonCode)
 }
 
 QString
-FlowMonStatsScene::flowStatsToString(FlowStatsFlow_t flowStats)
+FlowMonStatsScene::flowStatsToString (FlowStatsFlow_t flowStats)
 {
   QString str;
   int justify = 20;
   double denominator = (flowStats.timeLastTxPacket - flowStats.timeFirstTxPacket);
-  if(!denominator)
+  if (!denominator)
     {
       denominator = -1;
     }
-  double txBitRate = (8 * flowStats.txBytes) * 1e9 * 1e-3 /(denominator);
+  double txBitRate = (8 * flowStats.txBytes) * 1e9 * 1e-3 / (denominator);
   denominator = (flowStats.timeLastRxPacket - flowStats.timeFirstRxPacket);
-  if(!denominator)
+  if (!denominator)
     {
       denominator = -1;
     }
-  double rxBitRate = (8 * flowStats.rxBytes) * 1e9 * 1e-3 /(denominator);
+  double rxBitRate = (8 * flowStats.rxBytes) * 1e9 * 1e-3 / (denominator);
   double meanDelay = -1;
-  if(flowStats.rxPackets)
+  if (flowStats.rxPackets)
     {
-      meanDelay = (1000 * flowStats.delaySum/(flowStats.rxPackets * 1e9));
+      meanDelay = (1000 * flowStats.delaySum/ (flowStats.rxPackets * 1e9));
     }
   uint64_t  sumPackets = flowStats.rxPackets + flowStats.lostPackets;
   double packetLostRatio = -1;
-  if(sumPackets)
+  if (sumPackets)
     {
       packetLostRatio = (double)flowStats.lostPackets/sumPackets;
     }
 
-  str += "\nTx bitrate:" + QString::number(txBitRate) + "kbps\n";
-  str += "Rx bitrate:" + QString::number(rxBitRate) + "kbps\n";
-  str += "Mean delay:" + QString::number(meanDelay) + "ms\n";
-  str += "Packet Loss ratio:" + QString::number(packetLostRatio * 100) + "%\n\n";
+  str += "\nTx bitrate:" + QString::number (txBitRate) + "kbps\n";
+  str += "Rx bitrate:" + QString::number (rxBitRate) + "kbps\n";
+  str += "Mean delay:" + QString::number (meanDelay) + "ms\n";
+  str += "Packet Loss ratio:" + QString::number (packetLostRatio * 100) + "%\n\n";
 
 
-  str += QString("timeFirstTxPacket= ").leftJustified(justify, ' ') + QString::number(flowStats.timeFirstTxPacket) + "ns\n";
-  str += QString("timeFirstRxPacket= ").leftJustified(justify, ' ') + QString::number(flowStats.timeFirstRxPacket) + "ns\n";
-  str += QString("timeLastTxPacket= ").leftJustified(justify, ' ') + QString::number(flowStats.timeLastTxPacket)   + "ns\n";
-  str += QString("timeLastRxPacket= ").leftJustified(justify, ' ') + QString::number(flowStats.timeLastRxPacket)   + "ns\n";
-  str += QString("delaySum= ").leftJustified(justify + 4, ' ') + QString::number(flowStats.delaySum)               + "ns\n";
-  str += QString("jitterSum= ").leftJustified(justify + 5, ' ') + QString::number(flowStats.jitterSum)             + "ns\n";
-  str += QString("lastDelay= ").leftJustified(justify + 5, ' ') + QString::number(flowStats.delaySum)              + "ns\n";
-  str += QString("txBytes= ").leftJustified(justify + 6, ' ') + QString::number(flowStats.txBytes)                 + "\n";
-  str += QString("rxBytes= ").leftJustified(justify + 6, ' ') + QString::number(flowStats.rxBytes)                 + "\n";
-  str += QString("txPackets= ").leftJustified(justify + 5, ' ') + QString::number(flowStats.txPackets)             + "\n";
-  str += QString("rxPackets= ").leftJustified(justify + 5, ' ') + QString::number(flowStats.rxPackets)             + "\n";
-  str += QString("lostPackets= ").leftJustified(justify + 5, ' ') + QString::number(flowStats.lostPackets)         + "\n";
-  str += QString("timesForwarded= ").leftJustified(justify, ' ') + QString::number(flowStats.timesForwarded)       + "\n";
+  str += QString ("timeFirstTxPacket= ").leftJustified (justify, ' ') + QString::number (flowStats.timeFirstTxPacket) + "ns\n";
+  str += QString ("timeFirstRxPacket= ").leftJustified (justify, ' ') + QString::number (flowStats.timeFirstRxPacket) + "ns\n";
+  str += QString ("timeLastTxPacket= ").leftJustified (justify, ' ') + QString::number (flowStats.timeLastTxPacket)   + "ns\n";
+  str += QString ("timeLastRxPacket= ").leftJustified (justify, ' ') + QString::number (flowStats.timeLastRxPacket)   + "ns\n";
+  str += QString ("delaySum= ").leftJustified (justify + 4, ' ') + QString::number (flowStats.delaySum)               + "ns\n";
+  str += QString ("jitterSum= ").leftJustified (justify + 5, ' ') + QString::number (flowStats.jitterSum)             + "ns\n";
+  str += QString ("lastDelay= ").leftJustified (justify + 5, ' ') + QString::number (flowStats.delaySum)              + "ns\n";
+  str += QString ("txBytes= ").leftJustified (justify + 6, ' ') + QString::number (flowStats.txBytes)                 + "\n";
+  str += QString ("rxBytes= ").leftJustified (justify + 6, ' ') + QString::number (flowStats.rxBytes)                 + "\n";
+  str += QString ("txPackets= ").leftJustified (justify + 5, ' ') + QString::number (flowStats.txPackets)             + "\n";
+  str += QString ("rxPackets= ").leftJustified (justify + 5, ' ') + QString::number (flowStats.rxPackets)             + "\n";
+  str += QString ("lostPackets= ").leftJustified (justify + 5, ' ') + QString::number (flowStats.lostPackets)         + "\n";
+  str += QString ("timesForwarded= ").leftJustified (justify, ' ') + QString::number (flowStats.timesForwarded)       + "\n";
 
-  if(!flowStats.packetsDropped.empty())
+  if (!flowStats.packetsDropped.empty ())
     {
-      str += QString("\nPackets Dropped:\n\n");
+      str += QString ("\nPackets Dropped:\n\n");
     }
-  for(PacketsDroppedReasonVector_t::const_iterator i = flowStats.packetsDropped.begin();
-      i != flowStats.packetsDropped.end();
+  for (PacketsDroppedReasonVector_t::const_iterator i = flowStats.packetsDropped.begin ();
+      i != flowStats.packetsDropped.end ();
       ++i)
     {
       Reason_t reason = *i;
-      str += dropReasonToString(reason.reasonCode) + ":" + QString::number(reason.number) + "\n";
+      str += dropReasonToString (reason.reasonCode) + ":" + QString::number (reason.number) + "\n";
     }
 
-  if(!flowStats.bytesDropped.empty())
+  if (!flowStats.bytesDropped.empty ())
     {
-      str += QString("\nBytes Dropped:\n\n");
+      str += QString ("\nBytes Dropped:\n\n");
     }
-  for(BytesDroppedReasonVector_t::const_iterator i = flowStats.bytesDropped.begin();
-      i != flowStats.bytesDropped.end();
+  for (BytesDroppedReasonVector_t::const_iterator i = flowStats.bytesDropped.begin ();
+      i != flowStats.bytesDropped.end ();
       ++i)
     {
       Reason_t reason = *i;
-      str += dropReasonToString(reason.reasonCode) + ":" + QString::number(reason.number) + "\n";
+      str += dropReasonToString (reason.reasonCode) + ":" + QString::number (reason.number) + "\n";
     }
 
-  for(HistogramVector_t::const_iterator i = flowStats.histograms.begin();
-      i != flowStats.histograms.end();
+  for (HistogramVector_t::const_iterator i = flowStats.histograms.begin ();
+      i != flowStats.histograms.end ();
       ++i)
     {
       Histogram_t histogram = *i;
-      str += "\n" + histogram.name + " nBins:" + QString::number(histogram.nBins) + "\n";
-      for(FlowBinVector_t::const_iterator j = histogram.bins.begin();
-          j != histogram.bins.end();
+      str += "\n" + histogram.name + " nBins:" + QString::number (histogram.nBins) + "\n";
+      for (FlowBinVector_t::const_iterator j = histogram.bins.begin ();
+          j != histogram.bins.end ();
           ++j)
         {
           FlowBin_t flowBin = *j;
-          str += "Index:" + QString::number(flowBin.index) + " ";
-          str += "Start:" + QString::number(flowBin.start) + " ";
-          str += "Width:" + QString::number(flowBin.width) + " ";
-          str += "Count:" + QString::number(flowBin.count) + "\n";
+          str += "Index:" + QString::number (flowBin.index) + " ";
+          str += "Start:" + QString::number (flowBin.start) + " ";
+          str += "Width:" + QString::number (flowBin.width) + " ";
+          str += "Count:" + QString::number (flowBin.count) + "\n";
         }
 
     }
@@ -227,11 +227,11 @@ FlowMonStatsScene::flowStatsToString(FlowStatsFlow_t flowStats)
 }
 
 QString
-FlowMonStatsScene::ipv4ClassifierToString(Ipv4Classifier_t ipv4Classifier)
+FlowMonStatsScene::ipv4ClassifierToString (Ipv4Classifier_t ipv4Classifier)
 {
   QString str;
   QString protocol = "";
-  if(ipv4Classifier.protocol == 6)
+  if (ipv4Classifier.protocol == 6)
     {
       protocol += "TCP ";
     }
@@ -241,163 +241,163 @@ FlowMonStatsScene::ipv4ClassifierToString(Ipv4Classifier_t ipv4Classifier)
     }
   else
     {
-      protocol += "Protocol:" + QString::number(ipv4Classifier.protocol) + " ";
+      protocol += "Protocol:" + QString::number (ipv4Classifier.protocol) + " ";
     }
   str += protocol;
-  str += ipv4Classifier.sourceAddress + "/" + QString::number(ipv4Classifier.sourcePort);
+  str += ipv4Classifier.sourceAddress + "/" + QString::number (ipv4Classifier.sourcePort);
   str += "---->";
-  str += ipv4Classifier.destinationAddress + "/" + QString::number(ipv4Classifier.destinationPort);
+  str += ipv4Classifier.destinationAddress + "/" + QString::number (ipv4Classifier.destinationPort);
   return str;
 }
 
 void
-FlowMonStatsScene::adjustRect()
+FlowMonStatsScene::adjustRect ()
 {
-  QRectF currentRect = sceneRect();
-  QRectF newRect = QRectF(currentRect.topLeft(), QPointF(currentRect.bottomRight().x(), m_bottomY));
-  setSceneRect(newRect);
+  QRectF currentRect = sceneRect ();
+  QRectF newRect = QRectF (currentRect.topLeft (), QPointF (currentRect.bottomRight ().x (), m_bottomY));
+  setSceneRect (newRect);
 }
 
 
 void
-FlowMonStatsScene::addProxyWidgets()
+FlowMonStatsScene::addProxyWidgets ()
 {
-  for(FlowIdFlowStatsMap_t::const_iterator i = m_flowIdFlowStats.begin();
-      i != m_flowIdFlowStats.end();
+  for (FlowIdFlowStatsMap_t::const_iterator i = m_flowIdFlowStats.begin ();
+      i != m_flowIdFlowStats.end ();
       ++i)
     {
       uint32_t flowId = i->first;
       FlowStatsFlow_t flowStats = i->second;
       Ipv4Classifier_t ipv4Classifer = m_flowIdIpv4Classifiers[flowId];
-      QString content = ipv4ClassifierToString(ipv4Classifer) + "\n" + flowStatsToString(flowStats);
-      TextBubble * tb = new TextBubble("Flow Id:" + QString::number(flowId) + "\n======", content);
-      m_flowIdProxyWidgets[flowId] = addWidget(tb);
-      showInfoWidget(false);
+      QString content = ipv4ClassifierToString (ipv4Classifer) + "\n" + flowStatsToString (flowStats);
+      TextBubble * tb = new TextBubble ("Flow Id:" + QString::number (flowId) + "\n======", content);
+      m_flowIdProxyWidgets[flowId] = addWidget (tb);
+      showInfoWidget (false);
     }
-  if(m_flowProbes.empty())
+  if (m_flowProbes.empty ())
     {
       return;
     }
 
   QString str;
   uint32_t probeIndex = 0;
-  for(FlowProbes_t::const_iterator i = m_flowProbes.begin();
-      i != m_flowProbes.end();
+  for (FlowProbes_t::const_iterator i = m_flowProbes.begin ();
+      i != m_flowProbes.end ();
       ++i, ++probeIndex)
     {
-      str += "\nIndex:" + QString::number(probeIndex) + "\n";
+      str += "\nIndex:" + QString::number (probeIndex) + "\n";
       FlowProbe_t probe = *i;
-      for(FlowProbe_t::const_iterator j = probe.begin();
-          j != probe.end();
+      for (FlowProbe_t::const_iterator j = probe.begin ();
+          j != probe.end ();
           ++j)
         {
           FlowProbeFlowStats_t flowStat = *j;
-          str += " FlowId:" + QString::number(flowStat.flowId);
-          str += " Packets:" + QString::number(flowStat.packets);
-          str += " Bytes:" + QString::number(flowStat.bytes);
-          str += " DelayFromFirstProbeSum:" + QString::number(flowStat.delayFromFirstProbeSum) + "ns";
+          str += " FlowId:" + QString::number (flowStat.flowId);
+          str += " Packets:" + QString::number (flowStat.packets);
+          str += " Bytes:" + QString::number (flowStat.bytes);
+          str += " DelayFromFirstProbeSum:" + QString::number (flowStat.delayFromFirstProbeSum) + "ns";
           str += "\n";
         }
 
     }
-  TextBubble * tb = new TextBubble("Flow Probes:", str);
-  m_flowProbeWidget = addWidget(tb);
+  TextBubble * tb = new TextBubble ("Flow Probes:", str);
+  m_flowProbeWidget = addWidget (tb);
 
 
 }
 
 void
-FlowMonStatsScene::align()
+FlowMonStatsScene::align ()
 {
   m_lastX = 0;
   m_lastY = 0;
   m_bottomY = 0;
   qreal currentMaxHeight = 0;
 
-  for(FlowIdProxyWidgetMap_t::const_iterator i = m_flowIdProxyWidgets.begin();
-      i != m_flowIdProxyWidgets.end();
+  for (FlowIdProxyWidgetMap_t::const_iterator i = m_flowIdProxyWidgets.begin ();
+      i != m_flowIdProxyWidgets.end ();
       ++i)
     {
       QGraphicsProxyWidget * pw = i->second;
-      bool flowIsActive = StatsMode::getInstance()->isNodeActive(i->first);
-      pw->setVisible(flowIsActive);
-      if(flowIsActive)
+      bool flowIsActive = StatsMode::getInstance ()->isNodeActive (i->first);
+      pw->setVisible (flowIsActive);
+      if (flowIsActive)
         {
-          TextBubble * tb = (TextBubble *) pw->widget();
-          QFont f(tb->font());
-          f.setPointSizeF(StatsMode::getInstance()->getCurrentFontSize());
-          tb->setFont(f);
+          TextBubble * tb = (TextBubble *) pw->widget ();
+          QFont f (tb->font ());
+          f.setPointSizeF (StatsMode::getInstance ()->getCurrentFontSize ());
+          tb->setFont (f);
 
-          QFontMetrics fm(f);
-          pw->setMaximumHeight(fm.height() * tb->text().count("\n"));
-          pw->adjustSize();
+          QFontMetrics fm (f);
+          pw->setMaximumHeight (fm.height () * tb->text ().count ("\n"));
+          pw->adjustSize ();
 
-          qreal newX = m_lastX + pw->size().width();
-          currentMaxHeight = qMax(currentMaxHeight, pw->size().height());
-          if(newX >= sceneRect().right())
+          qreal newX = m_lastX + pw->size ().width ();
+          currentMaxHeight = qMax (currentMaxHeight, pw->size ().height ());
+          if (newX >= sceneRect ().right ())
             {
               m_lastX = 0;
               m_lastY += currentMaxHeight + INTERSTATS_SPACE;
               currentMaxHeight = 0;
             }
-          pw->setPos(m_lastX, m_lastY);
-          m_lastX = pw->pos().x() + pw->size().width() + INTERSTATS_SPACE;
-          m_lastY = pw->pos().y();
+          pw->setPos (m_lastX, m_lastY);
+          m_lastX = pw->pos ().x () + pw->size ().width () + INTERSTATS_SPACE;
+          m_lastY = pw->pos ().y ();
           m_bottomY = m_lastY + currentMaxHeight;
-          adjustRect();
+          adjustRect ();
         }
     }
-  if(m_flowProbeWidget)
+  if (m_flowProbeWidget)
     {
       QGraphicsProxyWidget * pw = m_flowProbeWidget;
-      TextBubble * tb = (TextBubble *) pw->widget();
-      QFont f(tb->font());
-      f.setPointSizeF(StatsMode::getInstance()->getCurrentFontSize());
-      tb->setFont(f);
+      TextBubble * tb = (TextBubble *) pw->widget ();
+      QFont f (tb->font ());
+      f.setPointSizeF (StatsMode::getInstance ()->getCurrentFontSize ());
+      tb->setFont (f);
 
-      QFontMetrics fm(f);
-      pw->setMaximumHeight(fm.height() * tb->text().count("\n"));
-      pw->adjustSize();
+      QFontMetrics fm (f);
+      pw->setMaximumHeight (fm.height () * tb->text ().count ("\n"));
+      pw->adjustSize ();
 
-      qreal newX = m_lastX + pw->size().width();
-      currentMaxHeight = qMax(currentMaxHeight, pw->size().height());
-      if(newX >= sceneRect().right())
+      qreal newX = m_lastX + pw->size ().width ();
+      currentMaxHeight = qMax (currentMaxHeight, pw->size ().height ());
+      if (newX >= sceneRect ().right ())
         {
           m_lastX = 0;
           m_lastY += currentMaxHeight + INTERSTATS_SPACE;
           currentMaxHeight = 0;
         }
-      pw->setPos(m_lastX, m_lastY);
-      m_lastX = pw->pos().x() + pw->size().width() + INTERSTATS_SPACE;
-      m_lastY = pw->pos().y();
+      pw->setPos (m_lastX, m_lastY);
+      m_lastX = pw->pos ().x () + pw->size ().width () + INTERSTATS_SPACE;
+      m_lastY = pw->pos ().y ();
       m_bottomY = m_lastY + currentMaxHeight;
-      adjustRect();
+      adjustRect ();
 
     }
 
 }
 
 void
-FlowMonStatsScene::reloadContent(bool force)
+FlowMonStatsScene::reloadContent (bool force)
 {
-  Q_UNUSED(force);
-  if(m_flowIdProxyWidgets.empty())
+  Q_UNUSED (force);
+  if (m_flowIdProxyWidgets.empty ())
     {
-      addProxyWidgets();
+      addProxyWidgets ();
     }
-  if (m_flowIdProxyWidgets.empty())
+  if (m_flowIdProxyWidgets.empty ())
     {
       return;
     }
-  align();
+  align ();
 }
 
 uint32_t
-FlowMonStatsScene::getNodeCount()
+FlowMonStatsScene::getNodeCount ()
 {
-  if(!m_flowIdIpv4Classifiers.empty())
+  if (!m_flowIdIpv4Classifiers.empty ())
     {
-      uint32_t lastFlowId = m_flowIdIpv4Classifiers.rbegin()->first + 1;
+      uint32_t lastFlowId = m_flowIdIpv4Classifiers.rbegin ()->first + 1;
       return lastFlowId;
     }
   else

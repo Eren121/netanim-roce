@@ -53,18 +53,18 @@ public:
   {
     return Type;
   }
-  ResizeableItem();
-  ~ResizeableItem();
-  QRectF boundingRect() const;
-  qreal getItemWidth();
-  qreal getItemHeight();
-  qreal getBorderWidth();
-  void setSize(qreal width, qreal height);
-  void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);
-  void setPixmap(QPixmap pix);
-  void setType(ResizeableItemType_t t);
-  void setWidth(qreal width);
-  void setColor(uint8_t r, uint8_t g, uint8_t b);
+  ResizeableItem ();
+  ~ResizeableItem ();
+  QRectF boundingRect () const;
+  qreal getItemWidth ();
+  qreal getItemHeight ();
+  qreal getBorderWidth ();
+  void setSize (qreal width, qreal height);
+  void paint (QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);
+  void setPixmap (QPixmap pix);
+  void setType (ResizeableItemType_t t);
+  void setWidth (qreal width);
+  void setColor (uint8_t r, uint8_t g, uint8_t b);
 
 private:
   ResizeableItemType_t m_type;

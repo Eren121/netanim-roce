@@ -23,83 +23,83 @@
 namespace netanim
 {
 
-FlowMonXmlparser::FlowMonXmlparser(QString traceFileName):
-  m_traceFileName(traceFileName),
-  m_parsingComplete(false),
-  m_reader(0),
-  m_fileIsValid(true),
-  m_state(INIT)
+FlowMonXmlparser::FlowMonXmlparser (QString traceFileName):
+  m_traceFileName (traceFileName),
+  m_parsingComplete (false),
+  m_reader (0),
+  m_fileIsValid (true),
+  m_state (INIT)
 {
-  if(m_traceFileName == "")
+  if (m_traceFileName == "")
     return;
 
-  m_traceFile = new QFile(m_traceFileName);
-  if (!m_traceFile->open(QIODevice::ReadOnly | QIODevice::Text))
+  m_traceFile = new QFile (m_traceFileName);
+  if (!m_traceFile->open (QIODevice::ReadOnly | QIODevice::Text))
     {
       m_fileIsValid = false;
       return;
     }
-  m_reader = new QXmlStreamReader(m_traceFile);
+  m_reader = new QXmlStreamReader (m_traceFile);
 }
 
-FlowMonXmlparser::~FlowMonXmlparser()
+FlowMonXmlparser::~FlowMonXmlparser ()
 {
-  if(m_traceFile)
+  if (m_traceFile)
     delete m_traceFile;
-  if(m_reader)
+  if (m_reader)
     delete m_reader;
 }
 
 
 uint64_t
-FlowMonXmlparser::getFlowCount()
+FlowMonXmlparser::getFlowCount ()
 {
   uint64_t count = 0;
-  QFile * f = new QFile(m_traceFileName);
-  if(f->open(QIODevice::ReadOnly | QIODevice::Text))
+  QFile * f = new QFile (m_traceFileName);
+  if (f->open (QIODevice::ReadOnly | QIODevice::Text))
     {
-      QString allContent = QString(f->readAll());
+      QString allContent = QString (f->readAll ());
       int j = 0;
       QString searchString = "flow=";
-      while ((j = allContent.indexOf(searchString, j)) != -1)
+      while ( (j = allContent.indexOf (searchString, j)) != -1)
         {
           ++j;
           ++count;
         }
-      f->close();
+      f->close ();
       delete f;
-      //qDebug (QString::number(count));
+      //qDebug (QString::number (count));
       return count;
     }
   return count;
 }
 
 bool
-FlowMonXmlparser::isFileValid()
+FlowMonXmlparser::isFileValid ()
 {
   return m_fileIsValid;
 }
 
 bool
-FlowMonXmlparser::isParsingComplete()
+FlowMonXmlparser::isParsingComplete ()
 {
   return m_parsingComplete;
 }
 
 
 void
-FlowMonXmlparser::doParse()
+FlowMonXmlparser::doParse ()
 {
   uint64_t parsedElementCount = 0;
-  while(!isParsingComplete())
+  while (!isParsingComplete ())
     {
-      if(AnimatorMode::getInstance()->keepAppResponsive())
+      if (AnimatorMode::getInstance ()->keepAppResponsive ())
         {
-          //AnimatorMode::getInstance()->setParsingCount(parsedElementCount);
+          //AnimatorMode::getInstance ()->setParsingCount (parsedElementCount);
 
         }
-      FlowMonParsedElement parsedElement = parseNext();
-      switch(parsedElement.type)
+      FlowMonParsedElement parsedElement = parseNext ();
+      switch (parsedElement.type)
         {
         case FlowMonParsedElement::XML_FLOWMONITOR:
         {
@@ -112,82 +112,82 @@ FlowMonXmlparser::doParse()
         case FlowMonParsedElement::XML_FLOWSTATSFLOW:
         {
           ++parsedElementCount;
-          FlowMonStatsScene::getInstance()->addFlowStat(parsedElement.flowStats.flowId, parsedElement.flowStats);
+          FlowMonStatsScene::getInstance ()->addFlowStat (parsedElement.flowStats.flowId, parsedElement.flowStats);
           break;
         }
         case FlowMonParsedElement::XML_IPV4CLASSFLOW:
         {
           ++parsedElementCount;
-          FlowMonStatsScene::getInstance()->addIpv4Classifier(parsedElement.ipv4Classifier.flowId, parsedElement.ipv4Classifier);
+          FlowMonStatsScene::getInstance ()->addIpv4Classifier (parsedElement.ipv4Classifier.flowId, parsedElement.ipv4Classifier);
           break;
         }
         case FlowMonParsedElement::XML_FLOWPROBES:
         {
           ++parsedElementCount;
-          FlowMonStatsScene::getInstance()->addFlowProbes(parsedElement.flowProbes);
+          FlowMonStatsScene::getInstance ()->addFlowProbes (parsedElement.flowProbes);
           break;
 
         }
         case FlowMonParsedElement::XML_INVALID:
         default:
         {
-          //qDebug("Invalid XML element");
+          //qDebug ("Invalid XML element");
         }
         } //switch
     } // while loop
 }
 
 FlowMonParsedElement
-FlowMonXmlparser::parseNext()
+FlowMonXmlparser::parseNext ()
 {
   FlowMonParsedElement parsedElement;
   parsedElement.type = FlowMonParsedElement::XML_INVALID;
 
-  if(m_reader->atEnd() || m_reader->hasError())
+  if (m_reader->atEnd () || m_reader->hasError ())
     {
       m_parsingComplete = true;
-      m_traceFile->close();
+      m_traceFile->close ();
       return parsedElement;
     }
-  //qDebug("T" + m_reader->text().toString())  ;
+  //qDebug ("T" + m_reader->text ().toString ())  ;
 
 
 
 
-  QXmlStreamReader::TokenType token =  m_reader->readNext();
-  if(token == QXmlStreamReader::StartDocument)
+  QXmlStreamReader::TokenType token =  m_reader->readNext ();
+  if (token == QXmlStreamReader::StartDocument)
     {
       return parsedElement;
     }
 
-  if(token == QXmlStreamReader::StartElement)
+  if (token == QXmlStreamReader::StartElement)
     {
-      if(m_reader->name() == "FlowMonitor")
+      if (m_reader->name () == "FlowMonitor")
         {
-          //QDEBUG("FlowMonitor");
+          //QDEBUG ("FlowMonitor");
         }
-      if(m_reader->name() == "FlowStats")
+      if (m_reader->name () == "FlowStats")
         {
-          parsedElement = parseFlowStats();
+          parsedElement = parseFlowStats ();
         }
-      if(m_reader->name() == "Ipv4FlowClassifier")
+      if (m_reader->name () == "Ipv4FlowClassifier")
         {
-          parsedElement = parseIpv4Classifier();
+          parsedElement = parseIpv4Classifier ();
         }
-      if(m_reader->name() == "FlowProbes")
+      if (m_reader->name () == "FlowProbes")
         {
-          parsedElement = parseFlowProbes();
+          parsedElement = parseFlowProbes ();
         }
 
-      if(m_reader->name() == "Flow")
+      if (m_reader->name () == "Flow")
         {
-          if(m_state == FLOWSTATS)
+          if (m_state == FLOWSTATS)
             {
-              parsedElement = parseFlowStatsFlow();
+              parsedElement = parseFlowStatsFlow ();
             }
-          else if(m_state == IPV4CLASSIFIER)
+          else if (m_state == IPV4CLASSIFIER)
             {
-              parsedElement = parseIpv4ClassifierFlow();
+              parsedElement = parseIpv4ClassifierFlow ();
             }
         }
 
@@ -195,19 +195,19 @@ FlowMonXmlparser::parseNext()
 
     }
 
-  //qDebug(m_reader->errorString());
-  //qDebug(m_reader->tokenString());
+  //qDebug (m_reader->errorString ());
+  //qDebug (m_reader->tokenString ());
 
-  if(m_reader->atEnd())
+  if (m_reader->atEnd ())
     {
       m_parsingComplete = true;
-      m_traceFile->close();
+      m_traceFile->close ();
     }
   return parsedElement;
 }
 
 FlowMonParsedElement
-FlowMonXmlparser::parseFlowMonitor()
+FlowMonXmlparser::parseFlowMonitor ()
 {
   FlowMonParsedElement parsedElement;
   parsedElement.type = FlowMonParsedElement::XML_FLOWMONITOR;
@@ -217,7 +217,7 @@ FlowMonXmlparser::parseFlowMonitor()
 
 
 FlowMonParsedElement
-FlowMonXmlparser::parseFlowStats()
+FlowMonXmlparser::parseFlowStats ()
 {
   FlowMonParsedElement parsedElement;
   parsedElement.type = FlowMonParsedElement::XML_FLOWSTATS;
@@ -227,152 +227,152 @@ FlowMonXmlparser::parseFlowStats()
 
 
 FlowProbeFlowStats_t
-FlowMonXmlparser::parseFlowProbeFlowStats()
+FlowMonXmlparser::parseFlowProbeFlowStats ()
 {
   FlowProbeFlowStats_t flowStats;
-  flowStats.flowId = m_reader->attributes().value("flowId").toString().toUInt();
-  flowStats.bytes = m_reader->attributes().value("bytes").toString().toULong();
-  flowStats.delayFromFirstProbeSum = m_reader->attributes().value("delayFromFirstProbeSum").toString().remove("ns").toDouble();
-  flowStats.packets = m_reader->attributes().value("packets").toString().toULong();
+  flowStats.flowId = m_reader->attributes ().value ("flowId").toString ().toUInt ();
+  flowStats.bytes = m_reader->attributes ().value ("bytes").toString ().toULong ();
+  flowStats.delayFromFirstProbeSum = m_reader->attributes ().value ("delayFromFirstProbeSum").toString ().remove ("ns").toDouble ();
+  flowStats.packets = m_reader->attributes ().value ("packets").toString ().toULong ();
   return flowStats;
 }
 
 FlowProbe_t
-FlowMonXmlparser::parseFlowProbe()
+FlowMonXmlparser::parseFlowProbe ()
 {
 
   FlowProbe_t probe;
-  QXmlStreamReader::TokenType token = m_reader->readNext();
+  QXmlStreamReader::TokenType token = m_reader->readNext ();
 
-  while ((m_reader->name() != "FlowProbe"))
+  while ( (m_reader->name () != "FlowProbe"))
     {
 
-      if((m_reader->name() == "FlowStats") && (token != QXmlStreamReader::EndElement))
+      if ((m_reader->name () == "FlowStats") && (token != QXmlStreamReader::EndElement))
         {
-          if(m_state != FLOWPROBE)
+          if (m_state != FLOWPROBE)
             {
             }
-          //QDEBUG(m_reader->name().toString());
-          //QDEBUG(m_reader->tokenString());
-          probe.push_back(parseFlowProbeFlowStats());
+          //QDEBUG (m_reader->name ().toString ());
+          //QDEBUG (m_reader->tokenString ());
+          probe.push_back (parseFlowProbeFlowStats ());
 
         }
-      token = m_reader->readNext();
+      token = m_reader->readNext ();
     }
   return probe;
 }
 
 FlowMonParsedElement
-FlowMonXmlparser::parseFlowProbes()
+FlowMonXmlparser::parseFlowProbes ()
 {
   FlowMonParsedElement parsedElement;
   parsedElement.type = FlowMonParsedElement::XML_FLOWPROBES;
   m_state = FLOWPROBE;
-  QXmlStreamReader::TokenType token = m_reader->readNext();
-  while ((m_reader->name() != "FlowProbes"))
+  QXmlStreamReader::TokenType token = m_reader->readNext ();
+  while ( (m_reader->name () != "FlowProbes"))
     {
 
-      if((m_reader->name() == "FlowProbe") && (token != QXmlStreamReader::EndElement))
+      if ((m_reader->name () == "FlowProbe") && (token != QXmlStreamReader::EndElement))
         {
-          if(m_state != FLOWPROBE)
+          if (m_state != FLOWPROBE)
             {
             }
-          //QDEBUG(m_reader->name().toString());
-          //QDEBUG(m_reader->tokenString());
-          parsedElement.flowProbes.push_back(parseFlowProbe());
+          //QDEBUG (m_reader->name ().toString ());
+          //QDEBUG (m_reader->tokenString ());
+          parsedElement.flowProbes.push_back (parseFlowProbe ());
 
         }
-      token = m_reader->readNext();
+      token = m_reader->readNext ();
     }
   return parsedElement;
 }
 
 Histogram_t
-FlowMonXmlparser::parseHistogram(QString name)
+FlowMonXmlparser::parseHistogram (QString name)
 {
   Histogram_t histogram;
   histogram.name = name;
-  histogram.nBins = m_reader->attributes().value("nBins").toString().toUInt();
-  QXmlStreamReader::TokenType token = m_reader->readNext();
-  while(m_reader->name() != name)
+  histogram.nBins = m_reader->attributes ().value ("nBins").toString ().toUInt ();
+  QXmlStreamReader::TokenType token = m_reader->readNext ();
+  while (m_reader->name () != name)
     {
-      if(m_reader->name() == "bin" && (token != QXmlStreamReader::EndElement))
+      if (m_reader->name () == "bin" && (token != QXmlStreamReader::EndElement))
         {
           FlowBin_t flowBin;
-          flowBin.index = m_reader->attributes().value("index").toString().toUInt();
-          flowBin.start = m_reader->attributes().value("start").toString().toDouble();
-          flowBin.width = m_reader->attributes().value("width").toString().toDouble();
-          flowBin.count = m_reader->attributes().value("count").toString().toUInt();
-          histogram.bins.push_back(flowBin);
+          flowBin.index = m_reader->attributes ().value ("index").toString ().toUInt ();
+          flowBin.start = m_reader->attributes ().value ("start").toString ().toDouble ();
+          flowBin.width = m_reader->attributes ().value ("width").toString ().toDouble ();
+          flowBin.count = m_reader->attributes ().value ("count").toString ().toUInt ();
+          histogram.bins.push_back (flowBin);
         }
-      token = m_reader->readNext();
+      token = m_reader->readNext ();
     }
   return histogram;
 }
 
 FlowMonParsedElement
-FlowMonXmlparser::parseFlowStatsFlow()
+FlowMonXmlparser::parseFlowStatsFlow ()
 {
   FlowMonParsedElement parsedElement;
   parsedElement.type = FlowMonParsedElement::XML_FLOWSTATSFLOW;
   FlowStatsFlow_t flow;
-  flow.flowId = m_reader->attributes().value("flowId").toString().toUInt();
-  //QDEBUG("Flow:" + m_reader->attributes().value("flowId").toString());
-  flow.timeFirstTxPacket = m_reader->attributes().value("timeFirstTxPacket").toString().remove("ns").toDouble();
-  flow.timeFirstRxPacket = m_reader->attributes().value("timeFirstRxPacket").toString().remove("ns").toDouble();
-  flow.timeLastTxPacket = m_reader->attributes().value("timeLastTxPacket").toString().remove("ns").toDouble();
-  flow.timeLastRxPacket = m_reader->attributes().value("timeLastRxPacket").toString().remove("ns").toDouble();
-  flow.delaySum = m_reader->attributes().value("delaySum").toString().remove("ns").toDouble();
-  flow.jitterSum = m_reader->attributes().value("jitterSum").toString().remove("ns").toDouble();
-  flow.lastDelay = m_reader->attributes().value("lastDelay").toString().remove("ns").toDouble();
-  flow.txBytes = m_reader->attributes().value("txBytes").toString().toULong();
-  flow.rxBytes = m_reader->attributes().value("rxBytes").toString().toULong();
-  flow.txPackets = m_reader->attributes().value("txPackets").toString().toULong();
-  flow.rxPackets = m_reader->attributes().value("rxPackets").toString().toULong();
-  flow.lostPackets = m_reader->attributes().value("lostPackets").toString().toULong();
-  flow.timesForwarded = m_reader->attributes().value("timesForwarded").toString().toULong();
+  flow.flowId = m_reader->attributes ().value ("flowId").toString ().toUInt ();
+  //QDEBUG ("Flow:" + m_reader->attributes ().value ("flowId").toString ());
+  flow.timeFirstTxPacket = m_reader->attributes ().value ("timeFirstTxPacket").toString ().remove ("ns").toDouble ();
+  flow.timeFirstRxPacket = m_reader->attributes ().value ("timeFirstRxPacket").toString ().remove ("ns").toDouble ();
+  flow.timeLastTxPacket = m_reader->attributes ().value ("timeLastTxPacket").toString ().remove ("ns").toDouble ();
+  flow.timeLastRxPacket = m_reader->attributes ().value ("timeLastRxPacket").toString ().remove ("ns").toDouble ();
+  flow.delaySum = m_reader->attributes ().value ("delaySum").toString ().remove ("ns").toDouble ();
+  flow.jitterSum = m_reader->attributes ().value ("jitterSum").toString ().remove ("ns").toDouble ();
+  flow.lastDelay = m_reader->attributes ().value ("lastDelay").toString ().remove ("ns").toDouble ();
+  flow.txBytes = m_reader->attributes ().value ("txBytes").toString ().toULong ();
+  flow.rxBytes = m_reader->attributes ().value ("rxBytes").toString ().toULong ();
+  flow.txPackets = m_reader->attributes ().value ("txPackets").toString ().toULong ();
+  flow.rxPackets = m_reader->attributes ().value ("rxPackets").toString ().toULong ();
+  flow.lostPackets = m_reader->attributes ().value ("lostPackets").toString ().toULong ();
+  flow.timesForwarded = m_reader->attributes ().value ("timesForwarded").toString ().toULong ();
 
-  QXmlStreamReader::TokenType token = m_reader->readNext();
-  while(m_reader->name() != "Flow")
+  QXmlStreamReader::TokenType token = m_reader->readNext ();
+  while (m_reader->name () != "Flow")
     {
-      if((m_reader->name() == "packetsDropped") && (token != QXmlStreamReader::EndElement))
+      if ((m_reader->name () == "packetsDropped") && (token != QXmlStreamReader::EndElement))
         {
-          if(m_state != FLOWSTATS)
+          if (m_state != FLOWSTATS)
             {
             }
-          //QDEBUG(m_reader->name().toString());
-          //QDEBUG(m_reader->tokenString());
+          //QDEBUG (m_reader->name ().toString ());
+          //QDEBUG (m_reader->tokenString ());
 
-          parsePacketsDropped(flow);
+          parsePacketsDropped (flow);
         }
-      if((m_reader->name() == "bytesDropped") && (token != QXmlStreamReader::EndElement))
+      if ((m_reader->name () == "bytesDropped") && (token != QXmlStreamReader::EndElement))
         {
 
-          if(m_state != FLOWSTATS)
+          if (m_state != FLOWSTATS)
             {
             }
-          //QDEBUG(m_reader->name().toString());
-          //QDEBUG(m_reader->tokenString());
+          //QDEBUG (m_reader->name ().toString ());
+          //QDEBUG (m_reader->tokenString ());
 
-          parseBytesDropped(flow);
+          parseBytesDropped (flow);
         }
-      if(m_reader->name() == "delayHistogram")
+      if (m_reader->name () == "delayHistogram")
         {
-          flow.histograms.push_back(parseHistogram("delayHistogram"));
+          flow.histograms.push_back (parseHistogram ("delayHistogram"));
         }
-      else if(m_reader->name() == "jitterHistogram")
+      else if (m_reader->name () == "jitterHistogram")
         {
-          flow.histograms.push_back(parseHistogram("jitterHistogram"));
+          flow.histograms.push_back (parseHistogram ("jitterHistogram"));
         }
-      else if(m_reader->name() == "flowInterruptionsHistogram")
+      else if (m_reader->name () == "flowInterruptionsHistogram")
         {
-          flow.histograms.push_back(parseHistogram("flowInterruptionsHistogram"));
+          flow.histograms.push_back (parseHistogram ("flowInterruptionsHistogram"));
         }
-      else if(m_reader->name() == "packetSizeHistogram")
+      else if (m_reader->name () == "packetSizeHistogram")
         {
-          flow.histograms.push_back(parseHistogram("packetSizeHistogram"));
+          flow.histograms.push_back (parseHistogram ("packetSizeHistogram"));
         }
-      token = m_reader->readNext();
+      token = m_reader->readNext ();
     }
 
 
@@ -382,7 +382,7 @@ FlowMonXmlparser::parseFlowStatsFlow()
 
 
 FlowMonParsedElement
-FlowMonXmlparser::parseIpv4Classifier()
+FlowMonXmlparser::parseIpv4Classifier ()
 {
   FlowMonParsedElement parsedElement;
   parsedElement.type = FlowMonParsedElement::XML_IPV4CLASSIFIER;
@@ -392,38 +392,38 @@ FlowMonXmlparser::parseIpv4Classifier()
 
 
 FlowMonParsedElement
-FlowMonXmlparser::parseIpv4ClassifierFlow()
+FlowMonXmlparser::parseIpv4ClassifierFlow ()
 {
   FlowMonParsedElement parsedElement;
   parsedElement.type = FlowMonParsedElement::XML_IPV4CLASSFLOW;
   Ipv4Classifier_t classifier;
-  classifier.flowId = m_reader->attributes().value("flowId").toString().toUInt();
-  classifier.protocol = m_reader->attributes().value("protocol").toString().toUShort();
-  classifier.sourcePort = m_reader->attributes().value("sourcePort").toString().toUShort();
-  classifier.destinationPort = m_reader->attributes().value("destinationPort").toString().toUShort();
-  classifier.sourceAddress = m_reader->attributes().value("sourceAddress").toString();
-  classifier.destinationAddress = m_reader->attributes().value("destinationAddress").toString();
+  classifier.flowId = m_reader->attributes ().value ("flowId").toString ().toUInt ();
+  classifier.protocol = m_reader->attributes ().value ("protocol").toString ().toUShort ();
+  classifier.sourcePort = m_reader->attributes ().value ("sourcePort").toString ().toUShort ();
+  classifier.destinationPort = m_reader->attributes ().value ("destinationPort").toString ().toUShort ();
+  classifier.sourceAddress = m_reader->attributes ().value ("sourceAddress").toString ();
+  classifier.destinationAddress = m_reader->attributes ().value ("destinationAddress").toString ();
   parsedElement.ipv4Classifier = classifier;
   return parsedElement;
 }
 
 void
-FlowMonXmlparser::parsePacketsDropped(FlowStatsFlow_t & flow)
+FlowMonXmlparser::parsePacketsDropped (FlowStatsFlow_t & flow)
 {
   Reason_t reason;
-  reason.reasonCode = m_reader->attributes().value("reasonCode").toString().toUInt();
-  reason.number = m_reader->attributes().value("number").toString().toUInt();
-  flow.packetsDropped.push_back(reason);
+  reason.reasonCode = m_reader->attributes ().value ("reasonCode").toString ().toUInt ();
+  reason.number = m_reader->attributes ().value ("number").toString ().toUInt ();
+  flow.packetsDropped.push_back (reason);
 
 }
 
 void
-FlowMonXmlparser::parseBytesDropped(FlowStatsFlow_t & flow)
+FlowMonXmlparser::parseBytesDropped (FlowStatsFlow_t & flow)
 {
   Reason_t reason;
-  reason.reasonCode = m_reader->attributes().value("reasonCode").toString().toUInt();
-  reason.number = m_reader->attributes().value("bytes").toString().toUInt();
-  flow.bytesDropped.push_back(reason);
+  reason.reasonCode = m_reader->attributes ().value ("reasonCode").toString ().toUInt ();
+  reason.number = m_reader->attributes ().value ("bytes").toString ().toUInt ();
+  flow.bytesDropped.push_back (reason);
 
 }
 

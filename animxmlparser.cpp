@@ -31,133 +31,133 @@
 namespace netanim
 {
 
-NS_LOG_COMPONENT_DEFINE("Animxmlparser");
+NS_LOG_COMPONENT_DEFINE ("Animxmlparser");
 
-Animxmlparser::Animxmlparser(QString traceFileName):
-  m_traceFileName(traceFileName),
-  m_parsingComplete(false),
-  m_reader(0),
-  m_maxSimulationTime(0),
-  m_fileIsValid(true)
+Animxmlparser::Animxmlparser (QString traceFileName):
+  m_traceFileName (traceFileName),
+  m_parsingComplete (false),
+  m_reader (0),
+  m_maxSimulationTime (0),
+  m_fileIsValid (true)
 {
   m_version = 0;
-  if(m_traceFileName == "")
+  if (m_traceFileName == "")
     return;
 
-  m_traceFile = new QFile(m_traceFileName);
-  if (!m_traceFile->open(QIODevice::ReadOnly | QIODevice::Text))
+  m_traceFile = new QFile (m_traceFileName);
+  if (!m_traceFile->open (QIODevice::ReadOnly | QIODevice::Text))
     {
-      //qDebug(QString("Critical:Trace file is invalid"));
+      //qDebug (QString ("Critical:Trace file is invalid"));
       m_fileIsValid = false;
       return;
     }
-  //qDebug(m_traceFileName);
-  m_reader = new QXmlStreamReader(m_traceFile);
+  //qDebug (m_traceFileName);
+  m_reader = new QXmlStreamReader (m_traceFile);
 }
 
-Animxmlparser::~Animxmlparser()
+Animxmlparser::~Animxmlparser ()
 {
-  if(m_traceFile)
+  if (m_traceFile)
     delete m_traceFile;
-  if(m_reader)
+  if (m_reader)
     delete m_reader;
 }
 
 void
-Animxmlparser::searchForVersion()
+Animxmlparser::searchForVersion ()
 {
-  QFile * f = new QFile(m_traceFileName);
-  if(f->open(QIODevice::ReadOnly | QIODevice::Text))
+  QFile * f = new QFile (m_traceFileName);
+  if (f->open (QIODevice::ReadOnly | QIODevice::Text))
     {
-      QString firstLine = QString(f->readLine());
+      QString firstLine = QString (f->readLine ());
       int startIndex = 0;
       int endIndex = 0;
       QString versionField = VERSION_FIELD_DEFAULT;
-      startIndex = firstLine.indexOf(versionField);
-      endIndex = firstLine.lastIndexOf("\"");
-      if((startIndex != -1) && (endIndex > startIndex))
+      startIndex = firstLine.indexOf (versionField);
+      endIndex = firstLine.lastIndexOf ("\"");
+      if ((startIndex != -1) && (endIndex > startIndex))
         {
-          int adjustedStartIndex = startIndex + versionField.length();
-          QString v = firstLine.mid(adjustedStartIndex, endIndex-adjustedStartIndex);
-          m_version = v.toDouble();
+          int adjustedStartIndex = startIndex + versionField.length ();
+          QString v = firstLine.mid (adjustedStartIndex, endIndex-adjustedStartIndex);
+          m_version = v.toDouble ();
         }
-      f->close();
+      f->close ();
       delete f;
     }
 }
 
 uint64_t
-Animxmlparser::getRxCount()
+Animxmlparser::getRxCount ()
 {
-  searchForVersion();
+  searchForVersion ();
   uint64_t count = 0;
-  QFile * f = new QFile(m_traceFileName);
-  if(f->open(QIODevice::ReadOnly | QIODevice::Text))
+  QFile * f = new QFile (m_traceFileName);
+  if (f->open (QIODevice::ReadOnly | QIODevice::Text))
     {
-      QString allContent = QString(f->readAll());
+      QString allContent = QString (f->readAll ());
       int j = 0;
       QString searchString = " toId=";
-      if(m_version >= 3.102)
+      if (m_version >= 3.102)
         searchString = " tId";
 
-      while ((j = allContent.indexOf(searchString, j)) != -1)
+      while ( (j = allContent.indexOf (searchString, j)) != -1)
         {
           ++j;
           ++count;
         }
-      f->close();
+      f->close ();
       delete f;
-      //qDebug (QString::number(count));
+      //qDebug (QString::number (count));
       return count;
     }
   return count;
 }
 
 bool
-Animxmlparser::isFileValid()
+Animxmlparser::isFileValid ()
 {
   return m_fileIsValid;
 }
 
 bool
-Animxmlparser::isParsingComplete()
+Animxmlparser::isParsingComplete ()
 {
   return m_parsingComplete;
 }
 
 
 void
-Animxmlparser::doParse()
+Animxmlparser::doParse ()
 {
   uint64_t parsedElementCount = 0;
-  AnimatorMode * pAnimatorMode = AnimatorMode::getInstance();
-  while(!isParsingComplete())
+  AnimatorMode * pAnimatorMode = AnimatorMode::getInstance ();
+  while (!isParsingComplete ())
     {
-      if(AnimatorMode::getInstance()->keepAppResponsive())
+      if (AnimatorMode::getInstance ()->keepAppResponsive ())
         {
-          AnimatorMode::getInstance()->setParsingCount(parsedElementCount);
+          AnimatorMode::getInstance ()->setParsingCount (parsedElementCount);
 
         }
-      ParsedElement parsedElement = parseNext();
-      switch(parsedElement.type)
+      ParsedElement parsedElement = parseNext ();
+      switch (parsedElement.type)
         {
         case XML_ANIM:
         {
-          AnimatorMode::getInstance()->setVersion(parsedElement.version);
-          //qDebug(QString("XML Version:") + QString::number(version));
+          AnimatorMode::getInstance ()->setVersion (parsedElement.version);
+          //qDebug (QString ("XML Version:") + QString::number (version));
           break;
         }
         case XML_NODE:
         {
 
-          AnimNodeAddEvent * ev = new AnimNodeAddEvent(parsedElement.nodeId,
+          AnimNodeAddEvent * ev = new AnimNodeAddEvent (parsedElement.nodeId,
               parsedElement.node_x,
               parsedElement.node_y,
               parsedElement.nodeDescription,
               parsedElement.node_r,
               parsedElement.node_g,
               parsedElement.node_b);
-          pAnimatorMode->addAnimEvent(0, ev);
+          pAnimatorMode->addAnimEvent (0, ev);
           break;
         }
         case XML_WPACKET_RX:
@@ -165,92 +165,92 @@ Animxmlparser::doParse()
         {
           if (parsedElement.packetrx_fromId == parsedElement.packetrx_toId)
             break;
-          AnimPacketEvent * ev = new AnimPacketEvent(parsedElement.packetrx_fromId,
+          AnimPacketEvent * ev = new AnimPacketEvent (parsedElement.packetrx_fromId,
               parsedElement.packetrx_toId,
               parsedElement.packetrx_fbTx,
               parsedElement.packetrx_fbRx,
               parsedElement.isWpacket,
               parsedElement.meta_info);
-          pAnimatorMode->addAnimEvent(parsedElement.packetrx_fbTx, ev);
+          pAnimatorMode->addAnimEvent (parsedElement.packetrx_fbTx, ev);
           ++parsedElementCount;
           break;
         }
         case XML_LINK:
         {
-          //AnimLinkMgr::getInstance()->add(parsedElement.link_fromId, parsedElement.link_toId);
-          AnimLinkAddEvent * ev = new AnimLinkAddEvent(parsedElement.link_fromId,
+          //AnimLinkMgr::getInstance ()->add (parsedElement.link_fromId, parsedElement.link_toId);
+          AnimLinkAddEvent * ev = new AnimLinkAddEvent (parsedElement.link_fromId,
               parsedElement.link_toId,
               parsedElement.linkDescription,
               parsedElement.fromNodeDescription,
               parsedElement.toNodeDescription);
-          pAnimatorMode->addAnimEvent(0, ev);
+          pAnimatorMode->addAnimEvent (0, ev);
           break;
         }
         case XML_NONP2P_LINK:
         {
-          AnimLinkAddEvent * ev = new AnimLinkAddEvent(parsedElement.link_fromId,
+          AnimLinkAddEvent * ev = new AnimLinkAddEvent (parsedElement.link_fromId,
               parsedElement.link_toId,
               parsedElement.linkDescription,
               parsedElement.fromNodeDescription,
               parsedElement.toNodeDescription,
               false);
-          pAnimatorMode->addAnimEvent(0, ev);
+          pAnimatorMode->addAnimEvent (0, ev);
           break;
 
 
         }
         case XML_LINKUPDATE:
         {
-          AnimLinkUpdateEvent * ev = new AnimLinkUpdateEvent(parsedElement.link_fromId,
+          AnimLinkUpdateEvent * ev = new AnimLinkUpdateEvent (parsedElement.link_fromId,
               parsedElement.link_toId,
               parsedElement.linkDescription);
-          pAnimatorMode->addAnimEvent(parsedElement.updateTime, ev);
+          pAnimatorMode->addAnimEvent (parsedElement.updateTime, ev);
           break;
         }
 
         case XML_RESOURCE:
         {
-          AnimResourceManager::getInstance()->add(parsedElement.resourceId, parsedElement.resourcePath);
+          AnimResourceManager::getInstance ()->add (parsedElement.resourceId, parsedElement.resourcePath);
           break;
         }
         case XML_NODEUPDATE:
         {
           if (parsedElement.nodeUpdateType == ParsedElement::POSITION)
             {
-              AnimNodePositionUpdateEvent * ev = new AnimNodePositionUpdateEvent(parsedElement.nodeId,
+              AnimNodePositionUpdateEvent * ev = new AnimNodePositionUpdateEvent (parsedElement.nodeId,
                   parsedElement.node_x,
                   parsedElement.node_y);
-              pAnimatorMode->addAnimEvent(parsedElement.updateTime, ev);
+              pAnimatorMode->addAnimEvent (parsedElement.updateTime, ev);
             }
           if (parsedElement.nodeUpdateType == ParsedElement::COLOR)
             {
-              AnimNodeColorUpdateEvent * ev = new AnimNodeColorUpdateEvent(parsedElement.nodeId,
+              AnimNodeColorUpdateEvent * ev = new AnimNodeColorUpdateEvent (parsedElement.nodeId,
                   parsedElement.node_r,
                   parsedElement.node_g,
                   parsedElement.node_b);
 
-              pAnimatorMode->addAnimEvent(parsedElement.updateTime, ev);
+              pAnimatorMode->addAnimEvent (parsedElement.updateTime, ev);
             }
           if (parsedElement.nodeUpdateType == ParsedElement::DESCRIPTION)
             {
-              AnimNodeDescriptionUpdateEvent * ev = new AnimNodeDescriptionUpdateEvent(parsedElement.nodeId,
+              AnimNodeDescriptionUpdateEvent * ev = new AnimNodeDescriptionUpdateEvent (parsedElement.nodeId,
                   parsedElement.nodeDescription);
-              pAnimatorMode->addAnimEvent(parsedElement.updateTime, ev);
+              pAnimatorMode->addAnimEvent (parsedElement.updateTime, ev);
 
             }
           if (parsedElement.nodeUpdateType == ParsedElement::SIZE)
             {
-              AnimNodeSizeUpdateEvent * ev = new AnimNodeSizeUpdateEvent(parsedElement.nodeId,
+              AnimNodeSizeUpdateEvent * ev = new AnimNodeSizeUpdateEvent (parsedElement.nodeId,
                   parsedElement.node_width,
                   parsedElement.node_height);
-              pAnimatorMode->addAnimEvent(parsedElement.updateTime, ev);
+              pAnimatorMode->addAnimEvent (parsedElement.updateTime, ev);
 
             }
           if (parsedElement.nodeUpdateType == ParsedElement::IMAGE)
             {
-              AnimNodeImageUpdateEvent * ev = new AnimNodeImageUpdateEvent(parsedElement.nodeId,
+              AnimNodeImageUpdateEvent * ev = new AnimNodeImageUpdateEvent (parsedElement.nodeId,
                   parsedElement.resourceId);
-              pAnimatorMode->addAnimEvent(parsedElement.updateTime, ev);
+              pAnimatorMode->addAnimEvent (parsedElement.updateTime, ev);
             }
           break;
 
@@ -258,222 +258,222 @@ Animxmlparser::doParse()
         case XML_INVALID:
         default:
         {
-          //qDebug("Invalid XML element");
+          //qDebug ("Invalid XML element");
         }
         } //switch
     } // while loop
 }
 
 ParsedElement
-Animxmlparser::parseNext()
+Animxmlparser::parseNext ()
 {
   ParsedElement parsedElement;
   parsedElement.type = XML_INVALID;
   parsedElement.version = m_version;
   parsedElement.isWpacket = false;
 
-  if(m_reader->atEnd() || m_reader->hasError())
+  if (m_reader->atEnd () || m_reader->hasError ())
     {
       m_parsingComplete = true;
-      m_traceFile->close();
+      m_traceFile->close ();
       return parsedElement;
     }
 
 
 
-  QXmlStreamReader::TokenType token =  m_reader->readNext();
-  if(token == QXmlStreamReader::StartDocument)
+  QXmlStreamReader::TokenType token =  m_reader->readNext ();
+  if (token == QXmlStreamReader::StartDocument)
     return parsedElement;
 
-  if(token == QXmlStreamReader::StartElement)
+  if (token == QXmlStreamReader::StartElement)
     {
-      if(m_reader->name() == "anim")
+      if (m_reader->name () == "anim")
         {
-          parsedElement = parseAnim();
+          parsedElement = parseAnim ();
         }
-      if(m_reader->name() == "topology")
+      if (m_reader->name () == "topology")
         {
-          parsedElement = parseTopology();
+          parsedElement = parseTopology ();
         }
-      if(m_reader->name() == "node")
+      if (m_reader->name () == "node")
         {
-          parsedElement = parseNode();
+          parsedElement = parseNode ();
         }
-      if(m_reader->name() == "packet")
+      if (m_reader->name () == "packet")
         {
-          parsedElement = parsePacket();
+          parsedElement = parsePacket ();
         }
-      if(m_reader->name() == "p")
+      if (m_reader->name () == "p")
         {
-          parsedElement = parseP();
+          parsedElement = parseP ();
         }
-      if(m_reader->name() == "wp")
+      if (m_reader->name () == "wp")
         {
-          parsedElement = parseWp();
+          parsedElement = parseWp ();
         }
-      if(m_reader->name() == "wpacket")
+      if (m_reader->name () == "wpacket")
         {
-          parsedElement = parseWPacket();
+          parsedElement = parseWPacket ();
         }
-      if(m_reader->name() == "link")
+      if (m_reader->name () == "link")
         {
-          parsedElement = parseLink();
+          parsedElement = parseLink ();
         }
-      if(m_reader->name() == "nonp2plinkproperties")
+      if (m_reader->name () == "nonp2plinkproperties")
         {
-          parsedElement = parseNonP2pLink();
+          parsedElement = parseNonP2pLink ();
         }
-      if(m_reader->name() == "linkupdate")
+      if (m_reader->name () == "linkupdate")
         {
-          parsedElement = parseLinkUpdate();
+          parsedElement = parseLinkUpdate ();
         }
-      if(m_reader->name() == "nu")
+      if (m_reader->name () == "nu")
         {
-          parsedElement = parseNodeUpdate();
+          parsedElement = parseNodeUpdate ();
         }
-      if(m_reader->name() == "res")
+      if (m_reader->name () == "res")
         {
-          parsedElement = parseResource();
+          parsedElement = parseResource ();
         }
-      //qDebug(m_reader->name().toString());
+      //qDebug (m_reader->name ().toString ());
     }
 
-  if(m_reader->atEnd())
+  if (m_reader->atEnd ())
     {
       m_parsingComplete = true;
-      m_traceFile->close();
+      m_traceFile->close ();
     }
   return parsedElement;
 }
 
 
 ParsedElement
-Animxmlparser::parseAnim()
+Animxmlparser::parseAnim ()
 {
   ParsedElement parsedElement;
   parsedElement.type = XML_ANIM;
   parsedElement.version = m_version;
-  QString v = m_reader->attributes().value("ver").toString();
-  if(!v.contains("netanim-"))
+  QString v = m_reader->attributes ().value ("ver").toString ();
+  if (!v.contains ("netanim-"))
     return parsedElement;
   v = v.replace ("netanim-","");
-  m_version = v.toDouble();
+  m_version = v.toDouble ();
   parsedElement.version = m_version;
-  //qDebug(QString::number(m_version));
+  //qDebug (QString::number (m_version));
   return parsedElement;
 }
 
 ParsedElement
-Animxmlparser::parseTopology()
+Animxmlparser::parseTopology ()
 {
   ParsedElement parsedElement;
   parsedElement.type = XML_TOPOLOGY;
-  parsedElement.topo_width = m_reader->attributes().value("maxX").toString().toDouble();
-  parsedElement.topo_height = m_reader->attributes().value("maxY").toString().toDouble();
+  parsedElement.topo_width = m_reader->attributes ().value ("maxX").toString ().toDouble ();
+  parsedElement.topo_height = m_reader->attributes ().value ("maxY").toString ().toDouble ();
   return parsedElement;
 
 }
 
 ParsedElement
-Animxmlparser::parseLink()
+Animxmlparser::parseLink ()
 {
   ParsedElement parsedElement;
   parsedElement.type = XML_LINK;
-  parsedElement.link_fromId = m_reader->attributes().value("fromId").toString().toUInt();
-  parsedElement.link_toId = m_reader->attributes().value("toId").toString().toDouble();
-  parsedElement.fromNodeDescription = m_reader->attributes().value("fd").toString();
-  parsedElement.toNodeDescription = m_reader->attributes().value("td").toString();
-  parsedElement.linkDescription = m_reader->attributes().value("ld").toString();
+  parsedElement.link_fromId = m_reader->attributes ().value ("fromId").toString ().toUInt ();
+  parsedElement.link_toId = m_reader->attributes ().value ("toId").toString ().toDouble ();
+  parsedElement.fromNodeDescription = m_reader->attributes ().value ("fd").toString ();
+  parsedElement.toNodeDescription = m_reader->attributes ().value ("td").toString ();
+  parsedElement.linkDescription = m_reader->attributes ().value ("ld").toString ();
   return parsedElement;
 
 }
 
 
 ParsedElement
-Animxmlparser::parseNonP2pLink()
+Animxmlparser::parseNonP2pLink ()
 {
   ParsedElement parsedElement;
   parsedElement.type = XML_NONP2P_LINK;
-  parsedElement.link_fromId = m_reader->attributes().value("id").toString().toUInt();
-  parsedElement.fromNodeDescription = m_reader->attributes().value("ipv4Address").toString();
+  parsedElement.link_fromId = m_reader->attributes ().value ("id").toString ().toUInt ();
+  parsedElement.fromNodeDescription = m_reader->attributes ().value ("ipv4Address").toString ();
   return parsedElement;
 }
 
 ParsedElement
-Animxmlparser::parseLinkUpdate()
+Animxmlparser::parseLinkUpdate ()
 {
   ParsedElement parsedElement;
   parsedElement.type = XML_LINKUPDATE;
-  parsedElement.link_fromId = m_reader->attributes().value("fromId").toString().toUInt();
-  parsedElement.link_toId = m_reader->attributes().value("toId").toString().toDouble();
-  parsedElement.linkDescription = m_reader->attributes().value("ld").toString();
-  parsedElement.updateTime = m_reader->attributes().value("t").toString().toDouble();
-  setMaxSimulationTime(parsedElement.updateTime);
+  parsedElement.link_fromId = m_reader->attributes ().value ("fromId").toString ().toUInt ();
+  parsedElement.link_toId = m_reader->attributes ().value ("toId").toString ().toDouble ();
+  parsedElement.linkDescription = m_reader->attributes ().value ("ld").toString ();
+  parsedElement.updateTime = m_reader->attributes ().value ("t").toString ().toDouble ();
+  setMaxSimulationTime (parsedElement.updateTime);
   return parsedElement;
 
 }
 
 ParsedElement
-Animxmlparser::parseNode()
+Animxmlparser::parseNode ()
 {
   ParsedElement parsedElement;
   parsedElement.type = XML_NODE;
-  parsedElement.nodeId = m_reader->attributes().value("id").toString().toUInt();
-  parsedElement.node_x = m_reader->attributes().value("locX").toString().toDouble();
-  parsedElement.node_y = m_reader->attributes().value("locY").toString().toDouble();
-  parsedElement.node_batteryCapacity = m_reader->attributes().value("rc").toString().toDouble();
-  parsedElement.nodeDescription = m_reader->attributes().value("descr").toString();
-  parsedElement.node_r = m_reader->attributes().value("r").toString().toUInt();
-  parsedElement.node_g = m_reader->attributes().value("g").toString().toUInt();
-  parsedElement.node_b = m_reader->attributes().value("b").toString().toUInt();
-  parsedElement.hasColorUpdate = !m_reader->attributes().value("r").isEmpty();
-  parsedElement.hasBattery = !m_reader->attributes().value("rc").isEmpty();
+  parsedElement.nodeId = m_reader->attributes ().value ("id").toString ().toUInt ();
+  parsedElement.node_x = m_reader->attributes ().value ("locX").toString ().toDouble ();
+  parsedElement.node_y = m_reader->attributes ().value ("locY").toString ().toDouble ();
+  parsedElement.node_batteryCapacity = m_reader->attributes ().value ("rc").toString ().toDouble ();
+  parsedElement.nodeDescription = m_reader->attributes ().value ("descr").toString ();
+  parsedElement.node_r = m_reader->attributes ().value ("r").toString ().toUInt ();
+  parsedElement.node_g = m_reader->attributes ().value ("g").toString ().toUInt ();
+  parsedElement.node_b = m_reader->attributes ().value ("b").toString ().toUInt ();
+  parsedElement.hasColorUpdate = !m_reader->attributes ().value ("r").isEmpty ();
+  parsedElement.hasBattery = !m_reader->attributes ().value ("rc").isEmpty ();
   return parsedElement;
 }
 
 ParsedElement
-Animxmlparser::parseNodeUpdate()
+Animxmlparser::parseNodeUpdate ()
 {
   ParsedElement parsedElement;
   parsedElement.type = XML_NODEUPDATE;
-  QString nodeUpdateString = m_reader->attributes().value("p").toString();
-  if(nodeUpdateString == "p")
+  QString nodeUpdateString = m_reader->attributes ().value ("p").toString ();
+  if (nodeUpdateString == "p")
     parsedElement.nodeUpdateType = ParsedElement::POSITION;
-  if(nodeUpdateString == "c")
+  if (nodeUpdateString == "c")
     parsedElement.nodeUpdateType = ParsedElement::COLOR;
-  if(nodeUpdateString == "d")
+  if (nodeUpdateString == "d")
     parsedElement.nodeUpdateType = ParsedElement::DESCRIPTION;
-  if(nodeUpdateString == "s")
+  if (nodeUpdateString == "s")
     parsedElement.nodeUpdateType = ParsedElement::SIZE;
-  if(nodeUpdateString == "i")
+  if (nodeUpdateString == "i")
     parsedElement.nodeUpdateType = ParsedElement::IMAGE;
-  parsedElement.updateTime = m_reader->attributes().value("t").toString().toDouble();
-  setMaxSimulationTime(parsedElement.updateTime);
-  parsedElement.nodeId = m_reader->attributes().value("id").toString().toUInt();
+  parsedElement.updateTime = m_reader->attributes ().value ("t").toString ().toDouble ();
+  setMaxSimulationTime (parsedElement.updateTime);
+  parsedElement.nodeId = m_reader->attributes ().value ("id").toString ().toUInt ();
 
 
-  switch(parsedElement.nodeUpdateType)
+  switch (parsedElement.nodeUpdateType)
     {
     case ParsedElement::POSITION:
-      parsedElement.node_x = m_reader->attributes().value("x").toString().toDouble();
-      parsedElement.node_y = m_reader->attributes().value("y").toString().toDouble();
+      parsedElement.node_x = m_reader->attributes ().value ("x").toString ().toDouble ();
+      parsedElement.node_y = m_reader->attributes ().value ("y").toString ().toDouble ();
       break;
     case ParsedElement::COLOR:
-      parsedElement.node_r = m_reader->attributes().value("r").toString().toUInt();
-      parsedElement.node_g = m_reader->attributes().value("g").toString().toUInt();
-      parsedElement.node_b = m_reader->attributes().value("b").toString().toUInt();
+      parsedElement.node_r = m_reader->attributes ().value ("r").toString ().toUInt ();
+      parsedElement.node_g = m_reader->attributes ().value ("g").toString ().toUInt ();
+      parsedElement.node_b = m_reader->attributes ().value ("b").toString ().toUInt ();
       break;
     case ParsedElement::DESCRIPTION:
-      parsedElement.nodeDescription = m_reader->attributes().value("descr").toString();
+      parsedElement.nodeDescription = m_reader->attributes ().value ("descr").toString ();
 
       break;
     case ParsedElement::SIZE:
-      parsedElement.node_width = m_reader->attributes().value("w").toString().toDouble();
-      parsedElement.node_height = m_reader->attributes().value("h").toString().toDouble();
+      parsedElement.node_width = m_reader->attributes ().value ("w").toString ().toDouble ();
+      parsedElement.node_height = m_reader->attributes ().value ("h").toString ().toDouble ();
       break;
 
     case ParsedElement::IMAGE:
-      parsedElement.resourceId = m_reader->attributes().value("rid").toString().toUInt();
+      parsedElement.resourceId = m_reader->attributes ().value ("rid").toString ().toUInt ();
       break;
     }
 
@@ -481,137 +481,137 @@ Animxmlparser::parseNodeUpdate()
 }
 
 ParsedElement
-Animxmlparser::parseResource()
+Animxmlparser::parseResource ()
 {
   ParsedElement parsedElement;
   parsedElement.type = XML_RESOURCE;
-  parsedElement.resourceId = m_reader->attributes().value("rid").toString().toUInt();
-  parsedElement.resourcePath = m_reader->attributes().value("p").toString();
+  parsedElement.resourceId = m_reader->attributes ().value ("rid").toString ().toUInt ();
+  parsedElement.resourcePath = m_reader->attributes ().value ("p").toString ();
   return parsedElement;
 }
 
 void
-Animxmlparser::parseGeneric(ParsedElement & parsedElement)
+Animxmlparser::parseGeneric (ParsedElement & parsedElement)
 {
-  parsedElement.packetrx_fromId = m_reader->attributes().value("fId").toString().toUInt();
-  parsedElement.packetrx_fbTx = m_reader->attributes().value("fbTx").toString().toDouble();
-  parsedElement.packetrx_lbTx = m_reader->attributes().value("lbTx").toString().toDouble();
-  setMaxSimulationTime(parsedElement.packetrx_lbTx);
-  parsedElement.packetrx_toId = m_reader->attributes().value("tId").toString().toUInt();
-  parsedElement.packetrx_fbRx = m_reader->attributes().value("fbRx").toString().toDouble();
-  parsedElement.packetrx_lbRx = m_reader->attributes().value("lbRx").toString().toDouble();
-  setMaxSimulationTime(parsedElement.packetrx_lbRx);
-  parsedElement.meta_info = m_reader->attributes().value("meta-info").toString();
-  if(parsedElement.meta_info == "")
+  parsedElement.packetrx_fromId = m_reader->attributes ().value ("fId").toString ().toUInt ();
+  parsedElement.packetrx_fbTx = m_reader->attributes ().value ("fbTx").toString ().toDouble ();
+  parsedElement.packetrx_lbTx = m_reader->attributes ().value ("lbTx").toString ().toDouble ();
+  setMaxSimulationTime (parsedElement.packetrx_lbTx);
+  parsedElement.packetrx_toId = m_reader->attributes ().value ("tId").toString ().toUInt ();
+  parsedElement.packetrx_fbRx = m_reader->attributes ().value ("fbRx").toString ().toDouble ();
+  parsedElement.packetrx_lbRx = m_reader->attributes ().value ("lbRx").toString ().toDouble ();
+  setMaxSimulationTime (parsedElement.packetrx_lbRx);
+  parsedElement.meta_info = m_reader->attributes ().value ("meta-info").toString ();
+  if (parsedElement.meta_info == "")
     {
       parsedElement.meta_info = "null";
     }
 }
 
 ParsedElement
-Animxmlparser::parseP()
+Animxmlparser::parseP ()
 {
   ParsedElement parsedElement;
   parsedElement.isWpacket = false;
   parsedElement.type = XML_PACKET_RX;
-  parseGeneric(parsedElement);
+  parseGeneric (parsedElement);
   return parsedElement;
 }
 
 ParsedElement
-Animxmlparser::parseWp()
+Animxmlparser::parseWp ()
 {
   ParsedElement parsedElement;
   parsedElement.type = XML_WPACKET_RX;
   parsedElement.isWpacket = true;
-  parseGeneric(parsedElement);
+  parseGeneric (parsedElement);
   return parsedElement;
 }
 
 ParsedElement
-Animxmlparser::parsePacket()
+Animxmlparser::parsePacket ()
 {
   ParsedElement parsedElement;
   parsedElement.type = XML_PACKET_RX;
-  parsedElement.packetrx_fromId = m_reader->attributes().value("fromId").toString().toUInt();
-  parsedElement.packetrx_fbTx = m_reader->attributes().value("fbTx").toString().toDouble();
-  parsedElement.packetrx_lbTx = m_reader->attributes().value("lbTx").toString().toDouble();
+  parsedElement.packetrx_fromId = m_reader->attributes ().value ("fromId").toString ().toUInt ();
+  parsedElement.packetrx_fbTx = m_reader->attributes ().value ("fbTx").toString ().toDouble ();
+  parsedElement.packetrx_lbTx = m_reader->attributes ().value ("lbTx").toString ().toDouble ();
   parsedElement.meta_info = "null";
-  setMaxSimulationTime(parsedElement.packetrx_lbTx);
-  while(m_reader->name() != "rx")
-    m_reader->readNext();
+  setMaxSimulationTime (parsedElement.packetrx_lbTx);
+  while (m_reader->name () != "rx")
+    m_reader->readNext ();
 
-  if(m_reader->atEnd() || m_reader->hasError())
+  if (m_reader->atEnd () || m_reader->hasError ())
     {
       m_parsingComplete = true;
-      m_traceFile->close();
+      m_traceFile->close ();
       return parsedElement;
     }
 
-  parsedElement.packetrx_toId = m_reader->attributes().value("toId").toString().toUInt();
-  parsedElement.packetrx_fbRx = m_reader->attributes().value("fbRx").toString().toDouble();
-  parsedElement.packetrx_lbRx = m_reader->attributes().value("lbRx").toString().toDouble();
-  setMaxSimulationTime(parsedElement.packetrx_lbRx);
+  parsedElement.packetrx_toId = m_reader->attributes ().value ("toId").toString ().toUInt ();
+  parsedElement.packetrx_fbRx = m_reader->attributes ().value ("fbRx").toString ().toDouble ();
+  parsedElement.packetrx_lbRx = m_reader->attributes ().value ("lbRx").toString ().toDouble ();
+  setMaxSimulationTime (parsedElement.packetrx_lbRx);
 
-  while(m_reader->name() == "rx")
-    m_reader->readNext();
-  if(m_reader->name() == "packet")
+  while (m_reader->name () == "rx")
+    m_reader->readNext ();
+  if (m_reader->name () == "packet")
     return parsedElement;
-  m_reader->readNext();
-  if(m_reader->name() != "meta")
+  m_reader->readNext ();
+  if (m_reader->name () != "meta")
     return parsedElement;
-  parsedElement.meta_info = m_reader->attributes().value("info").toString();
-  //qDebug(parsedElement.meta_info);
+  parsedElement.meta_info = m_reader->attributes ().value ("info").toString ();
+  //qDebug (parsedElement.meta_info);
   return parsedElement;
 
 }
 
 ParsedElement
-Animxmlparser::parseWPacket()
+Animxmlparser::parseWPacket ()
 {
 
   ParsedElement parsedElement;
   parsedElement.type = XML_WPACKET_RX;
-  parsedElement.packetrx_fromId = m_reader->attributes().value("fromId").toString().toUInt();
-  parsedElement.packetrx_fbTx = m_reader->attributes().value("fbTx").toString().toDouble();
-  parsedElement.packetrx_lbTx = m_reader->attributes().value("lbTx").toString().toDouble();
+  parsedElement.packetrx_fromId = m_reader->attributes ().value ("fromId").toString ().toUInt ();
+  parsedElement.packetrx_fbTx = m_reader->attributes ().value ("fbTx").toString ().toDouble ();
+  parsedElement.packetrx_lbTx = m_reader->attributes ().value ("lbTx").toString ().toDouble ();
   parsedElement.meta_info = "null";
-  setMaxSimulationTime(parsedElement.packetrx_lbTx);
-  while(m_reader->name() != "rx")
-    m_reader->readNext();
-  if(m_reader->atEnd() || m_reader->hasError())
+  setMaxSimulationTime (parsedElement.packetrx_lbTx);
+  while (m_reader->name () != "rx")
+    m_reader->readNext ();
+  if (m_reader->atEnd () || m_reader->hasError ())
     {
       m_parsingComplete = true;
-      m_traceFile->close();
+      m_traceFile->close ();
       return parsedElement;
     }
 
-  //qDebug(m_reader->name().toString()+"parseWpacket");
-  parsedElement.packetrx_toId = m_reader->attributes().value("toId").toString().toUInt();
-  parsedElement.packetrx_fbRx = m_reader->attributes().value("fbRx").toString().toDouble();
-  parsedElement.packetrx_lbRx = m_reader->attributes().value("lbRx").toString().toDouble();
-  setMaxSimulationTime(parsedElement.packetrx_lbRx);
-  while(m_reader->name() == "rx")
-    m_reader->readNext();
-  if(m_reader->name() == "wpacket")
+  //qDebug (m_reader->name ().toString ()+"parseWpacket");
+  parsedElement.packetrx_toId = m_reader->attributes ().value ("toId").toString ().toUInt ();
+  parsedElement.packetrx_fbRx = m_reader->attributes ().value ("fbRx").toString ().toDouble ();
+  parsedElement.packetrx_lbRx = m_reader->attributes ().value ("lbRx").toString ().toDouble ();
+  setMaxSimulationTime (parsedElement.packetrx_lbRx);
+  while (m_reader->name () == "rx")
+    m_reader->readNext ();
+  if (m_reader->name () == "wpacket")
     return parsedElement;
-  m_reader->readNext();
-  if(m_reader->name() != "meta")
+  m_reader->readNext ();
+  if (m_reader->name () != "meta")
     return parsedElement;
-  parsedElement.meta_info = m_reader->attributes().value("info").toString();
-  //qDebug(parsedElement.meta_info);
+  parsedElement.meta_info = m_reader->attributes ().value ("info").toString ();
+  //qDebug (parsedElement.meta_info);
   return parsedElement;
 
 }
 
 void
-Animxmlparser::setMaxSimulationTime(qreal t)
+Animxmlparser::setMaxSimulationTime (qreal t)
 {
-  m_maxSimulationTime = std::max(m_maxSimulationTime, t);
+  m_maxSimulationTime = std::max (m_maxSimulationTime, t);
 }
 
 double
-Animxmlparser::getMaxSimulationTime()
+Animxmlparser::getMaxSimulationTime ()
 {
   return m_maxSimulationTime;
 }

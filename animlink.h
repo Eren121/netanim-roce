@@ -31,11 +31,11 @@ namespace netanim
 class AnimLink: public QGraphicsLineItem
 {
 public:
-  AnimLink(uint32_t fromId, uint32_t toId,
+  AnimLink (uint32_t fromId, uint32_t toId,
            QString pointADescription = "", QString pointBDescription = "",
            QString linkDescription = "", bool p2p = true);
 
-  ~AnimLink();
+  ~AnimLink ();
   uint32_t m_fromId;
   uint32_t m_toId;
   QString * m_pointADescription;
@@ -43,22 +43,22 @@ public:
   QString * m_currentLinkDescription;
   bool    m_p2p;
 
-  void updateCurrentLinkDescription(QString linkDescription);
-  void resetCurrentLinkDescription();
-  QString toString();
-  QPointF getInterfacePosA();
-  QPointF getInterfacePosB();
-  QString getInterfaceADescription();
-  QString getInterfaceBDescription();
-  void repairLink();
+  void updateCurrentLinkDescription (QString linkDescription);
+  void resetCurrentLinkDescription ();
+  QString toString ();
+  QPointF getInterfacePosA ();
+  QPointF getInterfacePosB ();
+  QString getInterfaceADescription ();
+  QString getInterfaceBDescription ();
+  void repairLink ();
 
 protected:
-  void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
+  void paint (QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 private:
 
   QString * m_originalLinkDescription;
 
-  QPointF getLinkDescriptionCenter(QPainter *, QPointF *);
+  QPointF getLinkDescriptionCenter (QPainter *, QPointF *);
   QPointF m_interfacePosA;
   QPointF m_interfacePosB;
 
@@ -69,20 +69,20 @@ class LinkManager
 public:
   typedef QVector <AnimLink *> AnimLinkVector_t;
   typedef std::map <uint32_t, AnimLinkVector_t> NodeIdAnimLinkVectorMap_t;
-  static LinkManager * getInstance();
-  AnimLink * addLink(uint32_t fromId, uint32_t toId,
+  static LinkManager * getInstance ();
+  AnimLink * addLink (uint32_t fromId, uint32_t toId,
                      QString pointADescription,
                      QString pointBDescription, QString linkDescription, bool p2p = true);
 
 
-  NodeIdAnimLinkVectorMap_t * getLinks();
-  AnimLink * getAnimLink(uint32_t fromId, uint32_t toId);
-  void updateLink(uint32_t fromId, uint32_t toId, QString linkDescription);
+  NodeIdAnimLinkVectorMap_t * getLinks ();
+  AnimLink * getAnimLink (uint32_t fromId, uint32_t toId);
+  void updateLink (uint32_t fromId, uint32_t toId, QString linkDescription);
   void repairLinks (uint32_t nodeId);
-  void systemReset();
+  void systemReset ();
 
 private:
-  LinkManager();
+  LinkManager ();
   //AnimLinkVector_t             m_pointToPointLinks;
   NodeIdAnimLinkVectorMap_t    m_pointToPointLinks;
 

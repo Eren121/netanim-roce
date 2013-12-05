@@ -30,23 +30,23 @@ class AnimatorView : public QGraphicsView
 {
 public:
 
-  static AnimatorView * getInstance();
-  void systemReset();
-  void fitSceneWithinView();
-  void postParse();
-  QTransform getTransform();
-  void setCurrentZoomFactor(qreal factor);
+  static AnimatorView * getInstance ();
+  void systemReset ();
+  void fitSceneWithinView ();
+  void postParse ();
+  QTransform getTransform ();
+  void setCurrentZoomFactor (qreal factor);
 
 
 protected:
-  void paintEvent(QPaintEvent * event);
-  void wheelEvent(QWheelEvent *event);
+  void paintEvent (QPaintEvent * event);
+  void wheelEvent (QWheelEvent *event);
 
 
 private:
-  explicit AnimatorView(QGraphicsScene *);
-  AnimatorScene * getAnimatorScene();
-  void updateTransform();
+  explicit AnimatorView (QGraphicsScene *);
+  AnimatorScene * getAnimatorScene ();
+  void updateTransform ();
   qreal m_currentZoomFactor;
 
 signals:

@@ -27,11 +27,11 @@
 class AnimResourceManager
 {
 public:
-  static AnimResourceManager * getInstance();
-  void add(uint32_t resourceId, QString resourcePath);
-  QString get(uint32_t resourceid);
+  static AnimResourceManager * getInstance ();
+  void add (uint32_t resourceId, QString resourcePath);
+  QString get (uint32_t resourceid);
 private:
-  AnimResourceManager();
+  AnimResourceManager ();
   std::map <uint32_t, QString> m_resources;
 
 };

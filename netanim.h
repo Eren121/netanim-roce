@@ -31,14 +31,14 @@ class NetAnim : public QObject
 {
   Q_OBJECT
 public:
-  NetAnim();
+  NetAnim ();
 private:
   typedef std::map <int, Mode *> TabIndexModeMap_t;
   QTabWidget * m_tabWidget;
   TabIndexModeMap_t m_TabMode;
 
 private slots:
-  void currentTabChangedSlot(int currentIndex);
+  void currentTabChangedSlot (int currentIndex);
 
 };
 }

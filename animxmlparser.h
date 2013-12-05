@@ -125,15 +125,15 @@ struct ParsedElement
 class Animxmlparser
 {
 public:
-  Animxmlparser(QString traceFileName);
-  ~Animxmlparser();
-  ParsedElement parseNext();
-  bool isParsingComplete();
-  double getMaxSimulationTime();
-  void setMaxSimulationTime(qreal t);
-  bool isFileValid();
-  uint64_t getRxCount();
-  void doParse();
+  Animxmlparser (QString traceFileName);
+  ~Animxmlparser ();
+  ParsedElement parseNext ();
+  bool isParsingComplete ();
+  double getMaxSimulationTime ();
+  void setMaxSimulationTime (qreal t);
+  bool isFileValid ();
+  uint64_t getRxCount ();
+  void doParse ();
 
 
 private:
@@ -145,21 +145,21 @@ private:
   bool m_fileIsValid;
   double m_version;
 
-  ParsedElement parseAnim();
-  ParsedElement parseTopology();
-  ParsedElement parseNode();
-  ParsedElement parseLink();
-  ParsedElement parseNonP2pLink();
-  ParsedElement parsePacket();
-  ParsedElement parseWPacket();
-  ParsedElement parseLinkUpdate();
-  ParsedElement parseNodeUpdate();
-  ParsedElement parseP();
-  ParsedElement parseWp();
-  ParsedElement parseResource();
-  void parseGeneric(ParsedElement &);
+  ParsedElement parseAnim ();
+  ParsedElement parseTopology ();
+  ParsedElement parseNode ();
+  ParsedElement parseLink ();
+  ParsedElement parseNonP2pLink ();
+  ParsedElement parsePacket ();
+  ParsedElement parseWPacket ();
+  ParsedElement parseLinkUpdate ();
+  ParsedElement parseNodeUpdate ();
+  ParsedElement parseP ();
+  ParsedElement parseWp ();
+  ParsedElement parseResource ();
+  void parseGeneric (ParsedElement &);
 
-  void searchForVersion();
+  void searchForVersion ();
 };
 
 } // namespace netanim

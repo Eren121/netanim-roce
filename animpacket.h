@@ -31,14 +31,14 @@ namespace netanim
 class AnimWirelessCircles : public QObject, public QGraphicsEllipseItem
 {
   Q_OBJECT
-  Q_PROPERTY(QRectF rect READ rect WRITE setRect)
+  Q_PROPERTY (QRectF rect READ rect WRITE setRect)
 
 };
 
 
 struct ArpInfo
 {
-  ArpInfo()
+  ArpInfo ()
   {
     type = "null";
     sourceMac = "null";
@@ -46,7 +46,7 @@ struct ArpInfo
     destMac = "ff:ff:ff:ff:ff:ff";
     destIpv4 = "null";
   }
-  QString toString()
+  QString toString ()
   {
     return  " Arp "     + type       +
             " SMac: "   + sourceMac  +
@@ -54,9 +54,9 @@ struct ArpInfo
             " SrcIp : " + sourceIpv4 +
             " DstIp : " + destIpv4;
   }
-  QString toShortString()
+  QString toShortString ()
   {
-    return QString("Arp:") + type + " DstIP=" + destIpv4;
+    return QString ("Arp:") + type + " DstIP=" + destIpv4;
   }
   QString type;
   QString sourceMac;
@@ -67,11 +67,11 @@ struct ArpInfo
 
 struct PppInfo
 {
-  QString toString()
+  QString toString ()
   {
     return " PPP";
   }
-  QString toShortString()
+  QString toShortString ()
   {
     return "PPP";
   }
@@ -80,17 +80,17 @@ struct PppInfo
 
 struct EthernetInfo
 {
-  EthernetInfo()
+  EthernetInfo ()
   {
     sourceMac = "null";
     destMac = "null";
   }
-  QString toString()
+  QString toString ()
   {
     return  " Ethernet SMac: " + sourceMac +
             " DMac: "          + destMac;
   }
-  QString toShortString()
+  QString toShortString ()
   {
     return "Ethernet:" + sourceMac + " > " + destMac;
   }
@@ -101,7 +101,7 @@ struct EthernetInfo
 
 struct WifiMacInfo
 {
-  WifiMacInfo()
+  WifiMacInfo ()
   {
     type = "null";
     toDs = "null";
@@ -115,13 +115,13 @@ struct WifiMacInfo
 
   }
 
-  QString toString()
+  QString toString ()
   {
-    if(type == "CTL_ACK")
+    if (type == "CTL_ACK")
       return " Wifi CTL_ACK RA:" + Ra;
-    if(type == "CTL_RTS")
+    if (type == "CTL_RTS")
       return " Wifi CTL_RTS RA:" + Ra + " TA:" + Sa;
-    if(type == "CTL_CTS")
+    if (type == "CTL_CTS")
       return " Wifi CTL_CTS RA:" + Ra;
     QString temp = " Wifi " + type +
                    " FromDS: " + fromDs +
@@ -129,26 +129,26 @@ struct WifiMacInfo
                    " DA: " + Da +
                    " SA: " + Sa +
                    " BSSId: " + Bssid;
-    if(type == "MGT_ASSOCIATION_REQUEST")
+    if (type == "MGT_ASSOCIATION_REQUEST")
       temp += " SSid: " + SSid;
 
-    if(type == "MGT_ASSOCIATION_RESPONSE")
+    if (type == "MGT_ASSOCIATION_RESPONSE")
       temp += " status: " + assocResponseStatus;
     return temp;
   }
 
-  QString toShortString()
+  QString toShortString ()
   {
     QString s = "";
-    if(type == "CTL_RTS")
+    if (type == "CTL_RTS")
       s = "Wifi:CTL_RTS RA:" + Ra + " TA:" + Sa;
-    if(type == "CTL_CTS")
+    if (type == "CTL_CTS")
       s = "Wifi:CTL_CTS RA:" + Ra;
-    if(type == "MGT_BEACON")
+    if (type == "MGT_BEACON")
       s =  "Wifi:BEACON ssid" + SSid;
-    if(type == "MGT_ASSOCIATION_REQUEST")
+    if (type == "MGT_ASSOCIATION_REQUEST")
       s =  "Wifi:ASSOC_REQ ssid" + SSid;
-    if(type == "CTL_ACK")
+    if (type == "CTL_ACK")
       s = "Wifi:CTL_ACK RA:" + Ra;
     else
       s = "Wifi:" + type;
@@ -170,7 +170,7 @@ struct WifiMacInfo
 
 struct Ipv4Info
 {
-  Ipv4Info()
+  Ipv4Info ()
   {
 
   }
@@ -180,7 +180,7 @@ struct Ipv4Info
             " SrcIp: " + SrcIp +
             " DstIp: " + DstIp;
   }
-  QString toShortString()
+  QString toShortString ()
   {
     return "IPv4:" + SrcIp + " > " + DstIp;
   }
@@ -199,11 +199,11 @@ struct Ipv4Info
 
 struct IcmpInfo
 {
-  IcmpInfo()
+  IcmpInfo ()
   {
 
   }
-  QString toString()
+  QString toString ()
   {
     QString temp;
     temp += "ICMP type: " + type +
@@ -213,9 +213,9 @@ struct IcmpInfo
     return temp;
 
   }
-  QString toShortString()
+  QString toShortString ()
   {
-    if ((type == "3") & (code == "3"))
+    if ( (type == "3") & (code == "3"))
       {
         return "ICMP: Dst Unreachable";
       }
@@ -228,16 +228,16 @@ struct IcmpInfo
 
 struct UdpInfo
 {
-  UdpInfo()
+  UdpInfo ()
   {
 
   }
-  QString toString()
+  QString toString ()
   {
     return " UDP " + SPort + " > " + DPort;
 
   }
-  QString toShortString()
+  QString toShortString ()
   {
     return "UDP:" + SPort + " > " + DPort;
 
@@ -250,18 +250,18 @@ struct UdpInfo
 
 struct TcpInfo
 {
-  TcpInfo()
+  TcpInfo ()
   {
 
   }
-  QString toString()
+  QString toString ()
   {
     return " TCP " + SPort + " > " + DPort +
            " " + flags +  " Seq=" + seq   +
            " Ack=" + ack + " Win=" + window;
 
   }
-  QString toShortString()
+  QString toShortString ()
   {
     return  "TCP:[" + flags + "]" + " S=" + seq +
             " A=" + ack;
@@ -277,21 +277,21 @@ struct TcpInfo
 
 struct AodvInfo
 {
-  AodvInfo()
+  AodvInfo ()
   {
 
   }
-  QString toString()
+  QString toString ()
   {
-    if(type == "RERR")
+    if (type == "RERR")
       {
         return "RERR:" + rerrInfo + " " + destination;
       }
     return "AODV:" + type + " D=" + destination + " S=" + source + " Seq=" + seq;
   }
-  QString toShortString()
+  QString toShortString ()
   {
-    if(type == "RERR")
+    if (type == "RERR")
       {
         return "RERR:" + rerrInfo + " " + destination;
       }
@@ -306,15 +306,15 @@ struct AodvInfo
 
 struct DsdvInfo
 {
-  DsdvInfo()
+  DsdvInfo ()
   {
 
   }
-  QString toString()
+  QString toString ()
   {
     return "DSDV";
   }
-  QString toShortString()
+  QString toShortString ()
   {
     return "DSDV";
   }
@@ -322,15 +322,15 @@ struct DsdvInfo
 
 struct OlsrInfo
 {
-  OlsrInfo()
+  OlsrInfo ()
   {
 
   }
-  QString toString()
+  QString toString ()
   {
     return "OLSR";
   }
-  QString toShortString()
+  QString toShortString ()
   {
     return "OLSR";
   }
@@ -343,14 +343,14 @@ class AnimPacket : public QGraphicsObject, public AnimEvent
   Q_OBJECT
   Q_PROPERTY (QPointF pos READ pos WRITE setPos)
 public:
-  AnimPacket(uint32_t fromNodeId,
+  AnimPacket (uint32_t fromNodeId,
              uint32_t toNodeId,
              qreal firstBitTx,
              qreal firstBitRx,
              bool isWPacket,
              QString metaInfo,
              bool showMetaInfo);
-  ~AnimPacket();
+  ~AnimPacket ();
   enum { Type = ANIMPACKET_TYPE };
   int type () const
   {
@@ -366,7 +366,7 @@ public:
   virtual QRectF boundingRect () const;
   void paint (QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);
   QPointF getHead ();
-  QGraphicsSimpleTextItem * getInfoTextItem();
+  QGraphicsSimpleTextItem * getInfoTextItem ();
   bool getIsWPacket ();
   QString getShortMeta (QString metaInfo);
 
@@ -388,27 +388,27 @@ private:
   QGraphicsSimpleTextItem * m_infoText;
 
 
-  ArpInfo parseArp(QString metaInfo, bool & result);
-  PppInfo parsePpp(QString metaInfo, bool & result);
-  EthernetInfo parseEthernet(QString metaInfo, bool & result);
-  WifiMacInfo parseWifi(QString metaInfo, bool & result);
-  Ipv4Info parseIpv4(QString metaInfo, bool & result);
-  IcmpInfo parseIcmp(QString metaInfo, bool & result);
-  UdpInfo parseUdp(QString metaInfo, bool & result);
-  TcpInfo parseTcp(QString metaInfo, bool & result);
-  AodvInfo parseAodv(QString metaInfo, bool & result);
-  DsdvInfo parseDsdv(QString metaInfo, bool & result);
-  OlsrInfo parseOlsr(QString metaInfo, bool & result);
+  ArpInfo parseArp (QString metaInfo, bool & result);
+  PppInfo parsePpp (QString metaInfo, bool & result);
+  EthernetInfo parseEthernet (QString metaInfo, bool & result);
+  WifiMacInfo parseWifi (QString metaInfo, bool & result);
+  Ipv4Info parseIpv4 (QString metaInfo, bool & result);
+  IcmpInfo parseIcmp (QString metaInfo, bool & result);
+  UdpInfo parseUdp (QString metaInfo, bool & result);
+  TcpInfo parseTcp (QString metaInfo, bool & result);
+  AodvInfo parseAodv (QString metaInfo, bool & result);
+  DsdvInfo parseDsdv (QString metaInfo, bool & result);
+  OlsrInfo parseOlsr (QString metaInfo, bool & result);
 
 };
 
 class AnimPacketMgr
 {
 public:
-  static AnimPacketMgr * getInstance();
-  AnimPacket * add(uint32_t fromId, uint32_t toId, qreal fbTx, qreal fbRx, bool isWPacket, QString metaInfo, bool showMetaInfo);
+  static AnimPacketMgr * getInstance ();
+  AnimPacket * add (uint32_t fromId, uint32_t toId, qreal fbTx, qreal fbRx, bool isWPacket, QString metaInfo, bool showMetaInfo);
 private:
-  AnimPacketMgr();
+  AnimPacketMgr ();
 
 
 };

@@ -28,55 +28,55 @@ namespace netanim
 
 LinkManager       * pLinkManager = 0;
 
-AnimLink::AnimLink(uint32_t fromId, uint32_t toId,
+AnimLink::AnimLink (uint32_t fromId, uint32_t toId,
                    QString pointADescription,
                    QString pointBDescription, QString linkDescription, bool p2p):
-  m_fromId(fromId), m_toId (toId), m_p2p(p2p)
+  m_fromId (fromId), m_toId (toId), m_p2p (p2p)
 {
   m_pointADescription = 0;
   m_pointBDescription = 0;
   m_currentLinkDescription = 0;
 
-  if(!m_p2p)
+  if (!m_p2p)
     {
 
       m_toId = m_fromId;
     }
-  QLineF line (AnimNodeMgr::getInstance()->getNode(m_fromId)->getCenter(),
-               AnimNodeMgr::getInstance()->getNode(m_toId)->getCenter());
-  setLine(line);
+  QLineF line (AnimNodeMgr::getInstance ()->getNode (m_fromId)->getCenter (),
+               AnimNodeMgr::getInstance ()->getNode (m_toId)->getCenter ());
+  setLine (line);
 
   if (pointADescription != "")
     {
-      m_pointADescription = new QString(pointADescription);
-      QStringList parts = (*m_pointADescription).split('~');
-      if(parts.count() == 2)
+      m_pointADescription = new QString (pointADescription);
+      QStringList parts = (*m_pointADescription).split ('~');
+      if (parts.count () == 2)
         {
-          AnimNodeMgr::getInstance()->addIpv4Address(fromId, parts.at(0));
-          AnimNodeMgr::getInstance()->addMacAddress(fromId, parts.at(1));
+          AnimNodeMgr::getInstance ()->addIpv4Address (fromId, parts.at (0));
+          AnimNodeMgr::getInstance ()->addMacAddress (fromId, parts.at (1));
         }
 
     }
   if (pointBDescription != "")
     {
-      m_pointBDescription = new QString(pointBDescription);
-      QStringList parts = (*m_pointBDescription).split('~');
-      if(parts.count() == 2)
+      m_pointBDescription = new QString (pointBDescription);
+      QStringList parts = (*m_pointBDescription).split ('~');
+      if (parts.count () == 2)
         {
-          AnimNodeMgr::getInstance()->addIpv4Address(fromId, parts.at(0));
-          AnimNodeMgr::getInstance()->addMacAddress(fromId, parts.at(1));
+          AnimNodeMgr::getInstance ()->addIpv4Address (fromId, parts.at (0));
+          AnimNodeMgr::getInstance ()->addMacAddress (fromId, parts.at (1));
         }
     }
-  m_originalLinkDescription = new QString("");
+  m_originalLinkDescription = new QString ("");
   if (linkDescription != "")
     {
-      m_currentLinkDescription = new QString(linkDescription);
+      m_currentLinkDescription = new QString (linkDescription);
       *m_originalLinkDescription = linkDescription;
     }
-  setZValue(ANIMLINK_ZVALUE);
+  setZValue (ANIMLINK_ZVALUE);
 }
 
-AnimLink::~AnimLink()
+AnimLink::~AnimLink ()
 {
   if (m_pointADescription)
     delete m_pointADescription;
@@ -91,94 +91,94 @@ AnimLink::~AnimLink()
 
 
 void
-AnimLink::repairLink()
+AnimLink::repairLink ()
 {
   if (!m_p2p)
     return;
-  QLineF line (AnimNodeMgr::getInstance()->getNode(m_fromId)->getCenter(),
-               AnimNodeMgr::getInstance()->getNode(m_toId)->getCenter());
-  setLine(line);
+  QLineF line (AnimNodeMgr::getInstance ()->getNode (m_fromId)->getCenter (),
+               AnimNodeMgr::getInstance ()->getNode (m_toId)->getCenter ());
+  setLine (line);
 }
 
 QPointF
-AnimLink::getLinkDescriptionCenter(QPainter * painter , QPointF * offset)
+AnimLink::getLinkDescriptionCenter (QPainter * painter , QPointF * offset)
 {
-  QFontMetrics fm = painter->fontMetrics();
-  qreal x = (line().length() - fm.width(m_currentLinkDescription->toAscii().data()))/2;
-  QPointF pOffset = line().p1().x() < line().p2().x()? line().p1():line().p2();
+  QFontMetrics fm = painter->fontMetrics ();
+  qreal x = (line ().length () - fm.width (m_currentLinkDescription->toAscii ().data ()))/2;
+  QPointF pOffset = line ().p1 ().x () < line ().p2 ().x ()? line ().p1 ():line ().p2 ();
   *offset = pOffset;
-  QPointF p = QPointF(x, -1);
+  QPointF p = QPointF (x, -1);
   return p;
 }
 
 void
-AnimLink::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+AnimLink::paint (QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
-  Q_UNUSED(option);
-  Q_UNUSED(widget);
-  painter->drawLine(line());
+  Q_UNUSED (option);
+  Q_UNUSED (widget);
+  painter->drawLine (line ());
   QFont font;
-  font.setPointSize(2);
+  font.setPointSize (2);
   QPen pen;
-  pen.setColor(Qt::darkRed);
-  painter->setFont(font);
-  painter->setPen(pen);
+  pen.setColor (Qt::darkRed);
+  painter->setFont (font);
+  painter->setPen (pen);
   if (m_currentLinkDescription)
     {
       QPointF offset;
-      QPointF center = getLinkDescriptionCenter(painter, &offset);
-      painter->save();
-      painter->translate(offset);
+      QPointF center = getLinkDescriptionCenter (painter, &offset);
+      painter->save ();
+      painter->translate (offset);
 
-      if (offset != line().p1())
+      if (offset != line ().p1 ())
         {
-          painter->rotate(180-line().angle());
+          painter->rotate (180-line ().angle ());
         }
       else
         {
-          painter->rotate(-line().angle());
+          painter->rotate (-line ().angle ());
         }
-      painter->drawText(center, *m_currentLinkDescription);
-      painter->restore();
+      painter->drawText (center, *m_currentLinkDescription);
+      painter->restore ();
     }
 
-  if(!m_p2p)
+  if (!m_p2p)
     {
-      m_interfacePosA = line().p1();
+      m_interfacePosA = line ().p1 ();
     }
 
-  QList <QGraphicsItem *> collidingList = collidingItems();
-  for (QList <QGraphicsItem *>::const_iterator i = collidingList.begin();
-       i != collidingList.end();
+  QList <QGraphicsItem *> collidingList = collidingItems ();
+  for (QList <QGraphicsItem *>::const_iterator i = collidingList.begin ();
+       i != collidingList.end ();
        ++i)
     {
       QGraphicsItem * item = *i;
-      if(item->type() == ANIMNODE_TYPE)
+      if (item->type () == ANIMNODE_TYPE)
         {
           AnimNode * node = qgraphicsitem_cast <AnimNode *> (item);
-          qreal radius = node->sceneBoundingRect().width()/2;
-          QPointF center = node->getCenter();
+          qreal radius = node->sceneBoundingRect ().width ()/2;
+          QPointF center = node->getCenter ();
 
 
           QPointF other;
-          if ((center.x() == line().x1()) && (center.y() == line().y1()))
+          if ( (center.x () == line ().x1 ()) && (center.y () == line ().y1 ()))
             {
-              other = line().p2();
+              other = line ().p2 ();
               QLineF l (center, other);
-              if(!m_p2p)
+              if (!m_p2p)
                 {
-                  l = QLineF(center, QPointF(center.x(), 0));
+                  l = QLineF (center, QPointF (center.x (), 0));
                 }
 
-              l.setLength(radius);
-              m_interfacePosA = l.p1();
+              l.setLength (radius);
+              m_interfacePosA = l.p1 ();
             }
           else
             {
-              other = line().p1();
+              other = line ().p1 ();
               QLineF l (center, other);
-              l.setLength(radius);
-              m_interfacePosB = l.p2();
+              l.setLength (radius);
+              m_interfacePosB = l.p2 ();
             }
 
 
@@ -188,18 +188,18 @@ AnimLink::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidg
 
 
 void
-AnimLink::updateCurrentLinkDescription(QString linkDescription)
+AnimLink::updateCurrentLinkDescription (QString linkDescription)
 {
-  if(!m_currentLinkDescription)
+  if (!m_currentLinkDescription)
     {
-      m_currentLinkDescription = new QString(linkDescription);
+      m_currentLinkDescription = new QString (linkDescription);
       return;
     }
   *m_currentLinkDescription = linkDescription;
 }
 
 void
-AnimLink::resetCurrentLinkDescription()
+AnimLink::resetCurrentLinkDescription ()
 {
   if (m_originalLinkDescription)
     {
@@ -208,26 +208,26 @@ AnimLink::resetCurrentLinkDescription()
 }
 
 QString
-AnimLink::toString()
+AnimLink::toString ()
 {
-  QString s = QString("From:") + QString::number(m_fromId) + " To:" + QString::number(m_toId);
+  QString s = QString ("From:") + QString::number (m_fromId) + " To:" + QString::number (m_toId);
   return s;
 }
 
 QPointF
-AnimLink::getInterfacePosA()
+AnimLink::getInterfacePosA ()
 {
   return m_interfacePosA;
 }
 
 QPointF
-AnimLink::getInterfacePosB()
+AnimLink::getInterfacePosB ()
 {
   return m_interfacePosB;
 }
 
 QString
-AnimLink::getInterfaceADescription()
+AnimLink::getInterfaceADescription ()
 {
   if (m_pointADescription)
     {
@@ -241,7 +241,7 @@ AnimLink::getInterfaceADescription()
 }
 
 QString
-AnimLink::getInterfaceBDescription()
+AnimLink::getInterfaceBDescription ()
 {
   if (m_pointBDescription)
     {
@@ -254,15 +254,15 @@ AnimLink::getInterfaceBDescription()
 }
 
 
-LinkManager::LinkManager()
+LinkManager::LinkManager ()
 {
 
 }
 
 LinkManager *
-LinkManager::getInstance()
+LinkManager::getInstance ()
 {
-  if(!pLinkManager)
+  if (!pLinkManager)
     {
       pLinkManager = new LinkManager;
     }
@@ -270,49 +270,49 @@ LinkManager::getInstance()
 }
 
 AnimLink *
-LinkManager::addLink(uint32_t fromId, uint32_t toId, QString pointADescription, QString pointBDescription, QString linkDescription, bool p2p)
+LinkManager::addLink (uint32_t fromId, uint32_t toId, QString pointADescription, QString pointBDescription, QString linkDescription, bool p2p)
 {
-  AnimLink * item = new AnimLink(fromId, toId, pointADescription, pointBDescription, linkDescription, p2p);
-  if(m_pointToPointLinks.find(fromId) == m_pointToPointLinks.end())
+  AnimLink * item = new AnimLink (fromId, toId, pointADescription, pointBDescription, linkDescription, p2p);
+  if (m_pointToPointLinks.find (fromId) == m_pointToPointLinks.end ())
     {
       LinkManager::AnimLinkVector_t v;
-      v.push_back(item);
+      v.push_back (item);
       m_pointToPointLinks[fromId] = v;
       return item;
     }
   else
     {
       LinkManager::AnimLinkVector_t & v = m_pointToPointLinks[fromId];
-      v.push_back(item);
+      v.push_back (item);
       return item;
     }
 }
 
 LinkManager::NodeIdAnimLinkVectorMap_t *
-LinkManager::getLinks()
+LinkManager::getLinks ()
 {
   return &m_pointToPointLinks;
 }
 
 AnimLink *
-LinkManager::getAnimLink(uint32_t fromId, uint32_t toId)
+LinkManager::getAnimLink (uint32_t fromId, uint32_t toId)
 {
   AnimLink * theLink = 0;
-  for(LinkManager::NodeIdAnimLinkVectorMap_t::const_iterator i = m_pointToPointLinks.begin();
-      i != m_pointToPointLinks.end();
+  for (LinkManager::NodeIdAnimLinkVectorMap_t::const_iterator i = m_pointToPointLinks.begin ();
+      i != m_pointToPointLinks.end ();
       ++i)
     {
-      if(fromId != i->first)
+      if (fromId != i->first)
         {
           continue;
         }
       LinkManager::AnimLinkVector_t v = i->second;
-      for(LinkManager::AnimLinkVector_t::const_iterator j = v.begin();
-          j != v.end();
+      for (LinkManager::AnimLinkVector_t::const_iterator j = v.begin ();
+          j != v.end ();
           ++j)
         {
           AnimLink * link = *j;
-          if ((link->m_fromId == fromId && link->m_toId == toId) ||
+          if ( (link->m_fromId == fromId && link->m_toId == toId) ||
               (link->m_fromId == toId && link->m_toId == fromId))
             return link;
         }
@@ -322,40 +322,40 @@ LinkManager::getAnimLink(uint32_t fromId, uint32_t toId)
 }
 
 void
-LinkManager::updateLink(uint32_t fromId, uint32_t toId, QString linkDescription)
+LinkManager::updateLink (uint32_t fromId, uint32_t toId, QString linkDescription)
 {
-  AnimLink * animLink = getAnimLink(fromId, toId);
+  AnimLink * animLink = getAnimLink (fromId, toId);
   if (animLink)
     {
-      animLink->updateCurrentLinkDescription(linkDescription);
+      animLink->updateCurrentLinkDescription (linkDescription);
     }
   //animLink-
 }
 
 void
-LinkManager::systemReset()
+LinkManager::systemReset ()
 {
   // remove links
-  m_pointToPointLinks.clear();
+  m_pointToPointLinks.clear ();
 
 }
 
 void
-LinkManager::repairLinks(uint32_t nodeId)
+LinkManager::repairLinks (uint32_t nodeId)
 {
-  for(LinkManager::NodeIdAnimLinkVectorMap_t::const_iterator i = m_pointToPointLinks.begin();
-      i != m_pointToPointLinks.end();
+  for (LinkManager::NodeIdAnimLinkVectorMap_t::const_iterator i = m_pointToPointLinks.begin ();
+      i != m_pointToPointLinks.end ();
       ++i)
     {
       LinkManager::AnimLinkVector_t v = i->second;
-      for(LinkManager::AnimLinkVector_t::const_iterator j = v.begin();
-          j != v.end();
+      for (LinkManager::AnimLinkVector_t::const_iterator j = v.begin ();
+          j != v.end ();
           ++j)
         {
           AnimLink * animLink = *j;
-          if((animLink->m_fromId == nodeId) || (animLink->m_toId == nodeId))
+          if ((animLink->m_fromId == nodeId) || (animLink->m_toId == nodeId))
             {
-              animLink->repairLink();
+              animLink->repairLink ();
             }
         }
     }

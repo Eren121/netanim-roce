@@ -22,15 +22,15 @@ namespace netanim
 
 StatsView * pStatsView = 0;
 
-StatsView::StatsView()
+StatsView::StatsView ()
 {
 
 }
 
 StatsView *
-StatsView::getInstance()
+StatsView::getInstance ()
 {
-  if(!pStatsView)
+  if (!pStatsView)
     {
       pStatsView = new StatsView;
     }

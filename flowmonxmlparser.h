@@ -127,25 +127,25 @@ struct FlowMonParsedElement
 class FlowMonXmlparser
 {
 public:
-  FlowMonXmlparser(QString traceFileName);
-  ~FlowMonXmlparser();
-  FlowMonParsedElement parseNext();
-  bool isParsingComplete();
-  bool isFileValid();
-  uint64_t getFlowCount();
-  void doParse();
-  FlowMonParsedElement parseFlowMonitor();
-  FlowMonParsedElement parseFlowStats();
-  FlowMonParsedElement parseFlowProbes();
-  FlowProbe_t parseFlowProbe();
-  FlowProbeFlowStats_t parseFlowProbeFlowStats();
-  FlowProbeFlowStats_t parseFlowProbeFlowStat();
-  FlowMonParsedElement parseFlowStatsFlow();
-  FlowMonParsedElement parseIpv4Classifier();
-  FlowMonParsedElement parseIpv4ClassifierFlow();
-  Histogram_t parseHistogram(QString name);
-  void parsePacketsDropped(FlowStatsFlow_t &);
-  void parseBytesDropped(FlowStatsFlow_t &);
+  FlowMonXmlparser (QString traceFileName);
+  ~FlowMonXmlparser ();
+  FlowMonParsedElement parseNext ();
+  bool isParsingComplete ();
+  bool isFileValid ();
+  uint64_t getFlowCount ();
+  void doParse ();
+  FlowMonParsedElement parseFlowMonitor ();
+  FlowMonParsedElement parseFlowStats ();
+  FlowMonParsedElement parseFlowProbes ();
+  FlowProbe_t parseFlowProbe ();
+  FlowProbeFlowStats_t parseFlowProbeFlowStats ();
+  FlowProbeFlowStats_t parseFlowProbeFlowStat ();
+  FlowMonParsedElement parseFlowStatsFlow ();
+  FlowMonParsedElement parseIpv4Classifier ();
+  FlowMonParsedElement parseIpv4ClassifierFlow ();
+  Histogram_t parseHistogram (QString name);
+  void parsePacketsDropped (FlowStatsFlow_t &);
+  void parseBytesDropped (FlowStatsFlow_t &);
 
 
 

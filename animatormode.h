@@ -40,27 +40,27 @@ class AnimatorMode: public Mode
 public:
   // Getters
 
-  static AnimatorMode * getInstance();
-  QWidget * getCentralWidget();
-  QString getTabName();
-  qreal getCurrentNodeSize();
-  QGraphicsPixmapItem * getBackground();
+  static AnimatorMode * getInstance ();
+  QWidget * getCentralWidget ();
+  QString getTabName ();
+  qreal getCurrentNodeSize ();
+  QGraphicsPixmapItem * getBackground ();
 
   // Setters
 
-  void setParsingCount(uint64_t parsingCount);
-  void setVersion(double version);
-  void setWPacketDetected();
-  void setFocus(bool focus);
-  void setCurrentTime(qreal currentTime);
+  void setParsingCount (uint64_t parsingCount);
+  void setVersion (double version);
+  void setWPacketDetected ();
+  void setFocus (bool focus);
+  void setCurrentTime (qreal currentTime);
   void addAnimEvent (qreal t, AnimEvent *);
 
   // Actions
 
-  bool keepAppResponsive();
-  void showPopup(QString msg);
-  void externalPauseEvent();
-  void start();
+  bool keepAppResponsive ();
+  void showPopup (QString msg);
+  void externalPauseEvent ();
+  void start ();
 
 private:
 
@@ -147,69 +147,69 @@ private:
 
 
   //functions
-  AnimatorMode();
-  bool parseXMLTraceFile(QString traceFileName);
-  void setLabelStyleSheet();
-  void initUpdateRate();
-  void enableAllToolButtons(bool show);
-  qreal nodeSizeStringToValue(QString nodeSize);
-  void systemReset();
-  void preParse();
-  void postParse();
-  void initToolbars();
-  void initLabels();
-  void initControls();
-  void setTopToolbarWidgets();
-  void setVerticalToolbarWidgets();
-  void setBottomToolbarWidgets();
-  void setToolButtonVector();
-  void setControlDefaults();
-  bool checkSimulationCompleted();
-  void doSimulationCompleted();
-  void timerCleanup();
-  void showParsingXmlDialog(bool show);
-  void setProgressBarRange(uint64_t rxCount);
-  void init();
-  void showAnimatorView(bool show);
-  void showPackets(bool show);
-  void setMaxSimulationTime(double maxTime);
-  void resetBackground();
-  void displayPacket(qreal t);
+  AnimatorMode ();
+  bool parseXMLTraceFile (QString traceFileName);
+  void setLabelStyleSheet ();
+  void initUpdateRate ();
+  void enableAllToolButtons (bool show);
+  qreal nodeSizeStringToValue (QString nodeSize);
+  void systemReset ();
+  void preParse ();
+  void postParse ();
+  void initToolbars ();
+  void initLabels ();
+  void initControls ();
+  void setTopToolbarWidgets ();
+  void setVerticalToolbarWidgets ();
+  void setBottomToolbarWidgets ();
+  void setToolButtonVector ();
+  void setControlDefaults ();
+  bool checkSimulationCompleted ();
+  void doSimulationCompleted ();
+  void timerCleanup ();
+  void showParsingXmlDialog (bool show);
+  void setProgressBarRange (uint64_t rxCount);
+  void init ();
+  void showAnimatorView (bool show);
+  void showPackets (bool show);
+  void setMaxSimulationTime (double maxTime);
+  void resetBackground ();
+  void displayPacket (qreal t);
   void dispatchEvents ();
-  void setSimulationCompleted();
-  void purgeAnimatedNodes();
-  void fastForward(qreal t);
-  void reset();
-  QPropertyAnimation * getButtonAnimation(QToolButton * toolButton);
+  void setSimulationCompleted ();
+  void purgeAnimatedNodes ();
+  void fastForward (qreal t);
+  void reset ();
+  QPropertyAnimation * getButtonAnimation (QToolButton * toolButton);
 
 
 private slots:
-  void testSlot();
-  void clickTraceFileOpenSlot();
-  void reloadFileSlot();
-  void clickZoomInSlot();
-  void clickZoomOutSlot();
-  void clickResetSlot();
-  void clickPlaySlot();
-  void clickAddCustomImageSlot();
-  void updateTimelineSlot(int value);
-  void updateRateTimeoutSlot();
-  void updateGridLinesSlot(int value);
-  void updateNodeSizeSlot(QString value);
-  void updateUpdateRateSlot(int);
-  void showGridLinesSlot();
-  void showNodeIdSlot();
-  void showMetaSlot();
-  void showPacketSlot();
-  void showWirelessCirclesSlot();
-  void showPacketStatsSlot();
-  void showNodePositionStatsSlot();
-  void showIpSlot();
-  void showMacSlot();
-  void showRoutePathSlot();
-  void showBatteryCapacitySlot();
-  void packetAnimationGroupFinishedSlot();
-  void buttonAnimationGroupFinishedSlot();
+  void testSlot ();
+  void clickTraceFileOpenSlot ();
+  void reloadFileSlot ();
+  void clickZoomInSlot ();
+  void clickZoomOutSlot ();
+  void clickResetSlot ();
+  void clickPlaySlot ();
+  void clickAddCustomImageSlot ();
+  void updateTimelineSlot (int value);
+  void updateRateTimeoutSlot ();
+  void updateGridLinesSlot (int value);
+  void updateNodeSizeSlot (QString value);
+  void updateUpdateRateSlot (int);
+  void showGridLinesSlot ();
+  void showNodeIdSlot ();
+  void showMetaSlot ();
+  void showPacketSlot ();
+  void showWirelessCirclesSlot ();
+  void showPacketStatsSlot ();
+  void showNodePositionStatsSlot ();
+  void showIpSlot ();
+  void showMacSlot ();
+  void showRoutePathSlot ();
+  void showBatteryCapacitySlot ();
+  void packetAnimationGroupFinishedSlot ();
+  void buttonAnimationGroupFinishedSlot ();
 };
 
 

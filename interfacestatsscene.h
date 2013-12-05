@@ -33,12 +33,12 @@ class InterfaceStatsScene : public QGraphicsScene
 {
 
 public:
-  static InterfaceStatsScene * getInstance();
-  void test();
-  void add(uint32_t nodeId, QString pointADescription, uint32_t otherNodeId, QString pointBDescription, QString linkDescription);
-  void adjustRect();
-  void systemReset();
-  void reloadContent(bool force = false);
+  static InterfaceStatsScene * getInstance ();
+  void test ();
+  void add (uint32_t nodeId, QString pointADescription, uint32_t otherNodeId, QString pointBDescription, QString linkDescription);
+  void adjustRect ();
+  void systemReset ();
+  void reloadContent (bool force = false);
 private:
   typedef struct
   {
@@ -50,10 +50,10 @@ private:
 
   typedef std::vector <QGraphicsProxyWidget *> ProxyWidgetVector_t;
   typedef std::map <uint32_t, ProxyWidgetVector_t> NodeIdProxyWidgetVectorMap_t;
-  InterfaceStatsScene();
-  void addToProxyWidgetsMap(uint32_t nodeId, QGraphicsProxyWidget *);
-  void clearProxyWidgetsMap();
-  void showInfoWidget(bool show = true);
+  InterfaceStatsScene ();
+  void addToProxyWidgetsMap (uint32_t nodeId, QGraphicsProxyWidget *);
+  void clearProxyWidgetsMap ();
+  void showInfoWidget (bool show = true);
   qreal m_lastX;
   qreal m_lastY;
   qreal m_bottomY;
