@@ -18,8 +18,8 @@
 
 #ifndef MODE_H
 #define MODE_H
-#include <stdint.h>
-#include <QWidget>
+
+#include "common.h"
 
 class Mode: public QWidget
 {

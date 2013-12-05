@@ -1,6 +1,7 @@
 #ifndef COMMON_H
 #define COMMON_H
 #include <stdint.h>
+#include <math.h>
 
 #include <QWidget>
 #include <QtGui/QToolButton>
@@ -22,4 +23,22 @@
 #include <QPushButton>
 #include <QGraphicsScene>
 #include <QGraphicsView>
+#include <QtCore/QXmlStreamReader>
+#include <QFile>
+#include <QTimer>
+#include <QDialog>
+#include <QApplication>
+#include <QMessageBox>
+#include <QFileDialog>
+#include <QGraphicsSceneHoverEvent>
+#include <QGraphicsProxyWidget>
+#include <QRegExp>
+#include <QFontMetrics>
+#include <QDesktopWidget>
+
+
+
+#include "log.h"
+#include "fatal-error.h"
+
 #endif // COMMON_H

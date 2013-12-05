@@ -18,9 +18,7 @@
 #ifndef ROUTINGXMLPARSER_H
 #define ROUTINGXMLPARSER_H
 
-#include "stdint.h"
-#include <QXmlStreamReader>
-#include <QFile>
+#include "common.h"
 
 namespace netanim
 {

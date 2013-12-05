@@ -21,10 +21,6 @@
 #include "animatormode.h"
 #include "routingstatsscene.h"
 
-#include <QFile>
-#include <QRegExp>
-#include <QMessageBox>
-
 namespace netanim
 {
 

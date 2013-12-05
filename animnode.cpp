@@ -16,19 +16,9 @@
  * Author: John Abraham <john.abraham.in@gmail.com>
  */
 
-#include <QPainter>
-#include <QGraphicsScene>
 #include "animnode.h"
-#include "animatorview.h"
-#include "animatorconstants.h"
-#include "logqt.h"
-#include "log.h"
-#include "fatal-error.h"
-#include "assert.h"
 
 NS_LOG_COMPONENT_DEFINE ("AnimNode");
-
-
 namespace netanim
 {
 

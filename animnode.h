@@ -18,11 +18,8 @@
 #ifndef ANIMNODE_H
 #define ANIMNODE_H
 
-#include <QGraphicsTextItem>
 #include "common.h"
 #include "resizeableitem.h"
-
-#include <map>
 
 namespace netanim
 {

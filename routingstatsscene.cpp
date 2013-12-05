@@ -23,10 +23,6 @@
 #include "animatormode.h"
 #include "timevalue.h"
 
-#include <QGraphicsProxyWidget>
-#include <QFont>
-#include <QFontMetrics>
-
 namespace netanim
 {
 

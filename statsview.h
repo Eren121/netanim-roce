@@ -19,7 +19,7 @@
 #ifndef STATSVIEW_H
 #define STATSVIEW_H
 
-#include <QGraphicsView>
+#include "common.h"
 
 namespace netanim
 {

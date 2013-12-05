@@ -19,10 +19,8 @@
 #ifndef NETANIM_H
 #define NETANIM_H
 
-#include <map>
+#include "common.h"
 #include "mode.h"
-
-#include <QTabWidget>
 
 namespace netanim
 {

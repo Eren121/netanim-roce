@@ -18,8 +18,6 @@
 
 
 #include "animresource.h"
-#include "fatal-error.h"
-#include <QString>
 
 AnimResourceManager * pResourceManager = 0;
 

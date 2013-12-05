@@ -17,11 +17,6 @@
  */
 
 #include "textbubble.h"
-#include <QPainter>
-#include <QPainterPath>
-#include <QFontMetrics>
-#include <QMessageBox>
-#include <iostream>
 
 using namespace std;
 namespace netanim

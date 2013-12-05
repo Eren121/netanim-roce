@@ -18,14 +18,6 @@
 
 
 #include "animatorview.h"
-#include "animatorscene.h"
-#include "logqt.h"
-
-#include <QtGui/QGraphicsScene>
-#include <QPaintEvent>
-#include <QMouseEvent>
-#include <QFileDialog>
-#include "resizeableitem.h"
 
 namespace netanim
 {

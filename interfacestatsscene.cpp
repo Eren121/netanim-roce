@@ -23,7 +23,6 @@
 #include "animlink.h"
 #include "animatormode.h"
 
-#include <QGraphicsProxyWidget>
 namespace netanim
 {
 

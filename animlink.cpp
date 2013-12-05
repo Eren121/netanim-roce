@@ -16,12 +16,8 @@
  * Author: John Abraham <john.abraham.in@gmail.com>
  */
 
-#include "animlink.h"
-#include "animatorconstants.h"
 #include "animnode.h"
-
-
-#include <QPainter>
+#include "animlink.h"
 
 namespace netanim
 {

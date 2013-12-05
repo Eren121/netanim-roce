@@ -16,33 +16,13 @@
  * Author: John Abraham <john.abraham.in@gmail.com>
  */
 
+#include "common.h"
 #include "animatormode.h"
 #include "animatorscene.h"
 #include "animatorview.h"
 #include "animxmlparser.h"
 #include "animlink.h"
 #include "animresource.h"
-#include <QFile>
-#include <QtCore/QDebug>
-#include <QtCore/QtPlugin>
-#include <QtGui/QAction>
-#include <QtGui/QMenu>
-#include <QtGui/QMessageBox>
-#include <QtGui/QPushButton>
-#include <QtGui/QGraphicsScene>
-#include <QtGui/QGraphicsView>
-#include <QtGui/QVBoxLayout>
-#include <QtGui/QToolButton>
-#include <QtGui/QMacStyle>
-#include <QGraphicsSimpleTextItem>
-#include <QFileDialog>
-#include <QXmlStreamReader>
-#include <QTimer>
-#include <QApplication>
-#include <QDesktopWidget>
-#include <QThread>
-#include <QPropertyAnimation>
-#include <QParallelAnimationGroup>
 #include "statsmode.h"
 
 
@@ -674,7 +654,7 @@ AnimatorMode::addAnimEvent (qreal t, AnimEvent * event)
 bool
 AnimatorMode::parseXMLTraceFile (QString traceFileName)
 {
-  NS_LOG_DEBUG ("parsing File:" << traceFileName.toAscii ().data ());
+ // NS_LOG_DEBUG ("parsing File:" << traceFileName.toAscii ().data ());
   m_rxCount = 0;
   Animxmlparser parser (traceFileName);
   if (!parser.isFileValid ())

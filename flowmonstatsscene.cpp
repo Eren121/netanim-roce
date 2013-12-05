@@ -20,8 +20,7 @@
 #include "flowmonstatsscene.h"
 #include "statisticsconstants.h"
 #include "textbubble.h"
-#include <QGraphicsProxyWidget>
-#include <QFontMetrics>
+
 
 namespace netanim
 {

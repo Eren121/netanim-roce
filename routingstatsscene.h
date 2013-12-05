@@ -18,12 +18,9 @@
 #ifndef ROUTINGSTATSSCENE_H
 #define ROUTINGSTATSSCENE_H
 
+#include "common.h"
 #include "timevalue.h"
 #include "routingxmlparser.h"
-#include <map>
-#include <vector>
-#include <QGraphicsScene>
-#include <QGraphicsProxyWidget>
 
 namespace netanim
 {

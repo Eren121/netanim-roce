@@ -19,12 +19,7 @@
 #ifndef FLOWMONXMLPARSER_H
 #define FLOWMONXMLPARSER_H
 
-#include <map>
-#include <vector>
-#include <stdint.h>
-#include <QString>
-#include <QXmlStreamReader>
-#include <QFile>
+#include "common.h"
 
 namespace netanim
 {

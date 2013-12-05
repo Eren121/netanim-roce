@@ -19,13 +19,8 @@
 #ifndef RESIZEABLEITEM_H
 #define RESIZEABLEITEM_H
 
-#include <stdint.h>
+#include "common.h"
 #include "animatorconstants.h"
-
-#include <QGraphicsItem>
-#include <QGraphicsSceneMouseEvent>
-
-
 
 #define PIXMAP_RESIZING_BORDER 5
 #define PIXMAP_WIDTH_MIN 20

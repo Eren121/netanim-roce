@@ -19,9 +19,7 @@
 #ifndef ANIMRESOURCE_H
 #define ANIMRESOURCE_H
 
-#include <Qt>
-#include <map>
-#include <stdint.h>
+#include "common.h"
 
 
 class AnimResourceManager

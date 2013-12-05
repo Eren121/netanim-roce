@@ -18,13 +18,10 @@
 #ifndef FLOWMONSTATSSCENE_H
 #define FLOWMONSTATSSCENE_H
 
+#include "common.h"
 #include "timevalue.h"
 #include "flowmonxmlparser.h"
 
-#include <map>
-#include <vector>
-#include <QGraphicsScene>
-#include <QGraphicsProxyWidget>
 
 namespace netanim
 {

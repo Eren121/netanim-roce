@@ -16,10 +16,6 @@
  * Author: John Abraham <john.abraham.in@gmail.com>
  */
 
-#include <QApplication>
-#include <QGraphicsView>
-#include "animatorscene.h"
-#include "log.h"
 #include "netanim.h"
 
 using namespace ns3;

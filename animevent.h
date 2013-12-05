@@ -19,8 +19,7 @@
 #ifndef ANIMEVENT_H
 #define ANIMEVENT_H
 
-#include <stdint.h>
-#include <Qt>
+#include "common.h"
 namespace netanim
 {
 

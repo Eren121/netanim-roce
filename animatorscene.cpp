@@ -16,22 +16,9 @@
  * Author: John Abraham <john.abraham.in@gmail.com>
  */
 
-#include "log.h"
-#include "logqt.h"
+
 #include "animatorscene.h"
 #include "animatorview.h"
-#include "animnode.h"
-#include "animlink.h"
-#include <QGraphicsProxyWidget>
-#include <QGraphicsSceneHoverEvent>
-#include <QGraphicsView>
-#include <QGraphicsLineItem>
-#include <QLabel>
-#include "timevalue.h"
-#include <math.h>
-#include <string.h>
-#include <sstream>
-
 
 namespace netanim
 {

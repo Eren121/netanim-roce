@@ -30,12 +30,6 @@
 #include "textbubble.h"
 #include "timevalue.h"
 
-#include <vector>
-#include <map>
-#include <QGraphicsProxyWidget>
-#include <QFileDialog>
-#include <QApplication>
-#include <QMessageBox>
 
 namespace netanim
 {

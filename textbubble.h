@@ -19,8 +19,7 @@
 #ifndef TEXTBUBBLE_H
 #define TEXTBUBBLE_H
 
-#include <QLabel>
-
+#include "common.h"
 
 namespace netanim
 {

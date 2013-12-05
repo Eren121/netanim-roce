@@ -18,13 +18,7 @@
 #ifndef ANIMLINK_H
 #define ANIMLINK_H
 
-#include "animatorconstants.h"
-#include <QGraphicsLineItem>
-#include <QString>
-
-#include <map>
-#include <stdint.h>
-
+#include "common.h"
 namespace netanim
 {
 

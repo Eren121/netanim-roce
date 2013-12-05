@@ -19,21 +19,7 @@
 #ifndef STATSMODE_H
 #define STATSMODE_H
 
-#include <vector>
-#include <Qt>
-#include <QWidget>
-#include <QToolBar>
-#include <QVBoxLayout>
-#include <QHBoxLayout>
-#include <QPushButton>
-#include <QScrollArea>
-#include <QComboBox>
-#include <QToolButton>
-#include <QProgressBar>
-#include <QLabel>
-#include <QLCDNumber>
-#include <QSlider>
-#include <QSpinBox>
+#include "common.h"
 #include "mode.h"
 
 namespace netanim

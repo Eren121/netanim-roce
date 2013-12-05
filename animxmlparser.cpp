@@ -17,7 +17,6 @@
  */
 
 
-#include <stdint.h>
 #include "animxmlparser.h"
 #include "animatormode.h"
 #include "animatorscene.h"
@@ -25,8 +24,6 @@
 #include "animlink.h"
 #include "animresource.h"
 
-#include <QFile>
-#include <QRegExp>
 
 namespace netanim
 {

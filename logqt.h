@@ -19,10 +19,7 @@
 #ifndef LOGQT_H
 #define LOGQT_H
 
-#include <QPointF>
-#include <QRectF>
-#include <QTransform>
-#include <iostream>
+#include "common.h"
 #include "animpacket.h"
 
 namespace netanim

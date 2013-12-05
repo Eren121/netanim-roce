@@ -22,10 +22,6 @@
 #include "designer/designermode.h"
 #endif
 
-#include <QObject>
-#include <QApplication>
-#include <QDesktopWidget>
-
 namespace netanim
 {
 

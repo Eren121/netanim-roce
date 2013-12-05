@@ -16,13 +16,7 @@
  * Author: John Abraham <john.abraham.in@gmail.com>
  */
 
-#include <QCursor>
-#include <QGraphicsView>
-#include <QGraphicsEllipseItem>
-
 #include "resizeableitem.h"
-#include "logqt.h"
-#include "log.h"
 
 NS_LOG_COMPONENT_DEFINE ("ResizeableItem");
 

@@ -19,12 +19,8 @@
 #ifndef ANIMXMLPARSER_H
 #define ANIMXMLPARSER_H
 
-#include <QDialog>
-#include <QFile>
-#include <QtCore/QXmlStreamReader>
-#include <QLabel>
-#include <QTableWidget>
 
+#include "common.h"
 #include "animevent.h"
 
 namespace netanim

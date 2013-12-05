@@ -18,8 +18,7 @@
 
 #ifndef ANIMPACKET_H
 #define ANIMPACKET_H
-#include "qglobal.h"
-#include <QGraphicsItem>
+#include "common.h"
 #include "animatorconstants.h"
 #include "common.h"
 #include "timevalue.h"

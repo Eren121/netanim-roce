@@ -19,12 +19,7 @@
 #ifndef INTERFACESTATSSCENE_H
 #define INTERFACESTATSSCENE_H
 
-#include <map>
-#include <stdint.h>
-#include <vector>
-#include <QGraphicsScene>
-#include <QGraphicsProxyWidget>
-
+#include "common.h"
 
 namespace netanim
 {
