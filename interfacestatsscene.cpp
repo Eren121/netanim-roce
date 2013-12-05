@@ -13,7 +13,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
- * Author: John Abraham <john.abraham@gatech.edu>
+ * Author: John Abraham <john.abraham.in@gmail.com>
  */
 
 #include "interfacestatsscene.h"

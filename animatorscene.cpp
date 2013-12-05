@@ -1,3 +1,21 @@
+/* -*- Mode:C++; c-file-style:"gnu"; indent-tabs-mode:nil; -*- */
+/*
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 as
+ * published by the Free Software Foundation;
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ * Author: John Abraham <john.abraham.in@gmail.com>
+ */
+
 #include "log.h"
 #include "logqt.h"
 #include "animatorscene.h"
@@ -21,11 +39,9 @@ namespace netanim
 NS_LOG_COMPONENT_DEFINE("AnimatorScene");
 AnimatorScene * pAnimatorScene = 0;
 
-AnimatorScene::AnimatorScene():QGraphicsScene(0, 0, ANIMATORSCENE_USERAREA_WIDTH, ANIMATORSCENE_USERAREA_WIDTH)
+AnimatorScene::AnimatorScene():
+    QGraphicsScene(0, 0, ANIMATORSCENE_USERAREA_WIDTH, ANIMATORSCENE_USERAREA_WIDTH)
 {
-    m_userAreadWidth = ANIMATORSCENE_USERAREA_WIDTH;
-    m_userAreaHeight = ANIMATORSCENE_USERAREA_HEIGHT;
-
 
     /*m_background = new ResizeablePixmap(pix);
     m_background->setFlags(QGraphicsItem::ItemIsMovable|QGraphicsItem::ItemIsSelectable);
@@ -65,16 +81,6 @@ AnimatorScene::systemReset()
 void AnimatorScene::testSlot()
 {
 
-}
-
-void AnimatorScene::setUserAreaHeight(qreal h)
-{
-    m_userAreaHeight = h;
-}
-
-void AnimatorScene::setUserAreaWidth(qreal w)
-{
-    m_userAreadWidth = w;
 }
 
 
@@ -206,10 +212,6 @@ AnimatorScene::addPacket(AnimPacket *p)
     m_animatedPackets.push_back(p);
 }
 
-void AnimatorScene::addPix()
-{
-
-}
 
 void
 AnimatorScene::setMousePositionLabel(QPointF pos)
@@ -365,45 +367,6 @@ AnimatorScene::resetGrid()
     m_gridCoordinates.clear();
 }
 
-
-AnimPacket * AnimatorScene::getTestPacket(uint32_t fromNodeId, uint32_t toNodeId, qreal firstBitTx, qreal propDelay, qreal bitRate)
-{
-    qreal packetSize = 8 * 1024;
-    qreal lastBitDelta = packetSize/bitRate;
-    qreal l_firstBitTx = firstBitTx;
-    qreal lastBitTx = firstBitTx + lastBitDelta;
-    qreal firstBitRx = firstBitTx + propDelay;
-    qreal lastBitRx = firstBitRx + lastBitDelta;
-
-   /* AnimPacket * p = new AnimPacket(fromNodeId,
-                                    toNodeId,
-                                    l_firstBitTx,
-                                    lastBitTx,
-                                    firstBitRx,
-                                    lastBitRx);*/
-    //addItem (p);
-    return 0;
-
-}
-
-void AnimatorScene::displayPacket(qreal t)
-{
-    purgeAnimatedPackets();
-    NS_LOG_DEBUG("Diplaying packet at t:" << t);
-    m_testTimeValue.setCurrentTime(t);
-    TimeValue<AnimPacket*>::TimeValueResult_t result;
-    AnimPacket * p = m_testTimeValue.get(t, result);
-    while (result == m_testTimeValue.GOOD)
-    {
-        m_animatedPackets.push_back(p);
-        p->update (t);
-        //NS_LOG_DEBUG ("Pos:" << p->getHead ());
-        p->setPos(p->getHead ());
-        p = m_testTimeValue.get(t, result);
-        update();
-    }
-
-}
 
 void
 AnimatorScene::setShowInterfaceTexts(bool showIp, bool showMac)
@@ -581,7 +544,6 @@ void
 AnimatorScene::removeInterfaceTextCollision()
 {
 
-
     for(AnimInterfaceTextVector_t::iterator i = m_interfaceATexts.begin();
         i != m_interfaceATexts.end();
         ++i)
@@ -610,86 +572,6 @@ AnimatorScene::removeInterfaceTextCollision()
 
 }
 
-
-void AnimatorScene::prepareTimeValueData()
-{
-    m_testTimeValue.setLookBack(11);
-    qreal propDelay1 = 10; // 10s for test
-    qreal bitRate = 100 * 1024; //100KBps
-
-    qreal firstBitTx = 0;
-    m_testTimeValue.add(firstBitTx, getTestPacket(0, 1, firstBitTx, propDelay1, bitRate));
-    m_testTimeValue.add(firstBitTx, getTestPacket(0, 2, firstBitTx, propDelay1, bitRate));
-    m_testTimeValue.add(firstBitTx, getTestPacket(0, 3, firstBitTx, propDelay1, bitRate));
-    m_testTimeValue.add(firstBitTx, getTestPacket(0, 4, firstBitTx, propDelay1, bitRate));
-    m_testTimeValue.add(firstBitTx, getTestPacket(0, 5, firstBitTx, propDelay1, bitRate));
-    m_testTimeValue.add(firstBitTx, getTestPacket(0, 6, firstBitTx, propDelay1, bitRate));
-    m_testTimeValue.add(firstBitTx, getTestPacket(0, 7, firstBitTx, propDelay1, bitRate));
-    m_testTimeValue.add(firstBitTx, getTestPacket(0, 8, firstBitTx, propDelay1, bitRate));
-
-/*
-
-    firstBitTx = 0.3;
-    m_testTimeValue.add(firstBitTx, getTestPacket(0, 1, firstBitTx, propDelay1, bitRate));
-    m_testTimeValue.add(firstBitTx, getTestPacket(0, 2, firstBitTx, propDelay1, bitRate));
-
-
-
-    firstBitTx = 1;
-    m_testTimeValue.add(firstBitTx, getTestPacket(0, 1, firstBitTx, propDelay1, bitRate));
-    m_testTimeValue.add(firstBitTx, getTestPacket(0, 2, firstBitTx, propDelay1, bitRate));
-
-
-    firstBitTx = 1.2;
-    m_testTimeValue.add(firstBitTx, getTestPacket(0, 1, firstBitTx, propDelay1, bitRate));
-    m_testTimeValue.add(firstBitTx, getTestPacket(0, 2, firstBitTx, propDelay1, bitRate));
-
-    firstBitTx = 1.3;
-    m_testTimeValue.add(firstBitTx, getTestPacket(0, 1, firstBitTx, propDelay1, bitRate));
-    m_testTimeValue.add(firstBitTx, getTestPacket(0, 2, firstBitTx, propDelay1, bitRate));
-
-    firstBitTx = 2;
-    m_testTimeValue.add(firstBitTx, getTestPacket(0, 1, firstBitTx, propDelay1, bitRate));
-    m_testTimeValue.add(firstBitTx, getTestPacket(0, 2, firstBitTx, propDelay1, bitRate));
-
-    firstBitTx = 2.1;
-    m_testTimeValue.add(firstBitTx, getTestPacket(0, 1, firstBitTx, propDelay1, bitRate));
-    m_testTimeValue.add(firstBitTx, getTestPacket(0, 2, firstBitTx, propDelay1, bitRate));
-    */
-
-    //displayPacket(0);
-    //displayPacket(0);
-
-    //displayPacket(0.1);
-    //displayPacket(0.1);
-
-    //displayPacket(0.2);
-    //displayPacket(0.7);
-    //displayPacket(0.9);
-    //displayPacket(1.0);
-    //displayPacket(2.0);
-    //displayPacket(2.2);
-    //displayPacket(2.2);
-    //displayPacket(7.2);
-    //logQString(m_testTimeValue.isEnd());
-    //displayPacket(0);
-
-    /*
-    displayPacket(0.1);
-    displayPacket(0.2);
-    displayPacket(0.3);
-    displayPacket(0.5);
-    displayPacket(0.7);
-    displayPacket(1.3);
-    displayPacket(5.0);
-    displayPacket(8);
-    displayPacket(9.9);
-    displayPacket(10.0);
-    displayPacket(11.0);
-    */
-    /*std::cout << m_testTimeValue.toString().str();*/
-    fflush(stdout);
-}
 
 AnimInterfaceText::AnimInterfaceText(QString description, bool leftAligned):QGraphicsTextItem(description),
     m_leftAligned(leftAligned),

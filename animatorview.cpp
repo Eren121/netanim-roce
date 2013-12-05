@@ -13,7 +13,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
- * Author: John Abraham <john.abraham@gatech.edu>
+ * Author: John Abraham <john.abraham.in@gmail.com>
  */
 
 
@@ -35,6 +35,7 @@ AnimatorView * pAnimatorView = 0;
 AnimatorView::AnimatorView(QGraphicsScene * scene) :
     QGraphicsView(scene),
     m_currentZoomFactor(1)
+
 {
     setRenderHint(QPainter::Antialiasing);
     setViewportUpdateMode(BoundingRectViewportUpdate);
@@ -111,11 +112,6 @@ AnimatorView::wheelEvent(QWheelEvent *event)
 }
 
 void
-AnimatorView::save()
-{
-}
-
-void
 AnimatorView::fitSceneWithinView()
 {
     //QGraphicsView::fitInView(sceneRect());
@@ -144,11 +140,6 @@ AnimatorView::getTransform()
     return transform();
 }
 
-int
-AnimatorView::getCurrentZoomFactor()
-{
-    return m_currentZoomFactor;
-}
 
 } // namespace netanim
 

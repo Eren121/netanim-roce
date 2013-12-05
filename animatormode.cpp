@@ -13,7 +13,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
- * Author: John Abraham <john.abraham@gatech.edu>
+ * Author: John Abraham <john.abraham.in@gmail.com>
  */
 
 #include "animatormode.h"
@@ -62,8 +62,6 @@ AnimatorMode::AnimatorMode():
      m_parsedMaxSimulationTime(5000),
      m_oldTimelineValue(0),
      m_simulationCompleted(false),
-     m_packetPersistTime(500),
-     m_wPacketDetected(false),
      m_parsingXMLDialog(0),
      m_background(0),
      m_fastForwarding(false),
@@ -186,9 +184,6 @@ AnimatorMode::setToolButtonVector()
     m_toolButtonVector.push_back(m_showIpButton);
     m_toolButtonVector.push_back(m_showMacButton);
     m_toolButtonVector.push_back(m_simulationTimeSlider);
-    m_toolButtonVector.push_back(m_packetPersistenceLabel);
-    m_toolButtonVector.push_back(m_packetPersistenceComboBox);
-    m_toolButtonVector.push_back(m_unicastMatchButton);
     m_toolButtonVector.push_back(m_showRoutePathButton);
     m_toolButtonVector.push_back(m_addCustomImageButton);
 }
@@ -245,7 +240,6 @@ AnimatorMode::setTopToolbarWidgets()
     m_topToolBar->addSeparator();
     m_topToolBar->addWidget(m_showIpButton);
     m_topToolBar->addWidget(m_showMacButton);
-    m_topToolBar->addWidget(m_unicastMatchButton);
     //m_topToolBar->addWidget(m_showRoutePathButton);
     m_topToolBar->addWidget(m_testButton);
     m_topToolBar->addWidget(m_addCustomImageButton);
@@ -314,24 +308,6 @@ AnimatorMode::initControls()
     m_nodeSizeComboBox->addItems(nodeSizes);
     connect(m_nodeSizeComboBox, SIGNAL(currentIndexChanged(QString)), this, SLOT(updateNodeSizeSlot(QString)));
 
-
-    m_packetPersistenceComboBox = new QComboBox;
-    m_packetPersistenceComboBox->setToolTip("Duration for which the packet should be seen on screen. \
-                                            Useful during wireless transmission which has low propagation delay");
-    QStringList persistTimes;
-    persistTimes << "1ms"
-                 << "10ms"
-                 << "50ms"
-                 << "100ms"
-                 << "250ms"
-                 << "500ms"
-                 << "1s";
-    m_packetPersistenceComboBox->addItems(persistTimes);
-    connect(m_packetPersistenceComboBox, SIGNAL(currentIndexChanged(QString)), this, SLOT(updatePacketPersistenceSlot(QString)));
-    //m_packetPersistenceComboBox->setCurrentIndex(PACKET_PERSIST_DEFAULT);
-    m_packetPersistenceComboBox->setCurrentIndex(PACKET_PERSIST_DEFAULT);
-
-
     m_testButton = new QToolButton;
     m_testButton->setText("T");
     connect(m_testButton, SIGNAL(clicked()), this, SLOT(testSlot()));
@@ -347,12 +323,6 @@ AnimatorMode::initControls()
     m_showMacButton->setToolTip("Show Mac Addresses");
     m_showMacButton->setCheckable(true);
     connect(m_showMacButton, SIGNAL(clicked()), this, SLOT(showMacSlot()));
-
-    m_unicastMatchButton = new QToolButton;
-    m_unicastMatchButton->setText("Unicast only for Wifi");
-    m_unicastMatchButton->setToolTip("Show Wifi frames only if dest MAC is the node's unicast MAC or dest IP matches is the node's unicast IP");
-    m_unicastMatchButton->setCheckable(true);
-    connect(m_unicastMatchButton, SIGNAL(clicked()), this, SLOT(setUnicastMatchSlot()));
 
     m_showRoutePathButton = new QToolButton;
     m_showRoutePathButton->setText("Route-Path");
@@ -452,14 +422,11 @@ AnimatorMode::initLabels()
 {
     m_gridLinesLabel = new QLabel("Lines");
     m_nodeSizeLabel = new QLabel("Node Size");
-    m_packetPersistenceLabel = new QLabel("Persist");
     m_fastRateLabel = new QLabel("fast");
     m_fastRateLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    //m_fastRateLabel->setFixedWidth(UPDATE_RATE_LABEL_WIDTH);
     m_fastRateLabel->setFixedWidth(UPDATE_RATE_LABEL_WIDTH);
     m_slowRateLabel = new QLabel("slow");
     m_slowRateLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    //m_slowRateLabel->setFixedWidth(UPDATE_RATE_LABEL_WIDTH);
     m_slowRateLabel->setFixedWidth(UPDATE_RATE_LABEL_WIDTH);
     m_timelineSliderLabel = new QLabel("Sim time");
     m_timelineSliderLabel->setToolTip("Set current time");
@@ -499,7 +466,6 @@ AnimatorMode::setLabelStyleSheet()
     m_gridLinesLabel->setStyleSheet(labelStyleSheet);
     m_fastRateLabel->setStyleSheet(labelStyleSheet);
     m_slowRateLabel->setStyleSheet(labelStyleSheet);
-    m_packetPersistenceLabel->setStyleSheet(labelStyleSheet);
     m_timelineSliderLabel->setStyleSheet(labelStyleSheet);
 }
 
@@ -571,19 +537,6 @@ AnimatorMode::initUpdateRate()
     //m_updateRateTimer->setInterval(m_updateRates[UPDATE_RATE_SLIDER_DEFAULT] * 1000);
     m_updateRateTimer->setInterval(m_updateRates[UPDATE_RATE_SLIDER_DEFAULT] * 1000);
     connect(m_updateRateTimer, SIGNAL(timeout()), this, SLOT(updateRateTimeoutSlot()));
-}
-
-void
-AnimatorMode::doWirelessDetectedAction()
-{
-    if (!m_wPacketDetected)
-    {
-        return;
-    }
-    m_showWirelessCirclesButton->setChecked(m_wPacketDetected);
-    showWirelessCirclesSlot();
-    m_updateRateSlider->setValue(UPDATE_RATE_SLIDER_WIRELESS_DEFAULT);
-    updateUpdateRateSlot(UPDATE_RATE_SLIDER_WIRELESS_DEFAULT);
 }
 
 qreal
@@ -722,7 +675,6 @@ bool
 AnimatorMode::parseXMLTraceFile(QString traceFileName)
 {
     NS_LOG_DEBUG ("parsing File:" << traceFileName.toAscii().data());
-    m_wPacketDetected = false;
     m_rxCount = 0;
     Animxmlparser parser(traceFileName);
     if(!parser.isFileValid())
@@ -759,7 +711,6 @@ void
 AnimatorMode::postParse()
 {
     enableAllToolButtons(true);
-    doWirelessDetectedAction();
     m_showNodeIdButton->setChecked(true);
     showNodeIdSlot();
     m_gridButton->setChecked(true);
@@ -781,12 +732,6 @@ AnimatorMode::postParse()
     showGridLinesSlot();
     AnimatorView::getInstance()->postParse();
 
-}
-
-void
-AnimatorMode::setWPacketDetected()
-{
-   m_wPacketDetected = true;
 }
 
 void
@@ -929,11 +874,6 @@ AnimatorMode::showPackets(bool show)
     showPacketSlot();
 }
 
-void
-PacketPersistThread::msleep(unsigned long interval)
-{
-   QThread::msleep(interval);
-}
 
 // Slots
 void
@@ -941,11 +881,6 @@ AnimatorMode::showMetaSlot()
 {
     m_showPacketMetaInfo = m_showMetaButton->isChecked();
 
-}
-void
-AnimatorMode::clickSaveSlot()
-{
-    AnimatorView::getInstance()->save();
 }
 
  void
@@ -1013,15 +948,8 @@ AnimatorMode::showPacketStatsSlot()
  void
  AnimatorMode::clickZoomInSlot()
  {
-     //if(m_animationGroup->state() != m_animationGroup->Stopped)
-     //    return;
      AnimatorScene::getInstance()->purgeAnimatedPackets();
-     if(m_playing)
-     {
-    //     clickPlaySlot();
-     }
-    AnimatorView::getInstance()->setCurrentZoomFactor(++m_currentZoomFactor);
-
+     AnimatorView::getInstance()->setCurrentZoomFactor(++m_currentZoomFactor);
 
  }
 
@@ -1030,19 +958,10 @@ AnimatorMode::showPacketStatsSlot()
  {
      if(m_currentZoomFactor == 1)
          return;
-     //if(m_animationGroup->state() != m_animationGroup->Stopped)
-     //    return;
+     AnimatorView::getInstance()->setCurrentZoomFactor(--m_currentZoomFactor);
      AnimatorScene::getInstance()->purgeAnimatedPackets();
-
-     if(m_playing)
-     {
-      //   clickPlaySlot();
-     }
      AnimatorScene::getInstance()->invalidate();
      AnimatorView::getInstance()->invalidateScene();
-     AnimatorView::getInstance()->setCurrentZoomFactor(--m_currentZoomFactor);
-     //m_animationGroup->stop();
-
 
  }
 
@@ -1424,49 +1343,6 @@ AnimatorMode::purgeAnimatedNodes()
 
  }
 
-
- void
- AnimatorMode::displayPacket(qreal t)
- {
- }
-
-
-
-#if 0
- void
- AnimatorMode::displayPacket(qreal t)
- {
-     AnimatorScene::getInstance()->purgeAnimatedPackets();
-     NS_LOG_DEBUG("Diplaying packet at t:" << t);
-     //TimeValue<AnimPacket*> * pPackets = AnimPacketMgr::getInstance()->getPackets();
-     TimeValue<AnimEvent*> * pPackets = AnimPacketMgr::getInstance()->getPackets();
-
-     pPackets->setCurrentTime(t);
-     //TimeValue<AnimPacket*>::TimeValueResult_t result;
-     TimeValue<AnimEvent*>::TimeValueResult_t result;
-
-     AnimPacket * p = static_cast<AnimPacket *> (pPackets->get(t, result));
-     while (result == pPackets->GOOD)
-     {
-
-         //NS_LOG_DEBUG ("P from Id:" << p->getFromNodeId() << " to Id:" << p->getToNodeId());
-         AnimatorScene::getInstance()->addPacket(p);
-         p->update (t);
-         //NS_LOG_DEBUG ("Pos:" << p->getHead ());
-         if(p->getFirstBitRx() > t)
-         {
-            p->setPos(p->getHead ());
-            p->setVisible(true);
-         }
-         else
-            p->setVisible(false);
-         p = static_cast <AnimPacket *> (pPackets->get(t, result));
-         update();
-     }
- }
-#endif
-
-
  void
  AnimatorMode::testSlot()
  {
@@ -1492,32 +1368,6 @@ AnimatorMode::purgeAnimatedNodes()
         animNode->getDescription()->setPos(animNode->sceneBoundingRect().bottomRight());
         LinkManager::getInstance()->repairLinks(animNode->getNodeId());
      }
-
- }
-
- void
- AnimatorMode::updatePacketPersistenceSlot(QString value)
- {
-    /* persistTimes << "10ms"
-                  << "50ms"
-                  << "100ms"
-                  << "250ms"
-                  << "500ms"
-                  << "1s";*/
-     if(value == "1ms")
-         m_packetPersistTime = 1;
-     if(value == "10ms")
-         m_packetPersistTime = 10;
-     if(value == "50ms")
-         m_packetPersistTime = 50;
-     if(value == "100ms")
-         m_packetPersistTime = 100;
-     if(value == "250ms")
-         m_packetPersistTime = 250;
-     if(value == "500ms")
-         m_packetPersistTime = 500;
-     if(value == "1s")
-         m_packetPersistTime = 2000;
 
  }
 
@@ -1579,10 +1429,6 @@ AnimatorMode::purgeAnimatedNodes()
      }
  }
 
- void
- AnimatorMode::setUnicastMatchSlot()
- {
- }
 
 
  void

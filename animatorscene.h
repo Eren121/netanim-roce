@@ -1,24 +1,36 @@
-#ifndef MYSCENE_H
-#define MYSCENE_H
+/* -*- Mode:C++; c-file-style:"gnu"; indent-tabs-mode:nil; -*- */
+/*
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 as
+ * published by the Free Software Foundation;
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ * Author: John Abraham <john.abraham.in@gmail.com>
+ */
 
+#ifndef ANIMATORSCENE_H
+#define ANIMATORSCENE_H
+
+#include "common.h"
 #include "animnode.h"
 #include "animlink.h"
 #include "resizeablepixmap.h"
 #include "resizeableitem.h"
 #include "timevalue.h"
 #include "animpacket.h"
-#include <QGraphicsScene>
-#include <QGraphicsProxyWidget>
-#include <QPushButton>
-#include <QLabel>
-#include <QVector>
+
 
 
 namespace netanim
 {
-
-#define ANIMATORSCENE_USERAREA_WIDTH 250
-#define ANIMATORSCENE_USERAREA_HEIGHT 250
 
 
 class AnimInterfaceText : public QGraphicsTextItem
@@ -65,14 +77,7 @@ public:
     ResizeablePixmap * m_background;
     //ResizeablePixmap * m_pItem;
     AnimNode * m_pItem;
-    QPushButton * m_testButton;
-    void addPix();
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
-    void setUserAreaWidth(qreal w);
-    void setUserAreaHeight(qreal h);
-    void prepareTimeValueData();
-    AnimPacket * getTestPacket(uint32_t fromNodeId, uint32_t toNodeId, qreal firstBitTx, qreal propDelay, qreal bitRate);
-    void displayPacket(qreal t);
     void addPacket (AnimPacket * p);
     void addNode (AnimNode * animNode);
     void addLink (AnimLink * animLink);
@@ -97,8 +102,6 @@ private:
     typedef QVector <QGraphicsLineItem *>          LineItemVector_t;
     typedef QVector <QGraphicsSimpleTextItem*>     GridCoordinatesVector_t;
 
-    qreal m_userAreadWidth;
-    qreal m_userAreaHeight;
     TimeValue<AnimPacket *> m_testTimeValue;
     QLabel * m_mousePositionLabel;
     QGraphicsProxyWidget * m_mousePositionProxyWidget;
@@ -132,14 +135,8 @@ private:
     void setMousePositionLabel(QPointF pos);
     void showMousePositionLabel(bool show);
 
-
-
-
-
-
-
 };
 
 } // namespace netanim
 
-#endif // MYSCENE_H
+#endif // ANIMATORSCENE_H

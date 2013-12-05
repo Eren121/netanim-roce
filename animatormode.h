@@ -13,12 +13,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
- * Author: John Abraham <john.abraham@gatech.edu>
+ * Author: John Abraham <john.abraham.in@gmail.com>
  */
 
 #ifndef AnimatorPlugin_H
 #define AnimatorPlugin_H
 
+#include "common.h"
 #include "animatorconstants.h"
 #include "animatorscene.h"
 #include "animatorview.h"
@@ -26,31 +27,10 @@
 #include "timevalue.h"
 #include "animevent.h"
 
-#include <QWidget>
-#include <QtGui/QToolButton>
-#include <QtGui/QSpinBox>
-#include <QtGui/QSlider>
-#include <QtGui/QLCDNumber>
-#include <QVBoxLayout>
-#include <QSplitter>
-#include <QToolBar>
-#include <QStatusBar>
-#include <QTime>
-#include <QThread>
-#include <QLabel>
-#include <QComboBox>
-#include <QProgressBar>
-#include <QGraphicsPixmapItem>
-#include <QParallelAnimationGroup>
-#include <QPropertyAnimation>
+
 
 namespace netanim {
 
-class PacketPersistThread: public QThread
-{
-public:
-    void msleep(unsigned long);
-};
 
 class AnimatorMode: public Mode
 {
@@ -107,8 +87,6 @@ private:
     QVector <QWidget *> m_toolButtonVector;
     QTime m_appResponsiveTimer;
     bool m_simulationCompleted;
-    qreal m_packetPersistTime;
-    bool m_wPacketDetected;
     uint64_t m_rxCount;
     TimeValue<AnimEvent *> m_events;
     bool m_fastForwarding;
@@ -157,12 +135,9 @@ private:
     QLabel * m_bottomStatusLabel;
     QToolButton * m_resetButton;
     QToolButton * m_showMetaButton;
-    QComboBox * m_packetPersistenceComboBox;
-    QLabel * m_packetPersistenceLabel;
     QProgressBar * m_parseProgressBar;
     QSlider * m_simulationTimeSlider;
     QToolButton * m_addCustomImageButton;
-    QToolButton * m_unicastMatchButton;
     QToolButton * m_showRoutePathButton;
     QGraphicsPixmapItem * m_background;
     QParallelAnimationGroup * m_packetAnimationGroup;
@@ -180,7 +155,6 @@ private:
     void systemReset();
     void preParse();
     void postParse();
-    void doWirelessDetectedAction();
     void initToolbars();
     void initLabels();
     void initControls();
@@ -210,22 +184,18 @@ private:
 
 private slots:
     void testSlot();
-
     void clickTraceFileOpenSlot();
     void reloadFileSlot();
     void clickZoomInSlot();
     void clickZoomOutSlot();
-    void clickSaveSlot();
     void clickResetSlot();
     void clickPlaySlot();
     void clickAddCustomImageSlot();
-    void updatePacketPersistenceSlot(QString value);
     void updateTimelineSlot(int value);
     void updateRateTimeoutSlot();
     void updateGridLinesSlot(int value);
     void updateNodeSizeSlot(QString value);
     void updateUpdateRateSlot(int);
-
     void showGridLinesSlot();
     void showNodeIdSlot();
     void showMetaSlot();
@@ -235,7 +205,6 @@ private slots:
     void showNodePositionStatsSlot();
     void showIpSlot();
     void showMacSlot();
-    void setUnicastMatchSlot();
     void showRoutePathSlot();
     void showBatteryCapacitySlot();
     void packetAnimationGroupFinishedSlot();

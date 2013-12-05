@@ -13,16 +13,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
- * Author: John Abraham <john.abraham@gatech.edu>
+ * Author: John Abraham <john.abraham.in@gmail.com>
  */
 
 #ifndef ANIMATORVIEW_H
 #define ANIMATORVIEW_H
 
+#include "common.h"
 #include "animatorscene.h"
 
-#include <QGraphicsView>
-#include <QGraphicsScene>
 
 namespace netanim {
 
@@ -31,13 +30,12 @@ class AnimatorView : public QGraphicsView
 public:
 
     static AnimatorView * getInstance();
-    void setCurrentZoomFactor(qreal factor);
-    void save();
     void systemReset();
     void fitSceneWithinView();
     void postParse();
-    int  getCurrentZoomFactor();
     QTransform getTransform();
+    void setCurrentZoomFactor(qreal factor);
+
 
 protected:
     void paintEvent(QPaintEvent * event);
@@ -46,9 +44,10 @@ protected:
 
 private:
     explicit AnimatorView(QGraphicsScene *);
-    qreal m_currentZoomFactor;
     AnimatorScene * getAnimatorScene();
     void updateTransform();
+    qreal m_currentZoomFactor;
+
 signals:
 
 public slots:
