@@ -89,10 +89,10 @@ private:
     bool m_simulationCompleted;
     uint64_t m_rxCount;
     TimeValue<AnimEvent *> m_events;
-    bool m_fastForwarding;
     bool m_showPacketMetaInfo;
     QString m_traceFileName;
     bool m_showPackets;
+    bool m_fastForwarding;
 
 
     //controls
@@ -139,7 +139,6 @@ private:
     QSlider * m_simulationTimeSlider;
     QToolButton * m_addCustomImageButton;
     QToolButton * m_showRoutePathButton;
-    QGraphicsPixmapItem * m_background;
     QParallelAnimationGroup * m_packetAnimationGroup;
     QParallelAnimationGroup * m_buttonAnimationGroup;
 

@@ -22,7 +22,6 @@
 #include "common.h"
 #include "animnode.h"
 #include "animlink.h"
-#include "resizeablepixmap.h"
 #include "resizeableitem.h"
 #include "timevalue.h"
 #include "animpacket.h"
@@ -74,9 +73,6 @@ Q_OBJECT
 public:
     static AnimatorScene * getInstance();
     AnimatorScene();
-    ResizeablePixmap * m_background;
-    //ResizeablePixmap * m_pItem;
-    AnimNode * m_pItem;
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
     void addPacket (AnimPacket * p);
     void addNode (AnimNode * animNode);

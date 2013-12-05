@@ -337,11 +337,10 @@ struct OlsrInfo
 
 
 
-class AnimPacket : public QObject, public QGraphicsItem, public AnimEvent
+class AnimPacket : public QGraphicsObject, public AnimEvent
 {
 Q_OBJECT
-
-    Q_PROPERTY (QPointF pos READ pos WRITE setPos)
+Q_PROPERTY (QPointF pos READ pos WRITE setPos)
 public:
   AnimPacket(uint32_t fromNodeId,
              uint32_t toNodeId,

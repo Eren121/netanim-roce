@@ -53,17 +53,5 @@ std::ostream & operator << (std::ostream & os, AnimPacket * p)
     return os;
 }
 
-void
-logQString(QString msg)
-{
-    qDebug(msg.toAscii().data());
-}
-
-
-void
-logQString(bool b)
-{
-    logQString(QString ("Bool:") + QString::number(b));
-}
 
 }

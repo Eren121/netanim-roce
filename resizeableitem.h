@@ -64,16 +64,17 @@ public:
     void setWidth(qreal width);
     void setColor(uint8_t r, uint8_t g, uint8_t b);
 
-protected:
-    qreal m_width;
-    qreal m_height;
 private:
     ResizeableItemType_t m_type;
-    QPixmap * m_pixmap;
     uint8_t m_r;
     uint8_t m_g;
     uint8_t m_b;
     uint8_t m_alpha;
+    QPixmap * m_pixmap;
+
+protected:
+    qreal m_width;
+    qreal m_height;
 
 
 };

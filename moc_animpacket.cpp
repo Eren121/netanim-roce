@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'animpacket.h'
 **
-** Created: Wed Dec 4 06:26:43 2013
+** Created: Thu Dec 5 05:57:55 2013
 **      by: The Qt Meta Object Compiler version 63 (Qt 4.8.1)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -148,7 +148,7 @@ const QMetaObjectExtraData netanim::AnimPacket::staticMetaObjectExtraData = {
 };
 
 const QMetaObject netanim::AnimPacket::staticMetaObject = {
-    { &QObject::staticMetaObject, qt_meta_stringdata_netanim__AnimPacket,
+    { &QGraphicsObject::staticMetaObject, qt_meta_stringdata_netanim__AnimPacket,
       qt_meta_data_netanim__AnimPacket, &staticMetaObjectExtraData }
 };
 
@@ -166,16 +166,14 @@ void *netanim::AnimPacket::qt_metacast(const char *_clname)
     if (!_clname) return 0;
     if (!strcmp(_clname, qt_meta_stringdata_netanim__AnimPacket))
         return static_cast<void*>(const_cast< AnimPacket*>(this));
-    if (!strcmp(_clname, "QGraphicsItem"))
-        return static_cast< QGraphicsItem*>(const_cast< AnimPacket*>(this));
     if (!strcmp(_clname, "AnimEvent"))
         return static_cast< AnimEvent*>(const_cast< AnimPacket*>(this));
-    return QObject::qt_metacast(_clname);
+    return QGraphicsObject::qt_metacast(_clname);
 }
 
 int netanim::AnimPacket::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
 {
-    _id = QObject::qt_metacall(_c, _id, _a);
+    _id = QGraphicsObject::qt_metacall(_c, _id, _a);
     if (_id < 0)
         return _id;
     

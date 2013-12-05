@@ -28,13 +28,13 @@ NS_LOG_COMPONENT_DEFINE("ResizeableItem");
 
 ResizeableItem::ResizeableItem():
     m_type(ResizeableItem::CIRCLE),
-    m_width(1),
-    m_height(1),
-    m_pixmap(0),
     m_r(255),
     m_g(0),
     m_b(0),
-    m_alpha(240)
+    m_alpha(240),
+    m_pixmap(0),
+    m_width(1),
+    m_height(1)
 {
     //NS_LOG_FUNCTION(m_mousePressed);
     setAcceptsHoverEvents(true);

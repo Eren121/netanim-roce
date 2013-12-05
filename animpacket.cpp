@@ -194,6 +194,7 @@ AnimPacket::getShortMeta(QString metaInfo)
     {
         return ethernetInfo.toShortString();
     }
+    return "";
 
 }
 
@@ -575,6 +576,7 @@ AnimPacket::update (qreal t)
 void
 AnimPacket::update (qreal t)
 {
+    Q_UNUSED(t);
   qreal midPointX = (m_toPos.x() + m_fromPos.x())/2;
   qreal midPointY = (m_toPos.y() + m_fromPos.y())/2;
   m_head = QPointF (midPointX, midPointY);
@@ -595,6 +597,8 @@ AnimPacket::boundingRect () const
 void
 AnimPacket::paint (QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
+    Q_UNUSED(option)
+    Q_UNUSED(widget)
     //NS_LOG_DEBUG ("Packet Transform:" << transform());
     //NS_LOG_DEBUG ("Device Transform:" << painter->deviceTransform());
     //NS_LOG_DEBUG ("Scene Transform:" << sceneTransform());

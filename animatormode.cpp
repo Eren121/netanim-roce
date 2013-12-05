@@ -62,12 +62,11 @@ AnimatorMode::AnimatorMode():
      m_parsedMaxSimulationTime(5000),
      m_oldTimelineValue(0),
      m_simulationCompleted(false),
-     m_parsingXMLDialog(0),
-     m_background(0),
-     m_fastForwarding(false),
-     m_packetAnimationGroup(0),
      m_showPacketMetaInfo(true),
-     m_showPackets(true)
+     m_showPackets(true),
+     m_fastForwarding(false),
+     m_parsingXMLDialog(0),
+     m_packetAnimationGroup(0)
 
 {
     init();
@@ -749,7 +748,8 @@ AnimatorMode::getCurrentNodeSize()
 QGraphicsPixmapItem *
 AnimatorMode::getBackground()
 {
-    return m_background;
+    //return m_background;
+    return 0;
 }
 
 bool
@@ -767,7 +767,7 @@ AnimatorMode::keepAppResponsive()
 void
 AnimatorMode::resetBackground()
 {
-    if(!m_background)
+    /*if(!m_background)
         return;
     m_background->setZValue(-1000);
     m_background->setPos(0, 0);
@@ -776,7 +776,7 @@ AnimatorMode::resetBackground()
 
     // Modify below as required
     m_background->scale(0.3, 0.3);
-    m_background->scale(0.5, 1);
+    m_background->scale(0.5, 1);*/
 }
 
 void
@@ -1014,7 +1014,7 @@ AnimatorMode::purgeAnimatedNodes()
  void
  AnimatorMode::clickAddCustomImageSlot()
  {
-     QFileDialog fileDialog;
+/*     QFileDialog fileDialog;
      fileDialog.setFileMode(QFileDialog::ExistingFiles);
      QString traceFileName = "";
      if(fileDialog.exec())
@@ -1029,6 +1029,7 @@ AnimatorMode::purgeAnimatedNodes()
              resetBackground();
          }
      }
+     */
 
  }
 

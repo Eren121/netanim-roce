@@ -31,9 +31,6 @@ std::ostream & operator << (std::ostream & os, QRectF r);
 std::ostream & operator << (std::ostream & os, QTransform t);
 std::ostream & operator << (std::ostream & os, AnimPacket * p);
 
-void logQString (QString msg);
-void logQString (bool b);
-
 }
 
 #endif // LOGQT_H
