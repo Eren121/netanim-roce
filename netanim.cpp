@@ -67,5 +67,11 @@ NetAnim::currentTabChangedSlot (int currentIndex)
 
 }
 
+QTabWidget *
+NetAnim::getTabWidget()
+{
+  return m_tabWidget;
+}
+
 } // namespace netanim
 

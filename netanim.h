@@ -30,6 +30,7 @@ class NetAnim : public QObject
   Q_OBJECT
 public:
   NetAnim ();
+  QTabWidget * getTabWidget();
 private:
   typedef std::map <int, Mode *> TabIndexModeMap_t;
   QTabWidget * m_tabWidget;
