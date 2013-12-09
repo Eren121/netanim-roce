@@ -24,6 +24,8 @@
 #include <QtSpinBoxFactory>
 #include <QtLineEditFactory>
 #include <QtDoubleSpinBoxFactory>
+#include "filepathmanager.h"
+#include "fileeditfactory.h"
 
 
 namespace netanim {
@@ -47,14 +49,19 @@ private:
   QtProperty * m_nodeYProperty;
   QtProperty * m_nodeColorProperty;
   QtProperty * m_nodeSizeProperty;
+  QtProperty * m_fileEditProperty;
+
 
   QtIntPropertyManager * m_intManager;
   QtStringPropertyManager * m_stringManager;
   QtDoublePropertyManager * m_doubleManager;
   QtColorPropertyManager * m_colorManager;
+  FilePathManager * m_filePathManager;
 
   QtDoubleSpinBoxFactory * m_doubleSpinBoxFactory;
   QtSpinBoxFactory * m_spinBoxFactory;
+  FileEditFactory * m_fileEditFactory;
+
 
 
   uint32_t m_currentNodeId;

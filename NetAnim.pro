@@ -31,7 +31,10 @@ SOURCES += \
     qtpropertybrowser/src/qtgroupboxpropertybrowser.cpp \
     qtpropertybrowser/src/qteditorfactory.cpp \
     qtpropertybrowser/src/qtbuttonpropertybrowser.cpp \
-    animpropertybrowser.cpp
+    animpropertybrowser.cpp \
+    qtpropertybrowser/src/filepathmanager.cpp \
+    qtpropertybrowser/src/fileeditfactory.cpp \
+    qtpropertybrowser/src/fileedit.cpp
 HEADERS += \
     log.h \
     fatal-error.h \
@@ -120,7 +123,10 @@ HEADERS += \
     qtpropertybrowser/src/QtAbstractPropertyManager \
     qtpropertybrowser/src/QtAbstractPropertyBrowser \
     qtpropertybrowser/src/QtAbstractEditorFactoryBase \
-    animpropertybrowser.h
+    animpropertybrowser.h \
+    qtpropertybrowser/src/filepathmanager.h \
+    qtpropertybrowser/src/fileeditfactory.h \
+    qtpropertybrowser/src/fileedit.h
 
 
 INCLUDEPATH += qtpropertybrowser/src

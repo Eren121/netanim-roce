@@ -67,11 +67,10 @@ AnimPropertyBroswer::setup ()
   m_vboxLayout->addWidget (m_nodeIdSelector);
   m_vboxLayout->addWidget (m_tree);
 
-  m_nodeIdProperty = m_intManager->addProperty ("NodeId");
+  m_nodeIdProperty = m_intManager->addProperty ("Node Id");
   m_tree->addProperty (m_nodeIdProperty);
 
-  m_nodeDescriptionProperty = m_stringManager->addProperty("NodeDescription");
-  m_propertyId[m_nodeDescriptionProperty] = "NodeDescription";
+  m_nodeDescriptionProperty = m_stringManager->addProperty("Node Description");
   QtLineEditFactory * lineEditFactory = new QtLineEditFactory;
   m_tree->setFactoryForManager (m_stringManager, lineEditFactory);
   connect (m_stringManager, SIGNAL(valueChanged(QtProperty*,QString)), this, SLOT(valueChangedSlot(QtProperty*,QString)));
@@ -86,9 +85,9 @@ AnimPropertyBroswer::setup ()
 
 
   QtGroupPropertyManager * groupManager = new QtGroupPropertyManager;
-  QtProperty * nodePosition = groupManager->addProperty ("NodePosition");
-  m_nodeXProperty = m_doubleManager->addProperty ("NodeX");
-  m_nodeYProperty = m_doubleManager->addProperty ("NodeY");
+  QtProperty * nodePosition = groupManager->addProperty ("Node Position");
+  m_nodeXProperty = m_doubleManager->addProperty ("Node X");
+  m_nodeYProperty = m_doubleManager->addProperty ("Node Y");
   nodePosition->addSubProperty (m_nodeXProperty);
   nodePosition->addSubProperty (m_nodeYProperty);
   m_doubleManager->setMinimum (m_nodeXProperty, 0);
@@ -102,7 +101,7 @@ AnimPropertyBroswer::setup ()
 
   m_spinBoxFactory = new QtSpinBoxFactory;
   m_colorManager = new QtColorPropertyManager;
-  m_nodeColorProperty = m_colorManager->addProperty ("NodeColor");
+  m_nodeColorProperty = m_colorManager->addProperty ("Node Color");
   connect(m_colorManager, SIGNAL(valueChanged(QtProperty*,QColor)), this, SLOT(valueChangedSlot(QtProperty*,QColor)));
 
   m_tree->addProperty (m_nodeColorProperty);
@@ -111,12 +110,18 @@ AnimPropertyBroswer::setup ()
   m_colorManager->setValue (m_nodeColorProperty, c);
 
 
-  m_nodeSizeProperty = m_doubleManager->addProperty ("NodeSize");
+  m_nodeSizeProperty = m_doubleManager->addProperty ("Node Size");
   m_doubleManager->setValue (m_nodeSizeProperty, animNode->getWidth ());
   m_doubleManager->setMinimum (m_nodeSizeProperty, 0.1);
 
   m_tree->addProperty (m_nodeSizeProperty);
 
+
+  m_filePathManager = new FilePathManager;
+  m_fileEditFactory = new FileEditFactory;
+  m_fileEditProperty = m_filePathManager->addProperty ("Node Resource");
+  m_tree->addProperty (m_fileEditProperty);
+  m_tree->setFactoryForManager (m_filePathManager, m_fileEditFactory);
 
 
 }
