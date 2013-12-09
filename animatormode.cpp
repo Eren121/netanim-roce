@@ -24,6 +24,8 @@
 #include "animlink.h"
 #include "animresource.h"
 #include "statsmode.h"
+#include "animpropertybrowser.h"
+
 
 
 namespace netanim
@@ -58,10 +60,12 @@ AnimatorMode::init ()
 {
   m_state = APP_INIT;
   initControls ();
+  initPropertyBrowser ();
   initToolbars ();
   m_mainSplitter = new QSplitter;
   m_mainSplitter->addWidget (m_verticalToolbar);
   m_mainSplitter->addWidget (AnimatorView::getInstance ());
+  m_mainSplitter->addWidget (AnimPropertyBroswer::getInstance ());
 
 
   m_vLayout = new QVBoxLayout;
@@ -225,6 +229,12 @@ AnimatorMode::setTopToolbarWidgets ()
   m_topToolBar->addWidget (m_addCustomImageButton);
 }
 
+
+void
+AnimatorMode::initPropertyBrowser()
+{
+  //m_propertyBrowser = new QtTreePropertyBrowser;
+}
 
 void
 AnimatorMode::initControls ()
@@ -711,6 +721,7 @@ AnimatorMode::postParse ()
   m_gridButton->setChecked (true);
   showGridLinesSlot ();
   AnimatorView::getInstance ()->postParse ();
+  AnimPropertyBroswer::getInstance ()->setup ();
 
 }
 

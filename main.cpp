@@ -30,6 +30,7 @@ int main (int argc, char *argv[])
   ns3::LogComponentEnable ("AnimatorMode", ns3::LOG_LEVEL_ALL);
   ns3::LogComponentEnable ("ResizeableItem", ns3::LOG_LEVEL_ALL);
   ns3::LogComponentEnable ("Animxmlparser", ns3::LOG_LEVEL_ALL);
+  ns3::LogComponentEnable ("AnimPropertyBroswer", ns3::LOG_LEVEL_ALL);
 
 
   QApplication app (argc, argv);

@@ -30,7 +30,8 @@ SOURCES += \
     qtpropertybrowser/src/qtpropertybrowser.cpp \
     qtpropertybrowser/src/qtgroupboxpropertybrowser.cpp \
     qtpropertybrowser/src/qteditorfactory.cpp \
-    qtpropertybrowser/src/qtbuttonpropertybrowser.cpp
+    qtpropertybrowser/src/qtbuttonpropertybrowser.cpp \
+    animpropertybrowser.cpp
 HEADERS += \
     log.h \
     fatal-error.h \
@@ -118,7 +119,11 @@ HEADERS += \
     qtpropertybrowser/src/QtBoolPropertyManager \
     qtpropertybrowser/src/QtAbstractPropertyManager \
     qtpropertybrowser/src/QtAbstractPropertyBrowser \
-    qtpropertybrowser/src/QtAbstractEditorFactoryBase
+    qtpropertybrowser/src/QtAbstractEditorFactoryBase \
+    animpropertybrowser.h
+
+
+INCLUDEPATH += qtpropertybrowser/src
 
 DEFINES += NS3_LOG_ENABLE
 

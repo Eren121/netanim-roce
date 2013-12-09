@@ -26,8 +26,7 @@
 #include "mode.h"
 #include "timevalue.h"
 #include "animevent.h"
-
-
+#include <QtTreePropertyBrowser>
 
 namespace netanim
 {
@@ -143,6 +142,7 @@ private:
   QToolButton * m_showRoutePathButton;
   QParallelAnimationGroup * m_packetAnimationGroup;
   QParallelAnimationGroup * m_buttonAnimationGroup;
+  //QtTreePropertyBrowser * m_propertyBrowser;
 
 
 
@@ -181,6 +181,7 @@ private:
   void fastForward (qreal t);
   void reset ();
   QPropertyAnimation * getButtonAnimation (QToolButton * toolButton);
+  void initPropertyBrowser();
 
 
 private slots:
