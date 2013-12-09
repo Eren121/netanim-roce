@@ -39,10 +39,12 @@ public:
   qreal getY ();
   void setX (qreal x);
   void setY (qreal y);
+  QColor getColor ();
   uint32_t getNodeId ();
+  qreal getWidth ();
   void setWidth (qreal width);
   void setHeight (qreal height);
-  void setColor (uint8_t r, uint8_t g, uint8_t b);
+  void setColor (uint8_t r, uint8_t g, uint8_t b, uint8_t alpha = 255);
   void addIpv4Address (QString ip);
   void addMacAddress (QString mac);
   bool hasIpv4 (QString ip);
@@ -55,9 +57,6 @@ private:
   uint32_t m_nodeId;
   qreal m_x;
   qreal m_y;
-  uint8_t m_r;
-  uint8_t m_g;
-  uint8_t m_b;
   bool m_showNodeId;
   Ipv4Vector_t m_ipv4Vector;
   MacVector_t m_macVector;

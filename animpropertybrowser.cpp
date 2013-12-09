@@ -18,6 +18,7 @@
 
 #include "animpropertybrowser.h"
 #include "animnode.h"
+#include "animatormode.h"
 
 namespace netanim {
 
@@ -51,6 +52,7 @@ AnimPropertyBroswer::setup ()
 
   m_intManager = new QtIntPropertyManager;
   m_stringManager = new QtStringPropertyManager;
+  m_doubleManager = new QtDoublePropertyManager;
   m_tree = new QtTreePropertyBrowser;
   m_mode = new QComboBox;
   m_nodeIdSelector = new QComboBox;
@@ -79,7 +81,82 @@ AnimPropertyBroswer::setup ()
   m_stringManager->setValue (m_nodeDescriptionProperty, animNode->getDescription ()->toPlainText ());
 
 
+
+  m_doubleSpinBoxFactory = new QtDoubleSpinBoxFactory;
+
+
+  QtGroupPropertyManager * groupManager = new QtGroupPropertyManager;
+  QtProperty * nodePosition = groupManager->addProperty ("NodePosition");
+  m_nodeXProperty = m_doubleManager->addProperty ("NodeX");
+  m_nodeYProperty = m_doubleManager->addProperty ("NodeY");
+  nodePosition->addSubProperty (m_nodeXProperty);
+  nodePosition->addSubProperty (m_nodeYProperty);
+  m_doubleManager->setMinimum (m_nodeXProperty, 0);
+  m_doubleManager->setMinimum (m_nodeYProperty, 0);
+  m_doubleManager->setValue (m_nodeXProperty, animNode->getX ());
+  m_doubleManager->setValue (m_nodeYProperty, animNode->getY ());
+  connect (m_doubleManager, SIGNAL(valueChanged(QtProperty*,double)), this, SLOT(valueChangedSlot(QtProperty*,double)));
+  m_tree->addProperty (nodePosition);
+  m_tree->setFactoryForManager (m_doubleManager, m_doubleSpinBoxFactory);
+
+
+  m_spinBoxFactory = new QtSpinBoxFactory;
+  m_colorManager = new QtColorPropertyManager;
+  m_nodeColorProperty = m_colorManager->addProperty ("NodeColor");
+  connect(m_colorManager, SIGNAL(valueChanged(QtProperty*,QColor)), this, SLOT(valueChangedSlot(QtProperty*,QColor)));
+
+  m_tree->addProperty (m_nodeColorProperty);
+  m_tree->setFactoryForManager (m_colorManager->subIntPropertyManager (), m_spinBoxFactory);
+  QColor c = animNode->getColor ();
+  m_colorManager->setValue (m_nodeColorProperty, c);
+
+
+  m_nodeSizeProperty = m_doubleManager->addProperty ("NodeSize");
+  m_doubleManager->setValue (m_nodeSizeProperty, animNode->getWidth ());
+  m_doubleManager->setMinimum (m_nodeSizeProperty, 0.1);
+
+  m_tree->addProperty (m_nodeSizeProperty);
+
+
+
 }
+
+void
+AnimPropertyBroswer::valueChangedSlot (QtProperty * property, QColor c)
+{
+  if (m_nodeColorProperty == property)
+    {
+      AnimNode * animNode = AnimNodeMgr::getInstance ()->getNode (m_currentNodeId);
+      animNode->setColor (c.red (), c.blue (), c.green (), c.alpha ());
+    }
+}
+
+void
+AnimPropertyBroswer::valueChangedSlot(QtProperty * property, double value)
+{
+  if (m_nodeXProperty == property)
+    {
+      AnimNode * animNode = AnimNodeMgr::getInstance ()->getNode (m_currentNodeId);
+      animNode->setX (value);
+      qreal x = animNode->getX ();
+      qreal y = animNode->getY ();
+      animNode->setPos (x, y);
+    }
+  if (m_nodeYProperty == property)
+    {
+      AnimNode * animNode = AnimNodeMgr::getInstance ()->getNode (m_currentNodeId);
+      animNode->setY (value);
+      qreal x = animNode->getX ();
+      qreal y = animNode->getY ();
+      animNode->setPos (x, y);
+    }
+  if (m_nodeSizeProperty == property)
+    {
+      AnimNode * animNode = AnimNodeMgr::getInstance ()->getNode (m_currentNodeId);
+      AnimatorMode::getInstance ()->setNodeSize (animNode, value);
+    }
+}
+
 
 void
 AnimPropertyBroswer::valueChangedSlot(QtProperty * property, QString description)

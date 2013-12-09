@@ -56,11 +56,12 @@ void ResizeableItem::setType (ResizeableItemType_t t)
 
 
 void
-ResizeableItem::setColor (uint8_t r, uint8_t g, uint8_t b)
+ResizeableItem::setColor (uint8_t r, uint8_t g, uint8_t b, uint8_t alpha)
 {
   m_r = r;
   m_g = g;
   m_b = b;
+  m_alpha = alpha;
 }
 void
 ResizeableItem::setWidth (qreal width)

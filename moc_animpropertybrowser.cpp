@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'animpropertybrowser.h'
 **
-** Created: Sun Dec 8 22:15:19 2013
+** Created: Mon Dec 9 06:27:31 2013
 **      by: The Qt Meta Object Compiler version 63 (Qt 4.8.1)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -23,7 +23,7 @@ static const uint qt_meta_data_netanim__AnimPropertyBroswer[] = {
        6,       // revision
        0,       // classname
        0,    0, // classinfo
-       2,   14, // methods
+       4,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -33,6 +33,8 @@ static const uint qt_meta_data_netanim__AnimPropertyBroswer[] = {
  // slots: signature, parameters, type, tag, flags
       39,   30,   29,   29, 0x08,
       69,   67,   29,   29, 0x08,
+     107,   67,   29,   29, 0x08,
+     144,   67,   29,   29, 0x08,
 
        0        // eod
 };
@@ -41,6 +43,8 @@ static const char qt_meta_stringdata_netanim__AnimPropertyBroswer[] = {
     "netanim::AnimPropertyBroswer\0\0newIndex\0"
     "nodeIdSelectorSlot(QString)\0,\0"
     "valueChangedSlot(QtProperty*,QString)\0"
+    "valueChangedSlot(QtProperty*,double)\0"
+    "valueChangedSlot(QtProperty*,QColor)\0"
 };
 
 void netanim::AnimPropertyBroswer::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
@@ -51,6 +55,8 @@ void netanim::AnimPropertyBroswer::qt_static_metacall(QObject *_o, QMetaObject::
         switch (_id) {
         case 0: _t->nodeIdSelectorSlot((*reinterpret_cast< QString(*)>(_a[1]))); break;
         case 1: _t->valueChangedSlot((*reinterpret_cast< QtProperty*(*)>(_a[1])),(*reinterpret_cast< QString(*)>(_a[2]))); break;
+        case 2: _t->valueChangedSlot((*reinterpret_cast< QtProperty*(*)>(_a[1])),(*reinterpret_cast< double(*)>(_a[2]))); break;
+        case 3: _t->valueChangedSlot((*reinterpret_cast< QtProperty*(*)>(_a[1])),(*reinterpret_cast< QColor(*)>(_a[2]))); break;
         default: ;
         }
     }
@@ -88,9 +94,9 @@ int netanim::AnimPropertyBroswer::qt_metacall(QMetaObject::Call _c, int _id, voi
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 2)
+        if (_id < 4)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 2;
+        _id -= 4;
     }
     return _id;
 }

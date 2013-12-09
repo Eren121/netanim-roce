@@ -23,6 +23,7 @@
 #include <QtIntPropertyManager>
 #include <QtSpinBoxFactory>
 #include <QtLineEditFactory>
+#include <QtDoubleSpinBoxFactory>
 
 
 namespace netanim {
@@ -42,9 +43,19 @@ private:
 
   QtProperty * m_nodeIdProperty;
   QtProperty * m_nodeDescriptionProperty;
+  QtProperty * m_nodeXProperty;
+  QtProperty * m_nodeYProperty;
+  QtProperty * m_nodeColorProperty;
+  QtProperty * m_nodeSizeProperty;
 
   QtIntPropertyManager * m_intManager;
   QtStringPropertyManager * m_stringManager;
+  QtDoublePropertyManager * m_doubleManager;
+  QtColorPropertyManager * m_colorManager;
+
+  QtDoubleSpinBoxFactory * m_doubleSpinBoxFactory;
+  QtSpinBoxFactory * m_spinBoxFactory;
+
 
   uint32_t m_currentNodeId;
   typedef std::map <QtProperty *, QString> PropertyIdMap_t;
@@ -52,6 +63,9 @@ private:
 private slots:
   void nodeIdSelectorSlot (QString newIndex);
   void valueChangedSlot (QtProperty*, QString);
+  void valueChangedSlot (QtProperty*, double);
+  void valueChangedSlot (QtProperty*, QColor);
+
 
 };
 

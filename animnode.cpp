@@ -28,13 +28,13 @@ AnimNode::AnimNode (uint32_t nodeId, qreal x, qreal y, QString nodeDescription):
   m_nodeId (nodeId),
   m_x (x),
   m_y (y),
-  m_r (255),
-  m_g (0),
-  m_b (0),
   m_showNodeId (true)
 {
   //setVisible (false);
   setZValue (ANIMNODE_ZVALUE);
+  m_r = 255;
+  m_g = 0;
+  m_b = 0;
   if (nodeDescription == "")
     {
       nodeDescription = QString::number (nodeId);
@@ -61,24 +61,42 @@ AnimNode::showNodeId (bool show)
 
 
 void
-AnimNode::setColor (uint8_t r, uint8_t g, uint8_t b)
+AnimNode::setColor (uint8_t r, uint8_t g, uint8_t b, uint8_t alpha)
 {
   m_r = r;
   m_g = g;
   m_b = b;
-  ResizeableItem::setColor (r, g, b);
+  m_alpha = alpha;
+  ResizeableItem::setColor (r, g, b, alpha);
+  update ();
+}
+
+QColor
+AnimNode::getColor ()
+{
+  QColor c (m_r, m_g, m_b, 255);
+  return c;
+}
+
+qreal
+AnimNode::getWidth ()
+{
+  return m_width;
 }
 
 void
 AnimNode::setWidth (qreal width)
 {
   m_width = width;
+  update ();
 }
 
 void
 AnimNode::setHeight (qreal height)
 {
   m_height = height;
+  update ();
+
 }
 
 qreal

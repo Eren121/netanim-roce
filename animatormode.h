@@ -53,6 +53,7 @@ public:
   void setFocus (bool focus);
   void setCurrentTime (qreal currentTime);
   void addAnimEvent (qreal t, AnimEvent *);
+  void setNodeSize (AnimNode * animNode, qreal size);
 
   // Actions
 

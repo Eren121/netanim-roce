@@ -1350,6 +1350,15 @@ AnimatorMode::testSlot ()
 }
 
 void
+AnimatorMode::setNodeSize (AnimNode *animNode, qreal size)
+{
+  animNode->setSize (size, size);
+  animNode->getDescription ()->setPos (animNode->sceneBoundingRect ().bottomRight ());
+  LinkManager::getInstance ()->repairLinks (animNode->getNodeId ());
+
+}
+
+void
 AnimatorMode::updateNodeSizeSlot (QString value)
 {
   qreal size = nodeSizeStringToValue (value);
@@ -1358,8 +1367,7 @@ AnimatorMode::updateNodeSizeSlot (QString value)
   for (uint32_t i = 0; i < nodeCount; ++i)
     {
       AnimNode * animNode = AnimNodeMgr::getInstance ()->getNode (i);
-      animNode->getDescription ()->setPos (animNode->sceneBoundingRect ().bottomRight ());
-      LinkManager::getInstance ()->repairLinks (animNode->getNodeId ());
+      setNodeSize (animNode, size);
     }
 
 }
