@@ -19,6 +19,7 @@
 #include "animpropertybrowser.h"
 #include "animnode.h"
 #include "animatormode.h"
+#include "animresource.h"
 
 namespace netanim {
 
@@ -27,11 +28,32 @@ NS_LOG_COMPONENT_DEFINE ("AnimPropertyBroswer");
 AnimPropertyBroswer * pAnimPropertyBrowser = 0;
 
 AnimPropertyBroswer::AnimPropertyBroswer ():
-  m_currentNodeId (0)
+  m_currentNodeId (0),
+  m_intManager (0),
+  m_stringManager (0),
+  m_doubleManager (0),
+  m_colorManager (0),
+  m_filePathManager (0),
+  m_nodePositionManager (0),
+  m_ipv4AddressManager (0),
+  m_macAddressManager (0),
+  m_staticStringManager (0),
+  m_doubleSpinBoxFactory (0),
+  m_spinBoxFactory (0),
+  m_fileEditFactory (0),
+  m_lineEditFactory (0)
 {
   m_vboxLayout = new QVBoxLayout;
 
   setLayout (m_vboxLayout);
+  m_tree = new QtTreePropertyBrowser;
+  m_mode = new QComboBox;
+  m_nodeIdSelector = new QComboBox;
+  m_mode->addItem ("Node");
+  m_vboxLayout->addWidget (m_mode);
+
+  m_vboxLayout->addWidget (m_nodeIdSelector);
+  m_vboxLayout->addWidget (m_tree);
 
 }
 
@@ -45,83 +67,175 @@ AnimPropertyBroswer::getInstance ()
   return pAnimPropertyBrowser;
 }
 
-
 void
-AnimPropertyBroswer::setup ()
+AnimPropertyBroswer::postParse ()
 {
-
-  m_intManager = new QtIntPropertyManager;
-  m_stringManager = new QtStringPropertyManager;
-  m_doubleManager = new QtDoublePropertyManager;
-  m_tree = new QtTreePropertyBrowser;
-  m_mode = new QComboBox;
-  m_nodeIdSelector = new QComboBox;
-  m_mode->addItem ("Node");
-  m_vboxLayout->addWidget (m_mode);
   uint32_t count = AnimNodeMgr::getInstance ()->getCount ();
   for (uint32_t i = 0; i < count; ++i)
     {
       m_nodeIdSelector->addItem (QString::number (i));
     }
+  setup ();
   connect (m_nodeIdSelector, SIGNAL(currentIndexChanged(QString)), this, SLOT (nodeIdSelectorSlot(QString)));
-  m_vboxLayout->addWidget (m_nodeIdSelector);
-  m_vboxLayout->addWidget (m_tree);
 
-  m_nodeIdProperty = m_intManager->addProperty ("Node Id");
-  m_tree->addProperty (m_nodeIdProperty);
+}
 
-  m_nodeDescriptionProperty = m_stringManager->addProperty("Node Description");
-  QtLineEditFactory * lineEditFactory = new QtLineEditFactory;
-  m_tree->setFactoryForManager (m_stringManager, lineEditFactory);
-  connect (m_stringManager, SIGNAL(valueChanged(QtProperty*,QString)), this, SLOT(valueChangedSlot(QtProperty*,QString)));
+void
+AnimPropertyBroswer::reset ()
+{
 
-  m_tree->addProperty (m_nodeDescriptionProperty);
-  AnimNode * animNode = AnimNodeMgr::getInstance ()->getNode (0);
-  m_stringManager->setValue (m_nodeDescriptionProperty, animNode->getDescription ()->toPlainText ());
+  if (m_intManager)
+    delete m_intManager;
+  if (m_stringManager)
+    delete m_stringManager;
+  if (m_doubleManager)
+    delete m_doubleManager;
+  if (m_colorManager)
+    delete m_colorManager;
+  if (m_filePathManager)
+    delete m_filePathManager;
+  if (m_nodePositionManager)
+    delete m_nodePositionManager;
+  if (m_ipv4AddressManager)
+    delete m_ipv4AddressManager;
+  if (m_macAddressManager)
+    delete m_macAddressManager;
+  if (m_staticStringManager)
+    delete m_staticStringManager;
+  m_intManager = 0;
+  m_stringManager = 0;
+  m_doubleManager = 0;
+  m_colorManager = 0;
+  m_filePathManager = 0;
+  m_nodePositionManager = 0;
+  m_ipv4AddressManager = 0;
+  m_macAddressManager = 0;
+  m_staticStringManager = 0;
 
+
+  if (m_doubleSpinBoxFactory)
+    delete m_doubleSpinBoxFactory;
+  if (m_spinBoxFactory)
+    delete m_spinBoxFactory;
+  if (m_fileEditFactory)
+    delete m_fileEditFactory;
+  if (m_lineEditFactory)
+    delete m_lineEditFactory;
+
+  m_doubleSpinBoxFactory = 0;
+  m_spinBoxFactory = 0;
+  m_fileEditFactory = 0;
+  m_lineEditFactory = 0;
+
+}
+
+void
+AnimPropertyBroswer::setup ()
+{
+  //reset ();
+  m_intManager = new QtIntPropertyManager;
+  m_stringManager = new QtStringPropertyManager;
+  m_doubleManager = new QtDoublePropertyManager;
+  m_colorManager = new QtColorPropertyManager;
+  m_filePathManager = new FilePathManager;
+  m_nodePositionManager = new QtGroupPropertyManager;
+  m_ipv4AddressManager = new QtGroupPropertyManager;
+  m_macAddressManager = new QtGroupPropertyManager;
+  m_staticStringManager = new QtStringPropertyManager;
 
 
   m_doubleSpinBoxFactory = new QtDoubleSpinBoxFactory;
+  m_spinBoxFactory = new QtSpinBoxFactory;
+  m_fileEditFactory = new FileEditFactory;
+  m_lineEditFactory = new QtLineEditFactory;
 
 
-  QtGroupPropertyManager * groupManager = new QtGroupPropertyManager;
-  QtProperty * nodePosition = groupManager->addProperty ("Node Position");
+  // Properties
+
+  // Node Id
+  m_nodeIdProperty = m_intManager->addProperty ("Node Id");
+  m_intManager->setValue (m_nodeIdProperty, m_currentNodeId);
+  m_tree->addProperty (m_nodeIdProperty);
+
+
+  // Node Description
+  m_nodeDescriptionProperty = m_stringManager->addProperty ("Node Description");
+  m_tree->setFactoryForManager (m_stringManager, m_lineEditFactory);
+  connect (m_stringManager, SIGNAL(valueChanged(QtProperty*,QString)), this, SLOT(valueChangedSlot(QtProperty*,QString)));
+  m_tree->addProperty (m_nodeDescriptionProperty);
+  AnimNode * animNode = AnimNodeMgr::getInstance ()->getNode (m_currentNodeId);
+  m_stringManager->setValue (m_nodeDescriptionProperty, animNode->getDescription ()->toPlainText ());
+
+
+  // Node Position
+  m_nodePositionGroupProperty = m_nodePositionManager->addProperty ("Node Position");
   m_nodeXProperty = m_doubleManager->addProperty ("Node X");
   m_nodeYProperty = m_doubleManager->addProperty ("Node Y");
-  nodePosition->addSubProperty (m_nodeXProperty);
-  nodePosition->addSubProperty (m_nodeYProperty);
+  m_nodePositionGroupProperty->addSubProperty (m_nodeXProperty);
+  m_nodePositionGroupProperty->addSubProperty (m_nodeYProperty);
   m_doubleManager->setMinimum (m_nodeXProperty, 0);
   m_doubleManager->setMinimum (m_nodeYProperty, 0);
   m_doubleManager->setValue (m_nodeXProperty, animNode->getX ());
   m_doubleManager->setValue (m_nodeYProperty, animNode->getY ());
   connect (m_doubleManager, SIGNAL(valueChanged(QtProperty*,double)), this, SLOT(valueChangedSlot(QtProperty*,double)));
-  m_tree->addProperty (nodePosition);
+  m_tree->addProperty (m_nodePositionGroupProperty);
   m_tree->setFactoryForManager (m_doubleManager, m_doubleSpinBoxFactory);
 
 
-  m_spinBoxFactory = new QtSpinBoxFactory;
-  m_colorManager = new QtColorPropertyManager;
+  // Node Color
   m_nodeColorProperty = m_colorManager->addProperty ("Node Color");
   connect(m_colorManager, SIGNAL(valueChanged(QtProperty*,QColor)), this, SLOT(valueChangedSlot(QtProperty*,QColor)));
-
   m_tree->addProperty (m_nodeColorProperty);
   m_tree->setFactoryForManager (m_colorManager->subIntPropertyManager (), m_spinBoxFactory);
   QColor c = animNode->getColor ();
   m_colorManager->setValue (m_nodeColorProperty, c);
 
 
+  // Node Size
   m_nodeSizeProperty = m_doubleManager->addProperty ("Node Size");
   m_doubleManager->setValue (m_nodeSizeProperty, animNode->getWidth ());
   m_doubleManager->setMinimum (m_nodeSizeProperty, 0.1);
-
   m_tree->addProperty (m_nodeSizeProperty);
 
 
-  m_filePathManager = new FilePathManager;
-  m_fileEditFactory = new FileEditFactory;
-  m_fileEditProperty = m_filePathManager->addProperty ("Node Resource");
-  m_tree->addProperty (m_fileEditProperty);
-  m_tree->setFactoryForManager (m_filePathManager, m_fileEditFactory);
+  // Node Resource
+  int resourceId = animNode->getResourceId ();
+  QString resourcePath = "";
+  if (resourceId != -1)
+    {
+      resourcePath = AnimResourceManager::getInstance ()->get (resourceId);
+    }
+   m_fileEditProperty = m_filePathManager->addProperty ("Node Resource");
+   m_filePathManager->setValue (m_fileEditProperty, resourcePath);
+   m_tree->addProperty (m_fileEditProperty);
+   m_tree->setFactoryForManager (m_filePathManager, m_fileEditFactory);
+   connect (m_filePathManager, SIGNAL(valueChanged(QtProperty*,QString)), this, SLOT(valueChangedSlot(QtProperty*,QString)));
+
+
+
+   // IPv4 and Mac
+   m_ipv4AddressGroupProperty = m_ipv4AddressManager->addProperty ("Ipv4 Addresses");
+   m_macAddressGroupProperty = m_macAddressManager->addProperty ("Mac Addresses");
+   AnimNode::Ipv4Vector_t ipv4Addresses = animNode->getIpv4Addresses ();
+   for (AnimNode::Ipv4Vector_t::const_iterator i = ipv4Addresses.begin ();
+        i != ipv4Addresses.end ();
+        ++i)
+     {
+       QtProperty * property = m_staticStringManager->addProperty (*i);
+       m_ipv4AddressGroupProperty->addSubProperty (property);
+       m_ipv4AddressVectorProperty.push_back (property);
+     }
+   AnimNode::MacVector_t macAddresses = animNode->getMacAddresses ();
+   for (AnimNode::MacVector_t::const_iterator i = macAddresses.begin ();
+        i != macAddresses.end ();
+        ++i)
+    {
+      QtProperty * property = m_staticStringManager->addProperty (*i);
+      m_macAddressGroupProperty->addSubProperty (property);
+      m_macAddressVectorProperty.push_back (property);
+    }
+   m_tree->addProperty (m_ipv4AddressGroupProperty);
+   m_tree->addProperty (m_macAddressGroupProperty);
 
 
 }
@@ -145,7 +259,7 @@ AnimPropertyBroswer::valueChangedSlot(QtProperty * property, double value)
       animNode->setX (value);
       qreal x = animNode->getX ();
       qreal y = animNode->getY ();
-      animNode->setPos (x, y);
+      AnimatorMode::getInstance ()->setNodePos (animNode, x, y);
     }
   if (m_nodeYProperty == property)
     {
@@ -153,7 +267,8 @@ AnimPropertyBroswer::valueChangedSlot(QtProperty * property, double value)
       animNode->setY (value);
       qreal x = animNode->getX ();
       qreal y = animNode->getY ();
-      animNode->setPos (x, y);
+      AnimatorMode::getInstance ()->setNodePos (animNode, x, y);
+
     }
   if (m_nodeSizeProperty == property)
     {
@@ -171,17 +286,76 @@ AnimPropertyBroswer::valueChangedSlot(QtProperty * property, QString description
       AnimNode * animNode = AnimNodeMgr::getInstance ()->getNode (m_currentNodeId);
       animNode->setNodeDescription (description);
     }
-
+  if (m_fileEditProperty == property)
+    {
+      uint32_t newResourceId = AnimResourceManager::getInstance ()->getNewResourceId ();
+      AnimResourceManager::getInstance ()->add (newResourceId, description);
+      AnimNode * animNode = AnimNodeMgr::getInstance ()->getNode (m_currentNodeId);
+      animNode->setResource (newResourceId);
+    }
 }
 
 void
 AnimPropertyBroswer::nodeIdSelectorSlot (QString newIndex)
 {
   NS_LOG_DEBUG (newIndex.toUInt());
-  uint32_t nodeId = newIndex.toUInt();
-  m_intManager->setValue (m_nodeIdProperty, nodeId);
-  AnimNode * animNode = AnimNodeMgr::getInstance ()->getNode (nodeId);
-  m_stringManager->setValue (m_nodeDescriptionProperty, animNode->getDescription ()->toPlainText());
+  m_currentNodeId = newIndex.toUInt ();
+  m_intManager->setValue (m_nodeIdProperty, m_currentNodeId);
+  // Node Id
+  m_intManager->setValue (m_nodeIdProperty, m_currentNodeId);
+
+
+  // Node Description
+  AnimNode * animNode = AnimNodeMgr::getInstance ()->getNode (m_currentNodeId);
+  m_stringManager->setValue (m_nodeDescriptionProperty, animNode->getDescription ()->toPlainText ());
+
+
+  // Node Position
+  m_doubleManager->setValue (m_nodeXProperty, animNode->getX ());
+  m_doubleManager->setValue (m_nodeYProperty, animNode->getY ());
+
+
+  // Node Color
+  QColor c = animNode->getColor ();
+  m_colorManager->setValue (m_nodeColorProperty, c);
+
+
+  // Node Size
+  m_doubleManager->setValue (m_nodeSizeProperty, animNode->getWidth ());
+  m_doubleManager->setMinimum (m_nodeSizeProperty, 0.1);
+
+
+  // Node Resource
+  int resourceId = animNode->getResourceId ();
+  QString resourcePath = "";
+  if (resourceId != -1)
+    {
+      resourcePath = AnimResourceManager::getInstance ()->get (resourceId);
+    }
+   m_filePathManager->setValue (m_fileEditProperty, resourcePath);
+
+
+   // IPv4 and Mac
+   m_ipv4AddressGroupProperty = m_ipv4AddressManager->addProperty ("Ipv4 Addresses");
+   m_macAddressGroupProperty = m_macAddressManager->addProperty ("Mac Addresses");
+   AnimNode::Ipv4Vector_t ipv4Addresses = animNode->getIpv4Addresses ();
+   for (AnimNode::Ipv4Vector_t::const_iterator i = ipv4Addresses.begin ();
+        i != ipv4Addresses.end ();
+        ++i)
+     {
+       QtProperty * property = m_staticStringManager->addProperty (*i);
+       m_ipv4AddressGroupProperty->addSubProperty (property);
+       m_ipv4AddressVectorProperty.push_back (property);
+     }
+   AnimNode::MacVector_t macAddresses = animNode->getMacAddresses ();
+   for (AnimNode::MacVector_t::const_iterator i = macAddresses.begin ();
+        i != macAddresses.end ();
+        ++i)
+    {
+      QtProperty * property = m_staticStringManager->addProperty (*i);
+      m_macAddressGroupProperty->addSubProperty (property);
+      m_macAddressVectorProperty.push_back (property);
+    }
 
 }
 

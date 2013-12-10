@@ -21,7 +21,8 @@
 
 AnimResourceManager * pResourceManager = 0;
 
-AnimResourceManager::AnimResourceManager ()
+AnimResourceManager::AnimResourceManager ():
+    m_maxResourceId (0)
 {
 
 }
@@ -40,7 +41,14 @@ AnimResourceManager::getInstance ()
 void
 AnimResourceManager::add (uint32_t resourceId, QString resourcePath)
 {
+  m_maxResourceId = qMax (resourceId, m_maxResourceId);
   m_resources[resourceId] = resourcePath;
+}
+
+uint32_t
+AnimResourceManager::getNewResourceId ()
+{
+  return m_maxResourceId+1;
 }
 
 

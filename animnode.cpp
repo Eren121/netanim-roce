@@ -17,6 +17,7 @@
  */
 
 #include "animnode.h"
+#include "animresource.h"
 
 NS_LOG_COMPONENT_DEFINE ("AnimNode");
 namespace netanim
@@ -28,7 +29,8 @@ AnimNode::AnimNode (uint32_t nodeId, qreal x, qreal y, QString nodeDescription):
   m_nodeId (nodeId),
   m_x (x),
   m_y (y),
-  m_showNodeId (true)
+  m_showNodeId (true),
+  m_resourceId (-1)
 {
   //setVisible (false);
   setZValue (ANIMNODE_ZVALUE);
@@ -59,6 +61,23 @@ AnimNode::showNodeId (bool show)
   m_nodeDescription->setVisible (m_showNodeId);
 }
 
+int
+AnimNode::getResourceId ()
+{
+  return m_resourceId;
+}
+
+
+void
+AnimNode::setResource (int resourceId)
+{
+  m_resourceId = resourceId;
+  QString resourcePath = AnimResourceManager::getInstance ()->get (resourceId);
+  //NS_LOG_DEBUG ("Res:" << resourcePath.toAscii ().data ());
+  QPixmap pix (resourcePath, "png");
+  setPixmap (pix);
+  update ();
+}
 
 void
 AnimNode::setColor (uint8_t r, uint8_t g, uint8_t b, uint8_t alpha)
@@ -158,6 +177,18 @@ void AnimNode::mouseMoveEvent (QGraphicsSceneMouseEvent *event)
       m_nodeDescription->setPos (sceneBoundingRect ().bottomRight ());
       update ();
     }
+}
+
+AnimNode::Ipv4Vector_t
+AnimNode::getIpv4Addresses ()
+{
+  return m_ipv4Vector;
+}
+
+AnimNode::MacVector_t
+AnimNode::getMacAddresses ()
+{
+  return m_macVector;
 }
 
 void

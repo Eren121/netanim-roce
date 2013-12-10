@@ -721,7 +721,7 @@ AnimatorMode::postParse ()
   m_gridButton->setChecked (true);
   showGridLinesSlot ();
   AnimatorView::getInstance ()->postParse ();
-  AnimPropertyBroswer::getInstance ()->setup ();
+  AnimPropertyBroswer::getInstance ()->postParse ();
 
 }
 
@@ -1164,11 +1164,8 @@ AnimatorMode::dispatchEvents ()
               //NS_LOG_DEBUG ("Node Update POs");
               AnimNodePositionUpdateEvent * ev = static_cast<AnimNodePositionUpdateEvent *> (j->second);
               AnimNode * animNode = AnimNodeMgr::getInstance ()->getNode (ev->m_nodeId);
-              animNode->setX (ev->m_x);
-              animNode->setY (ev->m_y);
-              animNode->setPos (animNode->getX (), animNode->getY ());
-              animNode->getDescription ()->setPos (animNode->sceneBoundingRect ().bottomRight ());
-              LinkManager::getInstance ()->repairLinks (animNode->getNodeId ());
+              setNodePos (animNode, ev->m_x, ev->m_y);
+
 
               break;
             }
@@ -1191,21 +1188,15 @@ AnimatorMode::dispatchEvents ()
             {
               AnimNodeSizeUpdateEvent * ev = static_cast<AnimNodeSizeUpdateEvent *> (j->second);
               AnimNode * animNode = AnimNodeMgr::getInstance ()->getNode (ev->m_nodeId);
-              animNode->setSize (ev->m_width, ev->m_height);
-              animNode->getDescription ()->setPos (animNode->sceneBoundingRect ().bottomRight ());
-              LinkManager::getInstance ()->repairLinks (animNode->getNodeId ());
+              setNodeSize (animNode, ev->m_width);
               break;
             }
             case AnimEvent::UPDATE_NODE_IMAGE_EVENT:
             {
               AnimNodeImageUpdateEvent * ev = static_cast<AnimNodeImageUpdateEvent *> (j->second);
               AnimNode * animNode = AnimNodeMgr::getInstance ()->getNode (ev->m_nodeId);
-              uint32_t resourceId = ev->m_resourceId;
-              QString resourcePath = AnimResourceManager::getInstance ()->get (resourceId);
-              //NS_LOG_DEBUG ("Res:" << resourcePath.toAscii ().data ());
-              QPixmap pix (resourcePath, "png");
-              animNode->setPixmap (pix);
-              LinkManager::getInstance ()->repairLinks (animNode->getNodeId ());
+              setNodeResource (animNode, ev->m_resourceId);
+
               break;
 
             }
@@ -1349,6 +1340,14 @@ AnimatorMode::testSlot ()
   t += 0.00005;
 }
 
+
+void
+AnimatorMode::setNodeResource (AnimNode *animNode, uint32_t resourceId)
+{
+  animNode->setResource (resourceId);
+  LinkManager::getInstance ()->repairLinks (animNode->getNodeId ());
+}
+
 void
 AnimatorMode::setNodeSize (AnimNode *animNode, qreal size)
 {
@@ -1356,6 +1355,16 @@ AnimatorMode::setNodeSize (AnimNode *animNode, qreal size)
   animNode->getDescription ()->setPos (animNode->sceneBoundingRect ().bottomRight ());
   LinkManager::getInstance ()->repairLinks (animNode->getNodeId ());
 
+}
+
+void
+AnimatorMode::setNodePos (AnimNode *animNode, qreal x, qreal y)
+{
+  animNode->setX (x);
+  animNode->setY (y);
+  animNode->setPos (x, y);
+  animNode->getDescription ()->setPos (animNode->sceneBoundingRect ().bottomRight ());
+  LinkManager::getInstance ()->repairLinks (animNode->getNodeId ());
 }
 
 void

@@ -34,10 +34,12 @@ class AnimPropertyBroswer: public QWidget
 Q_OBJECT
 public:
   static AnimPropertyBroswer * getInstance ();
-  void setup ();
+  void postParse ();
 private:
-  AnimPropertyBroswer();
-
+  typedef QVector <QtProperty *> QtPropertyVector_t;
+  AnimPropertyBroswer ();
+  void reset ();
+  void setup ();
   QVBoxLayout * m_vboxLayout;
   QtAbstractPropertyBrowser * m_tree;
   QComboBox * m_mode;
@@ -50,6 +52,13 @@ private:
   QtProperty * m_nodeColorProperty;
   QtProperty * m_nodeSizeProperty;
   QtProperty * m_fileEditProperty;
+  QtProperty * m_ipv4AddressGroupProperty;
+  QtProperty * m_macAddressGroupProperty;
+  QtProperty * m_nodePositionGroupProperty;
+  QtPropertyVector_t m_ipv4AddressVectorProperty;
+  QtPropertyVector_t m_macAddressVectorProperty;
+
+
 
 
   QtIntPropertyManager * m_intManager;
@@ -57,10 +66,15 @@ private:
   QtDoublePropertyManager * m_doubleManager;
   QtColorPropertyManager * m_colorManager;
   FilePathManager * m_filePathManager;
+  QtGroupPropertyManager * m_ipv4AddressManager;
+  QtGroupPropertyManager * m_macAddressManager;
+  QtGroupPropertyManager * m_nodePositionManager;
+  QtStringPropertyManager * m_staticStringManager;
 
   QtDoubleSpinBoxFactory * m_doubleSpinBoxFactory;
   QtSpinBoxFactory * m_spinBoxFactory;
   FileEditFactory * m_fileEditFactory;
+  QtLineEditFactory * m_lineEditFactory;
 
 
 
@@ -72,7 +86,6 @@ private slots:
   void valueChangedSlot (QtProperty*, QString);
   void valueChangedSlot (QtProperty*, double);
   void valueChangedSlot (QtProperty*, QColor);
-
 
 };
 

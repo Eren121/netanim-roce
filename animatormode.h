@@ -54,6 +54,8 @@ public:
   void setCurrentTime (qreal currentTime);
   void addAnimEvent (qreal t, AnimEvent *);
   void setNodeSize (AnimNode * animNode, qreal size);
+  void setNodePos (AnimNode * animNode, qreal x, qreal y);
+  void setNodeResource (AnimNode * animNode, uint32_t resourceId);
 
   // Actions
 
