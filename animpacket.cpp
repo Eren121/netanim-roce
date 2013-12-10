@@ -598,7 +598,7 @@ AnimPacket::paint (QPainter *painter, const QStyleOptionGraphicsItem *option, QW
   QPainterPath arrowTailPath;
   arrowTailPath.moveTo (0, 0);
   arrowTailPath.lineTo (-5 * (10/viewTransform.m22 ()) , 0);
-  p.setColor (Qt::red);
+  p.setColor (Qt::blue);
   painter->setPen (p);
   //p.setWidthF(1.0);
   painter->setPen (p);
