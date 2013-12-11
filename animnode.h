@@ -30,6 +30,7 @@ class AnimNode: public ResizeableItem
 public:
   typedef QVector <QString> Ipv4Vector_t;
   typedef QVector <QString> MacVector_t;
+  typedef QVector <QPointF> PosVector_t;
 
   AnimNode (uint32_t nodeId, qreal x, qreal y, QString nodeDescription);
   ~AnimNode ();
@@ -52,7 +53,8 @@ public:
   void setHeight (qreal height);
   void setColor (uint8_t r, uint8_t g, uint8_t b, uint8_t alpha = 255);
   void setResource (int resourceId);
-
+  void setPos (qreal x, qreal y);
+  void addAPosition (QPointF pos);
   void addIpv4Address (QString ip);
   void addMacAddress (QString mac);
   bool hasIpv4 (QString ip);
@@ -67,6 +69,7 @@ private:
   Ipv4Vector_t m_ipv4Vector;
   MacVector_t m_macVector;
   int m_resourceId;
+  PosVector_t m_positions;
 
 
 };

@@ -70,11 +70,13 @@ private:
   QtGroupPropertyManager * m_macAddressManager;
   QtGroupPropertyManager * m_nodePositionManager;
   QtStringPropertyManager * m_staticStringManager;
+  QtBoolPropertyManager * m_boolManager;
 
   QtDoubleSpinBoxFactory * m_doubleSpinBoxFactory;
   QtSpinBoxFactory * m_spinBoxFactory;
   FileEditFactory * m_fileEditFactory;
   QtLineEditFactory * m_lineEditFactory;
+  QtCheckBoxFactory * m_checkBoxFactory;
 
 
 

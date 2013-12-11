@@ -1165,7 +1165,7 @@ AnimatorMode::dispatchEvents ()
               AnimNodePositionUpdateEvent * ev = static_cast<AnimNodePositionUpdateEvent *> (j->second);
               AnimNode * animNode = AnimNodeMgr::getInstance ()->getNode (ev->m_nodeId);
               setNodePos (animNode, ev->m_x, ev->m_y);
-
+              animNode->addAPosition (QPointF (ev->m_x, ev->m_y));
 
               break;
             }

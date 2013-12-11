@@ -43,6 +43,7 @@ AnimNode::AnimNode (uint32_t nodeId, qreal x, qreal y, QString nodeDescription):
     }
   m_nodeDescription = new QGraphicsTextItem (nodeDescription);
   m_nodeDescription->setFlag (QGraphicsItem::ItemIgnoresTransformations);
+  m_positions.push_back (QPointF (x, y));
 
 }
 
@@ -128,6 +129,20 @@ qreal
 AnimNode::getY ()
 {
   return m_y;
+}
+
+void
+AnimNode::addAPosition (QPointF pos)
+{
+  m_positions.push_back (pos);
+}
+
+void
+AnimNode::setPos (qreal x, qreal y)
+{
+  m_x = x;
+  m_y = y;
+  QGraphicsItem::setPos (x, y);
 }
 
 void

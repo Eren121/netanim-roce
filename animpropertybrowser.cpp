@@ -38,10 +38,12 @@ AnimPropertyBroswer::AnimPropertyBroswer ():
   m_ipv4AddressManager (0),
   m_macAddressManager (0),
   m_staticStringManager (0),
+  m_boolManager (0),
   m_doubleSpinBoxFactory (0),
   m_spinBoxFactory (0),
   m_fileEditFactory (0),
-  m_lineEditFactory (0)
+  m_lineEditFactory (0),
+  m_checkBoxFactory (0)
 {
   m_vboxLayout = new QVBoxLayout;
 
@@ -102,6 +104,8 @@ AnimPropertyBroswer::reset ()
     delete m_macAddressManager;
   if (m_staticStringManager)
     delete m_staticStringManager;
+  if (m_boolManager)
+    delete m_boolManager;
   m_intManager = 0;
   m_stringManager = 0;
   m_doubleManager = 0;
@@ -111,6 +115,7 @@ AnimPropertyBroswer::reset ()
   m_ipv4AddressManager = 0;
   m_macAddressManager = 0;
   m_staticStringManager = 0;
+  m_boolManager = 0;
 
 
   if (m_doubleSpinBoxFactory)
@@ -121,11 +126,14 @@ AnimPropertyBroswer::reset ()
     delete m_fileEditFactory;
   if (m_lineEditFactory)
     delete m_lineEditFactory;
+  if (m_checkBoxFactory)
+    delete m_checkBoxFactory;
 
   m_doubleSpinBoxFactory = 0;
   m_spinBoxFactory = 0;
   m_fileEditFactory = 0;
   m_lineEditFactory = 0;
+  m_checkBoxFactory = 0;
 
 }
 
@@ -142,12 +150,14 @@ AnimPropertyBroswer::setup ()
   m_ipv4AddressManager = new QtGroupPropertyManager;
   m_macAddressManager = new QtGroupPropertyManager;
   m_staticStringManager = new QtStringPropertyManager;
+  m_boolManager = new QtBoolPropertyManager;
 
 
   m_doubleSpinBoxFactory = new QtDoubleSpinBoxFactory;
   m_spinBoxFactory = new QtSpinBoxFactory;
   m_fileEditFactory = new FileEditFactory;
   m_lineEditFactory = new QtLineEditFactory;
+  m_checkBoxFactory = new QtCheckBoxFactory;
 
 
   // Properties
