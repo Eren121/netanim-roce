@@ -30,7 +30,8 @@ AnimNode::AnimNode (uint32_t nodeId, qreal x, qreal y, QString nodeDescription):
   m_x (x),
   m_y (y),
   m_showNodeId (true),
-  m_resourceId (-1)
+  m_resourceId (-1),
+  m_showNodeTrajectory (false)
 {
   //setVisible (false);
   setZValue (ANIMNODE_ZVALUE);
@@ -43,7 +44,6 @@ AnimNode::AnimNode (uint32_t nodeId, qreal x, qreal y, QString nodeDescription):
     }
   m_nodeDescription = new QGraphicsTextItem (nodeDescription);
   m_nodeDescription->setFlag (QGraphicsItem::ItemIgnoresTransformations);
-  m_positions.push_back (QPointF (x, y));
 
 }
 
@@ -131,11 +131,6 @@ AnimNode::getY ()
   return m_y;
 }
 
-void
-AnimNode::addAPosition (QPointF pos)
-{
-  m_positions.push_back (pos);
-}
 
 void
 AnimNode::setPos (qreal x, qreal y)
@@ -150,6 +145,20 @@ AnimNode::setX (qreal x)
 {
   m_x = x;
 }
+
+
+bool
+AnimNode::getShowNodeTrajectory ()
+{
+  return m_showNodeTrajectory;
+}
+
+void
+AnimNode::setShowNodeTrajectory (bool showNodeTrajectory)
+{
+  m_showNodeTrajectory = showNodeTrajectory;
+}
+
 
 void
 AnimNode::setY (qreal y)
@@ -372,6 +381,25 @@ AnimNodeMgr::showNodeId (bool show)
       animNode->showNodeId (show);
     }
 
+}
+
+AnimNodeMgr::PosVector_t
+AnimNodeMgr::getPositions (uint32_t nodeId)
+{
+  return m_nodePositions[nodeId];
+}
+
+void
+AnimNodeMgr::addAPosition (uint32_t nodeId, QPointF pos)
+{
+  if (m_nodePositions.find (nodeId) == m_nodePositions.end ())
+    {
+      PosVector_t posVector;
+      posVector.push_back (pos);
+      m_nodePositions[nodeId] = posVector;
+    }
+  PosVector_t & pv = m_nodePositions[nodeId];
+  pv.push_back (pos);
 }
 
 

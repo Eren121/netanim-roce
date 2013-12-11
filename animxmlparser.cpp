@@ -23,6 +23,7 @@
 #include "animpacket.h"
 #include "animlink.h"
 #include "animresource.h"
+#include "animnode.h"
 
 
 namespace netanim
@@ -155,6 +156,8 @@ Animxmlparser::doParse ()
               parsedElement.node_g,
               parsedElement.node_b);
           pAnimatorMode->addAnimEvent (0, ev);
+          AnimNodeMgr::getInstance ()->addAPosition (parsedElement.nodeId, QPointF (parsedElement.node_x,
+                                                                                    parsedElement.node_y));
           break;
         }
         case XML_WPACKET_RX:
@@ -218,6 +221,9 @@ Animxmlparser::doParse ()
                   parsedElement.node_x,
                   parsedElement.node_y);
               pAnimatorMode->addAnimEvent (parsedElement.updateTime, ev);
+              AnimNodeMgr::getInstance ()->addAPosition (parsedElement.nodeId, QPointF (parsedElement.node_x,
+                                                                                        parsedElement.node_y));
+
             }
           if (parsedElement.nodeUpdateType == ParsedElement::COLOR)
             {

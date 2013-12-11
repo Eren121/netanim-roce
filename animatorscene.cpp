@@ -19,6 +19,7 @@
 
 #include "animatorscene.h"
 #include "animatorview.h"
+#include "logqt.h"
 
 namespace netanim
 {
@@ -72,6 +73,38 @@ void AnimatorScene::testSlot ()
 
 
 void
+AnimatorScene::setShowNodeTrajectory (AnimNode *animNode)
+{
+  uint32_t nodeId = animNode->getNodeId ();
+  if (m_nodeTrajectory.find (nodeId) == m_nodeTrajectory.end ())
+    {
+      QPainterPath path;
+      AnimNodeMgr::PosVector_t positions =  AnimNodeMgr::getInstance ()->getPositions (animNode->getNodeId ());
+      for (AnimNodeMgr::PosVector_t::const_iterator i = positions.begin ();
+          i != positions.end ();
+          ++i)
+        {
+          QPointF pt = *i;
+          path.moveTo (pt);
+          break;
+        }
+
+
+      positions =  AnimNodeMgr::getInstance ()->getPositions (animNode->getNodeId ());
+      for (AnimNodeMgr::PosVector_t::const_iterator i = positions.begin ();
+          i != positions.end ();
+          ++i)
+        {
+          QPointF pt = *i;
+          path.lineTo (pt);
+        }
+      QGraphicsPathItem * pathItem = addPath (path);
+      m_nodeTrajectory[nodeId] = pathItem;
+    }
+  m_nodeTrajectory[nodeId]->setVisible (animNode->getShowNodeTrajectory ());
+}
+
+void
 AnimatorScene::addWirelessCircle (AnimWirelessCircles *w)
 {
   addItem (w);
@@ -95,6 +128,19 @@ AnimatorScene::purgeAnimatedNodes ()
   m_animatedNodes.clear ();
   AnimNodeMgr::getInstance ()->systemReset ();
 
+}
+
+void
+AnimatorScene::purgeNodeTrajectories ()
+{
+  for (NodeTrajectoryMap_t::const_iterator i = m_nodeTrajectory.begin ();
+       i != m_nodeTrajectory.end ();
+       ++i)
+    {
+      i->second->setVisible (false);
+      removeItem (i->second);
+    }
+  m_nodeTrajectory.clear ();
 }
 
 void

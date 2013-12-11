@@ -222,6 +222,13 @@ AnimPropertyBroswer::setup ()
    connect (m_filePathManager, SIGNAL(valueChanged(QtProperty*,QString)), this, SLOT(valueChangedSlot(QtProperty*,QString)));
 
 
+   // Node Trajectory
+   m_showNodeTrajectoryProperty = m_boolManager->addProperty ("Show Node Trajectory");
+   m_tree->setFactoryForManager  (m_boolManager, m_checkBoxFactory);
+   m_boolManager->setValue (m_showNodeTrajectoryProperty, animNode->getShowNodeTrajectory ());
+   m_tree->addProperty (m_showNodeTrajectoryProperty);
+   connect (m_boolManager, SIGNAL(valueChanged(QtProperty*,bool)), this, SLOT(valueChangedSlot(QtProperty*,bool)));
+
 
    // IPv4 and Mac
    m_ipv4AddressGroupProperty = m_ipv4AddressManager->addProperty ("Ipv4 Addresses");
@@ -306,6 +313,17 @@ AnimPropertyBroswer::valueChangedSlot(QtProperty * property, QString description
 }
 
 void
+AnimPropertyBroswer::valueChangedSlot (QtProperty * property, bool showNodeTrajectory)
+{
+  if (m_showNodeTrajectoryProperty == property)
+    {
+      AnimNode * animNode = AnimNodeMgr::getInstance ()->getNode (m_currentNodeId);
+      animNode->setShowNodeTrajectory (showNodeTrajectory);
+      AnimatorMode::getInstance ()->setShowNodeTrajectory (animNode);
+    }
+}
+
+void
 AnimPropertyBroswer::nodeIdSelectorSlot (QString newIndex)
 {
   NS_LOG_DEBUG (newIndex.toUInt());
@@ -343,6 +361,10 @@ AnimPropertyBroswer::nodeIdSelectorSlot (QString newIndex)
       resourcePath = AnimResourceManager::getInstance ()->get (resourceId);
     }
    m_filePathManager->setValue (m_fileEditProperty, resourcePath);
+
+
+  m_boolManager->setValue (m_showNodeTrajectoryProperty, animNode->getShowNodeTrajectory ());
+  AnimatorMode::getInstance ()->setShowNodeTrajectory (animNode);
 
 
    // IPv4 and Mac

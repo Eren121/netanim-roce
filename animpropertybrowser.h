@@ -57,6 +57,7 @@ private:
   QtProperty * m_nodePositionGroupProperty;
   QtPropertyVector_t m_ipv4AddressVectorProperty;
   QtPropertyVector_t m_macAddressVectorProperty;
+  QtProperty * m_showNodeTrajectoryProperty;
 
 
 
@@ -88,6 +89,7 @@ private slots:
   void valueChangedSlot (QtProperty*, QString);
   void valueChangedSlot (QtProperty*, double);
   void valueChangedSlot (QtProperty*, QColor);
+  void valueChangedSlot (QtProperty* ,bool);
 
 };
 

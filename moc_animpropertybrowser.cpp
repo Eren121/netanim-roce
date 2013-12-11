@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'animpropertybrowser.h'
 **
-** Created: Mon Dec 9 07:42:03 2013
+** Created: Wed Dec 11 06:53:00 2013
 **      by: The Qt Meta Object Compiler version 63 (Qt 4.8.1)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -23,7 +23,7 @@ static const uint qt_meta_data_netanim__AnimPropertyBroswer[] = {
        6,       // revision
        0,       // classname
        0,    0, // classinfo
-       4,   14, // methods
+       5,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -35,6 +35,7 @@ static const uint qt_meta_data_netanim__AnimPropertyBroswer[] = {
       69,   67,   29,   29, 0x08,
      107,   67,   29,   29, 0x08,
      144,   67,   29,   29, 0x08,
+     181,   67,   29,   29, 0x08,
 
        0        // eod
 };
@@ -45,6 +46,7 @@ static const char qt_meta_stringdata_netanim__AnimPropertyBroswer[] = {
     "valueChangedSlot(QtProperty*,QString)\0"
     "valueChangedSlot(QtProperty*,double)\0"
     "valueChangedSlot(QtProperty*,QColor)\0"
+    "valueChangedSlot(QtProperty*,bool)\0"
 };
 
 void netanim::AnimPropertyBroswer::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
@@ -57,6 +59,7 @@ void netanim::AnimPropertyBroswer::qt_static_metacall(QObject *_o, QMetaObject::
         case 1: _t->valueChangedSlot((*reinterpret_cast< QtProperty*(*)>(_a[1])),(*reinterpret_cast< QString(*)>(_a[2]))); break;
         case 2: _t->valueChangedSlot((*reinterpret_cast< QtProperty*(*)>(_a[1])),(*reinterpret_cast< double(*)>(_a[2]))); break;
         case 3: _t->valueChangedSlot((*reinterpret_cast< QtProperty*(*)>(_a[1])),(*reinterpret_cast< QColor(*)>(_a[2]))); break;
+        case 4: _t->valueChangedSlot((*reinterpret_cast< QtProperty*(*)>(_a[1])),(*reinterpret_cast< bool(*)>(_a[2]))); break;
         default: ;
         }
     }
@@ -94,9 +97,9 @@ int netanim::AnimPropertyBroswer::qt_metacall(QMetaObject::Call _c, int _id, voi
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 4)
+        if (_id < 5)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 4;
+        _id -= 5;
     }
     return _id;
 }

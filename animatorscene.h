@@ -83,14 +83,14 @@ public:
   void showAnimatedPackets (bool show);
   void purgeAnimatedNodes ();
   void purgeAnimatedLinks ();
+  void purgeNodeTrajectories ();
   void setShowInterfaceTexts (bool showIp, bool showMac);
   void addGrid ();
   void resetGrid ();
   void systemReset ();
   QRectF getBoundaryRect ();
   void setGridLinesCount (int nGridLines);
-
-
+  void setShowNodeTrajectory (AnimNode * animNode);
 
 public slots:
   void testSlot ();
@@ -98,6 +98,7 @@ private:
   typedef QVector <AnimInterfaceText *>          AnimInterfaceTextVector_t;
   typedef QVector <QGraphicsLineItem *>          LineItemVector_t;
   typedef QVector <QGraphicsSimpleTextItem*>     GridCoordinatesVector_t;
+  typedef std::map <uint32_t, QGraphicsPathItem *>          NodeTrajectoryMap_t;
 
   TimeValue<AnimPacket *> m_testTimeValue;
   QLabel * m_mousePositionLabel;
@@ -119,6 +120,7 @@ private:
   LineItemVector_t             m_gridLines;
   GridCoordinatesVector_t      m_gridCoordinates;
   QRectF m_boundaryRect;
+  NodeTrajectoryMap_t m_nodeTrajectory;
 
 
   void repositionInterfaceText (AnimInterfaceText * textItem);

@@ -56,6 +56,7 @@ public:
   void setNodeSize (AnimNode * animNode, qreal size);
   void setNodePos (AnimNode * animNode, qreal x, qreal y);
   void setNodeResource (AnimNode * animNode, uint32_t resourceId);
+  void setShowNodeTrajectory (AnimNode * animNode);
 
   // Actions
 
@@ -184,7 +185,7 @@ private:
   void fastForward (qreal t);
   void reset ();
   QPropertyAnimation * getButtonAnimation (QToolButton * toolButton);
-  void initPropertyBrowser();
+  void initPropertyBrowser ();
 
 
 private slots:

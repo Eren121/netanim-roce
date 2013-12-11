@@ -230,8 +230,9 @@ AnimatorMode::setTopToolbarWidgets ()
 }
 
 
+
 void
-AnimatorMode::initPropertyBrowser()
+AnimatorMode::initPropertyBrowser ()
 {
   //m_propertyBrowser = new QtTreePropertyBrowser;
 }
@@ -890,6 +891,7 @@ AnimatorMode::clickResetSlot ()
   m_playButton->setIcon (QIcon (":/resources/animator_play.svg"));
   m_playButton->setToolTip ("Play Animation");
   m_playButton->setEnabled (true);
+  AnimatorScene::getInstance ()->purgeNodeTrajectories ();
   AnimatorScene::getInstance ()->purgeAnimatedNodes ();
   AnimatorScene::getInstance ()->purgeAnimatedPackets ();
 
@@ -1165,8 +1167,6 @@ AnimatorMode::dispatchEvents ()
               AnimNodePositionUpdateEvent * ev = static_cast<AnimNodePositionUpdateEvent *> (j->second);
               AnimNode * animNode = AnimNodeMgr::getInstance ()->getNode (ev->m_nodeId);
               setNodePos (animNode, ev->m_x, ev->m_y);
-              animNode->addAPosition (QPointF (ev->m_x, ev->m_y));
-
               break;
             }
             case AnimEvent::UPDATE_NODE_COLOR_EVENT:
@@ -1340,6 +1340,11 @@ AnimatorMode::testSlot ()
   t += 0.00005;
 }
 
+void
+AnimatorMode::setShowNodeTrajectory (AnimNode *animNode)
+{
+  AnimatorScene::getInstance ()->setShowNodeTrajectory (animNode);
+}
 
 void
 AnimatorMode::setNodeResource (AnimNode *animNode, uint32_t resourceId)
