@@ -64,6 +64,7 @@ public:
   void showPopup (QString msg);
   void externalPauseEvent ();
   void start ();
+  void openPropertyBroswer ();
 
 private:
 
@@ -127,7 +128,6 @@ private:
   QToolBar * m_topToolBar;
   QToolButton * m_packetStatsButton;
   QSplitter * m_mainSplitter;
-  QToolButton * m_nodePositionStatsButton;
   QToolButton * m_nodeTrajectoryButton;
   QLabel * m_timelineSliderLabel;
   QToolBar * m_verticalToolbar;
@@ -144,6 +144,7 @@ private:
   QSlider * m_simulationTimeSlider;
   QToolButton * m_addCustomImageButton;
   QToolButton * m_showRoutePathButton;
+  QToolButton * m_showPropertiesButton;
   QParallelAnimationGroup * m_packetAnimationGroup;
   QParallelAnimationGroup * m_buttonAnimationGroup;
   //QtTreePropertyBrowser * m_propertyBrowser;
@@ -215,6 +216,7 @@ private slots:
   void showBatteryCapacitySlot ();
   void packetAnimationGroupFinishedSlot ();
   void buttonAnimationGroupFinishedSlot ();
+  void showPropertiesSlot ();
 };
 
 

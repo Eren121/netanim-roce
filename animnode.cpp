@@ -44,7 +44,7 @@ AnimNode::AnimNode (uint32_t nodeId, qreal x, qreal y, QString nodeDescription):
     }
   m_nodeDescription = new QGraphicsTextItem (nodeDescription);
   m_nodeDescription->setFlag (QGraphicsItem::ItemIgnoresTransformations);
-
+  setFlag (QGraphicsItem::ItemIsSelectable);
 }
 
 AnimNode::~AnimNode ()
@@ -355,6 +355,10 @@ void
 AnimNodeMgr::systemReset ()
 {
   m_nodes.clear ();
+  m_minX = 0;
+  m_minY = 0;
+  m_maxX = 0;
+  m_maxY = 0;
 }
 
 

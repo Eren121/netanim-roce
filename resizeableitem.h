@@ -46,7 +46,7 @@ public:
   enum { Type = ANIMNODE_TYPE };
   int type () const
   {
-    return Type;
+    return ResizeableItem::Type;
   }
   ResizeableItem ();
   ~ResizeableItem ();

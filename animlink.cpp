@@ -59,8 +59,8 @@ AnimLink::AnimLink (uint32_t fromId, uint32_t toId,
       QStringList parts = (*m_pointBDescription).split ('~');
       if (parts.count () == 2)
         {
-          AnimNodeMgr::getInstance ()->addIpv4Address (fromId, parts.at (0));
-          AnimNodeMgr::getInstance ()->addMacAddress (fromId, parts.at (1));
+          AnimNodeMgr::getInstance ()->addIpv4Address (toId, parts.at (0));
+          AnimNodeMgr::getInstance ()->addMacAddress (toId, parts.at (1));
         }
     }
   m_originalLinkDescription = new QString ("");

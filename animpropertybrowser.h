@@ -35,6 +35,9 @@ Q_OBJECT
 public:
   static AnimPropertyBroswer * getInstance ();
   void postParse ();
+  void systemReset ();
+  void show (bool show);
+  void setCurrentNodeId (uint32_t currentNodeId);
 private:
   typedef QVector <QtProperty *> QtPropertyVector_t;
   AnimPropertyBroswer ();

@@ -19,6 +19,8 @@
 
 #include "animatorscene.h"
 #include "animatorview.h"
+#include "animatormode.h"
+#include "animpropertybrowser.h"
 #include "logqt.h"
 
 namespace netanim
@@ -60,10 +62,13 @@ AnimatorScene::getInstance ()
 void
 AnimatorScene::systemReset ()
 {
+  purgeNodeTrajectories ();
   purgeAnimatedPackets ();
   purgeAnimatedNodes ();
   purgeAnimatedLinks ();
   resetInterfaceTexts ();
+  setSceneRect (0, 0, ANIMATORSCENE_USERAREA_WIDTH, ANIMATORSCENE_USERAREA_WIDTH);
+  resetGrid ();
 }
 
 void AnimatorScene::testSlot ()
@@ -232,8 +237,6 @@ AnimatorScene::addNode (AnimNode *animNode)
   QPointF maxPoint = QPointF (AnimNodeMgr::getInstance ()->getMaxPoint ().x () +  boundaryWidth,
                              AnimNodeMgr::getInstance ()->getMaxPoint ().y () +  boundaryWidth);
   setSceneRect (QRectF (minPoint, maxPoint));
-
-
 }
 
 void
@@ -263,7 +266,49 @@ AnimatorScene::showMousePositionLabel (bool show)
   m_mousePositionProxyWidget->setVisible (show);
 }
 
-void AnimatorScene::mouseMoveEvent (QGraphicsSceneMouseEvent *event)
+
+void
+AnimatorScene::mouseDoubleClickEvent (QGraphicsSceneMouseEvent *event)
+{
+  QGraphicsItem * item = itemAt (event->scenePos ());
+  int t = item->type ();
+  NS_LOG_DEBUG ("Type:" << t);
+  if (item->type () == ANIMNODE_TYPE)
+    {
+
+      NS_LOG_DEBUG ("AnimNode Dbl clicked");
+      AnimNode * animNode = qgraphicsitem_cast <AnimNode *> (item);
+      if (animNode)
+        {
+          AnimPropertyBroswer::getInstance ()->setCurrentNodeId (animNode->getNodeId ());
+          AnimatorMode::getInstance ()->openPropertyBroswer ();
+        }
+
+    }
+  else
+    {
+      QList <QGraphicsItem *> list = collidingItems(item);
+      foreach (QGraphicsItem * i, list)
+        {
+          if (i->type () == ANIMNODE_TYPE)
+            {
+
+              NS_LOG_DEBUG ("AnimNode Dbl clicked");
+              AnimNode * animNode = qgraphicsitem_cast <AnimNode *> (item);
+              if (animNode)
+                {
+                  NS_LOG_DEBUG ("AnimNode Dbl clicked: Node Id:" << animNode->getNodeId());
+                  AnimPropertyBroswer::getInstance ()->setCurrentNodeId (animNode->getNodeId ());
+                  AnimatorMode::getInstance ()->openPropertyBroswer ();
+                }
+            }
+        }
+
+    }
+}
+
+void
+AnimatorScene::mouseMoveEvent (QGraphicsSceneMouseEvent *event)
 {
 
   QPointF scenePos = event->scenePos ();

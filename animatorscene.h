@@ -75,6 +75,7 @@ public:
   static AnimatorScene * getInstance ();
   AnimatorScene ();
   void mouseMoveEvent (QGraphicsSceneMouseEvent *event);
+  void mouseDoubleClickEvent (QGraphicsSceneMouseEvent *event);
   void addPacket (AnimPacket * p);
   void addNode (AnimNode * animNode);
   void addLink (AnimLink * animLink);

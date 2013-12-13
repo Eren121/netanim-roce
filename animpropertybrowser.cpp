@@ -59,6 +59,13 @@ AnimPropertyBroswer::AnimPropertyBroswer ():
 
 }
 
+
+void
+AnimPropertyBroswer::show (bool show)
+{
+  setVisible (show);
+}
+
 AnimPropertyBroswer *
 AnimPropertyBroswer::getInstance ()
 {
@@ -70,8 +77,22 @@ AnimPropertyBroswer::getInstance ()
 }
 
 void
+AnimPropertyBroswer::systemReset ()
+{
+  reset ();
+}
+
+
+void
+AnimPropertyBroswer::setCurrentNodeId (uint32_t currentNodeId)
+{
+  nodeIdSelectorSlot (QString::number (currentNodeId));
+}
+
+void
 AnimPropertyBroswer::postParse ()
 {
+  reset ();
   uint32_t count = AnimNodeMgr::getInstance ()->getCount ();
   for (uint32_t i = 0; i < count; ++i)
     {
@@ -85,7 +106,9 @@ AnimPropertyBroswer::postParse ()
 void
 AnimPropertyBroswer::reset ()
 {
-
+  m_currentNodeId = 0;
+  m_nodeIdSelector->clear ();
+  disconnect (m_nodeIdSelector, SIGNAL(currentIndexChanged(QString)), this, SLOT (nodeIdSelectorSlot(QString)));
   if (m_intManager)
     delete m_intManager;
   if (m_stringManager)
@@ -305,6 +328,8 @@ AnimPropertyBroswer::valueChangedSlot(QtProperty * property, QString description
     }
   if (m_fileEditProperty == property)
     {
+      if (description == "")
+        return;
       uint32_t newResourceId = AnimResourceManager::getInstance ()->getNewResourceId ();
       AnimResourceManager::getInstance ()->add (newResourceId, description);
       AnimNode * animNode = AnimNodeMgr::getInstance ()->getNode (m_currentNodeId);
@@ -328,13 +353,15 @@ AnimPropertyBroswer::nodeIdSelectorSlot (QString newIndex)
 {
   NS_LOG_DEBUG (newIndex.toUInt());
   m_currentNodeId = newIndex.toUInt ();
-  m_intManager->setValue (m_nodeIdProperty, m_currentNodeId);
+
   // Node Id
   m_intManager->setValue (m_nodeIdProperty, m_currentNodeId);
 
 
   // Node Description
   AnimNode * animNode = AnimNodeMgr::getInstance ()->getNode (m_currentNodeId);
+  if (!animNode)
+    return;
   m_stringManager->setValue (m_nodeDescriptionProperty, animNode->getDescription ()->toPlainText ());
 
 

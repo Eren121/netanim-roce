@@ -93,6 +93,13 @@ AnimatorMode::getInstance ()
 }
 
 void
+AnimatorMode::openPropertyBroswer ()
+{
+  m_showPropertiesButton->setChecked (true);
+  showPropertiesSlot ();
+}
+
+void
 AnimatorMode::start ()
 {
   clickTraceFileOpenSlot ();
@@ -119,6 +126,8 @@ AnimatorMode::setControlDefaults ()
   m_nodeSizeComboBox->setCurrentIndex (NODE_SIZE_DEFAULT);
   m_showNodeIdButton->setChecked (true);
   showNodeIdSlot ();
+  m_showPropertiesButton->setChecked (true);
+  showPropertiesSlot ();
 
   // Vertical toolbar
 
@@ -170,6 +179,7 @@ AnimatorMode::setToolButtonVector ()
   m_toolButtonVector.push_back (m_simulationTimeSlider);
   m_toolButtonVector.push_back (m_showRoutePathButton);
   m_toolButtonVector.push_back (m_addCustomImageButton);
+  m_toolButtonVector.push_back (m_showPropertiesButton);
 }
 
 void
@@ -190,10 +200,10 @@ AnimatorMode::setVerticalToolbarWidgets ()
   m_verticalToolbar->addWidget (m_showWirelessCirclesButton);
   m_verticalToolbar->addSeparator ();
   m_verticalToolbar->addWidget (m_packetStatsButton);
-  m_verticalToolbar->addWidget (m_nodePositionStatsButton);
   m_verticalToolbar->addWidget (m_blockPacketsButton);
   m_verticalToolbar->addWidget (m_resetButton);
   m_verticalToolbar->addWidget (m_showMetaButton);
+  m_verticalToolbar->addWidget (m_showPropertiesButton);
   m_verticalToolbar->addWidget (m_batteryCapacityButton);
 }
 
@@ -329,6 +339,12 @@ AnimatorMode::initControls ()
   connect (m_showNodeIdButton, SIGNAL (clicked ()), this, SLOT (showNodeIdSlot ()));
 
 
+  m_showPropertiesButton = new QToolButton;
+  m_showPropertiesButton->setText ("Pr");
+  m_showPropertiesButton->setToolTip ("Show Properties Tree");
+  m_showPropertiesButton->setCheckable (true);
+  connect (m_showPropertiesButton, SIGNAL (clicked ()), this, SLOT (showPropertiesSlot()));
+
   m_batteryCapacityButton = new QToolButton ();
   m_batteryCapacityButton->setCheckable (true);
   m_batteryCapacityButton->setIcon (QIcon (":/animator_resource/battery_icon_4.png"));
@@ -371,14 +387,6 @@ AnimatorMode::initControls ()
   m_packetStatsButton->setToolTip ("Packet filter and statistics");
   connect (m_packetStatsButton, SIGNAL (clicked ()), this, SLOT (showPacketStatsSlot ()));
   m_packetStatsButton->setCheckable (true);
-
-
-  m_nodePositionStatsButton = new QToolButton;
-  m_nodePositionStatsButton->setIcon (QIcon (":/animator_resource/animator_trajectory.svg"));
-  m_nodePositionStatsButton->setToolTip ("Node Position statistics");
-  connect (m_nodePositionStatsButton, SIGNAL (clicked ()), this, SLOT (showNodePositionStatsSlot ()));
-  m_nodePositionStatsButton->setCheckable (true);
-
 
   m_blockPacketsButton = new QToolButton;
   m_blockPacketsButton->setIcon (QIcon (":/resources/animator_showpackets.svg"));
@@ -483,6 +491,8 @@ AnimatorMode::systemReset ()
   setControlDefaults ();
   AnimatorView::getInstance ()->systemReset ();
   AnimatorScene::getInstance ()->systemReset ();
+  AnimPropertyBroswer::getInstance ()->systemReset ();
+  AnimNodeMgr::getInstance ()->systemReset ();
   for (TimeValue<AnimEvent *>::TimeValue_t::const_iterator i = m_events.Begin ();
       i != m_events.End ();
       ++i)
@@ -604,6 +614,7 @@ AnimatorMode::showParsingXmlDialog (bool show)
 void
 AnimatorMode::fastForward (qreal t)
 {
+  //AnimatorScene::getInstance ()->invalidate ();
   while (m_currentTime <t)
     {
       if (m_state == SIMULATION_COMPLETE)
@@ -621,7 +632,7 @@ AnimatorMode::reset ()
   m_updateRateTimer->stop ();
   m_events.rewind ();
   m_events.setCurrentTime (0);
-  AnimatorScene::getInstance ()->systemReset ();
+  //AnimatorScene::getInstance ()->systemReset ();
   m_currentTime = 0;
 }
 
@@ -900,26 +911,23 @@ AnimatorMode::clickResetSlot ()
 void
 AnimatorMode::updateTimelineSlot (int value)
 {
-  // if (m_animationGroup)
-  //     m_animationGroup->stop ();
   if (value == m_oldTimelineValue)
     return;
   m_oldTimelineValue = value;
   m_fastForwarding = true;
   setCurrentTime (value);
-  if (m_nodePositionStatsButton->isChecked ())
-    {
-      if (!m_playing)
-        clickPlaySlot ();
-    }
-
-  //updateRateTimeoutSlot ();
 }
 
 void
 AnimatorMode::showNodePositionStatsSlot ()
 {
 
+}
+
+void
+AnimatorMode::showPropertiesSlot ()
+{
+  AnimPropertyBroswer::getInstance ()->show (m_showPropertiesButton->isChecked());
 }
 
 void
@@ -1137,17 +1145,34 @@ AnimatorMode::dispatchEvents ()
             case AnimEvent::ADD_NODE_EVENT:
             {
               AnimNodeAddEvent * addEvent = static_cast<AnimNodeAddEvent *> (ev);
-              AnimNode * animNode = AnimNodeMgr::getInstance ()->add (addEvent->m_nodeId,
-                                    addEvent->m_x,
-                                    addEvent->m_y,
-                                    addEvent->m_nodeDescription);
-              AnimatorScene::getInstance ()->addNode (animNode);
-              AnimatorView::getInstance ()->postParse ();
+              AnimNode * animNode = 0;
+              if (!m_fastForwarding)
+                {
+                  uint32_t nodeId = addEvent->m_nodeId;
+                  if (!AnimNodeMgr::getInstance ()->getNode (nodeId))
+                    {
+                      animNode = AnimNodeMgr::getInstance ()->add (addEvent->m_nodeId,
+                                            addEvent->m_x,
+                                            addEvent->m_y,
+                                            addEvent->m_nodeDescription);
+                      AnimatorScene::getInstance ()->addNode (animNode);
+                    }
+                  AnimatorView::getInstance ()->postParse ();
+                }
+              else
+                {
+                  animNode = AnimNodeMgr::getInstance ()->getNode (addEvent->m_nodeId);
+                }
+              if (animNode)
+                {
+                  setNodePos (animNode, addEvent->m_x, addEvent->m_y);
+                  //animNode->setPos (addEvent->m_x, addEvent->m_y);
+                }
               break;
             }
             case AnimEvent::PACKET_EVENT:
             {
-              if (m_fastForwarding || ! (m_showPackets))
+              if (m_fastForwarding || !(m_showPackets))
                 continue;
               AnimPacketEvent * packetEvent = static_cast<AnimPacketEvent *> (j->second);
               AnimPacket * animPacket = AnimPacketMgr::getInstance ()->add (packetEvent->m_fromId,
@@ -1204,11 +1229,17 @@ AnimatorMode::dispatchEvents ()
             {
 
               AnimLinkAddEvent * ev = static_cast<AnimLinkAddEvent *> (j->second);
-              AnimLink * animLink = LinkManager::getInstance ()->addLink (ev->m_fromNodeId, ev->m_toNodeId,
+              AnimLink * animLink = 0;
+              animLink = LinkManager::getInstance ()->getAnimLink (ev->m_fromNodeId, ev->m_toNodeId);
+              if (!animLink)
+                {
+                  animLink = LinkManager::getInstance ()->addLink (ev->m_fromNodeId, ev->m_toNodeId,
                                     ev->m_fromNodeDescription, ev->m_toNodeDescription,
                                     ev->m_linkDescription,
                                     ev->m_p2p);
-              AnimatorScene::getInstance ()->addLink (animLink);
+                  AnimatorScene::getInstance ()->addLink (animLink);
+                }
+
             }
             case AnimEvent::UPDATE_LINK_EVENT:
             {
@@ -1365,6 +1396,7 @@ AnimatorMode::setNodeSize (AnimNode *animNode, qreal size)
 void
 AnimatorMode::setNodePos (AnimNode *animNode, qreal x, qreal y)
 {
+  //NS_LOG_DEBUG ("SetNodePos:" << animNode->getNodeId ());
   animNode->setX (x);
   animNode->setY (y);
   animNode->setPos (x, y);
