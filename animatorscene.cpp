@@ -270,40 +270,20 @@ AnimatorScene::showMousePositionLabel (bool show)
 void
 AnimatorScene::mouseDoubleClickEvent (QGraphicsSceneMouseEvent *event)
 {
-  QGraphicsItem * item = itemAt (event->scenePos ());
-  int t = item->type ();
-  NS_LOG_DEBUG ("Type:" << t);
-  if (item->type () == ANIMNODE_TYPE)
+  QList <QGraphicsItem *> list = items (event->scenePos ());
+  foreach (QGraphicsItem * i, list)
     {
-
-      NS_LOG_DEBUG ("AnimNode Dbl clicked");
-      AnimNode * animNode = qgraphicsitem_cast <AnimNode *> (item);
-      if (animNode)
+      if (i->type () == ANIMNODE_TYPE)
         {
-          AnimPropertyBroswer::getInstance ()->setCurrentNodeId (animNode->getNodeId ());
-          AnimatorMode::getInstance ()->openPropertyBroswer ();
-        }
 
-    }
-  else
-    {
-      QList <QGraphicsItem *> list = collidingItems(item);
-      foreach (QGraphicsItem * i, list)
-        {
-          if (i->type () == ANIMNODE_TYPE)
+          AnimNode * animNode = qgraphicsitem_cast <AnimNode *> (i);
+          if (animNode)
             {
-
-              NS_LOG_DEBUG ("AnimNode Dbl clicked");
-              AnimNode * animNode = qgraphicsitem_cast <AnimNode *> (item);
-              if (animNode)
-                {
-                  NS_LOG_DEBUG ("AnimNode Dbl clicked: Node Id:" << animNode->getNodeId());
-                  AnimPropertyBroswer::getInstance ()->setCurrentNodeId (animNode->getNodeId ());
-                  AnimatorMode::getInstance ()->openPropertyBroswer ();
-                }
+              AnimPropertyBroswer::getInstance ()->setCurrentNodeId (animNode->getNodeId ());
+              AnimatorMode::getInstance ()->openPropertyBroswer ();
+              break;
             }
         }
-
     }
 }
 

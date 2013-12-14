@@ -86,6 +86,7 @@ AnimPropertyBroswer::systemReset ()
 void
 AnimPropertyBroswer::setCurrentNodeId (uint32_t currentNodeId)
 {
+  m_nodeIdSelector->setCurrentIndex (currentNodeId);
   nodeIdSelectorSlot (QString::number (currentNodeId));
 }
 
@@ -351,7 +352,7 @@ AnimPropertyBroswer::valueChangedSlot (QtProperty * property, bool showNodeTraje
 void
 AnimPropertyBroswer::nodeIdSelectorSlot (QString newIndex)
 {
-  NS_LOG_DEBUG (newIndex.toUInt());
+  //NS_LOG_DEBUG (newIndex.toUInt());
   m_currentNodeId = newIndex.toUInt ();
 
   // Node Id

@@ -51,6 +51,7 @@ public:
   ResizeableItem ();
   ~ResizeableItem ();
   QRectF boundingRect () const;
+  QPainterPath shape();
   qreal getItemWidth ();
   qreal getItemHeight ();
   qreal getBorderWidth ();
