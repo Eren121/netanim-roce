@@ -102,7 +102,7 @@ AnimatorMode::openPropertyBroswer ()
 void
 AnimatorMode::start ()
 {
-  clickTraceFileOpenSlot ();
+  //clickTraceFileOpenSlot ();
 
 }
 
@@ -902,9 +902,10 @@ AnimatorMode::clickResetSlot ()
   m_playButton->setIcon (QIcon (":/resources/animator_play.svg"));
   m_playButton->setToolTip ("Play Animation");
   m_playButton->setEnabled (true);
-  AnimatorScene::getInstance ()->purgeNodeTrajectories ();
-  AnimatorScene::getInstance ()->purgeAnimatedNodes ();
+  //AnimatorScene::getInstance ()->purgeNodeTrajectories ();
+  //AnimatorScene::getInstance ()->purgeAnimatedNodes ();
   AnimatorScene::getInstance ()->purgeAnimatedPackets ();
+  setCurrentTime (0);
 
 }
 
@@ -987,17 +988,33 @@ AnimatorMode::purgeAnimatedNodes ()
 void
 AnimatorMode::updateRateTimeoutSlot ()
 {
-  AnimatorScene::getInstance ()->invalidate ();
+  //NS_LOG_DEBUG ("updateRateTimeoutSlot");
+  //AnimatorScene::getInstance ()->invalidate ();
   m_updateRateTimer->stop ();
   if (m_state == SIMULATION_COMPLETE)
     return;
   if (m_playing)
     {
       dispatchEvents ();
+
+      disconnect (m_simulationTimeSlider, SIGNAL (valueChanged (int)), this, SLOT (updateTimelineSlot (int)));
       m_simulationTimeSlider->setValue (m_currentTime);
+      connect (m_simulationTimeSlider, SIGNAL (valueChanged (int)), this, SLOT (updateTimelineSlot (int)));
       m_qLcdNumber->display (m_currentTime);
       keepAppResponsive ();
-      m_updateRateTimer->start ();
+      if (m_packetAnimationGroup)
+        {
+          connect (m_packetAnimationGroup,
+                  SIGNAL (finished ()),
+                  this,
+                  SLOT (packetAnimationGroupFinishedSlot ()));
+          m_packetAnimationGroup->start ();
+          return;
+        }
+      else
+        {
+          m_updateRateTimer->start ();
+        }
     }
 }
 
@@ -1093,18 +1110,32 @@ AnimatorMode::clickPlaySlot ()
       m_bottomStatusLabel->setText ("Playing");
       if (m_simulationCompleted)
         {
-          //AnimatorScene::getInstance ()->softReset ();
           m_simulationCompleted = false;
         }
       m_appResponsiveTimer.restart ();
       m_playButton->setIcon (QIcon (":/resources/animator_pause.svg"));
       m_playButton->setToolTip ("Pause Animation");
-      m_updateRateTimer->start ();
+      if (m_packetAnimationGroup)
+        {
+          if (m_packetAnimationGroup->state () == QParallelAnimationGroup::Paused)
+            {
+              m_packetAnimationGroup->resume ();
+            }
+        }
+      else
+        {
+          m_updateRateTimer->start ();
+        }
 
     }
   else
     {
       m_state = PAUSING;
+      if (m_packetAnimationGroup)
+        {
+          if (m_packetAnimationGroup->state () != QParallelAnimationGroup::Stopped)
+            m_packetAnimationGroup->pause ();
+        }
       m_bottomStatusLabel->setText ("Not Playing");
       m_playButton->setIcon (QIcon (":/resources/animator_play.svg"));
       m_playButton->setToolTip ("Play Animation");
@@ -1115,6 +1146,7 @@ AnimatorMode::clickPlaySlot ()
 void
 AnimatorMode::dispatchEvents ()
 {
+  //NS_LOG_DEBUG ("Dispatch events");
   m_updateRateSlider->setEnabled (false);
   m_simulationTimeSlider->setEnabled (false);
   //m_zoomInButton->setEnabled (false);
@@ -1251,7 +1283,15 @@ AnimatorMode::dispatchEvents ()
 
             } //switch
         } // for loop
-      m_packetAnimationGroup  = new QParallelAnimationGroup;
+      if (!packetsToAnimate.empty ())
+        {
+          //NS_LOG_DEBUG ("Created animation Group");
+          m_packetAnimationGroup  = new QParallelAnimationGroup;
+          /*connect (m_packetAnimationGroup,
+                  SIGNAL (finished ()),
+                  this,
+                  SLOT (packetAnimationGroupFinishedSlot ()));*/
+        }
       for (QVector <AnimPacket *>::const_iterator i = packetsToAnimate.begin ();
            i != packetsToAnimate.end ();
            ++i)
@@ -1291,36 +1331,25 @@ AnimatorMode::dispatchEvents ()
 
 
           QPropertyAnimation * propertyAnimation = new QPropertyAnimation (animPacket, "pos");
-          qreal duration = m_currentUpdateRate * 1000;
+          qreal duration = m_currentUpdateRate * 1000/1.1;
+          //qreal duration = 2000;
           if (m_fastForwarding)
-            duration = 0;
+            {
+              //NS_LOG_DEBUG ("Fast Fwd");
+              duration = 0;
+            }
           propertyAnimation->setDuration (duration);
           propertyAnimation->setStartValue (animPacket->getFromPos ());
           propertyAnimation->setEndValue (animPacket->getToPos ());
-          //propAnimation->start ();
-          // m_animationGroup->addAnimation (propertyAnimation);
+          m_packetAnimationGroup->addAnimation (propertyAnimation);
 
-          //AnimatorScene::getInstance ()->update ();
         }
-      //NS_LOG_DEBUG ("Animation duration:" << animationGroup->duration ());
-
-      //m_animationGroup->start (QPropertyAnimation::DeleteWhenStopped);
-      m_packetAnimationGroup->start ();
-
-      connect (m_packetAnimationGroup,
-              SIGNAL (finished ()),
-              this,
-              SLOT (packetAnimationGroupFinishedSlot ()));
-
-      //delete animationGroup;
-      //AnimatorScene::getInstance ()->setShowInterfaceTexts (true, true);
       m_updateRateSlider->setEnabled (true);
       m_simulationTimeSlider->setEnabled (true);
     } // if result == good
   else
     {
-      //showPopup ("Result : BAD");
-      //NS_LOG_DEBUG ("Set Simulation completed");
+
       setSimulationCompleted ();
     }
 
@@ -1336,6 +1365,8 @@ AnimatorMode::packetAnimationGroupFinishedSlot ()
   //if (newState != QAbstractAnimation::Stopped)
   //    return;
   m_packetAnimationGroup->deleteLater ();
+  m_packetAnimationGroup = 0;
+  updateRateTimeoutSlot ();
   //m_updateRateTimer->start ();
   //m_updateRateSlider->setEnabled (true);
   //m_simulationTimeSlider->setEnabled (true);

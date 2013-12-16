@@ -24,6 +24,8 @@
 class Mode: public QWidget
 {
 public:
+  virtual QWidget * getCentralWidget () = 0;
+  virtual QString getTabName () = 0;
   virtual void setFocus (bool focus) = 0;
 };
 #endif // MODE_H

@@ -128,12 +128,6 @@ AnimatorView::postParse ()
   fitSceneWithinView ();
 }
 
-QTransform
-AnimatorView::getTransform ()
-{
-  return transform ();
-}
-
 
 } // namespace netanim
 

@@ -592,7 +592,7 @@ AnimPacket::paint (QPainter *painter, const QStyleOptionGraphicsItem *option, QW
   //NS_LOG_DEBUG ("Device Transform:" << painter->deviceTransform());
   //NS_LOG_DEBUG ("Scene Transform:" << sceneTransform());
   QPen p;
-  QTransform viewTransform = AnimatorView::getInstance ()->getTransform ();
+  QTransform viewTransform = AnimatorView::getInstance ()->transform ();
 
   painter->save ();
   QPainterPath arrowTailPath;

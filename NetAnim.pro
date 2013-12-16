@@ -34,7 +34,11 @@ SOURCES += \
     animpropertybrowser.cpp \
     qtpropertybrowser/src/filepathmanager.cpp \
     qtpropertybrowser/src/fileeditfactory.cpp \
-    qtpropertybrowser/src/fileedit.cpp
+    qtpropertybrowser/src/fileedit.cpp \
+    packetsmode.cpp \
+    packetsview.cpp \
+    packetsscene.cpp \
+    graphpacket.cpp
 HEADERS += \
     log.h \
     fatal-error.h \
@@ -126,7 +130,11 @@ HEADERS += \
     animpropertybrowser.h \
     qtpropertybrowser/src/filepathmanager.h \
     qtpropertybrowser/src/fileeditfactory.h \
-    qtpropertybrowser/src/fileedit.h
+    qtpropertybrowser/src/fileedit.h \
+    packetsmode.h \
+    packetsview.h \
+    packetsscene.h \
+    graphpacket.h
 
 
 INCLUDEPATH += qtpropertybrowser/src

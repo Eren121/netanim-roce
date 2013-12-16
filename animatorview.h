@@ -34,7 +34,6 @@ public:
   void systemReset ();
   void fitSceneWithinView ();
   void postParse ();
-  QTransform getTransform ();
   void setCurrentZoomFactor (qreal factor);
 
 
