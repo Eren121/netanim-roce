@@ -387,23 +387,25 @@ AnimNodeMgr::showNodeId (bool show)
 
 }
 
-AnimNodeMgr::PosVector_t
+AnimNodeMgr::TimePosVector_t
 AnimNodeMgr::getPositions (uint32_t nodeId)
 {
   return m_nodePositions[nodeId];
 }
 
 void
-AnimNodeMgr::addAPosition (uint32_t nodeId, QPointF pos)
+AnimNodeMgr::addAPosition (uint32_t nodeId, qreal t, QPointF pos)
 {
   if (m_nodePositions.find (nodeId) == m_nodePositions.end ())
     {
-      PosVector_t posVector;
-      posVector.push_back (pos);
+      TimePosVector_t posVector;
       m_nodePositions[nodeId] = posVector;
     }
-  PosVector_t & pv = m_nodePositions[nodeId];
-  pv.push_back (pos);
+  TimePosVector_t & pv = m_nodePositions[nodeId];
+  TimePosition_t tp;
+  tp.p = pos;
+  tp.t = t;
+  pv.push_back (tp);
 }
 
 

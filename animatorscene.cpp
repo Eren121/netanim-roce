@@ -84,23 +84,25 @@ AnimatorScene::setShowNodeTrajectory (AnimNode *animNode)
   if (m_nodeTrajectory.find (nodeId) == m_nodeTrajectory.end ())
     {
       QPainterPath path;
-      AnimNodeMgr::PosVector_t positions =  AnimNodeMgr::getInstance ()->getPositions (animNode->getNodeId ());
-      for (AnimNodeMgr::PosVector_t::const_iterator i = positions.begin ();
+      AnimNodeMgr::TimePosVector_t positions =  AnimNodeMgr::getInstance ()->getPositions (animNode->getNodeId ());
+      for (AnimNodeMgr::TimePosVector_t::const_iterator i = positions.begin ();
           i != positions.end ();
           ++i)
         {
-          QPointF pt = *i;
+          TimePosition_t tp = *i;
+          QPointF pt = tp.p;
           path.moveTo (pt);
           break;
         }
 
 
       positions =  AnimNodeMgr::getInstance ()->getPositions (animNode->getNodeId ());
-      for (AnimNodeMgr::PosVector_t::const_iterator i = positions.begin ();
+      for (AnimNodeMgr::TimePosVector_t::const_iterator i = positions.begin ();
           i != positions.end ();
           ++i)
         {
-          QPointF pt = *i;
+          TimePosition_t tp = *i;
+          QPointF pt = tp.p;
           path.lineTo (pt);
         }
       QGraphicsPathItem * pathItem = addPath (path);

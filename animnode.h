@@ -24,6 +24,11 @@
 namespace netanim
 {
 
+typedef
+struct {
+  qreal t;
+  QPointF p;
+} TimePosition_t;
 
 class AnimNode: public ResizeableItem
 {
@@ -79,8 +84,8 @@ class AnimNodeMgr
 {
 public:
   typedef std::map <uint32_t, AnimNode *> NodeIdAnimNodeMap_t;
-  typedef QVector <QPointF> PosVector_t;
-  typedef std::map <uint32_t, PosVector_t> NodeIdPositionMap_t;
+  typedef QVector <TimePosition_t> TimePosVector_t;
+  typedef std::map <uint32_t, TimePosVector_t> NodeIdPositionMap_t;
 
   static AnimNodeMgr * getInstance ();
   AnimNode * getNode (uint32_t nodeId);
@@ -93,8 +98,8 @@ public:
   void addMacAddress (uint32_t nodeId, QString mac);
   void setSize (qreal width, qreal height);
   void showNodeId (bool show);
-  PosVector_t getPositions (uint32_t nodeId);
-  void addAPosition (uint32_t nodeId, QPointF pos);
+  TimePosVector_t getPositions (uint32_t nodeId);
+  void addAPosition (uint32_t nodeId, qreal t, QPointF pos);
 
 
 private:

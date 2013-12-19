@@ -24,6 +24,7 @@
 #include <QtSpinBoxFactory>
 #include <QtLineEditFactory>
 #include <QtDoubleSpinBoxFactory>
+#include <QTableWidget>
 #include "filepathmanager.h"
 #include "fileeditfactory.h"
 
@@ -38,6 +39,7 @@ public:
   void systemReset ();
   void show (bool show);
   void setCurrentNodeId (uint32_t currentNodeId);
+  void showNodePositionTable (bool show);
 private:
   typedef QVector <QtProperty *> QtPropertyVector_t;
   AnimPropertyBroswer ();
@@ -45,6 +47,7 @@ private:
   void setup ();
   QVBoxLayout * m_vboxLayout;
   QtAbstractPropertyBrowser * m_tree;
+  QTableWidget * m_nodePosTable;
   QComboBox * m_mode;
   QComboBox * m_nodeIdSelector;
 
@@ -61,9 +64,6 @@ private:
   QtPropertyVector_t m_ipv4AddressVectorProperty;
   QtPropertyVector_t m_macAddressVectorProperty;
   QtProperty * m_showNodeTrajectoryProperty;
-
-
-
 
   QtIntPropertyManager * m_intManager;
   QtStringPropertyManager * m_stringManager;

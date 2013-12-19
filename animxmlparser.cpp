@@ -156,7 +156,7 @@ Animxmlparser::doParse ()
               parsedElement.node_g,
               parsedElement.node_b);
           pAnimatorMode->addAnimEvent (0, ev);
-          AnimNodeMgr::getInstance ()->addAPosition (parsedElement.nodeId, QPointF (parsedElement.node_x,
+          AnimNodeMgr::getInstance ()->addAPosition (parsedElement.nodeId, 0, QPointF (parsedElement.node_x,
                                                                                     parsedElement.node_y));
           break;
         }
@@ -221,7 +221,7 @@ Animxmlparser::doParse ()
                   parsedElement.node_x,
                   parsedElement.node_y);
               pAnimatorMode->addAnimEvent (parsedElement.updateTime, ev);
-              AnimNodeMgr::getInstance ()->addAPosition (parsedElement.nodeId, QPointF (parsedElement.node_x,
+              AnimNodeMgr::getInstance ()->addAPosition (parsedElement.nodeId, parsedElement.updateTime, QPointF (parsedElement.node_x,
                                                                                         parsedElement.node_y));
 
             }
