@@ -34,61 +34,31 @@ GraphPacket::GraphPacket (QPointF fromNodePos, QPointF toNodePos):
 void
 GraphPacket::paint (QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
+
+
+
   QPointF fromPos = line().p1();
   QPointF toPos = line().p2();
   QLineF l = QLineF (mapToScene (fromPos), mapToScene (toPos));
+  painter->translate(0, 0);
+  //painter->rotate (360 - l.angle ());
   painter->save ();
   QPainterPath arrowTailPath;
   arrowTailPath.moveTo (0, 0);
-  arrowTailPath.lineTo (l.length () , 0);
+  arrowTailPath.lineTo (l.length (), 0);
   QPen p;
   p.setColor (Qt::blue);
   painter->setPen (p);
   painter->setPen (p);
-  painter->rotate (360 - l.angle ());
   painter->drawPath (arrowTailPath);
   painter->restore();
-  painter->save();
 
-  painter->translate(0, 0);
-  painter->rotate (360 - l.angle ());
+
+  painter->save();
   painter->translate (l.length(), 0);
-  painter->drawEllipse (0, 0, 50, 50);
-  painter->restore ();
-
-  painter->save();
-  painter->translate(0, 0);
-  //painter->rotate(360 - l.angle());
-  painter->restore();
-
-  QPolygonF arrowHeadPolygon;
-  QPainterPath arrowHeadPath;
-  qreal arrowHeadLength = 0.005;//2 * (10/PacketsView::getInstance ()->transform().m22 ());
-  arrowHeadPolygon << mapToScene (line().p1())
-                   << mapToScene (line().p2());
-                   //<< QPointF (-arrowHeadLength * cos (PI/4), -arrowHeadLength * sin (PI/4))
-                   //<< QPointF (-arrowHeadLength * cos (PI/4), arrowHeadLength * sin (PI/4));
-
-  arrowHeadPath.lineTo (-arrowHeadLength * cos (PI/10), -arrowHeadLength * sin (PI/10));
-  arrowHeadPath.moveTo (l.length (), 0);
-  arrowHeadPath.lineTo (-arrowHeadLength * cos (PI/10), arrowHeadLength * sin (PI/10));
-  arrowHeadPath.moveTo (0, 0);
-
-  painter->save();
-  QPen arrowHeadPen;
-  QColor black (0, 0, 5, 130);
-  arrowHeadPen.setColor(black);
-
-
-  painter->setPen(arrowHeadPen);
-  //painter->rotate (360 - l.angle ());
-  QBrush brush;
-  brush.setColor (black);
-  brush.setStyle (Qt::SolidPattern);
-  painter->setBrush (brush);
-  painter->translate (toPos);
-  //painter->drawEllipse (0, 0, 10, 10);
-  //painter->drawPolygon (arrowHeadPolygon);
+  qreal angle = PI/4;
+  qreal mag = 9;
+  painter->drawLine (0, 0, mag * cos (angle), mag * sin (angle));
   painter->restore ();
 
 

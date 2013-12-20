@@ -42,6 +42,7 @@ PacketsView::getInstance ()
 void
 PacketsView::test()
 {
+  setSceneRect (viewport()->rect());
 }
 
 
