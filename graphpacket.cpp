@@ -42,6 +42,7 @@ GraphPacket::paint (QPainter *painter, const QStyleOptionGraphicsItem *option, Q
   QLineF l = QLineF (mapToScene (fromPos), mapToScene (toPos));
   painter->translate(0, 0);
   painter->rotate (360 - l.angle ());
+  //painter->rotate (l.angle());
   painter->save ();
   QPainterPath arrowTailPath;
   arrowTailPath.moveTo (0, 0);

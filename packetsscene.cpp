@@ -42,14 +42,23 @@ PacketsScene::getInstance ()
 void
 PacketsScene::setUpNodeLines ()
 {
+  QRectF r = sceneRect ();
+  qreal height = r.bottom () - r.top ();
+  qreal borderHeight = 0.05 * height;
   for (uint32_t nodeId = 0; nodeId < 10 ; ++nodeId)
     {
-      QGraphicsLineItem * lineItem = addLine (m_interNodeSpacing * nodeId, 0, m_interNodeSpacing * nodeId, 100);
+      QGraphicsLineItem * lineItem = addLine (m_interNodeSpacing * nodeId, borderHeight, m_interNodeSpacing * nodeId, r.bottom () - borderHeight);
       //lineItem->setFlag(QGraphicsItem::ItemIgnoresTransformations);
 
       m_nodeLines[nodeId] = lineItem;
     }
   addPacket (5, 50, 0, 5);
+  addPacket (10, 50, 0, 5);
+  addPacket (100, 50, 0, 5);
+  addPacket (100, 50, 5, 1);
+
+
+
 }
 
 
@@ -68,6 +77,7 @@ PacketsScene::addPacket (qreal tx, qreal rx, uint32_t fromNodeId, uint32_t toNod
   qreal rxY = timeToY (rx);
   GraphPacket * graphPacket = new GraphPacket (QPointF (fromNodeX, txY), QPointF (toNodeX, rxY));
   addItem (graphPacket);
+  graphPacket->setPos (QPointF (fromNodeX, txY));
 
 }
 

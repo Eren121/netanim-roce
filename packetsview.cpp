@@ -18,6 +18,7 @@
 
 #include "packetsview.h"
 #include "packetsscene.h"
+#include "logqt.h"
 
 namespace netanim {
 
@@ -27,7 +28,9 @@ PacketsView::PacketsView ()
 {
   setScene (PacketsScene::getInstance ());
   setRenderHints (QPainter::Antialiasing);
-  setSceneRect (viewport()->rect());
+  //setSceneRect ();
+  PacketsScene::getInstance ()->setSceneRect (viewport()->rect());
+  NS_LOG_DEBUG ("Viewport Rect:" << viewport()->rect());
 }
 
 PacketsView *
@@ -43,7 +46,7 @@ PacketsView::getInstance ()
 void
 PacketsView::test()
 {
-  setSceneRect (viewport()->rect());
+  PacketsScene::getInstance ()->setSceneRect (viewport()->rect());
 }
 
 
