@@ -41,7 +41,7 @@ GraphPacket::paint (QPainter *painter, const QStyleOptionGraphicsItem *option, Q
   QPointF toPos = line().p2();
   QLineF l = QLineF (mapToScene (fromPos), mapToScene (toPos));
   painter->translate(0, 0);
-  //painter->rotate (360 - l.angle ());
+  painter->rotate (360 - l.angle ());
   painter->save ();
   QPainterPath arrowTailPath;
   arrowTailPath.moveTo (0, 0);
@@ -58,7 +58,8 @@ GraphPacket::paint (QPainter *painter, const QStyleOptionGraphicsItem *option, Q
   painter->translate (l.length(), 0);
   qreal angle = PI/4;
   qreal mag = 9;
-  painter->drawLine (0, 0, mag * cos (angle), mag * sin (angle));
+  painter->drawLine (0, 0, -mag * cos (angle), mag * sin (angle));
+  painter->drawLine (0, 0, -mag * cos (angle), -mag * sin (angle));
   painter->restore ();
 
 

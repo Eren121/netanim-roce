@@ -27,6 +27,7 @@ PacketsView::PacketsView ()
 {
   setScene (PacketsScene::getInstance ());
   setRenderHints (QPainter::Antialiasing);
+  setSceneRect (viewport()->rect());
 }
 
 PacketsView *

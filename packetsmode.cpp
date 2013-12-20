@@ -47,11 +47,11 @@ void
 PacketsMode::testSlot ()
 {
   //PacketsView::getInstance ()->fitInView(QRectF (-10,-10, 110, 110));
-  PacketsScene::getInstance ()->test ();
-  PacketsView::getInstance ()->fitInView(PacketsScene::getInstance ()->sceneRect ());
-  PacketsScene::getInstance()->update();
   PacketsView::getInstance()->test();
-  PacketsScene::getInstance()->update();
+  PacketsScene::getInstance ()->test ();
+  //PacketsView::getInstance ()->fitInView(PacketsScene::getInstance ()->sceneRect ());
+  //PacketsScene::getInstance()->update();
+  //PacketsScene::getInstance()->update();
 
 }
 
