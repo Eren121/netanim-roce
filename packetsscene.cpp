@@ -45,7 +45,7 @@ PacketsScene::setUpNodeLines ()
   QRectF r = sceneRect ();
   qreal height = r.bottom () - r.top ();
   qreal borderHeight = 0.05 * height;
-  for (uint32_t nodeId = 0; nodeId < 10 ; ++nodeId)
+  for (uint32_t nodeId = 0; nodeId < 100 ; ++nodeId)
     {
       QGraphicsLineItem * lineItem = addLine (m_interNodeSpacing * nodeId, borderHeight, m_interNodeSpacing * nodeId, r.bottom () - borderHeight);
       //lineItem->setFlag(QGraphicsItem::ItemIgnoresTransformations);
