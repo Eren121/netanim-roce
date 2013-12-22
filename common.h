@@ -35,6 +35,7 @@
 #include <QRegExp>
 #include <QFontMetrics>
 #include <QDesktopWidget>
+#include <QLineEdit>
 
 
 

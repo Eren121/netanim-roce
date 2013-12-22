@@ -36,6 +36,7 @@ private:
   std::vector <QGraphicsLineItem *> m_packetLines;
   std::vector <QGraphicsSimpleTextItem *> m_packetTexts;
   qreal m_interNodeSpacing;
+  qreal m_maxTime;
 };
 }
 

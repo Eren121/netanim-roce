@@ -19,13 +19,16 @@
 #include "logqt.h"
 #include "animpacket.h"
 #include "graphpacket.h"
+#include "animatormode.h"
 
 namespace netanim {
 NS_LOG_COMPONENT_DEFINE ("PacketsScene");
 
 PacketsScene * pPacketsScene = 0;
 PacketsScene::PacketsScene ():
-  m_interNodeSpacing (100)
+  QGraphicsScene (-100, -100, 10024, 10024),
+  m_interNodeSpacing (100),
+  m_maxTime (0)
 {
 
 }
@@ -44,7 +47,9 @@ PacketsScene::setUpNodeLines ()
 {
   QRectF r = sceneRect ();
   qreal height = r.bottom () - r.top ();
-  qreal borderHeight = 0.05 * height;
+  qreal borderHeight = 0;//0.01 * height;
+  r.setWidth(100 * m_interNodeSpacing);
+  setSceneRect(r);
   for (uint32_t nodeId = 0; nodeId < 100 ; ++nodeId)
     {
       QGraphicsLineItem * lineItem = addLine (m_interNodeSpacing * nodeId, borderHeight, m_interNodeSpacing * nodeId, r.bottom () - borderHeight);
@@ -52,10 +57,25 @@ PacketsScene::setUpNodeLines ()
 
       m_nodeLines[nodeId] = lineItem;
     }
-  addPacket (5, 50, 0, 5);
+  TimeValue <AnimEvent*> *events = AnimatorMode::getInstance ()->getEvents ();
+  m_maxTime = AnimatorMode::getInstance ()->getLastPacketEventTime ();
+  for (TimeValue<AnimEvent *>::TimeValue_t::const_iterator i = events->Begin ();
+      i != events->End ();
+      ++i)
+    {
+      AnimEvent * ev = i->second;
+      if (ev->m_type == AnimEvent::PACKET_EVENT)
+        {
+          AnimPacketEvent * packetEvent = static_cast<AnimPacketEvent *> (ev);
+          addPacket (packetEvent->m_fbTx, packetEvent->m_fbRx, packetEvent->m_fromId, packetEvent->m_toId);
+        }
+    }
+
+
+  /*addPacket (5, 50, 0, 5);
   addPacket (10, 50, 0, 5);
   addPacket (100, 50, 0, 5);
-  addPacket (100, 50, 5, 1);
+  addPacket (100, 50, 5, 1);*/
 
 
 
@@ -65,7 +85,7 @@ PacketsScene::setUpNodeLines ()
 qreal
 PacketsScene::timeToY (qreal t)
 {
-  return t;
+  return t * (1000/m_maxTime);
 }
 
 void
@@ -86,6 +106,8 @@ PacketsScene::test ()
 {
   NS_LOG_DEBUG ("Packets Scene:" << sceneRect ());
   setUpNodeLines ();
+  NS_LOG_DEBUG ("Packets Scene After:" << sceneRect ());
+
 }
 
 

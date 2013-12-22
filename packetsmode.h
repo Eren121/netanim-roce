@@ -38,9 +38,14 @@ private:
   QVBoxLayout * m_vLayout;
   QToolBar * m_mainToolBar;
   QToolButton * m_testButton;
+  QToolButton * m_showGridLinesButton;
+  QLineEdit * m_gridLineSpacingEdit;
+  QToolButton * m_zoomInButton;
 
 private slots:
   void testSlot ();
+  //void showGridLinesSlot ();
+  void zoomInSlot ();
 
 };
 

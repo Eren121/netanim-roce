@@ -26,6 +26,8 @@ class PacketsView : public QGraphicsView
 public:
   static PacketsView * getInstance ();
   void test ();
+  void postParse ();
+  void zoomIn ();
 private:
   PacketsView ();
 

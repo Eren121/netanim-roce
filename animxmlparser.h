@@ -130,6 +130,7 @@ public:
   bool isFileValid ();
   uint64_t getRxCount ();
   void doParse ();
+  qreal getLastPacketEventTime ();
 
 
 private:
@@ -138,6 +139,7 @@ private:
   QXmlStreamReader * m_reader;
   QFile * m_traceFile;
   double m_maxSimulationTime;
+  qreal m_lastPacketEventTime;
   bool m_fileIsValid;
   double m_version;
 

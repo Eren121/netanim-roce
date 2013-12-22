@@ -27,9 +27,19 @@ PacketsMode::PacketsMode ()
 {
   m_mainToolBar = new QToolBar;
   m_testButton = new QToolButton;
+  m_zoomInButton = new QToolButton;
+  m_zoomInButton->setText ("Zoom In");
+  connect (m_zoomInButton, SIGNAL(clicked()), this, SLOT(zoomInSlot()));
   m_testButton->setText ("test");
+  m_showGridLinesButton = new QToolButton;
+  m_gridLineSpacingEdit = new QLineEdit;
+  m_gridLineSpacingEdit->setInputMask ("ddd.dddddd");
   connect (m_testButton, SIGNAL(clicked()), this, SLOT(testSlot()));
   m_mainToolBar->addWidget (m_testButton);
+  m_mainToolBar->addWidget (m_showGridLinesButton);
+  m_mainToolBar->addWidget (m_gridLineSpacingEdit);
+  m_mainToolBar->addWidget (m_zoomInButton);
+
   m_vLayout = new QVBoxLayout;
   m_vLayout->addWidget (m_mainToolBar);
   m_vLayout->addWidget (PacketsView::getInstance ());
@@ -49,10 +59,19 @@ PacketsMode::testSlot ()
   //PacketsView::getInstance ()->fitInView(QRectF (-10,-10, 110, 110));
   PacketsView::getInstance()->test();
   PacketsScene::getInstance ()->test ();
+  PacketsView::getInstance()->postParse ();
+
   //PacketsView::getInstance ()->fitInView(PacketsScene::getInstance ()->sceneRect ());
   //PacketsScene::getInstance()->update();
   //PacketsScene::getInstance()->update();
 
+}
+
+
+void
+PacketsMode::zoomInSlot ()
+{
+  PacketsView::getInstance ()->zoomIn ();
 }
 
 void
@@ -76,5 +95,8 @@ PacketsMode::getInstance ()
     }
   return pPacketsMode;
 }
+
+
+
 
 }

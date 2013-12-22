@@ -653,6 +653,18 @@ AnimatorMode::setCurrentTime (qreal currentTime)
 
 }
 
+TimeValue<AnimEvent*>*
+AnimatorMode::getEvents ()
+{
+  return &m_events;
+}
+
+qreal
+AnimatorMode::getLastPacketEventTime ()
+{
+  return m_lastPacketEventTime;
+}
+
 void
 AnimatorMode::setProgressBarRange (uint64_t rxCount)
 {
@@ -686,13 +698,12 @@ AnimatorMode::parseXMLTraceFile (QString traceFileName)
       return false;
     }
   preParse ();
-
   showParsingXmlDialog (true);
-
+  parser.doParse ();
   m_rxCount = parser.getRxCount ();
   setProgressBarRange (m_rxCount);
+  m_lastPacketEventTime = parser.getLastPacketEventTime ();
 
-  parser.doParse ();
   showParsingXmlDialog (false);
   setMaxSimulationTime (parser.getMaxSimulationTime ());
 

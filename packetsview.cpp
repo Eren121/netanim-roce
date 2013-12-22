@@ -24,13 +24,10 @@ namespace netanim {
 
 NS_LOG_COMPONENT_DEFINE ("PacketsView");
 PacketsView * pPacketsView = 0;
-PacketsView::PacketsView ()
+PacketsView::PacketsView ():
+  QGraphicsView (PacketsScene::getInstance ())
 {
-  setScene (PacketsScene::getInstance ());
   setRenderHints (QPainter::Antialiasing);
-  //setSceneRect ();
-  PacketsScene::getInstance ()->setSceneRect (viewport()->rect());
-  NS_LOG_DEBUG ("Viewport Rect:" << viewport()->rect());
 }
 
 PacketsView *
@@ -46,7 +43,19 @@ PacketsView::getInstance ()
 void
 PacketsView::test()
 {
-  PacketsScene::getInstance ()->setSceneRect (viewport()->rect());
+}
+
+void
+PacketsView::postParse ()
+{
+
+  return;
+}
+
+void
+PacketsView::zoomIn ()
+{
+  scale (1.1, 1.1);
 }
 
 

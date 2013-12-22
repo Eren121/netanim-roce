@@ -44,6 +44,8 @@ public:
   QString getTabName ();
   qreal getCurrentNodeSize ();
   QGraphicsPixmapItem * getBackground ();
+  TimeValue<AnimEvent *>* getEvents ();
+  qreal getLastPacketEventTime ();
 
   // Setters
 
@@ -99,6 +101,7 @@ private:
   QString m_traceFileName;
   bool m_showPackets;
   bool m_fastForwarding;
+  qreal m_lastPacketEventTime;
 
 
   //controls
