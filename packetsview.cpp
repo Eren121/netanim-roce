@@ -53,6 +53,12 @@ PacketsView::postParse ()
 }
 
 void
+PacketsView::wheelEvent(QWheelEvent *event)
+{
+  QGraphicsView::wheelEvent(event);
+}
+
+void
 PacketsView::zoomIn ()
 {
   scale (1.1, 1.1);

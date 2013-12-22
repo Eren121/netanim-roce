@@ -26,9 +26,13 @@ class GraphPacket: public QGraphicsLineItem
 public:
   GraphPacket (QPointF fromNodePos, QPointF toNodePos);
   void paint (QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
+ // QRectF boundingRect ();
+ // QPainterPath shape () const;
 private:
   QPointF m_fromNodePos;
   QPointF m_toNodePos;
+  QRectF m_boundingRect;
+  QPainterPath m_shape;
 
 };
 }

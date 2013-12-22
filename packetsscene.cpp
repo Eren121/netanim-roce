@@ -26,7 +26,7 @@ NS_LOG_COMPONENT_DEFINE ("PacketsScene");
 
 PacketsScene * pPacketsScene = 0;
 PacketsScene::PacketsScene ():
-  QGraphicsScene (-100, -100, 10024, 10024),
+  QGraphicsScene (-100, -100, 1024, 1024),
   m_interNodeSpacing (100),
   m_maxTime (0)
 {
@@ -59,6 +59,7 @@ PacketsScene::setUpNodeLines ()
     }
   TimeValue <AnimEvent*> *events = AnimatorMode::getInstance ()->getEvents ();
   m_maxTime = AnimatorMode::getInstance ()->getLastPacketEventTime ();
+  m_maxTime = 0.25;
   for (TimeValue<AnimEvent *>::TimeValue_t::const_iterator i = events->Begin ();
       i != events->End ();
       ++i)
@@ -71,11 +72,11 @@ PacketsScene::setUpNodeLines ()
         }
     }
 
-
-  /*addPacket (5, 50, 0, 5);
+ /* m_maxTime = 120;
+  addPacket (5, 50, 0, 5);
   addPacket (10, 50, 0, 5);
-  addPacket (100, 50, 0, 5);
-  addPacket (100, 50, 5, 1);*/
+  addPacket (50, 50, 0, 5);
+  addPacket (60, 50, 0, 5);*/
 
 
 
@@ -97,7 +98,7 @@ PacketsScene::addPacket (qreal tx, qreal rx, uint32_t fromNodeId, uint32_t toNod
   qreal rxY = timeToY (rx);
   GraphPacket * graphPacket = new GraphPacket (QPointF (fromNodeX, txY), QPointF (toNodeX, rxY));
   addItem (graphPacket);
-  graphPacket->setPos (QPointF (fromNodeX, txY));
+  //graphPacket->setPos (QPointF (fromNodeX, txY));
 
 }
 

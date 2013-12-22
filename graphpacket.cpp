@@ -18,10 +18,12 @@
 
 #include "graphpacket.h"
 #include "packetsview.h"
+#include "logqt.h"
 
 namespace netanim {
 #define PI 3.14159265
 
+NS_LOG_COMPONENT_DEFINE ("GraphPacket");
 
 GraphPacket::GraphPacket (QPointF fromNodePos, QPointF toNodePos):
   m_fromNodePos (fromNodePos),
@@ -29,40 +31,43 @@ GraphPacket::GraphPacket (QPointF fromNodePos, QPointF toNodePos):
 {
   QLineF l (fromNodePos, toNodePos);
   setLine (l);
+  setFlags (QGraphicsItem::ItemIsSelectable);
+  QPen p = pen();
+  p.setColor (Qt::blue);
+  p.setWidthF (1.5);
+  setPen(p);
 }
 
+/*QRectF
+GraphPacket::boundingRect ()
+{
+  return QRectF(line().p1(), QSizeF(line().p2().x() - line().p1().x(),
+                                    line().p2().y() - line().p1().y()))
+      .normalized();
+}
+
+QPainterPath
+GraphPacket::shape () const
+{
+  return m_shape;
+}
+*/
 void
 GraphPacket::paint (QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
 
-
-
-  QPointF fromPos = line().p1();
-  QPointF toPos = line().p2();
-  QLineF l = QLineF (mapToScene (fromPos), mapToScene (toPos));
-  painter->translate(0, 0);
-  painter->rotate (360 - l.angle ());
-  //painter->rotate (l.angle());
-  painter->save ();
-  QPainterPath arrowTailPath;
-  arrowTailPath.moveTo (0, 0);
-  arrowTailPath.lineTo (l.length (), 0);
-  QPen p;
-  p.setColor (Qt::blue);
-  painter->setPen (p);
-  painter->setPen (p);
-  painter->drawPath (arrowTailPath);
-  painter->restore();
-
-
   painter->save();
-  painter->translate (l.length(), 0);
+  QPen p;
+  p.setColor (Qt::black);
+  painter->setPen (p);
+  painter->translate (line().p2());
   qreal angle = PI/4;
   qreal mag = 9;
-  painter->drawLine (0, 0, -mag * cos (angle), mag * sin (angle));
-  painter->drawLine (0, 0, -mag * cos (angle), -mag * sin (angle));
+  painter->rotate (360 - line().angle ());
+  painter->drawLine(0, 0, -mag * cos (angle), mag * sin (angle));
+  painter->drawLine(0, 0, -mag * cos (angle), -mag * sin (angle));
   painter->restore ();
-
+  QGraphicsLineItem::paint(painter, option, widget);
 
 }
 

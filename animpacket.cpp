@@ -601,7 +601,6 @@ AnimPacket::paint (QPainter *painter, const QStyleOptionGraphicsItem *option, QW
   p.setColor (Qt::blue);
   painter->setPen (p);
   //p.setWidthF(1.0);
-  painter->setPen (p);
   painter->rotate (360 - m_line.angle ());
   painter->drawPath (arrowTailPath);
   painter->restore ();
