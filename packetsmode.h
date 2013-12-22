@@ -41,11 +41,13 @@ private:
   QToolButton * m_showGridLinesButton;
   QLineEdit * m_gridLineSpacingEdit;
   QToolButton * m_zoomInButton;
+  QToolButton * m_zoomOutButton;
 
 private slots:
   void testSlot ();
   //void showGridLinesSlot ();
   void zoomInSlot ();
+  void zoomOutSlot ();
 
 };
 

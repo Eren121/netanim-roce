@@ -28,6 +28,7 @@ public:
   void test ();
   void postParse ();
   void zoomIn ();
+  void zoomOut ();
   void wheelEvent(QWheelEvent *event);
 private:
   PacketsView ();

@@ -28,17 +28,30 @@ PacketsMode::PacketsMode ()
   m_mainToolBar = new QToolBar;
   m_testButton = new QToolButton;
   m_zoomInButton = new QToolButton;
-  m_zoomInButton->setText ("Zoom In");
+  m_zoomInButton->setText ("Zoom In");  
   connect (m_zoomInButton, SIGNAL(clicked()), this, SLOT(zoomInSlot()));
+  m_zoomInButton->setToolTip ("Zoom in");
+  m_zoomInButton->setIcon (QIcon (":/resources/animator_zoomin.svg"));
+
+
+  m_zoomOutButton = new QToolButton;
+  m_zoomOutButton->setText ("Zoom Out");
+  connect (m_zoomOutButton, SIGNAL(clicked()), this, SLOT(zoomOutSlot()));
+  m_zoomOutButton->setToolTip ("Zoom Out");
+  m_zoomOutButton->setIcon (QIcon (":/resources/animator_zoomout.svg"));
+
+
   m_testButton->setText ("test");
   m_showGridLinesButton = new QToolButton;
   m_gridLineSpacingEdit = new QLineEdit;
   m_gridLineSpacingEdit->setInputMask ("ddd.dddddd");
   connect (m_testButton, SIGNAL(clicked()), this, SLOT(testSlot()));
   m_mainToolBar->addWidget (m_testButton);
+  m_mainToolBar->addWidget (m_zoomInButton);
+  m_mainToolBar->addWidget (m_zoomOutButton);
+  m_mainToolBar->addSeparator ();
   m_mainToolBar->addWidget (m_showGridLinesButton);
   m_mainToolBar->addWidget (m_gridLineSpacingEdit);
-  m_mainToolBar->addWidget (m_zoomInButton);
 
   m_vLayout = new QVBoxLayout;
   m_vLayout->addWidget (m_mainToolBar);
@@ -56,15 +69,6 @@ PacketsMode::getTabName ()
 void
 PacketsMode::testSlot ()
 {
-  //PacketsView::getInstance ()->fitInView(QRectF (-10,-10, 110, 110));
-  PacketsView::getInstance()->test();
-  PacketsScene::getInstance ()->test ();
-  PacketsView::getInstance()->postParse ();
-
-  //PacketsView::getInstance ()->fitInView(PacketsScene::getInstance ()->sceneRect ());
-  //PacketsScene::getInstance()->update();
-  //PacketsScene::getInstance()->update();
-
 }
 
 
@@ -74,11 +78,23 @@ PacketsMode::zoomInSlot ()
   PacketsView::getInstance ()->zoomIn ();
 }
 
+
+void
+PacketsMode::zoomOutSlot ()
+{
+  PacketsView::getInstance ()->zoomOut ();
+}
+
 void
 PacketsMode::setFocus (bool focus)
 {
   //focus?qDebug (QString ("Animator Focus")):qDebug (QString ("Animator lost Focus"));
   Q_UNUSED (focus);
+  if (focus)
+    {
+      PacketsScene::getInstance ()->addPackets ();
+    }
+
 }
 
 QWidget *

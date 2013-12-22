@@ -64,5 +64,11 @@ PacketsView::zoomIn ()
   scale (1.1, 1.1);
 }
 
+void
+PacketsView::zoomOut ()
+{
+  scale (0.9, 0.9);
+}
+
 
 }

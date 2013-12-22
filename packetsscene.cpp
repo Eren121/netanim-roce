@@ -20,6 +20,7 @@
 #include "animpacket.h"
 #include "graphpacket.h"
 #include "animatormode.h"
+#include "textbubble.h"
 
 namespace netanim {
 NS_LOG_COMPONENT_DEFINE ("PacketsScene");
@@ -30,7 +31,9 @@ PacketsScene::PacketsScene ():
   m_interNodeSpacing (100),
   m_maxTime (0)
 {
-
+  m_infoWidget = addWidget (new TextBubble ("Info:", "No data available\nDid you load the XML file?"));
+  m_infoWidget->setVisible (true);
+  m_infoWidget->setPos (sceneRect ().width ()/2, sceneRect ().height ()/2);
 }
 PacketsScene *
 PacketsScene::getInstance ()
@@ -42,43 +45,27 @@ PacketsScene::getInstance ()
   return pPacketsScene;
 }
 
-void
+bool
 PacketsScene::setUpNodeLines ()
 {
+  bool foundNodes = false;
   QRectF r = sceneRect ();
   qreal height = r.bottom () - r.top ();
-  qreal borderHeight = 0;//0.01 * height;
+  qreal borderHeight = 0.01 * height;
   r.setWidth(100 * m_interNodeSpacing);
   setSceneRect(r);
-  for (uint32_t nodeId = 0; nodeId < 100 ; ++nodeId)
+  for (uint32_t nodeId = 0; nodeId < AnimNodeMgr::getInstance ()->getCount () ; ++nodeId)
     {
+      foundNodes = true;
       QGraphicsLineItem * lineItem = addLine (m_interNodeSpacing * nodeId, borderHeight, m_interNodeSpacing * nodeId, r.bottom () - borderHeight);
-      //lineItem->setFlag(QGraphicsItem::ItemIgnoresTransformations);
-
       m_nodeLines[nodeId] = lineItem;
-    }
-  TimeValue <AnimEvent*> *events = AnimatorMode::getInstance ()->getEvents ();
-  m_maxTime = AnimatorMode::getInstance ()->getLastPacketEventTime ();
-  m_maxTime = 0.25;
-  for (TimeValue<AnimEvent *>::TimeValue_t::const_iterator i = events->Begin ();
-      i != events->End ();
-      ++i)
-    {
-      AnimEvent * ev = i->second;
-      if (ev->m_type == AnimEvent::PACKET_EVENT)
-        {
-          AnimPacketEvent * packetEvent = static_cast<AnimPacketEvent *> (ev);
-          addPacket (packetEvent->m_fbTx, packetEvent->m_fbRx, packetEvent->m_fromId, packetEvent->m_toId);
-        }
+      QGraphicsSimpleTextItem * nodeIdText = new QGraphicsSimpleTextItem (QString::number (nodeId));
+      addItem (nodeIdText);
+      m_nodeIdTexts.push_back (nodeIdText);
+      nodeIdText->setPos (m_interNodeSpacing * nodeId, borderHeight/3);
     }
 
- /* m_maxTime = 120;
-  addPacket (5, 50, 0, 5);
-  addPacket (10, 50, 0, 5);
-  addPacket (50, 50, 0, 5);
-  addPacket (60, 50, 0, 5);*/
-
-
+  return foundNodes;
 
 }
 
@@ -103,11 +90,26 @@ PacketsScene::addPacket (qreal tx, qreal rx, uint32_t fromNodeId, uint32_t toNod
 }
 
 void
-PacketsScene::test ()
+PacketsScene::addPackets ()
 {
-  NS_LOG_DEBUG ("Packets Scene:" << sceneRect ());
-  setUpNodeLines ();
-  NS_LOG_DEBUG ("Packets Scene After:" << sceneRect ());
+  bool foundNodes = setUpNodeLines ();
+  if (!foundNodes)
+    return;
+  TimeValue <AnimEvent*> *events = AnimatorMode::getInstance ()->getEvents ();
+  m_maxTime = AnimatorMode::getInstance ()->getLastPacketEventTime ();
+  m_maxTime = 0.25;
+  for (TimeValue<AnimEvent *>::TimeValue_t::const_iterator i = events->Begin ();
+      i != events->End ();
+      ++i)
+    {
+      AnimEvent * ev = i->second;
+      if (ev->m_type == AnimEvent::PACKET_EVENT)
+        {
+          AnimPacketEvent * packetEvent = static_cast<AnimPacketEvent *> (ev);
+          addPacket (packetEvent->m_fbTx, packetEvent->m_fbRx, packetEvent->m_fromId, packetEvent->m_toId);
+        }
+    }
+  m_infoWidget->setVisible (false);
 
 }
 
