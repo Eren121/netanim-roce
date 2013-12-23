@@ -180,7 +180,7 @@ Animxmlparser::doParse ()
           pAnimatorMode->addAnimEvent (parsedElement.packetrx_fbTx, ev);
           ++parsedElementCount;
           m_lastPacketEventTime = parsedElement.packetrx_fbRx;
-          NS_LOG_DEBUG ("Packet Last Time:" << m_lastPacketEventTime);
+          //NS_LOG_DEBUG ("Packet Last Time:" << m_lastPacketEventTime);
           break;
         }
         case XML_LINK:

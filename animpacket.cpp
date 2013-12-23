@@ -234,7 +234,7 @@ AnimPacket::parsePpp(QString metaInfo, bool & result)
   int pos = 0;
   if((pos = rx.indexIn (metaInfo)) == -1)
     {
-      result = true;
+      result = false;
       return pppInfo;
     }
   result = true;

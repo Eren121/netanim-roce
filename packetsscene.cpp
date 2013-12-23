@@ -48,6 +48,8 @@ PacketsScene::getInstance ()
 bool
 PacketsScene::setUpNodeLines ()
 {
+  if (!m_nodeLines.empty ())
+    return false;
   bool foundNodes = false;
   QRectF r = sceneRect ();
   qreal height = r.bottom () - r.top ();
