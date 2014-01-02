@@ -34,7 +34,6 @@ AnimPacket::AnimPacket (uint32_t fromNodeId,
                         bool isWPacket,
                         QString metaInfo,
                         bool showMetaInfo):
-  AnimEvent(PACKET_EVENT),
   m_fromNodeId (fromNodeId),
   m_toNodeId (toNodeId),
   m_firstBitTx (firstBitTx),

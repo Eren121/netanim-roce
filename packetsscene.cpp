@@ -105,7 +105,7 @@ PacketsScene::addPackets ()
       ++i)
     {
       AnimEvent * ev = i->second;
-      if (ev->m_type == AnimEvent::PACKET_EVENT)
+      if (ev->m_type == AnimEvent::PACKET_FBTX_EVENT)
         {
           AnimPacketEvent * packetEvent = static_cast<AnimPacketEvent *> (ev);
           addPacket (packetEvent->m_fbTx, packetEvent->m_fbRx, packetEvent->m_fromId, packetEvent->m_toId);

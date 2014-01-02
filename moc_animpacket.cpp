@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'animpacket.h'
 **
-** Created: Sat Dec 21 18:01:59 2013
+** Created: Thu Jan 2 06:10:51 2014
 **      by: The Qt Meta Object Compiler version 63 (Qt 4.8.1)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -166,8 +166,6 @@ void *netanim::AnimPacket::qt_metacast(const char *_clname)
     if (!_clname) return 0;
     if (!strcmp(_clname, qt_meta_stringdata_netanim__AnimPacket))
         return static_cast<void*>(const_cast< AnimPacket*>(this));
-    if (!strcmp(_clname, "AnimEvent"))
-        return static_cast< AnimEvent*>(const_cast< AnimPacket*>(this));
     return QGraphicsObject::qt_metacast(_clname);
 }
 

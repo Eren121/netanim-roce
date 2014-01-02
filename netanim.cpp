@@ -49,7 +49,7 @@ NetAnim::NetAnim ():
   m_tabWidget->addTab (designerMode->getCentralWidget (), designerMode->getTabName ());
 #endif
   QObject::connect (m_tabWidget, SIGNAL (currentChanged (int)), this, SLOT (currentTabChangedSlot (int)));
-  m_tabWidget->setCurrentIndex (2);
+  m_tabWidget->setCurrentIndex (0);
   QRect geometry = QApplication::desktop ()->screenGeometry ();
   int minimumDimension = std::min (geometry.width (), geometry.height ());
   m_tabWidget->setGeometry (0, 0, minimumDimension, minimumDimension);

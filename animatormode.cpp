@@ -1213,7 +1213,7 @@ AnimatorMode::dispatchEvents ()
                 }
               break;
             }
-            case AnimEvent::PACKET_EVENT:
+            case AnimEvent::PACKET_FBTX_EVENT:
             {
               if (m_fastForwarding || !(m_showPackets))
                 continue;

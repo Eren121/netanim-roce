@@ -29,7 +29,10 @@ class AnimEvent
 public:
   typedef enum
   {
-    PACKET_EVENT,
+    PACKET_FBTX_EVENT,
+    PACKET_FBRX_EVENT,
+    PACKET_LBTX_EVENT,
+    PACKET_LBRX_EVENT,
     ADD_NODE_EVENT,
     UPDATE_NODE_POS_EVENT,
     UPDATE_NODE_COLOR_EVENT,
@@ -201,13 +204,21 @@ public:
 class AnimPacketEvent: public AnimEvent
 {
 public:
-  AnimPacketEvent (uint32_t fromId, uint32_t toId, qreal fbTx, qreal fbRx, bool isWPacket,
+  AnimPacketEvent (uint32_t fromId,
+                   uint32_t toId,
+                   qreal fbTx,
+                   qreal fbRx,
+                   qreal lbTx,
+                   qreal lbRx,
+                   bool isWPacket,
                   QString metaInfo):
-    AnimEvent (PACKET_EVENT),
+    AnimEvent (PACKET_FBTX_EVENT),
     m_fromId (fromId),
     m_toId (toId),
     m_fbTx (fbTx),
     m_fbRx (fbRx),
+    m_lbTx (lbTx),
+    m_lbRx (lbRx),
     m_isWPacket (isWPacket),
     m_metaInfo (metaInfo)
   {
@@ -216,6 +227,8 @@ public:
   uint32_t m_toId;
   qreal m_fbTx;
   qreal m_fbRx;
+  qreal m_lbTx;
+  qreal m_lbRx;
   bool m_isWPacket;
   QString m_metaInfo;
 

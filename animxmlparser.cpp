@@ -175,6 +175,8 @@ Animxmlparser::doParse ()
               parsedElement.packetrx_toId,
               parsedElement.packetrx_fbTx,
               parsedElement.packetrx_fbRx,
+              parsedElement.packetrx_lbTx,
+              parsedElement.packetrx_lbRx,
               parsedElement.isWpacket,
               parsedElement.meta_info);
           pAnimatorMode->addAnimEvent (parsedElement.packetrx_fbTx, ev);
