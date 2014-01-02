@@ -1225,6 +1225,13 @@ AnimatorMode::dispatchEvents ()
                                         packetEvent->m_isWPacket,
                                         packetEvent->m_metaInfo,
                                         m_showPacketMetaInfo);
+              if (!packetEvent->m_isWPacket)
+                {
+                  AnimPacketLbTxEvent * animLbTxEvent = new AnimPacketLbTxEvent (animPacket);
+                  m_events.add (packetEvent->m_lbTx, animLbTxEvent);
+                  AnimPacketLbRxEvent * animLbRxEvent = new AnimPacketLbRxEvent  (animPacket);
+                  m_events.add (packetEvent->m_lbRx, animLbRxEvent);
+                }
               packetsToAnimate.push_back (animPacket);
               break;
 
@@ -1298,10 +1305,6 @@ AnimatorMode::dispatchEvents ()
         {
           //NS_LOG_DEBUG ("Created animation Group");
           m_packetAnimationGroup  = new QParallelAnimationGroup;
-          /*connect (m_packetAnimationGroup,
-                  SIGNAL (finished ()),
-                  this,
-                  SLOT (packetAnimationGroupFinishedSlot ()));*/
         }
       for (QVector <AnimPacket *>::const_iterator i = packetsToAnimate.begin ();
            i != packetsToAnimate.end ();

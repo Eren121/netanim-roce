@@ -200,6 +200,31 @@ public:
 };
 
 
+class AnimPacketLbTxEvent: public AnimEvent
+{
+public:
+  AnimPacketLbTxEvent (void * p):
+    AnimEvent (PACKET_LBTX_EVENT),
+    m_pkt (p)
+  {
+  }
+  void * m_pkt;
+
+};
+
+
+class AnimPacketLbRxEvent: public AnimEvent
+{
+public:
+  AnimPacketLbTxEvent (void * p):
+    AnimEvent (PACKET_LBRX_EVENT),
+    m_pkt (p)
+  {
+  }
+  void * m_pkt;
+
+};
+
 
 class AnimPacketEvent: public AnimEvent
 {
