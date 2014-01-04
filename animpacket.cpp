@@ -56,8 +56,8 @@ AnimPacket::AnimPacket (uint32_t fromNodeId,
   m_infoText = new QGraphicsSimpleTextItem (this);
   if(showMetaInfo)
     {
-      m_infoText->setText("p");
-      m_infoText->setFlag(QGraphicsItem::ItemIgnoresTransformations);
+      m_infoText->setText ("p");
+      m_infoText->setFlag (QGraphicsItem::ItemIgnoresTransformations);
 
 
       qreal textAngle = m_line.angle ();

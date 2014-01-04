@@ -1174,7 +1174,7 @@ AnimatorMode::dispatchEvents ()
         {
           m_simulationTimeSlider->setEnabled (true);
         }
-      QVector <AnimPacket *> packetsToAnimate;
+      QVector <AnimPacket *> wirelessPacketsToAnimate;
       for (TimeValue<AnimEvent*>::TimeValue_t::const_iterator j = pp.first;
           j != pp.second;
           ++j)
@@ -1231,10 +1231,32 @@ AnimatorMode::dispatchEvents ()
                   m_events.add (packetEvent->m_lbTx, animLbTxEvent);
                   AnimPacketLbRxEvent * animLbRxEvent = new AnimPacketLbRxEvent  (animPacket);
                   m_events.add (packetEvent->m_lbRx, animLbRxEvent);
+                  qreal fullDuration = packetEvent->m_lbRx - packetEvent->m_fbTx;
+                  uint32_t numSlots = 10;
+                  qreal step = fullDuration/numSlots;
+                  for (uint32_t i = 1; i <= numSlots; ++i)
+                    {
+                      qreal point = packetEvent->m_fbTx + (i * step);
+                      //NS_LOG_DEBUG ("Point:" << point);
+                      m_events.add (point, new AnimWiredPacketUpdateEvent ());
+                    }
+                  AnimatorScene::getInstance ()->addPacket (animPacket);
+                  animPacket->update (m_currentTime);
+                  animPacket->setPos (animPacket->getHead ());
+                  animPacket->setVisible (true);
                 }
-              packetsToAnimate.push_back (animPacket);
+              else
+                {
+                  wirelessPacketsToAnimate.push_back (animPacket);
+                }
               break;
 
+            }
+            case AnimEvent::WIRED_PACKET_UPDATE_EVENT:
+            {
+              uint32_t j=0;
+              ++j;
+              break;
             }
             case AnimEvent::UPDATE_NODE_POS_EVENT:
             {
@@ -1301,13 +1323,13 @@ AnimatorMode::dispatchEvents ()
 
             } //switch
         } // for loop
-      if (!packetsToAnimate.empty ())
+      if (!wirelessPacketsToAnimate.empty ())
         {
           //NS_LOG_DEBUG ("Created animation Group");
           m_packetAnimationGroup  = new QParallelAnimationGroup;
         }
-      for (QVector <AnimPacket *>::const_iterator i = packetsToAnimate.begin ();
-           i != packetsToAnimate.end ();
+      for (QVector <AnimPacket *>::const_iterator i = wirelessPacketsToAnimate.begin ();
+           i != wirelessPacketsToAnimate.end ();
            ++i)
         {
           AnimPacket * animPacket = *i;

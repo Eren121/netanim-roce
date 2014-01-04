@@ -40,7 +40,8 @@ public:
     UPDATE_NODE_SIZE_EVENT,
     UPDATE_NODE_IMAGE_EVENT,
     ADD_LINK_EVENT,
-    UPDATE_LINK_EVENT
+    UPDATE_LINK_EVENT,
+    WIRED_PACKET_UPDATE_EVENT
   } AnimEventType_h;
   AnimEventType_h m_type;
   AnimEvent (AnimEventType_h type): m_type (type)
@@ -116,6 +117,14 @@ public:
 
 
 
+class AnimWiredPacketUpdateEvent: public AnimEvent
+{
+public:
+  AnimWiredPacketUpdateEvent ():
+    AnimEvent (WIRED_PACKET_UPDATE_EVENT)
+  {
+  }
+};
 
 
 class AnimNodePositionUpdateEvent: public AnimEvent
@@ -216,7 +225,7 @@ public:
 class AnimPacketLbRxEvent: public AnimEvent
 {
 public:
-  AnimPacketLbTxEvent (void * p):
+  AnimPacketLbRxEvent (void * p):
     AnimEvent (PACKET_LBRX_EVENT),
     m_pkt (p)
   {
