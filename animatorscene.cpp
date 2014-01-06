@@ -173,8 +173,8 @@ AnimatorScene::purgeAnimatedLinks ()
 void
 AnimatorScene::showAnimatedPackets (bool show)
 {
-  for (QVector <AnimPacket *>::const_iterator i = m_animatedPackets.begin ();
-      i != m_animatedPackets.end ();
+  for (QVector <AnimPacket *>::const_iterator i = m_wirelessAnimatedPackets.begin ();
+      i != m_wirelessAnimatedPackets.end ();
       ++i)
     {
       AnimPacket * p = *i;
@@ -193,8 +193,8 @@ AnimatorScene::showAnimatedPackets (bool show)
 void
 AnimatorScene::purgeAnimatedPackets ()
 {
-  for (QVector <AnimPacket *>::const_iterator i = m_animatedPackets.begin ();
-      i != m_animatedPackets.end ();
+  for (QVector <AnimPacket *>::const_iterator i = m_wirelessAnimatedPackets.begin ();
+      i != m_wirelessAnimatedPackets.end ();
       ++i)
     {
       AnimPacket * p = *i;
@@ -203,7 +203,7 @@ AnimatorScene::purgeAnimatedPackets ()
       removeItem (p);
       delete p;
     }
-  m_animatedPackets.clear ();
+  m_wirelessAnimatedPackets.clear ();
 
   for (QVector <AnimWirelessCircles *>::const_iterator i = m_animatedWirelessCircles.begin ();
       i != m_animatedWirelessCircles.end ();
@@ -242,12 +242,22 @@ AnimatorScene::addNode (AnimNode *animNode)
 }
 
 void
-AnimatorScene::addPacket (AnimPacket *p)
+AnimatorScene::addWirelessPacket (AnimPacket *p)
 {
   addItem (p);
   //addItem (p->getInfoTextItem ());
   p->getInfoTextItem ()->setPos (p->boundingRect ().bottomLeft ());
-  m_animatedPackets.push_back (p);
+  m_wirelessAnimatedPackets.push_back (p);
+}
+
+
+void
+AnimatorScene::addWiredPacket (AnimPacket *p)
+{
+  addItem (p);
+  //addItem (p->getInfoTextItem ());
+  p->getInfoTextItem ()->setPos (p->boundingRect ().bottomLeft ());
+  m_wiredAnimatedPackets.push_back (p);
 }
 
 

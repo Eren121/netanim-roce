@@ -1240,10 +1240,11 @@ AnimatorMode::dispatchEvents ()
                       //NS_LOG_DEBUG ("Point:" << point);
                       m_events.add (point, new AnimWiredPacketUpdateEvent ());
                     }
-                  AnimatorScene::getInstance ()->addPacket (animPacket);
+                  AnimatorScene::getInstance ()->addWiredPacket (animPacket);
                   animPacket->update (m_currentTime);
                   animPacket->setPos (animPacket->getHead ());
                   animPacket->setVisible (true);
+                  wiredPacketsToAnimate[wiredPacketsToAnimate.size ()] = animPacket;
                 }
               else
                 {
@@ -1254,8 +1255,15 @@ AnimatorMode::dispatchEvents ()
             }
             case AnimEvent::WIRED_PACKET_UPDATE_EVENT:
             {
-              uint32_t j=0;
-              ++j;
+              AnimPacket * animPacket = 0;
+              for (std::map <uint32_t, AnimPacket *>::iterator i = wiredPacketsToAnimate.begin ();
+                   i != wiredPacketsToAnimate.end ();
+                   ++i)
+                {
+                  animPacket = i->second;
+                  animPacket->update (m_currentTime);
+                  animPacket->setPos (animPacket->getHead ());
+                }
               break;
             }
             case AnimEvent::UPDATE_NODE_POS_EVENT:
@@ -1333,7 +1341,7 @@ AnimatorMode::dispatchEvents ()
            ++i)
         {
           AnimPacket * animPacket = *i;
-          AnimatorScene::getInstance ()->addPacket (animPacket);
+          AnimatorScene::getInstance ()->addWirelessPacket (animPacket);
           animPacket->update (m_currentTime);
           animPacket->setVisible (true);
           animPacket->setPos (animPacket->getHead ());

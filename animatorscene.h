@@ -76,7 +76,8 @@ public:
   AnimatorScene ();
   void mouseMoveEvent (QGraphicsSceneMouseEvent *event);
   void mouseDoubleClickEvent (QGraphicsSceneMouseEvent *event);
-  void addPacket (AnimPacket * p);
+  void addWirelessPacket (AnimPacket * p);
+  void addWiredPacket (AnimPacket * p);
   void addNode (AnimNode * animNode);
   void addLink (AnimLink * animLink);
   void addWirelessCircle (AnimWirelessCircles * w);
@@ -104,7 +105,9 @@ private:
   TimeValue<AnimPacket *> m_testTimeValue;
   QLabel * m_mousePositionLabel;
   QGraphicsProxyWidget * m_mousePositionProxyWidget;
-  QVector <AnimPacket *> m_animatedPackets;
+  QVector <AnimPacket *> m_wirelessAnimatedPackets;
+  QVector <AnimPacket *> m_wiredAnimatedPackets;
+
   QVector <AnimWirelessCircles *> m_animatedWirelessCircles;
   QVector <AnimLink *> m_animatedLinks;
   QVector<AnimNode *> m_animatedNodes;

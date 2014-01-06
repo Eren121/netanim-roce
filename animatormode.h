@@ -102,6 +102,8 @@ private:
   bool m_showPackets;
   bool m_fastForwarding;
   qreal m_lastPacketEventTime;
+  std::map <uint32_t, AnimPacket *> wiredPacketsToAnimate;
+
 
 
   //controls
