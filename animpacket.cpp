@@ -567,7 +567,18 @@ AnimPacket::update (qreal t)
   Q_UNUSED(t);
   qreal midPointX = (m_toPos.x () + m_fromPos.x ())/2;
   qreal midPointY = (m_toPos.y () + m_fromPos.y ())/2;
-  m_head = QPointF (midPointX, midPointY);
+  if (m_isWPacket)
+    {
+      m_head = QPointF (midPointX, midPointY);
+    }
+  else
+    {
+      qreal timeElapsed = t - getFirstBitTx ();
+      qreal distanceTravelled = m_velocity * timeElapsed;
+      qreal x = distanceTravelled * m_cos;
+      qreal y = distanceTravelled * m_sin;
+      m_head = QPointF (m_fromPos.x () + x, m_fromPos.y () + y);
+    }
   //m_head = QPointF (100,100);
   //NS_LOG_DEBUG ("m_head:" << m_head);
 }
