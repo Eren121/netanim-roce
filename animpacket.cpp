@@ -19,6 +19,7 @@
 #include "animpacket.h"
 #include "animnode.h"
 #include "animatorview.h"
+#include "logqt.h"
 
 #define PI 3.14159265
 NS_LOG_COMPONENT_DEFINE ("AnimPacket");
@@ -580,7 +581,7 @@ AnimPacket::update (qreal t)
       m_head = QPointF (m_fromPos.x () + x, m_fromPos.y () + y);
     }
   //m_head = QPointF (100,100);
-  //NS_LOG_DEBUG ("m_head:" << m_head);
+  NS_LOG_DEBUG ("m_head:" << m_head);
 }
 
 #endif

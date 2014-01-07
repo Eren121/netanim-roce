@@ -29,6 +29,12 @@
 #include <QtGlobal>
 
 
+inline bool fuzzyCompare (float p1, float p2)
+{
+    return (qAbs(p1 - p2) <= 0.000000000001f * qMin(qAbs(p1), qAbs(p2)));
+}
+
+
 namespace netanim
 {
 
@@ -143,6 +149,8 @@ template <class T>
 void
 TimeValue<T>::add (qreal t, T value)
 {
+  std::cout << "T:" <<t << std::endl;
+  fflush (stdout);
   bool wasEmpty = m_timeValues.empty ();
   m_timeValues.insert (TimeValuePair_t (t, value));
   if (wasEmpty)
@@ -195,7 +203,27 @@ typename TimeValue<T>::TimeValueIteratorPair_t
 TimeValue<T>::getNext (TimeValueResult_t & result)
 {
   result = GOOD;
-  TimeValueIteratorPair_t pp =  m_timeValues.equal_range (m_getIterator->first);
+  //TimeValueIteratorPair_t pp =  m_timeValues.equal_range (m_getIterator->first);
+
+  typename TimeValue_t::const_iterator lowerIterator = m_getIterator;
+  typename TimeValue_t::const_iterator upperIterator = m_getIterator;
+  typename TimeValue_t::const_iterator tempIterator = m_getIterator;
+  while (tempIterator != m_timeValues.end ())
+    {
+      //if (tempIterator->first > upperBound)
+      if (!fuzzyCompare (tempIterator->first, m_getIterator->first))
+        {
+          std::cout << "First:" << tempIterator->first;
+          break;
+        }
+      upperIterator = tempIterator;
+      ++tempIterator;
+    }
+  TimeValueIteratorPair_t pp (lowerIterator, upperIterator);
+
+
+
+
   //std::cout << "First:" << m_getIterator->first;
   //fflush (stdout);
   if (m_getIterator == m_timeValues.end ())
@@ -204,7 +232,8 @@ TimeValue<T>::getNext (TimeValueResult_t & result)
     }
   else
     {
-      m_getIterator = m_timeValues.upper_bound (m_getIterator->first);
+      //m_getIterator = m_timeValues.upper_bound (m_getIterator->first);
+      m_getIterator = tempIterator;
     }
   return pp;
 
@@ -295,7 +324,7 @@ TimeValue<T>::setCurrentTime (qreal t)
               result = GOOD;
               break;
             }
-          else if (qFuzzyCompare (i->first, t))
+          else if (fuzzyCompare (i->first, t))
             {
               result = GOOD;
               break;

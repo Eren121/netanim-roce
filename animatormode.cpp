@@ -1203,9 +1203,11 @@ AnimatorMode::dispatchEvents ()
           m_simulationTimeSlider->setEnabled (true);
         }
       QVector <AnimPacket *> wirelessPacketsToAnimate;
-      for (TimeValue<AnimEvent*>::TimeValue_t::const_iterator j = pp.first;
+      /*for (TimeValue<AnimEvent*>::TimeValue_t::const_iterator j = pp.first;
           j != pp.second;
-          ++j)
+          ++j)*/
+      TimeValue<AnimEvent*>::TimeValue_t::const_iterator j = pp.first;
+      while (j != m_events.End ())
         {
           //NS_LOG_DEBUG ("fbTx:" << j->first);
           AnimEvent * ev = j->second;
@@ -1250,12 +1252,12 @@ AnimatorMode::dispatchEvents ()
               if (m_fastForwarding)
                 {
                   packetEvent->m_valid = false;
-                  continue;
+                  break;
                 }
               if (!packetEvent->m_valid)
-                continue;
+                break;
               if (!animPacket)
-                continue;
+                break;
               //NS_LOG_DEBUG ("PACKET_LBRX_EVENT Remove P:" << animPacket);
 
               AnimatorScene::getInstance ()->removeWiredPacket (animPacket);
@@ -1267,8 +1269,9 @@ AnimatorMode::dispatchEvents ()
             }
             case AnimEvent::PACKET_FBTX_EVENT:
             {
+
               if (m_fastForwarding || !(m_showPackets))
-                continue;
+                break;
               AnimPacketEvent * packetEvent = static_cast<AnimPacketEvent *> (j->second);
               AnimPacket * animPacket = AnimPacketMgr::getInstance ()->add (packetEvent->m_fromId,
                                         packetEvent->m_toId,
@@ -1284,7 +1287,7 @@ AnimatorMode::dispatchEvents ()
                   AnimPacketLbRxEvent * animLbRxEvent = new AnimPacketLbRxEvent  (animPacket);
                   m_events.add (packetEvent->m_lbRx, animLbRxEvent);
 
-                  NS_LOG_DEBUG ("Packet LbRX Scheduling:" << animLbRxEvent << " P:" << animPacket);
+                  //NS_LOG_DEBUG ("Packet LbRX Scheduling:" << animLbRxEvent << " P:" << animPacket);
 
                   qreal fullDuration = packetEvent->m_lbRx - packetEvent->m_fbTx;
                   uint32_t numSlots = 100;
@@ -1292,7 +1295,7 @@ AnimatorMode::dispatchEvents ()
                   for (uint32_t i = 1; i <= numSlots; ++i)
                     {
                       qreal point = packetEvent->m_fbTx + (i * step);
-                      //NS_LOG_DEBUG ("Point:" << point);
+                      NS_LOG_DEBUG ("Point:" << point);
                       m_events.add (point, new AnimWiredPacketUpdateEvent ());
                     }
                   AnimatorScene::getInstance ()->addWiredPacket (animPacket);
@@ -1318,6 +1321,8 @@ AnimatorMode::dispatchEvents ()
                   animPacket = i->first;
                   animPacket->update (m_currentTime);
                   animPacket->setPos (animPacket->getHead ());
+                  AnimatorScene::getInstance ()->update ();
+                  NS_LOG_DEBUG ("Updating");
                 }
               break;
             }
@@ -1385,7 +1390,17 @@ AnimatorMode::dispatchEvents ()
 
 
             } //switch
-        } // for loop
+
+           ++j;
+           if (j == pp.second)
+             break;
+           if (j->first != m_currentTime)
+             {
+               m_events.setCurrentTime (j->first);
+               break;
+             }
+
+        } // for/while loop
       if (!wirelessPacketsToAnimate.empty ())
         {
           //NS_LOG_DEBUG ("Created animation Group");
