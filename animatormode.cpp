@@ -488,6 +488,7 @@ AnimatorMode::systemReset ()
 {
   m_state = SYSTEM_RESET_IN_PROGRESS;
   clickResetSlot ();
+  purgeWiredPackets ();
   setControlDefaults ();
   AnimatorView::getInstance ()->systemReset ();
   AnimatorScene::getInstance ()->systemReset ();
@@ -615,6 +616,7 @@ void
 AnimatorMode::fastForward (qreal t)
 {
   //AnimatorScene::getInstance ()->invalidate ();
+  purgeWiredPackets ();
   while (m_currentTime <t)
     {
       if (m_state == SIMULATION_COMPLETE)
@@ -989,6 +991,32 @@ AnimatorMode::setSimulationCompleted ()
 
 }
 
+void
+AnimatorMode::purgeWiredPackets ()
+{
+  for (std::map <AnimPacket *, AnimEvent *>::const_iterator i = m_wiredPacketsToAnimate.begin ();
+       i != m_wiredPacketsToAnimate.end ();
+       ++i)
+    {
+      AnimPacket * animPacket = i->first;
+      AnimEvent * animEvent = i->second;
+      switch (animEvent->m_type)
+        {
+          case AnimEvent::PACKET_LBRX_EVENT:
+          {
+            AnimPacketLbRxEvent * animLbRxEvent = static_cast<AnimPacketLbRxEvent *> (animEvent);
+            animLbRxEvent->m_valid = false;
+            break;
+          }
+        }
+      //NS_LOG_DEBUG ("Purge P:" << animPacket);
+
+      AnimatorScene::getInstance ()->removeWiredPacket (animPacket);
+      delete animPacket;
+      animPacket = 0;
+    }
+  m_wiredPacketsToAnimate.clear ();
+}
 
 void
 AnimatorMode::purgeAnimatedNodes ()
@@ -1213,6 +1241,30 @@ AnimatorMode::dispatchEvents ()
                 }
               break;
             }
+            case AnimEvent::PACKET_LBRX_EVENT:
+            {
+              AnimPacketLbRxEvent * packetEvent = static_cast<AnimPacketLbRxEvent *> (j->second);
+              AnimPacket * animPacket = static_cast<AnimPacket *> (packetEvent->m_pkt);
+
+              //NS_LOG_DEBUG ("Packet LbRX Event:" << packetEvent << " P:"<< animPacket );
+              if (m_fastForwarding)
+                {
+                  packetEvent->m_valid = false;
+                  continue;
+                }
+              if (!packetEvent->m_valid)
+                continue;
+              if (!animPacket)
+                continue;
+              //NS_LOG_DEBUG ("PACKET_LBRX_EVENT Remove P:" << animPacket);
+
+              AnimatorScene::getInstance ()->removeWiredPacket (animPacket);
+              m_wiredPacketsToAnimate.erase (animPacket);
+              delete animPacket;
+              packetEvent->m_valid = false;
+              break;
+
+            }
             case AnimEvent::PACKET_FBTX_EVENT:
             {
               if (m_fastForwarding || !(m_showPackets))
@@ -1231,8 +1283,11 @@ AnimatorMode::dispatchEvents ()
                   m_events.add (packetEvent->m_lbTx, animLbTxEvent);
                   AnimPacketLbRxEvent * animLbRxEvent = new AnimPacketLbRxEvent  (animPacket);
                   m_events.add (packetEvent->m_lbRx, animLbRxEvent);
+
+                  NS_LOG_DEBUG ("Packet LbRX Scheduling:" << animLbRxEvent << " P:" << animPacket);
+
                   qreal fullDuration = packetEvent->m_lbRx - packetEvent->m_fbTx;
-                  uint32_t numSlots = 10;
+                  uint32_t numSlots = 100;
                   qreal step = fullDuration/numSlots;
                   for (uint32_t i = 1; i <= numSlots; ++i)
                     {
@@ -1244,7 +1299,7 @@ AnimatorMode::dispatchEvents ()
                   animPacket->update (m_currentTime);
                   animPacket->setPos (animPacket->getHead ());
                   animPacket->setVisible (true);
-                  wiredPacketsToAnimate[wiredPacketsToAnimate.size ()] = animPacket;
+                  m_wiredPacketsToAnimate[animPacket] = animLbRxEvent;
                 }
               else
                 {
@@ -1256,11 +1311,11 @@ AnimatorMode::dispatchEvents ()
             case AnimEvent::WIRED_PACKET_UPDATE_EVENT:
             {
               AnimPacket * animPacket = 0;
-              for (std::map <uint32_t, AnimPacket *>::iterator i = wiredPacketsToAnimate.begin ();
-                   i != wiredPacketsToAnimate.end ();
+              for (std::map <AnimPacket *, AnimEvent *>::iterator i = m_wiredPacketsToAnimate.begin ();
+                   i != m_wiredPacketsToAnimate.end ();
                    ++i)
                 {
-                  animPacket = i->second;
+                  animPacket = i->first;
                   animPacket->update (m_currentTime);
                   animPacket->setPos (animPacket->getHead ());
                 }

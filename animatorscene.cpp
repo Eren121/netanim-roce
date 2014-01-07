@@ -252,6 +252,12 @@ AnimatorScene::addWirelessPacket (AnimPacket *p)
 
 
 void
+AnimatorScene::removeWiredPacket (AnimPacket *p)
+{
+  removeItem (p);
+}
+
+void
 AnimatorScene::addWiredPacket (AnimPacket *p)
 {
   addItem (p);

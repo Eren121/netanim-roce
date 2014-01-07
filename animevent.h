@@ -227,10 +227,12 @@ class AnimPacketLbRxEvent: public AnimEvent
 public:
   AnimPacketLbRxEvent (void * p):
     AnimEvent (PACKET_LBRX_EVENT),
-    m_pkt (p)
+    m_pkt (p),
+    m_valid (true)
   {
   }
   void * m_pkt;
+  bool m_valid;
 
 };
 

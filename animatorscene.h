@@ -78,6 +78,7 @@ public:
   void mouseDoubleClickEvent (QGraphicsSceneMouseEvent *event);
   void addWirelessPacket (AnimPacket * p);
   void addWiredPacket (AnimPacket * p);
+  void removeWiredPacket (AnimPacket * p);
   void addNode (AnimNode * animNode);
   void addLink (AnimLink * animLink);
   void addWirelessCircle (AnimWirelessCircles * w);

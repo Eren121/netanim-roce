@@ -102,7 +102,7 @@ private:
   bool m_showPackets;
   bool m_fastForwarding;
   qreal m_lastPacketEventTime;
-  std::map <uint32_t, AnimPacket *> wiredPacketsToAnimate;
+  std::map <AnimPacket *, AnimEvent *> m_wiredPacketsToAnimate;
 
 
 
@@ -187,6 +187,7 @@ private:
   void displayPacket (qreal t);
   void dispatchEvents ();
   void setSimulationCompleted ();
+  void purgeWiredPackets ();
   void purgeAnimatedNodes ();
   void fastForward (qreal t);
   void reset ();
