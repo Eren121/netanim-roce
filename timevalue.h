@@ -29,12 +29,6 @@
 #include <QtGlobal>
 
 
-inline bool fuzzyCompare (float p1, float p2)
-{
-    return (qAbs(p1 - p2) <= 0.000000000001f * qMin(qAbs(p1), qAbs(p2)));
-}
-
-
 namespace netanim
 {
 
@@ -77,7 +71,6 @@ private:
   typename TimeValue<T>::TimeValue_t::const_iterator m_getIterator;
   qreal m_lookBack;
   void rewindCurrentIterator ();
-  void print ();
 };
 
 template <class T>
@@ -150,8 +143,6 @@ template <class T>
 void
 TimeValue<T>::add (qreal t, T value)
 {
-  std::cout << "T:" <<t << std::endl;
-  fflush (stdout);
   bool wasEmpty = m_timeValues.empty ();
   m_timeValues.insert (TimeValuePair_t (t, value));
   if (wasEmpty)
@@ -204,29 +195,7 @@ typename TimeValue<T>::TimeValueIteratorPair_t
 TimeValue<T>::getNext (TimeValueResult_t & result)
 {
   result = GOOD;
-  //TimeValueIteratorPair_t pp =  m_timeValues.equal_range (m_getIterator->first);
-
-  typename TimeValue_t::const_iterator lowerIterator = m_getIterator;
-  typename TimeValue_t::const_iterator upperIterator = m_getIterator;
-  typename TimeValue_t::const_iterator tempIterator = m_getIterator;
-  int count = 0;
-  while (tempIterator != m_timeValues.end ())
-    {
-      //if (tempIterator->first > upperBound)
-      if (!fuzzyCompare (tempIterator->first, m_getIterator->first))
-        {
-          std::cout << "First:" << tempIterator->first << " count:" << count << std::endl;
-          break;
-        }
-      upperIterator = tempIterator;
-      ++tempIterator;
-      ++count;
-    }
-  TimeValueIteratorPair_t pp (lowerIterator, upperIterator);
-
-
-
-
+  TimeValueIteratorPair_t pp =  m_timeValues.equal_range (m_getIterator->first);
   //std::cout << "First:" << m_getIterator->first;
   //fflush (stdout);
   if (m_getIterator == m_timeValues.end ())
@@ -235,8 +204,7 @@ TimeValue<T>::getNext (TimeValueResult_t & result)
     }
   else
     {
-      //m_getIterator = m_timeValues.upper_bound (m_getIterator->first);
-      m_getIterator = tempIterator;
+      m_getIterator = m_timeValues.upper_bound (m_getIterator->first);
     }
   return pp;
 
@@ -327,7 +295,7 @@ TimeValue<T>::setCurrentTime (qreal t)
               result = GOOD;
               break;
             }
-          else if (fuzzyCompare (i->first, t))
+          else if (qFuzzyCompare (i->first, t))
             {
               result = GOOD;
               break;
@@ -348,7 +316,6 @@ TimeValue<T>::setCurrentTime (qreal t)
   return result;
 }
 
-
 template <class T>
 std::ostringstream
 TimeValue<T>::toString ()
@@ -363,11 +330,9 @@ TimeValue<T>::toString ()
           j != pp.second;
           ++j)
         {
-          os << j->first << ",";
-          //os << j->second;
+          os << j->second;
         }
       i = m_timeValues.upper_bound (i->first);
-      os << std::endl;
     }
   return os;
 }

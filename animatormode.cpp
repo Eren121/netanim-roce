@@ -994,12 +994,12 @@ AnimatorMode::setSimulationCompleted ()
 void
 AnimatorMode::purgeWiredPackets ()
 {
-  for (std::map <AnimPacket *, AnimEvent *>::const_iterator i = m_wiredPacketsToAnimate.begin ();
+  for (std::map <AnimPacket *, AnimPacket *>::const_iterator i = m_wiredPacketsToAnimate.begin ();
        i != m_wiredPacketsToAnimate.end ();
        ++i)
     {
       AnimPacket * animPacket = i->first;
-      AnimEvent * animEvent = i->second;
+      /*AnimEvent * animEvent = i->second;
       switch (animEvent->m_type)
         {
           case AnimEvent::PACKET_LBRX_EVENT:
@@ -1009,6 +1009,7 @@ AnimatorMode::purgeWiredPackets ()
             break;
           }
         }
+        */
       //NS_LOG_DEBUG ("Purge P:" << animPacket);
 
       AnimatorScene::getInstance ()->removeWiredPacket (animPacket);
@@ -1203,11 +1204,11 @@ AnimatorMode::dispatchEvents ()
           m_simulationTimeSlider->setEnabled (true);
         }
       QVector <AnimPacket *> wirelessPacketsToAnimate;
-      /*for (TimeValue<AnimEvent*>::TimeValue_t::const_iterator j = pp.first;
+      for (TimeValue<AnimEvent*>::TimeValue_t::const_iterator j = pp.first;
           j != pp.second;
-          ++j)*/
-      TimeValue<AnimEvent*>::TimeValue_t::const_iterator j = pp.first;
-      while (j != m_events.End ())
+          ++j)
+      //TimeValue<AnimEvent*>::TimeValue_t::const_iterator j = pp.first;
+      //while (j != m_events.End ())
         {
           //NS_LOG_DEBUG ("fbTx:" << j->first);
           AnimEvent * ev = j->second;
@@ -1282,28 +1283,16 @@ AnimatorMode::dispatchEvents ()
                                         m_showPacketMetaInfo);
               if (!packetEvent->m_isWPacket)
                 {
-                  AnimPacketLbTxEvent * animLbTxEvent = new AnimPacketLbTxEvent (animPacket);
-                  m_events.add (packetEvent->m_lbTx, animLbTxEvent);
-                  AnimPacketLbRxEvent * animLbRxEvent = new AnimPacketLbRxEvent  (animPacket);
-                  m_events.add (packetEvent->m_lbRx, animLbRxEvent);
 
                   //NS_LOG_DEBUG ("Packet LbRX Scheduling:" << animLbRxEvent << " P:" << animPacket);
 
-                  qreal fullDuration = packetEvent->m_lbRx - packetEvent->m_fbTx;
-                  uint32_t numSlots = 100;
-                  qreal step = fullDuration/numSlots;
-                  for (uint32_t i = 1; i <= numSlots; ++i)
-                    {
-                      qreal point = packetEvent->m_fbTx + (i * step);
-                      NS_LOG_DEBUG ("Point:" << point);
-                      m_events.add (point, new AnimWiredPacketUpdateEvent ());
-                    }
+
                   AnimatorScene::getInstance ()->addWiredPacket (animPacket);
                   animPacket->update (m_currentTime);
                   animPacket->setPos (animPacket->getHead ());
                   animPacket->setVisible (true);
-                  m_wiredPacketsToAnimate[animPacket] = animLbRxEvent;
-                  NS_LOG_DEBUG ("Events:" << m_events.toString ().str ().c_str ());
+                  m_wiredPacketsToAnimate[animPacket] = animPacket;
+                  //NS_LOG_DEBUG ("Events:" << m_events.toString ().str ().c_str ());
                 }
               else
                 {
@@ -1314,8 +1303,10 @@ AnimatorMode::dispatchEvents ()
             }
             case AnimEvent::WIRED_PACKET_UPDATE_EVENT:
             {
+              if (m_fastForwarding)
+                  break;
               AnimPacket * animPacket = 0;
-              for (std::map <AnimPacket *, AnimEvent *>::iterator i = m_wiredPacketsToAnimate.begin ();
+              for (std::map <AnimPacket *, AnimPacket *>::iterator i = m_wiredPacketsToAnimate.begin ();
                    i != m_wiredPacketsToAnimate.end ();
                    ++i)
                 {
@@ -1391,16 +1382,6 @@ AnimatorMode::dispatchEvents ()
 
 
             } //switch
-
-           ++j;
-           if (j == pp.second)
-             break;
-           if (j->first != m_currentTime)
-             {
-               m_events.setCurrentTime (j->first);
-               break;
-             }
-
         } // for/while loop
       if (!wirelessPacketsToAnimate.empty ())
         {
