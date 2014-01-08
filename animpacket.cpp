@@ -32,6 +32,7 @@ AnimPacket::AnimPacket (uint32_t fromNodeId,
                         uint32_t toNodeId,
                         qreal firstBitTx,
                         qreal firstBitRx,
+                        qreal lastBitRx,
                         bool isWPacket,
                         QString metaInfo,
                         bool showMetaInfo):
@@ -39,6 +40,7 @@ AnimPacket::AnimPacket (uint32_t fromNodeId,
   m_toNodeId (toNodeId),
   m_firstBitTx (firstBitTx),
   m_firstBitRx (firstBitRx),
+  m_lastBitRx (lastBitRx),
   m_isWPacket (isWPacket),
   m_infoText (0)
 {
@@ -211,6 +213,12 @@ AnimPacket::getFirstBitRx ()
   return m_firstBitRx;
 }
 
+
+qreal
+AnimPacket::getLastBitRx ()
+{
+  return m_lastBitRx;
+}
 
 bool
 AnimPacket::getIsWPacket ()
@@ -747,9 +755,9 @@ AnimPacketMgr::getInstance ()
 }
 
 AnimPacket *
-AnimPacketMgr::add (uint32_t fromId, uint32_t toId, qreal fbTx, qreal fbRx, bool isWPacket, QString metaInfo, bool showMetaInfo)
+AnimPacketMgr::add (uint32_t fromId, uint32_t toId, qreal fbTx, qreal fbRx, qreal lbRx, bool isWPacket, QString metaInfo, bool showMetaInfo)
 {
-  AnimPacket * pkt = new AnimPacket (fromId, toId, fbTx, fbRx, isWPacket, metaInfo, showMetaInfo);
+  AnimPacket * pkt = new AnimPacket (fromId, toId, fbTx, fbRx, lbRx, isWPacket, metaInfo, showMetaInfo);
   return pkt;
 }
 

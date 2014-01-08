@@ -193,6 +193,7 @@ private:
   void reset ();
   QPropertyAnimation * getButtonAnimation (QToolButton * toolButton);
   void initPropertyBrowser ();
+  void removeWiredPacket (AnimPacket * animPacket);
 
 
 private slots:

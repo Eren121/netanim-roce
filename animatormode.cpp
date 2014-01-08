@@ -992,6 +992,15 @@ AnimatorMode::setSimulationCompleted ()
 }
 
 void
+AnimatorMode::removeWiredPacket (AnimPacket *animPacket)
+{
+  m_wiredPacketsToAnimate.erase (animPacket);
+  AnimatorScene::getInstance ()->removeWiredPacket (animPacket);
+  delete animPacket;
+  animPacket = 0;
+}
+
+void
 AnimatorMode::purgeWiredPackets ()
 {
   for (std::map <AnimPacket *, AnimPacket *>::const_iterator i = m_wiredPacketsToAnimate.begin ();
@@ -1278,6 +1287,7 @@ AnimatorMode::dispatchEvents ()
                                         packetEvent->m_toId,
                                         packetEvent->m_fbTx,
                                         packetEvent->m_fbRx,
+                                        packetEvent->m_lbRx,
                                         packetEvent->m_isWPacket,
                                         packetEvent->m_metaInfo,
                                         m_showPacketMetaInfo);
@@ -1305,16 +1315,32 @@ AnimatorMode::dispatchEvents ()
             {
               if (m_fastForwarding)
                   break;
-              AnimPacket * animPacket = 0;
+
+
+              QVector <AnimPacket *> packetsToRemove;
               for (std::map <AnimPacket *, AnimPacket *>::iterator i = m_wiredPacketsToAnimate.begin ();
                    i != m_wiredPacketsToAnimate.end ();
                    ++i)
                 {
+                  AnimPacket * animPacket = 0;
                   animPacket = i->first;
+                  if (m_currentTime > animPacket->getLastBitRx ())
+                    {
+                      packetsToRemove.push_back (animPacket);
+                      continue;
+                    }
                   animPacket->update (m_currentTime);
                   animPacket->setPos (animPacket->getHead ());
                   AnimatorScene::getInstance ()->update ();
                   NS_LOG_DEBUG ("Updating");
+                }
+
+              for (QVector <AnimPacket *>::const_iterator i = packetsToRemove.begin ();
+                   i != packetsToRemove.end ();
+                   ++i)
+                {
+                  AnimPacket * animPacket = *i;
+                  removeWiredPacket (animPacket);
                 }
               break;
             }
