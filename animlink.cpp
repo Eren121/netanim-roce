@@ -70,6 +70,7 @@ AnimLink::AnimLink (uint32_t fromId, uint32_t toId,
       *m_originalLinkDescription = linkDescription;
     }
   setZValue (ANIMLINK_ZVALUE);
+  setVisible (false);
 }
 
 AnimLink::~AnimLink ()

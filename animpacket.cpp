@@ -32,6 +32,7 @@ AnimPacket::AnimPacket (uint32_t fromNodeId,
                         uint32_t toNodeId,
                         qreal firstBitTx,
                         qreal firstBitRx,
+                        qreal lastBitTx,
                         qreal lastBitRx,
                         bool isWPacket,
                         QString metaInfo,
@@ -40,6 +41,7 @@ AnimPacket::AnimPacket (uint32_t fromNodeId,
   m_toNodeId (toNodeId),
   m_firstBitTx (firstBitTx),
   m_firstBitRx (firstBitRx),
+  m_lastBitTx (lastBitTx),
   m_lastBitRx (lastBitRx),
   m_isWPacket (isWPacket),
   m_infoText (0)
@@ -218,6 +220,12 @@ qreal
 AnimPacket::getLastBitRx ()
 {
   return m_lastBitRx;
+}
+
+qreal
+AnimPacket::getLastBitTx ()
+{
+  return m_lastBitTx;
 }
 
 bool
@@ -573,7 +581,7 @@ AnimPacket::update (qreal t)
 void
 AnimPacket::update (qreal t)
 {
-  Q_UNUSED(t);
+  m_currentTime = t;
   qreal midPointX = (m_toPos.x () + m_fromPos.x ())/2;
   qreal midPointY = (m_toPos.y () + m_fromPos.y ())/2;
   if (m_isWPacket)
@@ -616,7 +624,25 @@ AnimPacket::paint (QPainter *painter, const QStyleOptionGraphicsItem *option, QW
   painter->save ();
   QPainterPath arrowTailPath;
   arrowTailPath.moveTo (0, 0);
-  arrowTailPath.lineTo (-5 * (10/viewTransform.m22 ()) , 0);
+  qreal mag = 5;
+  if (!m_isWPacket)
+    {
+      qreal timeElapsed = m_currentTime - getFirstBitTx ();
+      mag = m_velocity * timeElapsed;
+      qreal magLbTx = 0;
+      if (m_currentTime > getLastBitTx ())
+        {
+          timeElapsed = m_currentTime - getLastBitTx ();
+          magLbTx = m_velocity * timeElapsed;
+        }
+      mag -= magLbTx;
+      arrowTailPath.lineTo (-mag , 0);
+
+    }
+  else
+    {
+      arrowTailPath.lineTo (-mag * (10/viewTransform.m22 ()) , 0);
+    }
   p.setColor (Qt::blue);
   painter->setPen (p);
   //p.setWidthF(1.0);
@@ -629,6 +655,7 @@ AnimPacket::paint (QPainter *painter, const QStyleOptionGraphicsItem *option, QW
 
   QPainterPath arrowHeadPath;
   qreal arrowHeadLength = 2 * (10/viewTransform.m22 ());
+
   arrowHeadPolygon << QPointF (0, 0) << QPointF (-arrowHeadLength * cos (PI/10), -arrowHeadLength * sin (PI/10)) << QPointF (-arrowHeadLength * cos (PI/10), arrowHeadLength * sin (PI/10));
 
   arrowHeadPath.lineTo (-arrowHeadLength * cos (PI/10), -arrowHeadLength * sin (PI/10));
@@ -755,9 +782,9 @@ AnimPacketMgr::getInstance ()
 }
 
 AnimPacket *
-AnimPacketMgr::add (uint32_t fromId, uint32_t toId, qreal fbTx, qreal fbRx, qreal lbRx, bool isWPacket, QString metaInfo, bool showMetaInfo)
+AnimPacketMgr::add (uint32_t fromId, uint32_t toId, qreal fbTx, qreal fbRx, qreal lbTx, qreal lbRx, bool isWPacket, QString metaInfo, bool showMetaInfo)
 {
-  AnimPacket * pkt = new AnimPacket (fromId, toId, fbTx, fbRx, lbRx, isWPacket, metaInfo, showMetaInfo);
+  AnimPacket * pkt = new AnimPacket (fromId, toId, fbTx, fbRx, lbTx, lbRx, isWPacket, metaInfo, showMetaInfo);
   return pkt;
 }
 

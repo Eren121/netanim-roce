@@ -1287,6 +1287,7 @@ AnimatorMode::dispatchEvents ()
                                         packetEvent->m_toId,
                                         packetEvent->m_fbTx,
                                         packetEvent->m_fbRx,
+                                        packetEvent->m_lbTx,
                                         packetEvent->m_lbRx,
                                         packetEvent->m_isWPacket,
                                         packetEvent->m_metaInfo,

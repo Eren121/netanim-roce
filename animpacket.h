@@ -346,6 +346,7 @@ public:
              uint32_t toNodeId,
              qreal firstBitTx,
              qreal firstBitRx,
+             qreal lastBitTx,
              qreal lastBitRx,
              bool isWPacket,
              QString metaInfo,
@@ -359,6 +360,7 @@ public:
   qreal getFirstBitTx ();
   qreal getFirstBitRx ();
   qreal getLastBitRx ();
+  qreal getLastBitTx ();
   uint32_t getFromNodeId ();
   uint32_t getToNodeId ();
   QPointF getFromPos ();
@@ -376,6 +378,7 @@ private:
   uint32_t m_toNodeId;
   qreal m_firstBitTx;
   qreal m_firstBitRx;
+  qreal m_lastBitTx;
   qreal m_lastBitRx;
   qreal m_velocity;
   qreal m_isWPacket;
@@ -388,6 +391,7 @@ private:
   QPointF m_head;
   QRectF m_boundingRect;
   QGraphicsSimpleTextItem * m_infoText;
+  qreal m_currentTime;
 
 
   ArpInfo parseArp (QString metaInfo, bool & result);
@@ -408,7 +412,7 @@ class AnimPacketMgr
 {
 public:
   static AnimPacketMgr * getInstance ();
-  AnimPacket * add (uint32_t fromId, uint32_t toId, qreal fbTx, qreal fbRx, qreal lbRx, bool isWPacket, QString metaInfo, bool showMetaInfo);
+  AnimPacket * add (uint32_t fromId, uint32_t toId, qreal fbTx, qreal fbRx, qreal lbTx, qreal lbRx, bool isWPacket, QString metaInfo, bool showMetaInfo);
 private:
   AnimPacketMgr ();
 
