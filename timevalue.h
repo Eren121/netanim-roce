@@ -77,6 +77,7 @@ private:
   typename TimeValue<T>::TimeValue_t::const_iterator m_getIterator;
   qreal m_lookBack;
   void rewindCurrentIterator ();
+  void print ();
 };
 
 template <class T>
@@ -208,16 +209,18 @@ TimeValue<T>::getNext (TimeValueResult_t & result)
   typename TimeValue_t::const_iterator lowerIterator = m_getIterator;
   typename TimeValue_t::const_iterator upperIterator = m_getIterator;
   typename TimeValue_t::const_iterator tempIterator = m_getIterator;
+  int count = 0;
   while (tempIterator != m_timeValues.end ())
     {
       //if (tempIterator->first > upperBound)
       if (!fuzzyCompare (tempIterator->first, m_getIterator->first))
         {
-          std::cout << "First:" << tempIterator->first;
+          std::cout << "First:" << tempIterator->first << " count:" << count << std::endl;
           break;
         }
       upperIterator = tempIterator;
       ++tempIterator;
+      ++count;
     }
   TimeValueIteratorPair_t pp (lowerIterator, upperIterator);
 
@@ -345,6 +348,7 @@ TimeValue<T>::setCurrentTime (qreal t)
   return result;
 }
 
+
 template <class T>
 std::ostringstream
 TimeValue<T>::toString ()
@@ -359,9 +363,11 @@ TimeValue<T>::toString ()
           j != pp.second;
           ++j)
         {
-          os << j->second;
+          os << j->first << ",";
+          //os << j->second;
         }
       i = m_timeValues.upper_bound (i->first);
+      os << std::endl;
     }
   return os;
 }

@@ -1303,6 +1303,7 @@ AnimatorMode::dispatchEvents ()
                   animPacket->setPos (animPacket->getHead ());
                   animPacket->setVisible (true);
                   m_wiredPacketsToAnimate[animPacket] = animLbRxEvent;
+                  NS_LOG_DEBUG ("Events:" << m_events.toString ().str ().c_str ());
                 }
               else
                 {
