@@ -20,6 +20,9 @@
 #define PACKETSSCENE_H
 
 #include "common.h"
+#include "textbubble.h"
+
+
 namespace netanim {
 
 class PacketsScene: public QGraphicsScene {
@@ -50,6 +53,9 @@ private:
   QGraphicsProxyWidget * m_infoWidget;
   qreal m_borderHeight;
   qreal m_lineLength;
+
+  QGraphicsLineItem * m_rulerLine;
+  TextBubble * m_textBubble;
 
 };
 }

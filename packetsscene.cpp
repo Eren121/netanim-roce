@@ -20,7 +20,6 @@
 #include "animpacket.h"
 #include "graphpacket.h"
 #include "animatormode.h"
-#include "textbubble.h"
 
 namespace netanim {
 NS_LOG_COMPONENT_DEFINE ("PacketsScene");
@@ -30,11 +29,16 @@ PacketsScene::PacketsScene ():
   QGraphicsScene (-100, -100, 1024, 1024),
   m_interNodeSpacing (100),
   m_fromTime (0),
-  m_toTime (0)
+  m_toTime (0),
+  m_textBubble (0)
 {
-  m_infoWidget = addWidget (new TextBubble ("Info:", "No data available\nDid you load the XML file?"));
+  m_textBubble = new TextBubble ("Info:", "No data available\nDid you load the XML file?");
+  m_infoWidget = addWidget (m_textBubble);
   m_infoWidget->setVisible (true);
   m_infoWidget->setPos (sceneRect ().width ()/2, sceneRect ().height ()/2);
+
+  m_rulerLine = new QGraphicsLineItem;
+  addItem (m_rulerLine);
 }
 PacketsScene *
 PacketsScene::getInstance ()
@@ -79,13 +83,13 @@ PacketsScene::resetLines ()
     }
   m_packetLines.clear ();
   invalidate ();
+  setSceneRect (-100, -100, 1024, 1024);
 
 }
 
 bool
 PacketsScene::setUpNodeLines ()
 {
-  resetLines ();
   bool foundNodes = false;
   QRectF r = sceneRect ();
   qreal height = r.bottom () - r.top ();
@@ -118,7 +122,10 @@ PacketsScene::setUpNodeLines ()
 qreal
 PacketsScene::timeToY (qreal t)
 {
-  return m_borderHeight + ((t-m_fromTime) * ((m_lineLength-m_borderHeight)/(m_toTime-m_fromTime)));
+  qreal y = m_borderHeight + ((t-m_fromTime) * ((m_lineLength-m_borderHeight)/(m_toTime-m_fromTime)));
+  //NS_LOG_DEBUG ("y:" << y << " t-m_fromTime" << (t-m_fromTime));
+  //NS_LOG_DEBUG ("LineLength:" << m_lineLength << " (m_toTime-m_fromTime)" << (m_toTime-m_fromTime));
+  return y;
 }
 
 void
@@ -139,10 +146,22 @@ PacketsScene::addPacket (qreal tx, qreal rx, uint32_t fromNodeId, uint32_t toNod
 void
 PacketsScene::redraw (qreal fromTime, qreal toTime, QVector<uint32_t> allowedNodes)
 {
+  resetLines ();
+  m_infoWidget->setVisible (true);
+  if (fromTime >= toTime)
+    {
+      if (m_textBubble)
+        delete m_textBubble;
+      m_textBubble = new TextBubble ("Info:", "From Time should be less than To Time");
+      m_infoWidget->setWidget (m_textBubble);
+      return;
+    }
   m_fromTime = fromTime;
   m_toTime = toTime;
   m_allowedNodes = allowedNodes;
   addPackets ();
+  m_infoWidget->setVisible (false);
+
 }
 
 bool
@@ -175,6 +194,10 @@ PacketsScene::addPackets ()
             continue;
           if (!isAllowedNode (packetEvent->m_toId))
             continue;
+          if (packetEvent->m_fbRx > m_toTime)
+              continue;
+          if (packetEvent->m_fbTx < m_fromTime)
+              continue;
           addPacket (packetEvent->m_fbTx, packetEvent->m_fbRx, packetEvent->m_fromId, packetEvent->m_toId);
         }
     }
