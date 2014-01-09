@@ -32,6 +32,12 @@ public:
   QString getTabName ();
   void setFocus (bool focus);
 
+  void setFromTime (qreal fromTime);
+  void setToTime (qreal toTime);
+  void setAllowedNodes (QString allowedNodesString);
+  void showPopup (QString msg);
+
+
 private:
   PacketsMode ();
   QWidget * m_centralWidget;
@@ -39,15 +45,30 @@ private:
   QToolBar * m_mainToolBar;
   QToolButton * m_testButton;
   QToolButton * m_showGridLinesButton;
-  QLineEdit * m_gridLineSpacingEdit;
+  QLineEdit * m_fromTimeEdit;
+  QLineEdit * m_toTimeEdit;
+  QLineEdit * m_allowedNodesEdit;
+
+  QLabel * m_fromTimeLabel;
+  QLabel * m_toTimeLabel;
+  QLabel * m_allowedNodesLabel;
   QToolButton * m_zoomInButton;
   QToolButton * m_zoomOutButton;
 
+
+  qreal m_fromTime;
+  qreal m_toTime;
+  QVector <uint32_t> m_allowedNodes;
+
+  QVector <uint32_t> stringToNodeVector (QString nodeString);
+
 private slots:
   void testSlot ();
-  //void showGridLinesSlot ();
   void zoomInSlot ();
   void zoomOutSlot ();
+  void fromTimeChangedSlot (QString fromTimeText);
+  void toTimeChangedSlot (QString toTimeText);
+  void allowedNodesChangedSlot (QString allowedNodes);
 
 };
 

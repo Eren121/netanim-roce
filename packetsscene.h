@@ -27,10 +27,13 @@ class PacketsScene: public QGraphicsScene {
 public:
   static PacketsScene * getInstance ();
   void addPackets ();
+  void redraw (qreal fromTime, qreal toTime , QVector <uint32_t> allowedNodes);
 private:
   PacketsScene ();
   bool setUpNodeLines ();
   qreal timeToY (qreal t);
+  void resetLines ();
+
   void addPacket (qreal tx, qreal rx, uint32_t fromNodeId, uint32_t toNodeId);
   std::map <uint32_t, QGraphicsLineItem *> m_nodeLines;
   std::vector <QGraphicsLineItem *> m_packetLines;
@@ -38,7 +41,9 @@ private:
   std::vector <QGraphicsSimpleTextItem *> m_nodeIdTexts;
 
   qreal m_interNodeSpacing;
-  qreal m_maxTime;
+  qreal m_fromTime;
+  qreal m_toTime;
+  QVector <uint32_t> m_allowedNodes;
   QGraphicsProxyWidget * m_infoWidget;
 
 };

@@ -29,7 +29,8 @@ PacketsScene * pPacketsScene = 0;
 PacketsScene::PacketsScene ():
   QGraphicsScene (-100, -100, 1024, 1024),
   m_interNodeSpacing (100),
-  m_maxTime (0)
+  m_fromTime (0),
+  m_toTime (0)
 {
   m_infoWidget = addWidget (new TextBubble ("Info:", "No data available\nDid you load the XML file?"));
   m_infoWidget->setVisible (true);
@@ -45,26 +46,44 @@ PacketsScene::getInstance ()
   return pPacketsScene;
 }
 
+void
+PacketsScene::resetLines ()
+{
+  for (std::map <uint32_t, QGraphicsLineItem *>::const_iterator i = m_nodeLines.begin ();
+       i != m_nodeLines.end ();
+       ++i)
+    {
+      QGraphicsLineItem * lineItem = i->second;
+      removeItem (lineItem);
+      delete lineItem;
+    }
+  m_nodeLines.clear ();
+}
+
 bool
 PacketsScene::setUpNodeLines ()
 {
-  if (!m_nodeLines.empty ())
-    return false;
+  resetLines ();
   bool foundNodes = false;
   QRectF r = sceneRect ();
   qreal height = r.bottom () - r.top ();
   qreal borderHeight = 0.01 * height;
-  r.setWidth(100 * m_interNodeSpacing);
-  setSceneRect(r);
-  for (uint32_t nodeId = 0; nodeId < AnimNodeMgr::getInstance ()->getCount () ; ++nodeId)
+  r.setWidth (100 * m_interNodeSpacing);
+  setSceneRect (r);
+  uint32_t nodeCount = AnimNodeMgr::getInstance ()->getCount ();
+  if (!nodeCount)
+    return foundNodes;
+
+  for (uint32_t lineIndex = 0; lineIndex < m_allowedNodes.count () ; ++lineIndex)
     {
       foundNodes = true;
-      QGraphicsLineItem * lineItem = addLine (m_interNodeSpacing * nodeId, borderHeight, m_interNodeSpacing * nodeId, r.bottom () - borderHeight);
-      m_nodeLines[nodeId] = lineItem;
-      QGraphicsSimpleTextItem * nodeIdText = new QGraphicsSimpleTextItem (QString::number (nodeId));
-      addItem (nodeIdText);
-      m_nodeIdTexts.push_back (nodeIdText);
-      nodeIdText->setPos (m_interNodeSpacing * nodeId, borderHeight/3);
+      QGraphicsLineItem * lineItem = addLine (m_interNodeSpacing * lineIndex, borderHeight, m_interNodeSpacing * lineIndex, r.bottom () - borderHeight);
+      m_nodeLines[m_allowedNodes[lineIndex]] = lineItem;
+
+      //QGraphicsSimpleTextItem * nodeIdText = new QGraphicsSimpleTextItem (QString::number (nodeId));
+      ///addItem (nodeIdText);
+      //m_nodeIdTexts.push_back (nodeIdText);
+      //nodeIdText->setPos (m_interNodeSpacing * nodeId, borderHeight/3);
     }
 
   return foundNodes;
@@ -75,7 +94,7 @@ PacketsScene::setUpNodeLines ()
 qreal
 PacketsScene::timeToY (qreal t)
 {
-  return t * (1000/m_maxTime);
+  return t * (1000/(m_toTime-m_fromTime));
 }
 
 void
@@ -91,15 +110,24 @@ PacketsScene::addPacket (qreal tx, qreal rx, uint32_t fromNodeId, uint32_t toNod
 
 }
 
+
+void
+PacketsScene::redraw (qreal fromTime, qreal toTime, QVector<uint32_t> allowedNodes)
+{
+  m_fromTime = fromTime;
+  m_toTime = toTime;
+  m_allowedNodes = allowedNodes;
+  addPackets ();
+}
+
 void
 PacketsScene::addPackets ()
 {
   bool foundNodes = setUpNodeLines ();
+  return;
   if (!foundNodes)
     return;
   TimeValue <AnimEvent*> *events = AnimatorMode::getInstance ()->getEvents ();
-  m_maxTime = AnimatorMode::getInstance ()->getLastPacketEventTime ();
-  m_maxTime = 0.25;
   for (TimeValue<AnimEvent *>::TimeValue_t::const_iterator i = events->Begin ();
       i != events->End ();
       ++i)

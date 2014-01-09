@@ -36,7 +36,8 @@ Animxmlparser::Animxmlparser (QString traceFileName):
   m_parsingComplete (false),
   m_reader (0),
   m_maxSimulationTime (0),
-  m_fileIsValid (true)
+  m_fileIsValid (true),
+  m_lastPacketEventTime (-1)
 {
   m_version = 0;
   if (m_traceFileName == "")

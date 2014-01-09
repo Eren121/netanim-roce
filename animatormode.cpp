@@ -49,7 +49,8 @@ AnimatorMode::AnimatorMode ():
   m_showPackets (true),
   m_fastForwarding (false),
   m_parsingXMLDialog (0),
-  m_packetAnimationGroup (0)
+  m_packetAnimationGroup (0),
+  m_lastPacketEventTime (-1)
 
 {
   init ();
