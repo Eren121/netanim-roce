@@ -48,6 +48,8 @@ private:
   qreal m_toTime;
   QVector <uint32_t> m_allowedNodes;
   QGraphicsProxyWidget * m_infoWidget;
+  qreal m_borderHeight;
+  qreal m_lineLength;
 
 };
 }

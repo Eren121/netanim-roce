@@ -89,7 +89,8 @@ PacketsScene::setUpNodeLines ()
   bool foundNodes = false;
   QRectF r = sceneRect ();
   qreal height = r.bottom () - r.top ();
-  qreal borderHeight = 0.01 * height;
+  m_borderHeight = 0.01 * height;
+  m_lineLength = r.bottom () - m_borderHeight;
   r.setWidth (100 * m_interNodeSpacing);
   setSceneRect (r);
   uint32_t nodeCount = AnimNodeMgr::getInstance ()->getCount ();
@@ -99,13 +100,13 @@ PacketsScene::setUpNodeLines ()
   for (uint32_t lineIndex = 0; lineIndex < m_allowedNodes.count () ; ++lineIndex)
     {
       foundNodes = true;
-      QGraphicsLineItem * lineItem = addLine (m_interNodeSpacing * lineIndex, borderHeight, m_interNodeSpacing * lineIndex, r.bottom () - borderHeight);
+      QGraphicsLineItem * lineItem = addLine (m_interNodeSpacing * lineIndex, m_borderHeight, m_interNodeSpacing * lineIndex, m_lineLength);
       m_nodeLines[m_allowedNodes[lineIndex]] = lineItem;
 
       QGraphicsSimpleTextItem * nodeIdText = new QGraphicsSimpleTextItem (QString::number (m_allowedNodes[lineIndex]));
       addItem (nodeIdText);
       m_nodeIdTexts.push_back (nodeIdText);
-      nodeIdText->setPos (m_interNodeSpacing * lineIndex, borderHeight/3);
+      nodeIdText->setPos (m_interNodeSpacing * lineIndex, m_borderHeight/3);
       m_lineIndex[m_allowedNodes[lineIndex]] = lineIndex;
     }
 
@@ -117,7 +118,7 @@ PacketsScene::setUpNodeLines ()
 qreal
 PacketsScene::timeToY (qreal t)
 {
-  return (t-m_fromTime) * (1000/(m_toTime-m_fromTime));
+  return m_borderHeight + ((t-m_fromTime) * ((m_lineLength-m_borderHeight)/(m_toTime-m_fromTime)));
 }
 
 void
