@@ -1333,7 +1333,7 @@ AnimatorMode::dispatchEvents ()
                   animPacket->update (m_currentTime);
                   animPacket->setPos (animPacket->getHead ());
                   AnimatorScene::getInstance ()->update ();
-                  NS_LOG_DEBUG ("Updating");
+                  //NS_LOG_DEBUG ("Updating");
                 }
 
               for (QVector <AnimPacket *>::const_iterator i = packetsToRemove.begin ();

@@ -186,7 +186,7 @@ Animxmlparser::doParse ()
           if (!parsedElement.isWpacket)
             {
               qreal fullDuration = parsedElement.packetrx_lbRx - parsedElement.packetrx_fbTx;
-              uint32_t numSlots = 100;
+              uint32_t numSlots = 15;
               qreal step = fullDuration/numSlots;
               for (uint32_t i = 1; i <= numSlots; ++i)
                 {
