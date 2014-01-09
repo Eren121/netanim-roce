@@ -54,6 +54,8 @@ PacketsMode::PacketsMode ():
   m_fromTimeLabel = new QLabel ("From Time");
   m_fromTimeEdit = new QLineEdit;
   QDoubleValidator * doubleValidator = new QDoubleValidator;
+  doubleValidator->setDecimals (10);
+  doubleValidator->setNotation (QDoubleValidator::StandardNotation);
   m_fromTimeEdit->setValidator (doubleValidator);
   //m_fromTimeEdit->setInputMask (TIME_EDIT_MASK);
   m_fromTimeEdit->setMaximumWidth (TIME_EDIT_WIDTH);
@@ -90,11 +92,11 @@ PacketsMode::PacketsMode ():
   m_centralWidget->setLayout (m_vLayout);
 
 
-  setToTime (0);
-  setFromTime (0);
+  setToTime (0.0);
+  setFromTime (0.0);
   setAllowedNodes (ALLOWED_NODES);
-  connect (m_fromTimeEdit, SIGNAL(textChanged(QString)), this, SLOT (fromTimeChangedSlot(QString)));
-  connect (m_toTimeEdit, SIGNAL(textChanged(QString)), this, SLOT (toTimeChangedSlot(QString)));
+  connect (m_fromTimeEdit, SIGNAL(textEdited(QString)), this, SLOT (fromTimeChangedSlot(QString)));
+  connect (m_toTimeEdit, SIGNAL(textEdited(QString)), this, SLOT (toTimeChangedSlot(QString)));
   connect (m_allowedNodesEdit, SIGNAL(textEdited(QString)), this, SLOT (allowedNodesChangedSlot(QString)));
 
 }
@@ -140,7 +142,9 @@ PacketsMode::setFocus (bool focus)
       //m_allowedNodes.clear ();
 
       m_toTime = lastPacketTime;
-      setToTime (m_toTime);
+      m_toTimeEdit->setText (QString::number (m_toTime, 'g', 6));
+      m_fromTimeEdit->setText (QString::number (m_fromTime, 'g', 6));
+
       //setAllowedNodes (m_allowedNodes);
       PacketsScene::getInstance ()->redraw(m_fromTime, m_toTime, m_allowedNodes);
     }
@@ -166,7 +170,8 @@ PacketsMode::getInstance ()
 void
 PacketsMode::setFromTime (qreal fromTime)
 {
-  m_fromTimeEdit->setText (QString::number (fromTime));
+  m_fromTime = fromTime;
+  //m_fromTimeEdit->setText (QString::number (fromTime, 'g', 6));
   PacketsScene::getInstance ()->redraw(m_fromTime, m_toTime, m_allowedNodes);
 
 }
@@ -174,7 +179,8 @@ PacketsMode::setFromTime (qreal fromTime)
 void
 PacketsMode::setToTime (qreal toTime)
 {
-  m_toTimeEdit->setText (QString::number (toTime));
+  m_toTime = toTime;
+  //m_toTimeEdit->setText (QString::number (toTime, 'g', 6));
   PacketsScene::getInstance ()->redraw(m_fromTime, m_toTime, m_allowedNodes);
 
 }
@@ -183,7 +189,7 @@ PacketsMode::setToTime (qreal toTime)
 QVector <uint32_t>
 PacketsMode::stringToNodeVector (QString nodeString)
 {
-  QStringList nodes = nodeString.split (":");
+  QStringList nodes = nodeString.split (":", QString::SkipEmptyParts);
   QVector <uint32_t> v;
   foreach (QString s ,nodes)
     {
@@ -215,27 +221,15 @@ void
 PacketsMode::fromTimeChangedSlot (QString fromTimeText)
 {
   qreal temp = fromTimeText.toDouble ();
-  if (temp > m_toTime)
-    {
-      showPopup ("From time cannot be greater than To time. Change To time first if necessary");
-      setFromTime (0);
-      return;
-    }
   m_fromTime = temp;
   setFromTime (m_fromTime);
 
 }
 
 void
-PacketsMode::toTimeChangedSlot (QString fromTimeText)
+PacketsMode::toTimeChangedSlot (QString toTimeText)
 {
-  qreal temp = fromTimeText.toDouble ();
-  if (temp < m_fromTime)
-    {
-      showPopup ("To time cannot be less than From time");
-      setToTime(0);
-      return;
-    }
+  qreal temp = toTimeText.toDouble ();
   m_toTime = temp;
   setToTime (m_toTime);
 

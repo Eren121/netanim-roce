@@ -33,9 +33,12 @@ private:
   bool setUpNodeLines ();
   qreal timeToY (qreal t);
   void resetLines ();
+  bool isAllowedNode (uint32_t nodeId);
 
   void addPacket (qreal tx, qreal rx, uint32_t fromNodeId, uint32_t toNodeId);
   std::map <uint32_t, QGraphicsLineItem *> m_nodeLines;
+  std::map <uint32_t, uint32_t> m_lineIndex;
+
   std::vector <QGraphicsLineItem *> m_packetLines;
   std::vector <QGraphicsSimpleTextItem *> m_packetTexts;
   std::vector <QGraphicsSimpleTextItem *> m_nodeIdTexts;

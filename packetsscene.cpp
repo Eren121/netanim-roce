@@ -49,6 +49,7 @@ PacketsScene::getInstance ()
 void
 PacketsScene::resetLines ()
 {
+  m_lineIndex.clear ();
   for (std::map <uint32_t, QGraphicsLineItem *>::const_iterator i = m_nodeLines.begin ();
        i != m_nodeLines.end ();
        ++i)
@@ -58,6 +59,27 @@ PacketsScene::resetLines ()
       delete lineItem;
     }
   m_nodeLines.clear ();
+  for (std::vector <QGraphicsSimpleTextItem *>::const_iterator i = m_nodeIdTexts.begin ();
+       i != m_nodeIdTexts.end ();
+       ++i)
+    {
+      QGraphicsSimpleTextItem * textItem = *i;
+      removeItem (textItem);
+      delete textItem;
+    }
+  m_nodeIdTexts.clear ();
+
+  for (std::vector <QGraphicsLineItem *>::const_iterator i = m_packetLines.begin ();
+       i != m_packetLines.end ();
+       ++i)
+    {
+      QGraphicsLineItem * packetLine = *i;
+      removeItem (packetLine);
+      delete packetLine;
+    }
+  m_packetLines.clear ();
+  invalidate ();
+
 }
 
 bool
@@ -80,10 +102,11 @@ PacketsScene::setUpNodeLines ()
       QGraphicsLineItem * lineItem = addLine (m_interNodeSpacing * lineIndex, borderHeight, m_interNodeSpacing * lineIndex, r.bottom () - borderHeight);
       m_nodeLines[m_allowedNodes[lineIndex]] = lineItem;
 
-      //QGraphicsSimpleTextItem * nodeIdText = new QGraphicsSimpleTextItem (QString::number (nodeId));
-      ///addItem (nodeIdText);
-      //m_nodeIdTexts.push_back (nodeIdText);
-      //nodeIdText->setPos (m_interNodeSpacing * nodeId, borderHeight/3);
+      QGraphicsSimpleTextItem * nodeIdText = new QGraphicsSimpleTextItem (QString::number (m_allowedNodes[lineIndex]));
+      addItem (nodeIdText);
+      m_nodeIdTexts.push_back (nodeIdText);
+      nodeIdText->setPos (m_interNodeSpacing * lineIndex, borderHeight/3);
+      m_lineIndex[m_allowedNodes[lineIndex]] = lineIndex;
     }
 
   return foundNodes;
@@ -94,18 +117,19 @@ PacketsScene::setUpNodeLines ()
 qreal
 PacketsScene::timeToY (qreal t)
 {
-  return t * (1000/(m_toTime-m_fromTime));
+  return (t-m_fromTime) * (1000/(m_toTime-m_fromTime));
 }
 
 void
 PacketsScene::addPacket (qreal tx, qreal rx, uint32_t fromNodeId, uint32_t toNodeId)
 {
-  qreal fromNodeX = m_interNodeSpacing * fromNodeId;
-  qreal toNodeX = m_interNodeSpacing * toNodeId;
+  qreal fromNodeX = m_interNodeSpacing * m_lineIndex[fromNodeId];
+  qreal toNodeX = m_interNodeSpacing * m_lineIndex[toNodeId];
   qreal txY = timeToY (tx);
   qreal rxY = timeToY (rx);
   GraphPacket * graphPacket = new GraphPacket (QPointF (fromNodeX, txY), QPointF (toNodeX, rxY));
   addItem (graphPacket);
+  m_packetLines.push_back (graphPacket);
   //graphPacket->setPos (QPointF (fromNodeX, txY));
 
 }
@@ -120,11 +144,21 @@ PacketsScene::redraw (qreal fromTime, qreal toTime, QVector<uint32_t> allowedNod
   addPackets ();
 }
 
+bool
+PacketsScene::isAllowedNode (uint32_t nodeId)
+{
+  for (uint32_t i = 0; i < m_allowedNodes.count (); ++i)
+    {
+      if (m_allowedNodes[i] == nodeId)
+        return true;
+    }
+  return false;
+}
+
 void
 PacketsScene::addPackets ()
 {
   bool foundNodes = setUpNodeLines ();
-  return;
   if (!foundNodes)
     return;
   TimeValue <AnimEvent*> *events = AnimatorMode::getInstance ()->getEvents ();
@@ -136,6 +170,10 @@ PacketsScene::addPackets ()
       if (ev->m_type == AnimEvent::PACKET_FBTX_EVENT)
         {
           AnimPacketEvent * packetEvent = static_cast<AnimPacketEvent *> (ev);
+          if (!isAllowedNode (packetEvent->m_fromId))
+            continue;
+          if (!isAllowedNode (packetEvent->m_toId))
+            continue;
           addPacket (packetEvent->m_fbTx, packetEvent->m_fbRx, packetEvent->m_fromId, packetEvent->m_toId);
         }
     }
