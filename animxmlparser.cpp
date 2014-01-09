@@ -183,14 +183,17 @@ Animxmlparser::doParse ()
           ++parsedElementCount;
           m_lastPacketEventTime = parsedElement.packetrx_fbRx;
 
-          qreal fullDuration = parsedElement.packetrx_lbRx - parsedElement.packetrx_fbTx;
-          uint32_t numSlots = 100;
-          qreal step = fullDuration/numSlots;
-          for (uint32_t i = 1; i <= numSlots; ++i)
+          if (!parsedElement.isWpacket)
             {
-              qreal point = parsedElement.packetrx_fbTx + (i * step);
-              //NS_LOG_DEBUG ("Point:" << point);
-              pAnimatorMode->addAnimEvent (point, new AnimWiredPacketUpdateEvent ());
+              qreal fullDuration = parsedElement.packetrx_lbRx - parsedElement.packetrx_fbTx;
+              uint32_t numSlots = 100;
+              qreal step = fullDuration/numSlots;
+              for (uint32_t i = 1; i <= numSlots; ++i)
+                {
+                  qreal point = parsedElement.packetrx_fbTx + (i * step);
+                  //NS_LOG_DEBUG ("Point:" << point);
+                  pAnimatorMode->addAnimEvent (point, new AnimWiredPacketUpdateEvent ());
+                }
             }
 
           //NS_LOG_DEBUG ("Packet Last Time:" << m_lastPacketEventTime);

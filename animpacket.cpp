@@ -590,14 +590,22 @@ AnimPacket::update (qreal t)
     }
   else
     {
-      qreal timeElapsed = t - getFirstBitTx ();
-      qreal distanceTravelled = m_velocity * timeElapsed;
-      qreal x = distanceTravelled * m_cos;
-      qreal y = distanceTravelled * m_sin;
-      m_head = QPointF (m_fromPos.x () + x, m_fromPos.y () + y);
+      if (t > getFirstBitRx ())
+        {
+          m_head = m_toPos;
+        }
+      else
+        {
+          qreal timeElapsed = t - getFirstBitTx ();
+          qreal distanceTravelled = m_velocity * timeElapsed;
+          qreal x = distanceTravelled * m_cos;
+          qreal y = distanceTravelled * m_sin;
+          m_head = QPointF (m_fromPos.x () + x, m_fromPos.y () + y);
+        }
+
     }
   //m_head = QPointF (100,100);
-  NS_LOG_DEBUG ("m_head:" << m_head);
+  //NS_LOG_DEBUG ("m_head:" << m_head);
 }
 
 #endif
@@ -636,7 +644,9 @@ AnimPacket::paint (QPainter *painter, const QStyleOptionGraphicsItem *option, QW
           magLbTx = m_velocity * timeElapsed;
         }
       mag -= magLbTx;
-      arrowTailPath.lineTo (-mag , 0);
+      arrowTailPath.lineTo (-mag, 0);
+      //arrowTailPath.lineTo (-mag , 0);
+
 
     }
   else
@@ -644,8 +654,8 @@ AnimPacket::paint (QPainter *painter, const QStyleOptionGraphicsItem *option, QW
       arrowTailPath.lineTo (-mag * (10/viewTransform.m22 ()) , 0);
     }
   p.setColor (Qt::blue);
+
   painter->setPen (p);
-  //p.setWidthF(1.0);
   painter->rotate (360 - m_line.angle ());
   painter->drawPath (arrowTailPath);
   painter->restore ();
@@ -656,7 +666,10 @@ AnimPacket::paint (QPainter *painter, const QStyleOptionGraphicsItem *option, QW
   QPainterPath arrowHeadPath;
   qreal arrowHeadLength = 2 * (10/viewTransform.m22 ());
 
-  arrowHeadPolygon << QPointF (0, 0) << QPointF (-arrowHeadLength * cos (PI/10), -arrowHeadLength * sin (PI/10)) << QPointF (-arrowHeadLength * cos (PI/10), arrowHeadLength * sin (PI/10));
+  arrowHeadPolygon << QPointF (0, 0)
+                   << QPointF (-arrowHeadLength * cos (PI/10), -arrowHeadLength * sin (PI/10))
+                   << QPointF (-(arrowHeadLength/2) * cos (PI/10), 0)
+                   << QPointF (-arrowHeadLength * cos (PI/10), arrowHeadLength * sin (PI/10));
 
   arrowHeadPath.lineTo (-arrowHeadLength * cos (PI/10), -arrowHeadLength * sin (PI/10));
   arrowHeadPath.moveTo (0, 0);
@@ -667,8 +680,7 @@ AnimPacket::paint (QPainter *painter, const QStyleOptionGraphicsItem *option, QW
   painter->save();
   QPen arrowHeadPen;
   QColor black (0, 0, 5, 130);
-  arrowHeadPen.setColor(black);
-
+  arrowHeadPen.setColor (black);
 
   painter->setPen(arrowHeadPen);
   painter->rotate (360 - m_line.angle ());
