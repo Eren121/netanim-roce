@@ -37,6 +37,7 @@
 #include <QDesktopWidget>
 #include <QLineEdit>
 #include <QScrollBar>
+#include <QTableWidget>
 
 
 #include "log.h"

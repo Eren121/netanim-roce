@@ -20,6 +20,7 @@
 
 #include "common.h"
 #include "mode.h"
+#include "table.h"
 namespace netanim {
 
 class PacketsMode: public Mode
@@ -36,6 +37,7 @@ public:
   void setToTime (qreal toTime);
   void setAllowedNodes (QString allowedNodesString);
   void showPopup (QString msg);
+  Table * getTable ();
 
 
 private:
@@ -48,12 +50,15 @@ private:
   QLineEdit * m_fromTimeEdit;
   QLineEdit * m_toTimeEdit;
   QLineEdit * m_allowedNodesEdit;
+  QSplitter * m_mainSplitter;
 
   QLabel * m_fromTimeLabel;
   QLabel * m_toTimeLabel;
   QLabel * m_allowedNodesLabel;
   QToolButton * m_zoomInButton;
   QToolButton * m_zoomOutButton;
+  QToolButton * m_showPacketsTableButton;
+  Table * m_packetsTable;
 
 
   qreal m_fromTime;
@@ -72,6 +77,7 @@ private slots:
   void toTimeChangedSlot (QString toTimeText);
   void allowedNodesChangedSlot (QString allowedNodes);
   void showGridLinesSlot ();
+  void showPacketTableSlot ();
 
 };
 

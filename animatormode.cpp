@@ -134,8 +134,6 @@ AnimatorMode::setControlDefaults ()
 
   m_showMetaButton->setChecked (true);
   showMetaSlot ();
-  m_packetStatsButton->setChecked (false);
-  showPacketStatsSlot ();
   m_showWirelessCirclesButton->setChecked (true);
   showWirelessCirclesSlot ();
 
@@ -200,7 +198,6 @@ AnimatorMode::setVerticalToolbarWidgets ()
   m_verticalToolbar->addSeparator ();
   m_verticalToolbar->addWidget (m_showWirelessCirclesButton);
   m_verticalToolbar->addSeparator ();
-  m_verticalToolbar->addWidget (m_packetStatsButton);
   m_verticalToolbar->addWidget (m_blockPacketsButton);
   m_verticalToolbar->addWidget (m_resetButton);
   m_verticalToolbar->addWidget (m_showMetaButton);
@@ -382,12 +379,6 @@ AnimatorMode::initControls ()
   m_showWirelessCirclesButton->setCheckable (true);
   connect (m_showWirelessCirclesButton, SIGNAL (clicked ()), this, SLOT (showWirelessCirclesSlot ()));
 
-
-  m_packetStatsButton = new QToolButton;
-  m_packetStatsButton->setIcon (QIcon (":/resources/animator_packetstats.svg"));
-  m_packetStatsButton->setToolTip ("Packet filter and statistics");
-  connect (m_packetStatsButton, SIGNAL (clicked ()), this, SLOT (showPacketStatsSlot ()));
-  m_packetStatsButton->setCheckable (true);
 
   m_blockPacketsButton = new QToolButton;
   m_blockPacketsButton->setIcon (QIcon (":/resources/animator_showpackets.svg"));

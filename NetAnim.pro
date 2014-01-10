@@ -38,7 +38,8 @@ SOURCES += \
     packetsmode.cpp \
     packetsview.cpp \
     packetsscene.cpp \
-    graphpacket.cpp
+    graphpacket.cpp \
+    table.cpp
 HEADERS += \
     log.h \
     fatal-error.h \
@@ -134,7 +135,8 @@ HEADERS += \
     packetsmode.h \
     packetsview.h \
     packetsscene.h \
-    graphpacket.h
+    graphpacket.h \
+    table.h
 
 
 INCLUDEPATH += qtpropertybrowser/src

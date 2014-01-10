@@ -79,6 +79,13 @@ PacketsMode::PacketsMode ():
   m_allowedNodesEdit->setMaximumWidth (ALLOWED_NODES_WITH);
 
 
+  m_showPacketsTableButton = new QToolButton;
+  m_showPacketsTableButton->setIcon (QIcon (":/resources/animator_packetstats.svg"));
+  m_showPacketsTableButton->setToolTip ("Packet table");
+  m_showPacketsTableButton->setCheckable (true);
+  m_showPacketsTableButton->setChecked (true);
+  connect (m_showPacketsTableButton, SIGNAL (clicked ()), this, SLOT (showPacketTableSlot()));
+
   connect (m_testButton, SIGNAL(clicked()), this, SLOT(testSlot()));
   m_mainToolBar->addWidget (m_testButton);
   m_mainToolBar->addWidget (m_zoomInButton);
@@ -91,11 +98,25 @@ PacketsMode::PacketsMode ():
   m_mainToolBar->addWidget (m_toTimeEdit);
   m_mainToolBar->addWidget (m_allowedNodesLabel);
   m_mainToolBar->addWidget (m_allowedNodesEdit);
+  m_mainToolBar->addWidget (m_showPacketsTableButton);
 
 
+  m_packetsTable = new Table;
+  QStringList packetTableHeaders;
+  packetTableHeaders << "From Id"
+                     << "To Id"
+                     << "Tx"
+                     << "Meta";
+  m_packetsTable->setHeaderList (packetTableHeaders);
+
+  m_mainSplitter = new QSplitter;
   m_vLayout = new QVBoxLayout;
   m_vLayout->addWidget (m_mainToolBar);
-  m_vLayout->addWidget (PacketsView::getInstance ());
+  m_mainSplitter->addWidget (PacketsView::getInstance ());
+  m_mainSplitter->addWidget (m_packetsTable);
+
+  m_vLayout->addWidget (m_mainSplitter);
+
   m_centralWidget = new QWidget;
   m_centralWidget->setLayout (m_vLayout);
 
@@ -125,6 +146,12 @@ void
 PacketsMode::zoomInSlot ()
 {
   PacketsView::getInstance ()->zoomIn ();
+}
+
+Table *
+PacketsMode::getTable ()
+{
+  return m_packetsTable;
 }
 
 
@@ -244,6 +271,12 @@ PacketsMode::toTimeChangedSlot (QString toTimeText)
   m_toTime = temp;
   setToTime (m_toTime);
 
+}
+
+void
+PacketsMode::showPacketTableSlot ()
+{
+  m_packetsTable->setVisible (m_showPacketsTableButton->isChecked ());
 }
 
 void

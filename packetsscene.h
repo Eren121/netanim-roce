@@ -21,6 +21,7 @@
 
 #include "common.h"
 #include "textbubble.h"
+#include "table.h"
 
 
 namespace netanim {
@@ -57,6 +58,7 @@ private:
   qreal m_borderHeight;
   qreal m_lineLength;
   bool m_showGrid;
+  bool m_showTable;
 
   QGraphicsLineItem * m_rulerLine;
   TextBubble * m_textBubble;

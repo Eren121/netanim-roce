@@ -20,6 +20,7 @@
 #include "animpacket.h"
 #include "graphpacket.h"
 #include "animatormode.h"
+#include "packetsmode.h"
 
 #define PACKETS_SCENE_LEFT -100
 #define PACKETS_SCENE_TOP -100
@@ -35,7 +36,8 @@ PacketsScene::PacketsScene ():
   m_fromTime (0),
   m_toTime (0),
   m_textBubble (0),
-  m_showGrid (true)
+  m_showGrid (true),
+  m_showTable (true)
 {
   m_textBubble = new TextBubble ("Info:", "No data available\nDid you load the XML file?");
   m_infoWidget = addWidget (m_textBubble);
@@ -173,6 +175,37 @@ PacketsScene::addPacket (qreal tx, qreal rx, uint32_t fromNodeId, uint32_t toNod
   GraphPacket * graphPacket = new GraphPacket (QPointF (fromNodeX, txY), QPointF (toNodeX, rxY));
   addItem (graphPacket);
   m_packetLines.push_back (graphPacket);
+  QString shortMeta = AnimPacket::getShortMeta (metaInfo);
+  QGraphicsSimpleTextItem * info = new QGraphicsSimpleTextItem (shortMeta);
+  addItem (info);
+  m_packetInfoTexts.push_back (info);
+  info->setFlag (QGraphicsItem::ItemIgnoresTransformations);
+  info->setPos (QPointF (fromNodeX, txY));
+  qreal textAngle = graphPacket->line().angle ();
+  if(textAngle < 90)
+    {
+      textAngle = 360-textAngle;
+    }
+  else if (textAngle > 270)
+    {
+      textAngle = 360-textAngle;
+    }
+  else
+    {
+      textAngle = 180-textAngle;
+      info->setPos (QPointF (toNodeX, rxY));
+
+    }
+  info->rotate (textAngle);
+
+  Table * table = PacketsMode::getInstance ()->getTable ();
+  QStringList sl;
+  sl << QString::number (fromNodeId)
+     << QString::number (toNodeId)
+     << QString::number (tx)
+     << metaInfo;
+  table->addRow (sl);
+
   if (m_showGrid)
     {
       QGraphicsSimpleTextItem * txText = new QGraphicsSimpleTextItem (QString::number (tx));
@@ -187,31 +220,6 @@ PacketsScene::addPacket (qreal tx, qreal rx, uint32_t fromNodeId, uint32_t toNod
       addItem (horizontalTxLine);
       addItem (horizontalRxLine);
 
-      QString shortMeta = AnimPacket::getShortMeta (metaInfo);
-      QGraphicsSimpleTextItem * info = new QGraphicsSimpleTextItem (shortMeta);
-      addItem (info);
-      m_packetInfoTexts.push_back (info);
-      info->setFlag (QGraphicsItem::ItemIgnoresTransformations);
-      info->setPos (QPointF (fromNodeX, txY));
-      qreal textAngle = graphPacket->line().angle ();
-      if(textAngle < 90)
-        {
-          textAngle = 360-textAngle;
-        }
-      else if (textAngle > 270)
-        {
-          textAngle = 360-textAngle;
-        }
-      else
-        {
-          textAngle = 180-textAngle;
-          info->setPos (QPointF (toNodeX, rxY));
-
-        }
-      info->rotate (textAngle);
-
-
-
       QGraphicsSimpleTextItem * rxText = new QGraphicsSimpleTextItem (QString::number (rx));
       addItem (rxText);
       rxText->setFlag (QGraphicsItem::ItemIgnoresTransformations);
@@ -224,6 +232,7 @@ PacketsScene::addPacket (qreal tx, qreal rx, uint32_t fromNodeId, uint32_t toNod
     }
 
 }
+
 
 
 void
@@ -260,6 +269,8 @@ PacketsScene::addPackets ()
   bool foundNodes = setUpNodeLines ();
   if (!foundNodes)
     return;
+  Table * table = PacketsMode::getInstance ()->getTable ();
+  table->removeAllRows ();
   TimeValue <AnimEvent*> *events = AnimatorMode::getInstance ()->getEvents ();
   for (TimeValue<AnimEvent *>::TimeValue_t::const_iterator i = events->Begin ();
       i != events->End ();
@@ -277,6 +288,8 @@ PacketsScene::addPackets ()
               continue;
           if (packetEvent->m_fbTx < m_fromTime)
               continue;
+
+
           addPacket (packetEvent->m_fbTx, packetEvent->m_fbRx, packetEvent->m_fromId, packetEvent->m_toId, packetEvent->m_metaInfo);
         }
     }
