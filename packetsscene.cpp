@@ -107,6 +107,16 @@ PacketsScene::resetLines ()
       delete line;
     }
   m_horizontalRulerLines.clear ();
+
+  for (std::vector <QGraphicsSimpleTextItem *>::const_iterator i = m_packetInfoTexts.begin ();
+       i != m_packetInfoTexts.end ();
+       ++i)
+    {
+      QGraphicsSimpleTextItem * text = *i;
+      removeItem (text);
+      delete text;
+    }
+  m_packetInfoTexts.clear ();
   invalidate ();
   setSceneRect (-100, -100, 1024, 1024);
 
@@ -154,7 +164,7 @@ PacketsScene::timeToY (qreal t)
 }
 
 void
-PacketsScene::addPacket (qreal tx, qreal rx, uint32_t fromNodeId, uint32_t toNodeId)
+PacketsScene::addPacket (qreal tx, qreal rx, uint32_t fromNodeId, uint32_t toNodeId, QString metaInfo)
 {
   qreal fromNodeX = m_interNodeSpacing * m_lineIndex[fromNodeId];
   qreal toNodeX = m_interNodeSpacing * m_lineIndex[toNodeId];
@@ -176,6 +186,31 @@ PacketsScene::addPacket (qreal tx, qreal rx, uint32_t fromNodeId, uint32_t toNod
       horizontalRxLine->setPen (pen);
       addItem (horizontalTxLine);
       addItem (horizontalRxLine);
+
+      QString shortMeta = AnimPacket::getShortMeta (metaInfo);
+      QGraphicsSimpleTextItem * info = new QGraphicsSimpleTextItem (shortMeta);
+      addItem (info);
+      m_packetInfoTexts.push_back (info);
+      info->setFlag (QGraphicsItem::ItemIgnoresTransformations);
+      info->setPos (QPointF (fromNodeX, txY));
+      qreal textAngle = graphPacket->line().angle ();
+      if(textAngle < 90)
+        {
+          textAngle = 360-textAngle;
+        }
+      else if (textAngle > 270)
+        {
+          textAngle = 360-textAngle;
+        }
+      else
+        {
+          textAngle = 180-textAngle;
+          info->setPos (QPointF (toNodeX, rxY));
+
+        }
+      info->rotate (textAngle);
+
+
 
       QGraphicsSimpleTextItem * rxText = new QGraphicsSimpleTextItem (QString::number (rx));
       addItem (rxText);
@@ -242,7 +277,7 @@ PacketsScene::addPackets ()
               continue;
           if (packetEvent->m_fbTx < m_fromTime)
               continue;
-          addPacket (packetEvent->m_fbTx, packetEvent->m_fbRx, packetEvent->m_fromId, packetEvent->m_toId);
+          addPacket (packetEvent->m_fbTx, packetEvent->m_fbRx, packetEvent->m_fromId, packetEvent->m_toId, packetEvent->m_metaInfo);
         }
     }
   m_infoWidget->setVisible (false);

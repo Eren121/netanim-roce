@@ -38,20 +38,7 @@ GraphPacket::GraphPacket (QPointF fromNodePos, QPointF toNodePos):
   setPen(p);
 }
 
-/*QRectF
-GraphPacket::boundingRect ()
-{
-  return QRectF(line().p1(), QSizeF(line().p2().x() - line().p1().x(),
-                                    line().p2().y() - line().p1().y()))
-      .normalized();
-}
 
-QPainterPath
-GraphPacket::shape () const
-{
-  return m_shape;
-}
-*/
 void
 GraphPacket::paint (QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {

@@ -371,7 +371,7 @@ public:
   QPointF getHead ();
   QGraphicsSimpleTextItem * getInfoTextItem ();
   bool getIsWPacket ();
-  QString getShortMeta (QString metaInfo);
+  static QString getShortMeta (QString metaInfo);
 
 private:
   uint32_t m_fromNodeId;
@@ -394,17 +394,17 @@ private:
   qreal m_currentTime;
 
 
-  ArpInfo parseArp (QString metaInfo, bool & result);
-  PppInfo parsePpp (QString metaInfo, bool & result);
-  EthernetInfo parseEthernet (QString metaInfo, bool & result);
-  WifiMacInfo parseWifi (QString metaInfo, bool & result);
-  Ipv4Info parseIpv4 (QString metaInfo, bool & result);
-  IcmpInfo parseIcmp (QString metaInfo, bool & result);
-  UdpInfo parseUdp (QString metaInfo, bool & result);
-  TcpInfo parseTcp (QString metaInfo, bool & result);
-  AodvInfo parseAodv (QString metaInfo, bool & result);
-  DsdvInfo parseDsdv (QString metaInfo, bool & result);
-  OlsrInfo parseOlsr (QString metaInfo, bool & result);
+  static ArpInfo parseArp (QString metaInfo, bool & result);
+  static PppInfo parsePpp (QString metaInfo, bool & result);
+  static EthernetInfo parseEthernet (QString metaInfo, bool & result);
+  static WifiMacInfo parseWifi (QString metaInfo, bool & result);
+  static Ipv4Info parseIpv4 (QString metaInfo, bool & result);
+  static IcmpInfo parseIcmp (QString metaInfo, bool & result);
+  static UdpInfo parseUdp (QString metaInfo, bool & result);
+  static TcpInfo parseTcp (QString metaInfo, bool & result);
+  static AodvInfo parseAodv (QString metaInfo, bool & result);
+  static DsdvInfo parseDsdv (QString metaInfo, bool & result);
+  static OlsrInfo parseOlsr (QString metaInfo, bool & result);
 
 };
 
