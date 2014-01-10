@@ -174,6 +174,14 @@ PacketsMode::setFocus (bool focus)
       uint32_t nodeCount = AnimNodeMgr::getInstance ()->getCount ();
       if (nodeCount == 0)
         return;
+      m_allowedNodes.clear ();
+      for (uint32_t i = 0; i < nodeCount; ++i)
+        {
+          if (i>10)
+            break;
+          m_allowedNodes.push_back (i);
+        }
+      setAllowedNodes (nodeVectorToString (m_allowedNodes));
       //m_allowedNodes.clear ();
       qreal thousandthPacketTime = AnimatorMode::getInstance ()->getThousandthPacketTime ();
       if (thousandthPacketTime < 0)
@@ -211,6 +219,7 @@ PacketsMode::setFromTime (qreal fromTime)
   m_fromTime = fromTime;
   //m_fromTimeEdit->setText (QString::number (fromTime, 'g', 6));
   PacketsScene::getInstance ()->redraw(m_fromTime, m_toTime, m_allowedNodes, m_showGrid);
+  PacketsView::getInstance ()->horizontalScrollBar ()->setValue (-100);
 
 }
 
@@ -220,6 +229,7 @@ PacketsMode::setToTime (qreal toTime)
   m_toTime = toTime;
   //m_toTimeEdit->setText (QString::number (toTime, 'g', 6));
   PacketsScene::getInstance ()->redraw(m_fromTime, m_toTime, m_allowedNodes, m_showGrid);
+  PacketsView::getInstance ()->horizontalScrollBar ()->setValue (-100);
 
 }
 
@@ -237,6 +247,17 @@ PacketsMode::stringToNodeVector (QString nodeString)
 }
 
 
+QString
+PacketsMode::nodeVectorToString (QVector<uint32_t> nodeVector)
+{
+  QString s;
+  for (uint32_t i = 0; i < nodeVector.size (); ++i)
+    {
+      s += QString::number (nodeVector[i]) + ":";
+    }
+  return s;
+}
+
 void
 PacketsMode::setAllowedNodes (QString allowedNodesString)
 {
@@ -244,6 +265,7 @@ PacketsMode::setAllowedNodes (QString allowedNodesString)
   m_allowedNodesEdit->setText (allowedNodesString);
   m_allowedNodes = nodes;
   PacketsScene::getInstance ()->redraw(m_fromTime, m_toTime, m_allowedNodes, m_showGrid);
+  PacketsView::getInstance ()->horizontalScrollBar ()->setValue (-100);
 
 }
 
@@ -298,6 +320,7 @@ PacketsMode::showGridLinesSlot ()
 {
   m_showGrid = m_showGridLinesButton->isChecked ();
   PacketsScene::getInstance ()->redraw(m_fromTime, m_toTime, m_allowedNodes, m_showGrid);
+  PacketsView::getInstance ()->horizontalScrollBar ()->setValue (-100);
 
 }
 

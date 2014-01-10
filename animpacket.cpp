@@ -93,6 +93,79 @@ AnimPacket::~AnimPacket ()
 }
 
 QString
+AnimPacket::getShortMeta (QString metaInfo, FilterType_t filter)
+{
+  QString metaInfoString = metaInfo.toAscii ().data ();
+
+  bool aodvResult = false;
+  AodvInfo aodvInfo = parseAodv (metaInfoString, aodvResult);
+  bool olsrResult = false;
+  OlsrInfo olsrInfo = parseOlsr (metaInfoString, olsrResult);
+  bool dsdvResult = false;
+  DsdvInfo dsdvInfo = parseDsdv (metaInfoString, dsdvResult);
+  bool tcpResult = false;
+  TcpInfo tcpInfo = parseTcp (metaInfoString, tcpResult);
+  bool udpResult = false;
+  UdpInfo udpInfo = parseUdp (metaInfoString, udpResult);
+  bool arpResult = false;
+  ArpInfo arpInfo = parseArp (metaInfoString, arpResult);
+  bool icmpResult = false;
+  IcmpInfo icmpInfo = parseIcmp (metaInfoString, icmpResult);
+  bool ipv4Result = false;
+  Ipv4Info ipv4Info = parseIpv4 (metaInfoString, ipv4Result);
+  bool wifiResult = false;
+  WifiMacInfo wifiMacInfo = parseWifi (metaInfoString, wifiResult);
+  bool pppResult = false;
+  PppInfo pppInfo = parsePpp (metaInfoString, pppResult);
+  bool ethernetResult = false;
+  EthernetInfo ethernetInfo = parseEthernet (metaInfoString, ethernetResult);
+
+  QString finalString = "";
+  if (filter == AnimPacket::ALL)
+    {
+      finalString += aodvInfo.toShortString () +
+                     olsrInfo.toShortString () +
+                     dsdvInfo.toShortString () +
+                     tcpInfo.toShortString () +
+                     udpInfo.toShortString () +
+                     icmpInfo.toShortString () +
+                     ipv4Info.toShortString () +
+                     arpInfo.toShortString () +
+                     wifiMacInfo.toShortString () +
+                     pppInfo.toShortString () +
+                     ethernetInfo.toShortString ();
+    }
+  else
+    {
+      if (filter & AnimPacket::AODV)
+        finalString += aodvInfo.toShortString ();
+      if (filter & AnimPacket::OLSR)
+        finalString += olsrInfo.toShortString ();
+      if (filter & AnimPacket::DSDV)
+        finalString += dsdvInfo.toShortString ();
+      if (filter & AnimPacket::TCP)
+        finalString += tcpInfo.toShortString ();
+      if (filter & AnimPacket::UDP)
+        finalString += udpInfo.toShortString ();
+      if (filter & AnimPacket::ICMP)
+        finalString += icmpInfo.toShortString ();
+      if (filter & AnimPacket::IPV4)
+        finalString += ipv4Info.toShortString ();
+      if (filter & AnimPacket::ARP)
+        finalString += arpInfo.toShortString ();
+      if (filter & AnimPacket::WIFI)
+        finalString += wifiMacInfo.toShortString ();
+      if (filter & AnimPacket::PPP)
+        finalString += pppInfo.toShortString ();
+      if (filter & AnimPacket::ETHERNET)
+        finalString += ethernetInfo.toShortString ();
+
+    }
+  return finalString;
+
+}
+
+QString
 AnimPacket::getShortMeta (QString metaInfo)
 {
   bool result = false;

@@ -38,6 +38,7 @@
 #include <QLineEdit>
 #include <QScrollBar>
 #include <QTableWidget>
+#include <QCheckBox>
 
 
 #include "log.h"

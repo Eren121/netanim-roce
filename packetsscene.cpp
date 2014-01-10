@@ -203,7 +203,7 @@ PacketsScene::addPacket (qreal tx, qreal rx, uint32_t fromNodeId, uint32_t toNod
   sl << QString::number (fromNodeId)
      << QString::number (toNodeId)
      << QString::number (tx)
-     << metaInfo;
+     << shortMeta;
   table->addRow (sl);
 
   if (m_showGrid)

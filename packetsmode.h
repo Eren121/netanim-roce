@@ -45,6 +45,7 @@ private:
   QWidget * m_centralWidget;
   QVBoxLayout * m_vLayout;
   QToolBar * m_mainToolBar;
+  QToolBar * m_filterToolBar;
   QToolButton * m_testButton;
   QToolButton * m_showGridLinesButton;
   QLineEdit * m_fromTimeEdit;
@@ -58,6 +59,12 @@ private:
   QToolButton * m_zoomInButton;
   QToolButton * m_zoomOutButton;
   QToolButton * m_showPacketsTableButton;
+
+  QCheckBox * m_wifiFilterCb;
+  QCheckBox * m_pppFilterCb;
+  QCheckBox * m_ethernetFilterCb;
+
+
   Table * m_packetsTable;
 
 
@@ -68,6 +75,7 @@ private:
 
 
   QVector <uint32_t> stringToNodeVector (QString nodeString);
+  QString nodeVectorToString (QVector <uint32_t> nodeVector);
 
 private slots:
   void testSlot ();
