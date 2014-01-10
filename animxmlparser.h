@@ -131,6 +131,7 @@ public:
   uint64_t getRxCount ();
   void doParse ();
   qreal getLastPacketEventTime ();
+  qreal getThousandthPacketTime ();
 
 
 private:
@@ -142,6 +143,7 @@ private:
   qreal m_lastPacketEventTime;
   bool m_fileIsValid;
   double m_version;
+  qreal m_thousandThPacketTime;
 
   ParsedElement parseAnim ();
   ParsedElement parseTopology ();

@@ -46,6 +46,7 @@ public:
   QGraphicsPixmapItem * getBackground ();
   TimeValue<AnimEvent *>* getEvents ();
   qreal getLastPacketEventTime ();
+  qreal getThousandthPacketTime ();
 
   // Setters
 
@@ -103,6 +104,7 @@ private:
   bool m_fastForwarding;
   qreal m_lastPacketEventTime;
   std::map <AnimPacket *, AnimPacket *> m_wiredPacketsToAnimate;
+  qreal m_thousandthPacketTime;
 
 
 

@@ -59,6 +59,8 @@ private:
   qreal m_fromTime;
   qreal m_toTime;
   QVector <uint32_t> m_allowedNodes;
+  bool m_showGrid;
+
 
   QVector <uint32_t> stringToNodeVector (QString nodeString);
 
@@ -69,6 +71,7 @@ private slots:
   void fromTimeChangedSlot (QString fromTimeText);
   void toTimeChangedSlot (QString toTimeText);
   void allowedNodesChangedSlot (QString allowedNodes);
+  void showGridLinesSlot ();
 
 };
 

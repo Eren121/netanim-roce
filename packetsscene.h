@@ -30,7 +30,7 @@ class PacketsScene: public QGraphicsScene {
 public:
   static PacketsScene * getInstance ();
   void addPackets ();
-  void redraw (qreal fromTime, qreal toTime , QVector <uint32_t> allowedNodes);
+  void redraw (qreal fromTime, qreal toTime , QVector <uint32_t> allowedNodes, bool showGrid);
 private:
   PacketsScene ();
   bool setUpNodeLines ();
@@ -45,6 +45,8 @@ private:
   std::vector <QGraphicsLineItem *> m_packetLines;
   std::vector <QGraphicsSimpleTextItem *> m_packetTexts;
   std::vector <QGraphicsSimpleTextItem *> m_nodeIdTexts;
+  std::vector <QGraphicsSimpleTextItem *> m_rulerTexts;
+  std::vector <QGraphicsLineItem *> m_horizontalRulerLines;
 
   qreal m_interNodeSpacing;
   qreal m_fromTime;
@@ -53,6 +55,7 @@ private:
   QGraphicsProxyWidget * m_infoWidget;
   qreal m_borderHeight;
   qreal m_lineLength;
+  bool m_showGrid;
 
   QGraphicsLineItem * m_rulerLine;
   TextBubble * m_textBubble;

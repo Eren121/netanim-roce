@@ -36,7 +36,7 @@
 #include <QFontMetrics>
 #include <QDesktopWidget>
 #include <QLineEdit>
-
+#include <QScrollBar>
 
 
 #include "log.h"

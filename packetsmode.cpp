@@ -31,7 +31,8 @@ PacketsMode * pPacketsMode = 0;
 
 PacketsMode::PacketsMode ():
   m_fromTime (0),
-  m_toTime (0)
+  m_toTime (0),
+  m_showGrid (true)
 {
   m_mainToolBar = new QToolBar;
   m_testButton = new QToolButton;
@@ -50,7 +51,14 @@ PacketsMode::PacketsMode ():
 
 
   m_testButton->setText ("test");
-  m_showGridLinesButton = new QToolButton;
+  m_showGridLinesButton = new QToolButton;  
+  m_showGridLinesButton->setIcon (QIcon (":/resources/animator_grid.svg"));
+  m_showGridLinesButton->setCheckable (true);
+  m_showGridLinesButton->setChecked (true);
+  connect (m_showGridLinesButton, SIGNAL (clicked ()), this, SLOT (showGridLinesSlot ()));
+
+
+
   m_fromTimeLabel = new QLabel ("From Time");
   m_fromTimeEdit = new QLineEdit;
   QDoubleValidator * doubleValidator = new QDoubleValidator;
@@ -140,13 +148,16 @@ PacketsMode::setFocus (bool focus)
       if (nodeCount == 0)
         return;
       //m_allowedNodes.clear ();
-
-      m_toTime = lastPacketTime;
+      qreal thousandthPacketTime = AnimatorMode::getInstance ()->getThousandthPacketTime ();
+      if (thousandthPacketTime < 0)
+        return;
+      m_toTime = thousandthPacketTime;
       m_toTimeEdit->setText (QString::number (m_toTime, 'g', 6));
       m_fromTimeEdit->setText (QString::number (m_fromTime, 'g', 6));
 
       //setAllowedNodes (m_allowedNodes);
-      PacketsScene::getInstance ()->redraw(m_fromTime, m_toTime, m_allowedNodes);
+      PacketsScene::getInstance ()->redraw(m_fromTime, m_toTime, m_allowedNodes, m_showGrid);
+      PacketsView::getInstance ()->horizontalScrollBar ()->setValue (-100);
     }
 
 }
@@ -172,7 +183,7 @@ PacketsMode::setFromTime (qreal fromTime)
 {
   m_fromTime = fromTime;
   //m_fromTimeEdit->setText (QString::number (fromTime, 'g', 6));
-  PacketsScene::getInstance ()->redraw(m_fromTime, m_toTime, m_allowedNodes);
+  PacketsScene::getInstance ()->redraw(m_fromTime, m_toTime, m_allowedNodes, m_showGrid);
 
 }
 
@@ -181,7 +192,7 @@ PacketsMode::setToTime (qreal toTime)
 {
   m_toTime = toTime;
   //m_toTimeEdit->setText (QString::number (toTime, 'g', 6));
-  PacketsScene::getInstance ()->redraw(m_fromTime, m_toTime, m_allowedNodes);
+  PacketsScene::getInstance ()->redraw(m_fromTime, m_toTime, m_allowedNodes, m_showGrid);
 
 }
 
@@ -205,7 +216,7 @@ PacketsMode::setAllowedNodes (QString allowedNodesString)
   QVector <uint32_t> nodes = stringToNodeVector (allowedNodesString);
   m_allowedNodesEdit->setText (allowedNodesString);
   m_allowedNodes = nodes;
-  PacketsScene::getInstance ()->redraw(m_fromTime, m_toTime, m_allowedNodes);
+  PacketsScene::getInstance ()->redraw(m_fromTime, m_toTime, m_allowedNodes, m_showGrid);
 
 }
 
@@ -246,6 +257,14 @@ PacketsMode::allowedNodesChangedSlot (QString allowedNodes)
       return;
     }
   setAllowedNodes (allowedNodes);
+
+}
+
+void
+PacketsMode::showGridLinesSlot ()
+{
+  m_showGrid = m_showGridLinesButton->isChecked ();
+  PacketsScene::getInstance ()->redraw(m_fromTime, m_toTime, m_allowedNodes, m_showGrid);
 
 }
 
