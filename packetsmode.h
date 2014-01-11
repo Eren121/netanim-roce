@@ -63,6 +63,13 @@ private:
   QCheckBox * m_wifiFilterCb;
   QCheckBox * m_pppFilterCb;
   QCheckBox * m_ethernetFilterCb;
+  QCheckBox * m_arpFilterCb;
+  QCheckBox * m_tcpFilterCb;
+  QCheckBox * m_udpFilterCb;
+  QCheckBox * m_aodvFilterCb;
+  QCheckBox * m_olsrFilterCb;
+  QCheckBox * m_ipv4FilterCb;
+  QCheckBox * m_icmpFilterCb;
 
 
   Table * m_packetsTable;

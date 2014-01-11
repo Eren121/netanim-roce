@@ -35,6 +35,7 @@ PacketsMode::PacketsMode ():
   m_showGrid (true)
 {
   m_mainToolBar = new QToolBar;
+  m_filterToolBar = new QToolBar;
   m_testButton = new QToolButton;
   m_zoomInButton = new QToolButton;
   m_zoomInButton->setText ("Zoom In");  
@@ -100,6 +101,18 @@ PacketsMode::PacketsMode ():
   m_mainToolBar->addWidget (m_allowedNodesEdit);
   m_mainToolBar->addWidget (m_showPacketsTableButton);
 
+  m_wifiFilterCb = new QCheckBox ("Wifi");
+  m_pppFilterCb = new QCheckBox ("Ppp");
+  m_ipv4FilterCb = new QCheckBox ("Ipv4");
+  m_arpFilterCb = new QCheckBox ("Arp");
+  m_tcpFilterCb = new QCheckBox ("Tcp");
+  m_udpFilterCb = new QCheckBox ("Udp");
+  m_aodvFilterCb = new QCheckBox ("Aodv");
+  m_icmpFilterCb = new QCheckBox  ("Icmp");
+  m_ethernetFilterCb = new QCheckBox ("Ethernet");
+  m_olsrFilterCb = new QCheckBox ("Olsr");
+
+
 
   m_packetsTable = new Table;
   QStringList packetTableHeaders;
@@ -109,9 +122,20 @@ PacketsMode::PacketsMode ():
                      << "Meta";
   m_packetsTable->setHeaderList (packetTableHeaders);
 
+  m_filterToolBar->addWidget (m_tcpFilterCb);
+  m_filterToolBar->addWidget (m_udpFilterCb);
+  m_filterToolBar->addWidget (m_ipv4FilterCb);
+  m_filterToolBar->addWidget (m_icmpFilterCb);
+  m_filterToolBar->addWidget (m_wifiFilterCb);
+  m_filterToolBar->addWidget (m_ethernetFilterCb);
+  m_filterToolBar->addWidget (m_pppFilterCb);
+  m_filterToolBar->addWidget (m_aodvFilterCb);
+
   m_mainSplitter = new QSplitter;
   m_vLayout = new QVBoxLayout;
   m_vLayout->addWidget (m_mainToolBar);
+  m_vLayout->addWidget (m_filterToolBar);
+
   m_mainSplitter->addWidget (PacketsView::getInstance ());
   m_mainSplitter->addWidget (m_packetsTable);
 
