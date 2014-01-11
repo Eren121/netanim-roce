@@ -288,7 +288,7 @@ void
 AnimatorScene::setMousePositionLabel (QPointF pos)
 {
 
-  QString string = "    (" + QString::number (qRound (pos.x ())) + "," + QString::number (sceneRect ().height ()-qRound (pos.y ())) + ")";
+  QString string = "    (" + QString::number (qRound (pos.x ())) + "," + QString::number (qRound (pos.y ())) + ")";
   m_mousePositionLabel->setText (string);
   m_mousePositionProxyWidget->setPos (pos.x (), pos.y ());
   m_mousePositionLabel->adjustSize ();
@@ -381,7 +381,7 @@ AnimatorScene::markGridCoordinates ()
       {
         QString text = QString::number (qRound (x))
                        + ","
-                       + QString::number ( sceneRect ().height ()-qRound (y));
+                       + QString::number (qRound (y));
         m_gridCoordinates[i]->setText (text);
         m_gridCoordinates[i]->setPos (QPointF (x, y));
         m_gridCoordinates[i]->setVisible (m_showGrid);
