@@ -122,6 +122,9 @@ AnimLink::paint (QPainter *painter, const QStyleOptionGraphicsItem *option, QWid
   painter->setPen (pen);
 
   painter->drawLine (line ());
+  bl = QColor (0, 0, 0);
+  pen.setColor (bl);
+  painter->setPen (pen);
 
   if (m_currentLinkDescription)
     {
