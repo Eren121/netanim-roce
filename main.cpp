@@ -31,8 +31,8 @@ int main (int argc, char *argv[])
   ns3::LogComponentEnable ("ResizeableItem", ns3::LOG_LEVEL_ALL);
   ns3::LogComponentEnable ("Animxmlparser", ns3::LOG_LEVEL_ALL);
   ns3::LogComponentEnable ("AnimPropertyBroswer", ns3::LOG_LEVEL_ALL);
-  ns3::LogComponentEnable ("PacketsScene", ns3::LOG_LEVEL_ALL);
-  ns3::LogComponentEnable ("PacketsView", ns3::LOG_LEVEL_ALL);
+  //ns3::LogComponentEnable ("PacketsScene", ns3::LOG_LEVEL_ALL);
+  //ns3::LogComponentEnable ("PacketsView", ns3::LOG_LEVEL_ALL);
   ns3::LogComponentEnable ("GraphPacket", ns3::LOG_LEVEL_ALL);
 
 

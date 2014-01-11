@@ -721,6 +721,8 @@ AnimPacket::paint (QPainter *painter, const QStyleOptionGraphicsItem *option, QW
   QPainterPath arrowTailPath;
   arrowTailPath.moveTo (0, 0);
   qreal mag = 5;
+  qreal transformedMag = 2 * (10/viewTransform.m22 ());
+
   if (!m_isWPacket)
     {
       qreal timeElapsed = m_currentTime - getFirstBitTx ();
@@ -733,6 +735,7 @@ AnimPacket::paint (QPainter *painter, const QStyleOptionGraphicsItem *option, QW
         }
       mag -= magLbTx;
       arrowTailPath.lineTo (-mag, 0);
+      arrowTailPath.addEllipse( QPointF (-mag, 0), transformedMag/10, transformedMag/10);
       //arrowTailPath.lineTo (-mag , 0);
 
 
@@ -742,7 +745,7 @@ AnimPacket::paint (QPainter *painter, const QStyleOptionGraphicsItem *option, QW
       arrowTailPath.lineTo (-mag * (10/viewTransform.m22 ()) , 0);
     }
   p.setColor (Qt::blue);
-
+  //p.setWidthF (0.75);
   painter->setPen (p);
   painter->rotate (360 - m_line.angle ());
   painter->drawPath (arrowTailPath);
@@ -752,7 +755,7 @@ AnimPacket::paint (QPainter *painter, const QStyleOptionGraphicsItem *option, QW
   QPolygonF arrowHeadPolygon;
 
   QPainterPath arrowHeadPath;
-  qreal arrowHeadLength = 2 * (10/viewTransform.m22 ());
+  qreal arrowHeadLength = transformedMag;
 
   arrowHeadPolygon << QPointF (0, 0)
                    << QPointF (-arrowHeadLength * cos (PI/10), -arrowHeadLength * sin (PI/10))
@@ -767,6 +770,8 @@ AnimPacket::paint (QPainter *painter, const QStyleOptionGraphicsItem *option, QW
   arrowHeadPath.moveTo (0, 0);
   painter->save();
   QPen arrowHeadPen;
+  //arrowHeadPen.setWidthF (0.75);
+
   QColor black (0, 0, 5, 130);
   arrowHeadPen.setColor (black);
 

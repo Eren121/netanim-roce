@@ -50,7 +50,9 @@ AnimatorMode::AnimatorMode ():
   m_fastForwarding (false),
   m_parsingXMLDialog (0),
   m_packetAnimationGroup (0),
-  m_lastPacketEventTime (-1)
+  m_lastPacketEventTime (-1),
+  m_pauseAtTime (65535),
+  m_pauseAtTimeTriggered (false)
 
 {
   init ();
@@ -127,7 +129,7 @@ AnimatorMode::setControlDefaults ()
   m_nodeSizeComboBox->setCurrentIndex (NODE_SIZE_DEFAULT);
   m_showNodeIdButton->setChecked (true);
   showNodeIdSlot ();
-  m_showPropertiesButton->setChecked (true);
+  m_showPropertiesButton->setChecked (false);
   showPropertiesSlot ();
 
   // Vertical toolbar
@@ -145,8 +147,7 @@ AnimatorMode::setControlDefaults ()
 
   // Scene elements if any
 
-  //AnimatorScene::getInstance ()->setSceneInfoText ("Please select an XML trace file using the file load button on the top-left corner", true);
-  //AnimatorScene::getInstance ()->setSceneInfoText ("Please select an XML trace file using the file load button on the top-left corner", true);
+  AnimatorScene::getInstance ()->setSceneInfoText ("Please select an XML trace file using the file load button on the top-left corner", true);
 
 
   enableAllToolButtons (false);
@@ -158,6 +159,7 @@ AnimatorMode::setControlDefaults ()
 void
 AnimatorMode::setToolButtonVector ()
 {
+  m_toolButtonVector.push_back (m_pauseAtEdit);
   m_toolButtonVector.push_back (m_playButton);
   m_toolButtonVector.push_back (m_updateRateSlider);
   m_toolButtonVector.push_back (m_fastRateLabel);
@@ -191,6 +193,7 @@ AnimatorMode::setBottomToolbarWidgets ()
 void
 AnimatorMode::setVerticalToolbarWidgets ()
 {
+  m_verticalToolbar->addWidget (m_stepButton);
   m_verticalToolbar->addWidget (m_zoomInButton);
   m_verticalToolbar->addWidget (m_zoomOutButton);
   m_verticalToolbar->addSeparator ();
@@ -212,13 +215,13 @@ AnimatorMode::setTopToolbarWidgets ()
   m_topToolBar->addWidget (m_reloadFileButton);
   m_topToolBar->addSeparator ();
   m_topToolBar->addWidget (m_playButton);
+  m_topToolBar->addWidget (m_pauseAtLabel);
+  m_topToolBar->addWidget (m_pauseAtEdit);
   m_topToolBar->addSeparator ();
   m_topToolBar->addWidget (m_fastRateLabel);
   m_topToolBar->addWidget (m_updateRateSlider);
   m_topToolBar->addWidget (m_slowRateLabel);
   m_topToolBar->addSeparator ();
-  //m_topToolBar->addWidget (m_packetPersistenceLabel);
-  //m_topToolBar->addWidget (m_packetPersistenceComboBox);
   m_topToolBar->addWidget (m_timelineSliderLabel);
   m_topToolBar->addWidget (m_simulationTimeSlider);
   m_topToolBar->addWidget (m_qLcdNumber);
@@ -341,7 +344,9 @@ AnimatorMode::initControls ()
   m_showPropertiesButton->setText ("Pr");
   m_showPropertiesButton->setToolTip ("Show Properties Tree");
   m_showPropertiesButton->setCheckable (true);
+  m_showPropertiesButton->setIcon (QIcon (":/resources/animator_packetstats.svg"));
   connect (m_showPropertiesButton, SIGNAL (clicked ()), this, SLOT (showPropertiesSlot()));
+
 
   m_batteryCapacityButton = new QToolButton ();
   m_batteryCapacityButton->setCheckable (true);
@@ -353,6 +358,14 @@ AnimatorMode::initControls ()
   m_playButton->setToolTip ("Play Animation");
   connect (m_playButton, SIGNAL (clicked ()), this, SLOT (clickPlaySlot ()));
 
+
+  m_pauseAtEdit = new QLineEdit;
+  m_pauseAtEdit->setText (QString::number (65535));
+  QDoubleValidator * doubleValidator = new QDoubleValidator;
+  m_pauseAtEdit->setValidator (doubleValidator);
+  m_pauseAtEdit->setToolTip ("Pause Simulation At Time");
+  m_pauseAtEdit->setMaximumWidth (PAUSE_AT_EDIT_WITH);
+  connect (m_pauseAtEdit, SIGNAL(editingFinished()), this, SLOT(pauseAtTimeSlot()));
 
   m_updateRateSlider = new QSlider (Qt::Horizontal);
   m_updateRateSlider->setToolTip ("Animation update interval");
@@ -397,6 +410,12 @@ AnimatorMode::initControls ()
   m_showMetaButton->setToolTip ("Show Packet meta data");
   connect (m_showMetaButton, SIGNAL (clicked ()), this, SLOT (showMetaSlot ()));
 
+
+  m_stepButton = new QToolButton;
+  m_stepButton->setToolTip ("Step through the simulation");
+  m_stepButton->setIcon (QIcon (":/resources/animator_step.svg"));
+  connect (m_stepButton, SIGNAL (clicked()), this, SLOT (stepSlot()));
+
   m_addCustomImageButton = new QToolButton;
   m_addCustomImageButton->setText ("Background");
   m_addCustomImageButton->setToolTip ("Add a custome image to the scene");
@@ -422,6 +441,9 @@ AnimatorMode::initLabels ()
   m_timelineSliderLabel = new QLabel ("Sim time");
   m_timelineSliderLabel->setToolTip ("Set current time");
   m_bottomStatusLabel = new QLabel;
+  m_pauseAtLabel = new QLabel ("Pause At");
+  m_pauseAtLabel->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
+
 }
 
 void
@@ -458,6 +480,8 @@ AnimatorMode::setLabelStyleSheet ()
   m_fastRateLabel->setStyleSheet (labelStyleSheet);
   m_slowRateLabel->setStyleSheet (labelStyleSheet);
   m_timelineSliderLabel->setStyleSheet (labelStyleSheet);
+  m_pauseAtLabel->setStyleSheet (labelStyleSheet);
+
 }
 
 void
@@ -478,6 +502,7 @@ AnimatorMode::getTabName ()
 void
 AnimatorMode::systemReset ()
 {
+  m_pauseAtTime = 65535;
   m_state = SYSTEM_RESET_IN_PROGRESS;
   clickResetSlot ();
   purgeWiredPackets ();
@@ -947,7 +972,22 @@ AnimatorMode::showNodePositionStatsSlot ()
 void
 AnimatorMode::showPropertiesSlot ()
 {
-  AnimPropertyBroswer::getInstance ()->show (m_showPropertiesButton->isChecked());
+  AnimPropertyBroswer::getInstance ()->show (m_showPropertiesButton->isChecked ());
+  if (m_showPropertiesButton->isChecked ())
+    externalPauseEvent ();
+}
+
+void
+AnimatorMode::pauseAtTimeSlot ()
+{
+  m_pauseAtTime = m_pauseAtEdit->text ().toDouble ();
+}
+
+void
+AnimatorMode::stepSlot ()
+{
+  externalPauseEvent ();
+  dispatchEvents ();
 }
 
 void
@@ -1043,9 +1083,17 @@ AnimatorMode::purgeAnimatedNodes ()
 void
 AnimatorMode::updateRateTimeoutSlot ()
 {
+
   //NS_LOG_DEBUG ("updateRateTimeoutSlot");
   //AnimatorScene::getInstance ()->invalidate ();
   m_updateRateTimer->stop ();
+  if (m_currentTime >= m_pauseAtTime)
+    {
+      externalPauseEvent ();
+      m_pauseAtTimeTriggered = true;
+      m_pauseAtTime = 65535;
+      return;
+    }
   if (m_state == SIMULATION_COMPLETE)
     return;
   if (m_playing)
@@ -1146,6 +1194,8 @@ AnimatorMode::clickTraceFileOpenSlot ()
             m_fileOpenButton->setEnabled (true);
         }
     }
+  AnimatorScene::getInstance ()->setSceneInfoText ("Please select an XML trace file using the file load button on the top-left corner", false);
+
   StatsMode::getInstance ()->systemReset ();
   QApplication::processEvents ();
 }
@@ -1157,6 +1207,11 @@ AnimatorMode::clickPlaySlot ()
   m_playing = !m_playing;
   if (m_playing)
     {
+      if (m_pauseAtTimeTriggered)
+        {
+          m_pauseAtEdit->setText (QString::number (65535));
+          m_pauseAtTimeTriggered = false;
+        }
       if (m_state == SIMULATION_COMPLETE)
         {
           reset ();
@@ -1218,6 +1273,9 @@ AnimatorMode::dispatchEvents ()
         {
           m_simulationTimeSlider->setEnabled (true);
         }
+      m_qLcdNumber->display (m_currentTime);
+
+
       QVector <AnimPacket *> wirelessPacketsToAnimate;
       for (TimeValue<AnimEvent*>::TimeValue_t::const_iterator j = pp.first;
           j != pp.second;
@@ -1521,14 +1579,7 @@ AnimatorMode::buttonAnimationGroupFinishedSlot ()
 void
 AnimatorMode::testSlot ()
 {
-  //AnimatorScene::getInstance ()->test ();
 
-  //AnimatorScene::getInstance ()->test ();
-  static qreal t = 0.659;
-  m_qLcdNumber->display (t);
-  //displayPacket (t);
-  dispatchEvents ();
-  t += 0.00005;
 }
 
 void

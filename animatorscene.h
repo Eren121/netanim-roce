@@ -94,6 +94,8 @@ public:
   QRectF getBoundaryRect ();
   void setGridLinesCount (int nGridLines);
   void setShowNodeTrajectory (AnimNode * animNode);
+  void setSceneInfoText (QString text, bool show);
+
 
 public slots:
   void testSlot ();
@@ -104,6 +106,8 @@ private:
   typedef std::map <uint32_t, QGraphicsPathItem *>          NodeTrajectoryMap_t;
 
   TimeValue<AnimPacket *> m_testTimeValue;
+  QGraphicsSimpleTextItem *    m_sceneInfoText;
+
   QLabel * m_mousePositionLabel;
   QGraphicsProxyWidget * m_mousePositionProxyWidget;
   QVector <AnimPacket *> m_wirelessAnimatedPackets;
@@ -138,6 +142,7 @@ private:
   QVector <QGraphicsSimpleTextItem *> getGridCoordinatesItems ();
   void setMousePositionLabel (QPointF pos);
   void showMousePositionLabel (bool show);
+
 
 };
 

@@ -107,6 +107,8 @@ private:
   qreal m_firstPacketEventTime;
   std::map <AnimPacket *, AnimPacket *> m_wiredPacketsToAnimate;
   qreal m_thousandthPacketTime;
+  qreal m_pauseAtTime;
+  bool m_pauseAtTimeTriggered;
 
 
 
@@ -156,7 +158,9 @@ private:
   QToolButton * m_showPropertiesButton;
   QParallelAnimationGroup * m_packetAnimationGroup;
   QParallelAnimationGroup * m_buttonAnimationGroup;
-  //QtTreePropertyBrowser * m_propertyBrowser;
+  QLabel * m_pauseAtLabel;
+  QLineEdit * m_pauseAtEdit;
+  QToolButton * m_stepButton;
 
 
 
@@ -228,6 +232,8 @@ private slots:
   void packetAnimationGroupFinishedSlot ();
   void buttonAnimationGroupFinishedSlot ();
   void showPropertiesSlot ();
+  void pauseAtTimeSlot ();
+  void stepSlot ();
 };
 
 

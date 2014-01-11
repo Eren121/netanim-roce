@@ -44,8 +44,11 @@ AnimatorScene::AnimatorScene ():
   m_nGridLines = GRID_LINES_DEFAULT;
   m_showGrid = true;
 
-  initGridCoordinates ();
+  m_sceneInfoText = new QGraphicsSimpleTextItem;
+  m_sceneInfoText->setFlag(QGraphicsItem::ItemIgnoresTransformations);
+  addItem(m_sceneInfoText);
 
+  initGridCoordinates ();
 }
 
 
@@ -75,6 +78,19 @@ void AnimatorScene::testSlot ()
 {
 
 }
+
+
+void
+AnimatorScene::setSceneInfoText(QString text, bool show)
+{
+    m_sceneInfoText->setText (text);
+    m_sceneInfoText->setVisible (show);
+    QFontMetrics fm (font ());
+    QRectF r = sceneRect ();
+    QPointF pos = QPointF ((sceneRect ().width () - fm.width (text))/2, r.center ().y ());
+    m_sceneInfoText->setPos (pos);
+}
+
 
 
 void
@@ -254,6 +270,7 @@ AnimatorScene::addWirelessPacket (AnimPacket *p)
 void
 AnimatorScene::removeWiredPacket (AnimPacket *p)
 {
+  p->setVisible (true);
   removeItem (p);
 }
 

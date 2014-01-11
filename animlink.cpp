@@ -70,7 +70,7 @@ AnimLink::AnimLink (uint32_t fromId, uint32_t toId,
       *m_originalLinkDescription = linkDescription;
     }
   setZValue (ANIMLINK_ZVALUE);
-  setVisible (false);
+  //setVisible (false);
 }
 
 AnimLink::~AnimLink ()
@@ -113,13 +113,16 @@ AnimLink::paint (QPainter *painter, const QStyleOptionGraphicsItem *option, QWid
 {
   Q_UNUSED (option);
   Q_UNUSED (widget);
-  painter->drawLine (line ());
   QFont font;
   font.setPointSize (2);
   QPen pen;
-  pen.setColor (Qt::darkRed);
+  QColor bl(0, 0, 0, 50);
+  pen.setColor (bl);
   painter->setFont (font);
   painter->setPen (pen);
+
+  painter->drawLine (line ());
+
   if (m_currentLinkDescription)
     {
       QPointF offset;
