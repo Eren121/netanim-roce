@@ -152,6 +152,16 @@ PacketsMode::PacketsMode ():
   connect (m_toTimeEdit, SIGNAL(textEdited(QString)), this, SLOT (toTimeChangedSlot(QString)));
   connect (m_allowedNodesEdit, SIGNAL(textEdited(QString)), this, SLOT (allowedNodesChangedSlot(QString)));
 
+  connect (m_wifiFilterCb, SIGNAL(clicked()), this, SLOT(filterClickedSlot()));
+  connect (m_tcpFilterCb, SIGNAL(clicked()), this, SLOT(filterClickedSlot()));
+  connect (m_udpFilterCb, SIGNAL(clicked()), this, SLOT(filterClickedSlot()));
+  connect (m_ipv4FilterCb, SIGNAL(clicked()), this, SLOT(filterClickedSlot()));
+  connect (m_icmpFilterCb, SIGNAL(clicked()), this, SLOT(filterClickedSlot()));
+  connect (m_wifiFilterCb, SIGNAL(clicked()), this, SLOT(filterClickedSlot()));
+  connect (m_ethernetFilterCb, SIGNAL(clicked()), this, SLOT(filterClickedSlot()));
+  connect (m_pppFilterCb, SIGNAL(clicked()), this, SLOT(filterClickedSlot()));
+  connect (m_aodvFilterCb, SIGNAL(clicked()), this, SLOT(filterClickedSlot()));
+
 }
 
 QString
@@ -210,6 +220,7 @@ PacketsMode::setFocus (bool focus)
       qreal thousandthPacketTime = AnimatorMode::getInstance ()->getThousandthPacketTime ();
       if (thousandthPacketTime < 0)
         return;
+      m_fromTime = AnimatorMode::getInstance ()->getFirstPacketTime ();
       m_toTime = thousandthPacketTime;
       m_toTimeEdit->setText (QString::number (m_toTime, 'g', 6));
       m_fromTimeEdit->setText (QString::number (m_fromTime, 'g', 6));
@@ -324,6 +335,28 @@ PacketsMode::showPacketTableSlot ()
 {
   m_packetsTable->setVisible (m_showPacketsTableButton->isChecked ());
 }
+
+
+void
+PacketsMode::filterClickedSlot ()
+{
+  int ft = AnimPacket::ALL;
+  ft |= m_wifiFilterCb->isChecked () ? AnimPacket::WIFI: AnimPacket::ALL;
+  ft |= m_arpFilterCb->isChecked () ? AnimPacket::ARP: AnimPacket::ALL;
+  ft |= m_aodvFilterCb->isChecked () ? AnimPacket::AODV: AnimPacket::ALL;
+  ft |= m_olsrFilterCb->isChecked () ? AnimPacket::OLSR: AnimPacket::ALL;
+  ft |= m_pppFilterCb->isChecked () ? AnimPacket::PPP: AnimPacket::ALL;
+  ft |= m_tcpFilterCb->isChecked () ? AnimPacket::TCP: AnimPacket::ALL;
+  ft |= m_udpFilterCb->isChecked () ? AnimPacket::UDP: AnimPacket::ALL;
+  ft |= m_icmpFilterCb->isChecked () ? AnimPacket::ICMP: AnimPacket::ALL;
+  ft |= m_ipv4FilterCb->isChecked () ? AnimPacket::IPV4: AnimPacket::ALL;
+  ft |= m_pppFilterCb->isChecked () ? AnimPacket::PPP: AnimPacket::ALL;
+  ft |= m_ethernetFilterCb->isChecked () ? AnimPacket::ETHERNET: AnimPacket::ALL;
+  PacketsScene::getInstance ()->setFilter (ft);
+  PacketsScene::getInstance ()->redraw(m_fromTime, m_toTime, m_allowedNodes, m_showGrid);
+
+}
+
 
 void
 PacketsMode::allowedNodesChangedSlot (QString allowedNodes)

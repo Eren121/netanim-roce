@@ -653,6 +653,13 @@ AnimatorMode::getEvents ()
   return &m_events;
 }
 
+
+qreal
+AnimatorMode::getFirstPacketTime ()
+{
+  return m_firstPacketEventTime;
+}
+
 qreal
 AnimatorMode::getThousandthPacketTime ()
 {
@@ -704,6 +711,7 @@ AnimatorMode::parseXMLTraceFile (QString traceFileName)
   setProgressBarRange (m_rxCount);
   m_lastPacketEventTime = parser.getLastPacketEventTime ();
   m_thousandthPacketTime = parser.getThousandthPacketTime ();
+  m_firstPacketEventTime = parser.getFirstPacketTime ();
   showParsingXmlDialog (false);
   setMaxSimulationTime (parser.getMaxSimulationTime ());
 

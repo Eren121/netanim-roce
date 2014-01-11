@@ -354,18 +354,18 @@ public:
   ~AnimPacket ();
 
   typedef enum {
-    TCP,
-    UDP,
-    AODV,
-    OLSR,
-    DSDV,
-    IPV4,
-    WIFI,
-    ETHERNET,
-    PPP,
-    ICMP,
-    ARP,
-    ALL
+    ALL= 0 << 0,
+    TCP= 1 << 0,
+    UDP= 1 << 1,
+    AODV= 1 << 2,
+    OLSR= 1 << 3,
+    DSDV= 1 << 4,
+    IPV4= 1 << 5,
+    WIFI= 1 << 6,
+    ETHERNET= 1 << 7,
+    PPP= 1 << 8,
+    ICMP= 1 << 9,
+    ARP= 1 << 10
   } FilterType_t;
   enum { Type = ANIMPACKET_TYPE };
   int type () const
@@ -387,7 +387,7 @@ public:
   QGraphicsSimpleTextItem * getInfoTextItem ();
   bool getIsWPacket ();
   static QString getShortMeta (QString metaInfo);
-  static QString getShortMeta (QString metaInfo, FilterType_t filter);
+  static QString getShortMeta (QString metaInfo, int filter, bool & result);
 
 
 

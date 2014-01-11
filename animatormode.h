@@ -47,6 +47,7 @@ public:
   TimeValue<AnimEvent *>* getEvents ();
   qreal getLastPacketEventTime ();
   qreal getThousandthPacketTime ();
+  qreal getFirstPacketTime ();
 
   // Setters
 
@@ -103,6 +104,7 @@ private:
   bool m_showPackets;
   bool m_fastForwarding;
   qreal m_lastPacketEventTime;
+  qreal m_firstPacketEventTime;
   std::map <AnimPacket *, AnimPacket *> m_wiredPacketsToAnimate;
   qreal m_thousandthPacketTime;
 

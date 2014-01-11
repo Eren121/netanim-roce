@@ -93,6 +93,8 @@ private slots:
   void allowedNodesChangedSlot (QString allowedNodes);
   void showGridLinesSlot ();
   void showPacketTableSlot ();
+  void filterClickedSlot ();
+
 
 };
 

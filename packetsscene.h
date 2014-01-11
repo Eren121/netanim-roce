@@ -32,6 +32,7 @@ public:
   static PacketsScene * getInstance ();
   void addPackets ();
   void redraw (qreal fromTime, qreal toTime , QVector <uint32_t> allowedNodes, bool showGrid);
+  void setFilter (int ft);
 private:
   PacketsScene ();
   bool setUpNodeLines ();
@@ -59,6 +60,7 @@ private:
   qreal m_lineLength;
   bool m_showGrid;
   bool m_showTable;
+  int m_filter;
 
   QGraphicsLineItem * m_rulerLine;
   TextBubble * m_textBubble;

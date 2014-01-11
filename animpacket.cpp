@@ -93,8 +93,9 @@ AnimPacket::~AnimPacket ()
 }
 
 QString
-AnimPacket::getShortMeta (QString metaInfo, FilterType_t filter)
+AnimPacket::getShortMeta (QString metaInfo, int filter, bool & result)
 {
+  result = false;
   QString metaInfoString = metaInfo.toAscii ().data ();
 
   bool aodvResult = false;
@@ -134,31 +135,45 @@ AnimPacket::getShortMeta (QString metaInfo, FilterType_t filter)
                      wifiMacInfo.toShortString () +
                      pppInfo.toShortString () +
                      ethernetInfo.toShortString ();
+      result = true;
     }
   else
     {
       if (filter & AnimPacket::AODV)
-        finalString += aodvInfo.toShortString ();
+        if (aodvResult)
+          finalString += aodvInfo.toShortString ();
       if (filter & AnimPacket::OLSR)
-        finalString += olsrInfo.toShortString ();
+        if (olsrResult)
+          finalString += olsrInfo.toShortString ();
       if (filter & AnimPacket::DSDV)
-        finalString += dsdvInfo.toShortString ();
+        if (dsdvResult)
+          finalString += dsdvInfo.toShortString ();
       if (filter & AnimPacket::TCP)
-        finalString += tcpInfo.toShortString ();
+        if (tcpResult)
+          finalString += tcpInfo.toShortString ();
       if (filter & AnimPacket::UDP)
-        finalString += udpInfo.toShortString ();
+        if (udpResult)
+          finalString += udpInfo.toShortString ();
       if (filter & AnimPacket::ICMP)
-        finalString += icmpInfo.toShortString ();
+        if (icmpResult)
+          finalString += icmpInfo.toShortString ();
       if (filter & AnimPacket::IPV4)
-        finalString += ipv4Info.toShortString ();
+        if (ipv4Result)
+          finalString += ipv4Info.toShortString ();
       if (filter & AnimPacket::ARP)
-        finalString += arpInfo.toShortString ();
+        if (arpResult)
+          finalString += arpInfo.toShortString ();
       if (filter & AnimPacket::WIFI)
-        finalString += wifiMacInfo.toShortString ();
+        if (wifiResult)
+          finalString += wifiMacInfo.toShortString ();
       if (filter & AnimPacket::PPP)
-        finalString += pppInfo.toShortString ();
+        if (pppResult)
+          finalString += pppInfo.toShortString ();
       if (filter & AnimPacket::ETHERNET)
-        finalString += ethernetInfo.toShortString ();
+        if (ethernetResult)
+          finalString += ethernetInfo.toShortString ();
+      if (finalString != "")
+        result = true;
 
     }
   return finalString;

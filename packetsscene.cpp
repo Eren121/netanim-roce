@@ -37,7 +37,8 @@ PacketsScene::PacketsScene ():
   m_toTime (0),
   m_textBubble (0),
   m_showGrid (true),
-  m_showTable (true)
+  m_showTable (true),
+  m_filter (AnimPacket::ALL)
 {
   m_textBubble = new TextBubble ("Info:", "No data available\nDid you load the XML file?");
   m_infoWidget = addWidget (m_textBubble);
@@ -168,6 +169,19 @@ PacketsScene::timeToY (qreal t)
 void
 PacketsScene::addPacket (qreal tx, qreal rx, uint32_t fromNodeId, uint32_t toNodeId, QString metaInfo)
 {
+  QString shortMeta = "";
+  if (m_filter != AnimPacket::ALL)
+    {
+      bool result;
+      shortMeta = AnimPacket::getShortMeta (metaInfo, m_filter, result);
+      if (!result)
+        return;
+    }
+  else
+    {
+      shortMeta = AnimPacket::getShortMeta (metaInfo);
+    }
+
   qreal fromNodeX = m_interNodeSpacing * m_lineIndex[fromNodeId];
   qreal toNodeX = m_interNodeSpacing * m_lineIndex[toNodeId];
   qreal txY = timeToY (tx);
@@ -175,7 +189,7 @@ PacketsScene::addPacket (qreal tx, qreal rx, uint32_t fromNodeId, uint32_t toNod
   GraphPacket * graphPacket = new GraphPacket (QPointF (fromNodeX, txY), QPointF (toNodeX, rxY));
   addItem (graphPacket);
   m_packetLines.push_back (graphPacket);
-  QString shortMeta = AnimPacket::getShortMeta (metaInfo);
+  //QString shortMeta = AnimPacket::getShortMeta (metaInfo);
   QGraphicsSimpleTextItem * info = new QGraphicsSimpleTextItem (shortMeta);
   addItem (info);
   m_packetInfoTexts.push_back (info);
@@ -233,6 +247,11 @@ PacketsScene::addPacket (qreal tx, qreal rx, uint32_t fromNodeId, uint32_t toNod
 
 }
 
+void
+PacketsScene::setFilter (int ft)
+{
+  m_filter = ft;
+}
 
 
 void

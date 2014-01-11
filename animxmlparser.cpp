@@ -38,7 +38,8 @@ Animxmlparser::Animxmlparser (QString traceFileName):
   m_maxSimulationTime (0),
   m_fileIsValid (true),
   m_lastPacketEventTime (-1),
-  m_thousandThPacketTime (-1)
+  m_thousandThPacketTime (-1),
+  m_firstPacketTime (65535)
 {
   m_version = 0;
   if (m_traceFileName == "")
@@ -131,6 +132,11 @@ Animxmlparser::getLastPacketEventTime ()
   return m_lastPacketEventTime;
 }
 
+qreal
+Animxmlparser::getFirstPacketTime ()
+{
+  return m_firstPacketTime;
+}
 
 qreal
 Animxmlparser::getThousandthPacketTime ()
@@ -177,6 +183,7 @@ Animxmlparser::doParse ()
         case XML_WPACKET_RX:
         case XML_PACKET_RX:
         {
+          m_firstPacketTime = qMin (m_firstPacketTime, parsedElement.packetrx_fbTx);
           if (parsedElement.packetrx_fromId == parsedElement.packetrx_toId)
             break;
           AnimPacketEvent * ev = new AnimPacketEvent (parsedElement.packetrx_fromId,

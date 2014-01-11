@@ -132,6 +132,7 @@ public:
   void doParse ();
   qreal getLastPacketEventTime ();
   qreal getThousandthPacketTime ();
+  qreal getFirstPacketTime ();
 
 
 private:
@@ -144,6 +145,7 @@ private:
   bool m_fileIsValid;
   double m_version;
   qreal m_thousandThPacketTime;
+  qreal m_firstPacketTime;
 
   ParsedElement parseAnim ();
   ParsedElement parseTopology ();
