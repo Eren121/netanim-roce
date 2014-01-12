@@ -289,7 +289,7 @@ AnimatorScene::addWirelessPacket (AnimPacket *p)
 void
 AnimatorScene::removeWiredPacket (AnimPacket *p)
 {
-  p->setVisible (true);
+  p->setVisible (false);
   removeItem (p);
 }
 

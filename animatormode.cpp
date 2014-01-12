@@ -1045,7 +1045,8 @@ AnimatorMode::removeWiredPacket (AnimPacket *animPacket)
 {
   m_wiredPacketsToAnimate.erase (animPacket);
   AnimatorScene::getInstance ()->removeWiredPacket (animPacket);
-  delete animPacket;
+  //TODO
+  //delete animPacket;
   animPacket = 0;
 }
 

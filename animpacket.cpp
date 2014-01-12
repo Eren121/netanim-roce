@@ -728,12 +728,20 @@ AnimPacket::paint (QPainter *painter, const QStyleOptionGraphicsItem *option, QW
       qreal timeElapsed = m_currentTime - getFirstBitTx ();
       mag = m_velocity * timeElapsed;
       qreal magLbTx = 0;
+      //NS_LOG_DEBUG ("First Bit Mag:" << mag);
       if (m_currentTime > getLastBitTx ())
         {
           timeElapsed = m_currentTime - getLastBitTx ();
           magLbTx = m_velocity * timeElapsed;
         }
+      if (m_currentTime > getFirstBitRx ())
+        {
+          qreal fullDistance = m_velocity * (getFirstBitRx () - getFirstBitTx ());
+          mag = fullDistance;
+
+        }
       mag -= magLbTx;
+      //NS_LOG_DEBUG ("Mag:" << mag << " MagLbTx:" << magLbTx);
       arrowTailPath.lineTo (-mag, 0);
       arrowTailPath.addEllipse( QPointF (-mag, 0), transformedMag/10, transformedMag/10);
       //arrowTailPath.lineTo (-mag , 0);
