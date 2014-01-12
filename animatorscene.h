@@ -97,7 +97,15 @@ public:
   void setSceneInfoText (QString text, bool show);
   void setSimulationBoundaries (QPointF minPoint, QPointF maxPoint);
   void setBackgroundImage (QString fileName, qreal x, qreal y, qreal scaleX, qreal scaleY, qreal opacity);
+  QGraphicsPixmapItem * getBackgroundImage ();
   void enableMousePositionLabel(bool enable);
+
+  void setBackgroundX (qreal x);
+  void setBackgroundY (qreal y);
+  void setBackgroundScaleX (qreal scaleX);
+  void setBackgroundScaleY (qreal scaleY);
+  void setBackgroundOpacity (qreal opacity);
+
 
 
 public slots:
@@ -138,6 +146,7 @@ private:
   QPointF m_sceneMinPoint;
   QPointF m_sceneMaxPoint;
   bool m_enableMousePositionLabel;
+  QTransform m_originalBackgroundTransform;
 
 
   void repositionInterfaceText (AnimInterfaceText * textItem);

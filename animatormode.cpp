@@ -1600,6 +1600,22 @@ AnimatorMode::testSlot ()
 
 }
 
+BackgroudImageProperties_t
+AnimatorMode::getBackgroundProperties ()
+{
+  QGraphicsPixmapItem * background = AnimatorScene::getInstance ()->getBackgroundImage ();
+  BackgroudImageProperties_t prop;
+  if (!background)
+    return prop;
+  prop.fileName = m_backgroundImageProperties.fileName;
+  prop.x = background->pos ().x ();
+  prop.y = background->pos ().y ();
+  prop.scaleX = background->transform ().m11 ();
+  prop.scaleY = background->transform ().m22 ();
+  prop.opacity = background->opacity ();
+  return prop;
+}
+
 void
 AnimatorMode::setBackgroundImageProperties (BackgroudImageProperties_t prop)
 {

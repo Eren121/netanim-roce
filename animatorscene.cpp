@@ -69,6 +69,10 @@ AnimatorScene::systemReset ()
   resetInterfaceTexts ();
   setSceneRect (0, 0, ANIMATORSCENE_USERAREA_WIDTH, ANIMATORSCENE_USERAREA_WIDTH);
   resetGrid ();
+  if (m_backgroundImage)
+    {
+      removeItem (m_backgroundImage);
+    }
 }
 
 void AnimatorScene::testSlot ()
@@ -94,6 +98,56 @@ AnimatorScene::enableMousePositionLabel (bool enable)
   m_enableMousePositionLabel = enable;
 }
 
+
+void
+AnimatorScene::setBackgroundX (qreal x)
+{
+  if (!m_backgroundImage)
+    return;
+  m_backgroundImage->setX(x);
+}
+
+void
+AnimatorScene::setBackgroundY (qreal y)
+{
+  if (!m_backgroundImage)
+    return;
+  m_backgroundImage->setY(y);
+}
+
+void
+AnimatorScene::setBackgroundScaleX (qreal x)
+{
+  if (!m_backgroundImage)
+    return;
+ // m_backgroundImage->setTransform (m_originalBackgroundTransform);
+  m_backgroundImage->scale (x, 1);
+}
+
+
+void
+AnimatorScene::setBackgroundScaleY (qreal y)
+{
+  if (!m_backgroundImage)
+    return;
+ // m_backgroundImage->setTransform (m_originalBackgroundTransform);
+  m_backgroundImage->scale (1, y);
+}
+
+void
+AnimatorScene::setBackgroundOpacity (qreal opacity)
+{
+  if (!m_backgroundImage)
+    return;
+  m_backgroundImage->setOpacity (opacity);
+}
+
+QGraphicsPixmapItem *
+AnimatorScene::getBackgroundImage ()
+{
+  return m_backgroundImage;
+}
+
 void
 AnimatorScene::setBackgroundImage (QString fileName, qreal x, qreal y, qreal scaleX, qreal scaleY, qreal opacity)
 {
@@ -111,6 +165,7 @@ AnimatorScene::setBackgroundImage (QString fileName, qreal x, qreal y, qreal sca
   addItem (m_backgroundImage);
   m_backgroundImage->setPos (x, y);
   m_backgroundImage->setFlags (QGraphicsItem::ItemIsMovable|QGraphicsItem::ItemIsSelectable);
+  m_originalBackgroundTransform = m_backgroundImage->transform ();
   m_backgroundImage->scale (scaleX, scaleY);
   m_backgroundImage->setZValue (ANIMBACKGROUND_ZVALUE);
   m_backgroundImage->setOpacity (opacity);

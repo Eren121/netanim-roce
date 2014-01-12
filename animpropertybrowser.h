@@ -68,11 +68,20 @@ private:
   QtPropertyVector_t m_ipv4AddressVectorProperty;
   QtPropertyVector_t m_macAddressVectorProperty;
   QtProperty * m_showNodeTrajectoryProperty;
+
+  // Background
   QtProperty * m_backgroundFileEditProperty;
+  QtProperty * m_backgroundX;
+  QtProperty * m_backgroundY;
+  QtProperty * m_backgroundScaleX;
+  QtProperty * m_backgroundScaleY;
+  QtProperty * m_backgroundOpacity;
 
   QtIntPropertyManager * m_intManager;
   QtStringPropertyManager * m_stringManager;
   QtDoublePropertyManager * m_doubleManager;
+  QtDoublePropertyManager * m_backgroundDoubleManager;
+
   QtColorPropertyManager * m_colorManager;
   FilePathManager * m_filePathManager;
   QtGroupPropertyManager * m_ipv4AddressManager;

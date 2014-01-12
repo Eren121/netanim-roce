@@ -72,6 +72,7 @@ public:
   void setNodeResource (AnimNode * animNode, uint32_t resourceId);
   void setShowNodeTrajectory (AnimNode * animNode);
   void setBackgroundImageProperties (BackgroudImageProperties_t prop);
+  BackgroudImageProperties_t getBackgroundProperties ();
 
   // Actions
 

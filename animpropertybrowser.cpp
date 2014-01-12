@@ -32,6 +32,7 @@ AnimPropertyBroswer::AnimPropertyBroswer ():
   m_intManager (0),
   m_stringManager (0),
   m_doubleManager (0),
+  m_backgroundDoubleManager (0),
   m_colorManager (0),
   m_filePathManager (0),
   m_nodePositionManager (0),
@@ -111,6 +112,7 @@ AnimPropertyBroswer::postParse ()
   setupManagers ();
   setupFactories ();
   setupNodeProperties ();
+  setupBackgroundProperties ();
   connect (m_nodeIdSelector, SIGNAL(currentIndexChanged(QString)), this, SLOT (nodeIdSelectorSlot(QString)));
 
 }
@@ -141,6 +143,8 @@ AnimPropertyBroswer::reset ()
     delete m_staticStringManager;
   if (m_boolManager)
     delete m_boolManager;
+  if (m_backgroundDoubleManager)
+    delete m_backgroundDoubleManager;
   m_intManager = 0;
   m_stringManager = 0;
   m_doubleManager = 0;
@@ -151,7 +155,7 @@ AnimPropertyBroswer::reset ()
   m_macAddressManager = 0;
   m_staticStringManager = 0;
   m_boolManager = 0;
-
+  m_backgroundDoubleManager = 0;
 
   if (m_doubleSpinBoxFactory)
     delete m_doubleSpinBoxFactory;
@@ -185,6 +189,8 @@ AnimPropertyBroswer::setupManagers ()
   m_macAddressManager = new QtGroupPropertyManager;
   m_staticStringManager = new QtStringPropertyManager;
   m_boolManager = new QtBoolPropertyManager;
+  m_backgroundDoubleManager = new QtDoublePropertyManager;
+
 }
 
 void
@@ -200,6 +206,27 @@ AnimPropertyBroswer::setupFactories ()
 void
 AnimPropertyBroswer::setupBackgroundProperties ()
 {
+  m_backgroundX = m_backgroundDoubleManager->addProperty ("Bg X");
+  m_backgroundY = m_backgroundDoubleManager->addProperty ("Bg Y");
+  m_backgroundScaleX = m_backgroundDoubleManager->addProperty ("Bg Scale X");
+  m_backgroundScaleY = m_backgroundDoubleManager->addProperty ("Bg Scale Y");
+  m_backgroundOpacity = m_backgroundDoubleManager->addProperty ("Bg Opacity");
+
+  m_backgroundBrowser->addProperty (m_backgroundX);
+  m_backgroundBrowser->addProperty (m_backgroundY);
+  m_backgroundBrowser->addProperty (m_backgroundScaleX);
+  m_backgroundBrowser->addProperty (m_backgroundScaleY);
+  m_backgroundBrowser->addProperty (m_backgroundOpacity);
+
+  BackgroudImageProperties_t prop = AnimatorMode::getInstance ()->getBackgroundProperties ();
+  m_backgroundDoubleManager->setValue (m_backgroundX, prop.x);
+  m_backgroundDoubleManager->setValue (m_backgroundY, prop.y);
+  m_backgroundDoubleManager->setValue (m_backgroundScaleX, prop.scaleX);
+  m_backgroundDoubleManager->setValue (m_backgroundScaleY, prop.scaleY);
+  m_backgroundDoubleManager->setValue (m_backgroundOpacity, prop.opacity);
+  m_backgroundBrowser->setFactoryForManager (m_backgroundDoubleManager, m_doubleSpinBoxFactory);
+  connect (m_backgroundDoubleManager, SIGNAL(valueChanged(QtProperty*,double)), this, SLOT(valueChangedSlot(QtProperty*,double)));
+
 
 }
 
@@ -339,6 +366,28 @@ AnimPropertyBroswer::valueChangedSlot(QtProperty * property, double value)
       AnimNode * animNode = AnimNodeMgr::getInstance ()->getNode (m_currentNodeId);
       AnimatorMode::getInstance ()->setNodeSize (animNode, value);
     }
+  AnimatorScene * scene = AnimatorScene ::getInstance();
+  if (m_backgroundX == property)
+    {
+      scene->setBackgroundX (value);
+    }
+  if (m_backgroundY == property)
+    {
+      scene->setBackgroundY (value);
+    }
+
+  if (m_backgroundScaleX == property)
+    {
+      scene->setBackgroundScaleX (value);
+    }
+  if (m_backgroundScaleY == property)
+    {
+      scene->setBackgroundScaleY (value);
+    }
+  if (m_backgroundOpacity == property)
+    {
+      scene->setBackgroundOpacity (value);
+    }
 }
 
 
@@ -374,10 +423,14 @@ AnimPropertyBroswer::modeChangedSlot (QString mode)
     }
   else if (mode == "Background")
     {
-      m_nodeIdSelector->setVisible (false);
-      m_nodeBrowser->setVisible (false);
-      m_nodePosTable->setVisible (false);
-      m_backgroundBrowser->setVisible (true);
+      if (AnimatorScene::getInstance ()->getBackgroundImage())
+        {
+          m_nodeIdSelector->setVisible (false);
+          m_nodeBrowser->setVisible (false);
+          m_nodePosTable->setVisible (false);
+          m_backgroundBrowser->setVisible (true);
+        }
+
 
     }
 }
