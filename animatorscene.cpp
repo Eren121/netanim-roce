@@ -30,13 +30,9 @@ NS_LOG_COMPONENT_DEFINE ("AnimatorScene");
 AnimatorScene * pAnimatorScene = 0;
 
 AnimatorScene::AnimatorScene ():
-  QGraphicsScene (0, 0, ANIMATORSCENE_USERAREA_WIDTH, ANIMATORSCENE_USERAREA_WIDTH)
+  QGraphicsScene (0, 0, ANIMATORSCENE_USERAREA_WIDTH, ANIMATORSCENE_USERAREA_WIDTH),
+  m_backgroundImage (0)
 {
-
-  /*m_background = new ResizeablePixmap (pix);
-  m_background->setFlags (QGraphicsItem::ItemIsMovable|QGraphicsItem::ItemIsSelectable);
-  m_background->setZValue (-100);*/
-
   m_mousePositionLabel = new QLabel ("");
   m_mousePositionLabel->setSizePolicy (QSizePolicy::Minimum, QSizePolicy::Minimum);
   m_mousePositionProxyWidget = addWidget (m_mousePositionLabel, Qt::ToolTip);
@@ -79,6 +75,37 @@ void AnimatorScene::testSlot ()
 
 }
 
+void
+AnimatorScene::setSimulationBoundaries (QPointF minPoint, QPointF maxPoint)
+{
+  m_minPoint = minPoint;
+  m_maxPoint = maxPoint;
+  qreal boundaryWidth = m_maxPoint.x () * 0.1;
+  m_sceneMinPoint = QPointF (m_minPoint.x () - boundaryWidth, m_minPoint.y () - boundaryWidth);
+  m_sceneMaxPoint = QPointF (m_maxPoint.x () + boundaryWidth, m_maxPoint.y () + boundaryWidth);
+
+  setSceneRect (QRectF (m_sceneMinPoint, m_sceneMaxPoint));
+}
+
+void
+AnimatorScene::setBackgroundImage (QString fileName, qreal x, qreal y, qreal scaleX, qreal scaleY)
+{
+
+  QPixmap pix (fileName);
+  if (pix.isNull ())
+    return;
+  if (m_backgroundImage)
+    {
+      removeItem (m_backgroundImage);
+      delete m_backgroundImage;
+    }
+  m_backgroundImage = new QGraphicsPixmapItem (pix);
+  addItem (m_backgroundImage);
+  m_backgroundImage->setPos (x, y);
+  m_backgroundImage->setFlags (QGraphicsItem::ItemIsMovable|QGraphicsItem::ItemIsSelectable);
+  m_backgroundImage->scale (scaleX, scaleY);
+  m_backgroundImage->setZValue (ANIMBACKGROUND_ZVALUE);
+}
 
 void
 AnimatorScene::setSceneInfoText(QString text, bool show)
@@ -248,20 +275,12 @@ AnimatorScene::addNode (AnimNode *animNode)
   animNode->setPos (animNode->getX (), animNode->getY ());
   addItem (animNode->getDescription ());
   animNode->getDescription ()->setPos (animNode->sceneBoundingRect ().bottomRight ());
-  qreal boundaryWidth = AnimNodeMgr::getInstance ()->getMaxPoint ().x () * 0.1;
-  QPointF minPoint = QPointF (AnimNodeMgr::getInstance ()->getMinPoint ().x () - boundaryWidth,
-                             AnimNodeMgr::getInstance ()->getMinPoint ().y () - boundaryWidth);
-
-  QPointF maxPoint = QPointF (AnimNodeMgr::getInstance ()->getMaxPoint ().x () +  boundaryWidth,
-                             AnimNodeMgr::getInstance ()->getMaxPoint ().y () +  boundaryWidth);
-  setSceneRect (QRectF (minPoint, maxPoint));
 }
 
 void
 AnimatorScene::addWirelessPacket (AnimPacket *p)
 {
   addItem (p);
-  //addItem (p->getInfoTextItem ());
   p->getInfoTextItem ()->setPos (p->boundingRect ().bottomLeft ());
   m_wirelessAnimatedPackets.push_back (p);
 }
@@ -278,7 +297,6 @@ void
 AnimatorScene::addWiredPacket (AnimPacket *p)
 {
   addItem (p);
-  //addItem (p->getInfoTextItem ());
   p->getInfoTextItem ()->setPos (p->boundingRect ().bottomLeft ());
   m_wiredAnimatedPackets.push_back (p);
 }
@@ -394,34 +412,33 @@ void
 AnimatorScene::addGrid ()
 {
   m_showGrid = true;
-  qreal xStep =  sceneRect ().width ()/ (m_nGridLines-1);
-  qreal yStep = sceneRect ().height ()/ (m_nGridLines-1);
+  QRectF simulationRect (m_minPoint, m_maxPoint);
+  qreal xStep =  simulationRect.width ()/ (m_nGridLines-1);
+  qreal yStep = simulationRect.height ()/ (m_nGridLines-1);
   QPen pen (QColor (100, 100, 155, 125));
 
   // draw horizontal grid
   qreal y;
   qreal x;
-  for ( y = 0; y <= sceneRect ().height (); y += yStep)
+  for (int c = 0; c <= m_nGridLines; ++c, y += yStep)
     {
-      m_gridLines.push_back (addLine (0, y, sceneRect ().width (), y, pen));
+      m_gridLines.push_back (addLine (0, y, simulationRect.right () + xStep, y, pen));
     }
   // now draw vertical grid
-  for (x = 0; x <=  sceneRect ().width (); x += xStep)
+  for (int c = 0; c <= m_nGridLines; ++c, x += xStep)
     {
-      m_gridLines.push_back (addLine (x, 0, x,  sceneRect ().height (), pen));
+      m_gridLines.push_back (addLine (x, 0, x,  simulationRect.bottom () + yStep, pen));
     }
   initGridCoordinates ();
   markGridCoordinates ();
-  m_boundaryRect = sceneRect ();
-  m_boundaryRect.setBottom (y);
-  m_boundaryRect.setRight (x);
+
 
 }
 
 QRectF
 AnimatorScene::getBoundaryRect ()
 {
-  return m_boundaryRect;
+  return QRectF (m_sceneMinPoint, m_sceneMaxPoint);
 }
 
 void
@@ -581,7 +598,7 @@ AnimatorScene::repositionInterfaceText (AnimInterfaceText *textItem)
     {
       textItem->setLeftAligned (true);
       qreal y = m_rightTop + 1.5 * fm.height ()/AnimatorView::getInstance ()->transform ().m11 ();
-      newPos = QPointF (sceneRect ().width () + fm.width (textItem->getText ())/AnimatorView::getInstance ()->transform ().m11 (), y);
+      newPos = QPointF (m_maxPoint.x () + fm.width (textItem->getText ())/AnimatorView::getInstance ()->transform ().m11 (), y);
       m_rightTop = newPos.y ();
     }
   textItem->setPos (newPos);

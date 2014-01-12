@@ -44,9 +44,13 @@ private:
   typedef QVector <QtProperty *> QtPropertyVector_t;
   AnimPropertyBroswer ();
   void reset ();
-  void setup ();
+  void setupNodeProperties ();
+  void setupBackgroundProperties ();
+  void setupManagers ();
+  void setupFactories ();
   QVBoxLayout * m_vboxLayout;
-  QtAbstractPropertyBrowser * m_tree;
+  QtAbstractPropertyBrowser * m_nodeBrowser;
+  QtAbstractPropertyBrowser * m_backgroundBrowser;
   QTableWidget * m_nodePosTable;
   QComboBox * m_mode;
   QComboBox * m_nodeIdSelector;
@@ -64,6 +68,7 @@ private:
   QtPropertyVector_t m_ipv4AddressVectorProperty;
   QtPropertyVector_t m_macAddressVectorProperty;
   QtProperty * m_showNodeTrajectoryProperty;
+  QtProperty * m_backgroundFileEditProperty;
 
   QtIntPropertyManager * m_intManager;
   QtStringPropertyManager * m_stringManager;
@@ -93,6 +98,7 @@ private slots:
   void valueChangedSlot (QtProperty*, double);
   void valueChangedSlot (QtProperty*, QColor);
   void valueChangedSlot (QtProperty* ,bool);
+  void modeChangedSlot (QString mode);
 
 };
 

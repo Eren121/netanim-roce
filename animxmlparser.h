@@ -38,7 +38,8 @@ enum ParsedElementType
   XML_WPACKET_RX,
   XML_LINKUPDATE,
   XML_NODEUPDATE,
-  XML_RESOURCE
+  XML_RESOURCE,
+  XML_BACKGROUNDIMAGE
 };
 
 struct ParsedElement
@@ -99,6 +100,12 @@ struct ParsedElement
   bool hasColorUpdate;
   bool hasBattery; //!< Has battery with possible capacity
 
+  // Background image properties
+  QString fileName;
+  qreal x;
+  qreal y;
+  qreal scaleX;
+  qreal scaleY;
 
   // Resource
   QString resourcePath;
@@ -133,6 +140,8 @@ public:
   qreal getLastPacketEventTime ();
   qreal getThousandthPacketTime ();
   qreal getFirstPacketTime ();
+  QPointF getMinPoint ();
+  QPointF getMaxPoint ();
 
 
 private:
@@ -147,11 +156,17 @@ private:
   qreal m_thousandThPacketTime;
   qreal m_firstPacketTime;
 
+  qreal m_minNodeX;
+  qreal m_minNodeY;
+  qreal m_maxNodeX;
+  qreal m_maxNodeY;
+
   ParsedElement parseAnim ();
   ParsedElement parseTopology ();
   ParsedElement parseNode ();
   ParsedElement parseLink ();
   ParsedElement parseNonP2pLink ();
+  ParsedElement parseBackground ();
   ParsedElement parsePacket ();
   ParsedElement parseWPacket ();
   ParsedElement parseLinkUpdate ();

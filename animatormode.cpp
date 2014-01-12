@@ -181,6 +181,7 @@ AnimatorMode::setToolButtonVector ()
   m_toolButtonVector.push_back (m_showRoutePathButton);
   m_toolButtonVector.push_back (m_addCustomImageButton);
   m_toolButtonVector.push_back (m_showPropertiesButton);
+  m_toolButtonVector.push_back (m_stepButton);
 }
 
 void
@@ -737,9 +738,11 @@ AnimatorMode::parseXMLTraceFile (QString traceFileName)
   m_lastPacketEventTime = parser.getLastPacketEventTime ();
   m_thousandthPacketTime = parser.getThousandthPacketTime ();
   m_firstPacketEventTime = parser.getFirstPacketTime ();
+  m_minPoint = parser.getMinPoint ();
+  m_maxPoint = parser.getMaxPoint ();
   showParsingXmlDialog (false);
   setMaxSimulationTime (parser.getMaxSimulationTime ());
-
+  AnimatorScene::getInstance ()->setSimulationBoundaries (m_minPoint, m_maxPoint);
   postParse ();
   return true;
 }
@@ -1580,6 +1583,13 @@ void
 AnimatorMode::testSlot ()
 {
 
+}
+
+void
+AnimatorMode::setBackgroundImageProperties (BackgroudImageProperties_t prop)
+{
+  m_backgroundImageProperties = prop;
+  AnimatorScene::getInstance ()->setBackgroundImage (prop.fileName, prop.x, prop.y, prop.scaleX, prop.scaleY);
 }
 
 void

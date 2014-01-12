@@ -70,7 +70,7 @@ AnimatorView::updateTransform ()
   QTransform transform;
   QRectF sceneBoundaryRect = AnimatorScene::getInstance ()->getBoundaryRect ();
 
-  qreal minDimension = qMin (sceneBoundaryRect.width (),sceneBoundaryRect.height ());
+  qreal minDimension = qMin (sceneBoundaryRect.width (), sceneBoundaryRect.height ());
 
   qreal xScale = viewport ()->width ()/minDimension;
   qreal yScale = viewport ()->height ()/minDimension;

@@ -39,7 +39,11 @@ Animxmlparser::Animxmlparser (QString traceFileName):
   m_fileIsValid (true),
   m_lastPacketEventTime (-1),
   m_thousandThPacketTime (-1),
-  m_firstPacketTime (65535)
+  m_firstPacketTime (65535),
+  m_minNodeX (0),
+  m_minNodeY (0),
+  m_maxNodeX (0),
+  m_maxNodeY (0)
 {
   m_version = 0;
   if (m_traceFileName == "")
@@ -138,6 +142,18 @@ Animxmlparser::getFirstPacketTime ()
   return m_firstPacketTime;
 }
 
+QPointF
+Animxmlparser::getMinPoint ()
+{
+  return QPointF (m_minNodeX, m_minNodeY);
+}
+
+QPointF
+Animxmlparser::getMaxPoint ()
+{
+  return QPointF (m_maxNodeX, m_maxNodeY);
+}
+
 qreal
 Animxmlparser::getThousandthPacketTime ()
 {
@@ -167,7 +183,10 @@ Animxmlparser::doParse ()
         }
         case XML_NODE:
         {
-
+            m_minNodeX = qMin (m_minNodeX, parsedElement.node_x);
+            m_minNodeY = qMin (m_minNodeY, parsedElement.node_y);
+            m_maxNodeX = qMax (m_maxNodeX, parsedElement.node_x);
+            m_maxNodeY = qMax (m_maxNodeY, parsedElement.node_y);
           AnimNodeAddEvent * ev = new AnimNodeAddEvent (parsedElement.nodeId,
               parsedElement.node_x,
               parsedElement.node_y,
@@ -248,6 +267,17 @@ Animxmlparser::doParse ()
           pAnimatorMode->addAnimEvent (parsedElement.updateTime, ev);
           break;
         }
+        case XML_BACKGROUNDIMAGE:
+        {
+          BackgroudImageProperties_t bgProp;
+          bgProp.fileName = parsedElement.fileName;
+          bgProp.x = parsedElement.x;
+          bgProp.y = parsedElement.y;
+          bgProp.scaleX = parsedElement.scaleX;
+          bgProp.scaleY = parsedElement.scaleY;
+          AnimatorMode::getInstance ()->setBackgroundImageProperties (bgProp);
+          break;
+        }
 
         case XML_RESOURCE:
         {
@@ -264,6 +294,10 @@ Animxmlparser::doParse ()
               pAnimatorMode->addAnimEvent (parsedElement.updateTime, ev);
               AnimNodeMgr::getInstance ()->addAPosition (parsedElement.nodeId, parsedElement.updateTime, QPointF (parsedElement.node_x,
                                                                                         parsedElement.node_y));
+              m_minNodeX = qMin (m_minNodeX, parsedElement.node_x);
+              m_minNodeY = qMin (m_minNodeY, parsedElement.node_y);
+              m_maxNodeX = qMax (m_maxNodeX, parsedElement.node_x);
+              m_maxNodeY = qMax (m_maxNodeY, parsedElement.node_y);
 
             }
           if (parsedElement.nodeUpdateType == ParsedElement::COLOR)
@@ -379,6 +413,10 @@ Animxmlparser::parseNext ()
         {
           parsedElement = parseResource ();
         }
+      if (m_reader->name () == "bg")
+        {
+          parsedElement = parseBackground ();
+        }
       //qDebug (m_reader->name ().toString ());
     }
 
@@ -432,6 +470,18 @@ Animxmlparser::parseLink ()
 
 }
 
+ParsedElement
+Animxmlparser::parseBackground ()
+{
+  ParsedElement parsedElement;
+  parsedElement.type = XML_BACKGROUNDIMAGE;
+  parsedElement.fileName = m_reader->attributes ().value ("f").toString ();
+  parsedElement.x = m_reader->attributes ().value ("x").toString ().toDouble ();
+  parsedElement.y = m_reader->attributes ().value ("y").toString ().toDouble ();
+  parsedElement.scaleX = m_reader->attributes ().value ("sx").toString ().toDouble ();
+  parsedElement.scaleY = m_reader->attributes ().value ("sy").toString ().toDouble ();
+  return parsedElement;
+}
 
 ParsedElement
 Animxmlparser::parseNonP2pLink ()

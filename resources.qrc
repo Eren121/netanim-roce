@@ -1,6 +1,5 @@
 <RCC>
     <qresource prefix="/resources">
-        <file>ns3logo2.png</file>
         <file>animator_play.svg</file>
         <file>animator_pause.svg</file>
         <file>animator_zoomin.svg</file>

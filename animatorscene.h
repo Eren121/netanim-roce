@@ -95,6 +95,8 @@ public:
   void setGridLinesCount (int nGridLines);
   void setShowNodeTrajectory (AnimNode * animNode);
   void setSceneInfoText (QString text, bool show);
+  void setSimulationBoundaries (QPointF minPoint, QPointF maxPoint);
+  void setBackgroundImage (QString fileName, qreal x, qreal y, qreal scaleX, qreal scaleY);
 
 
 public slots:
@@ -128,8 +130,12 @@ private:
   int             m_nGridLines;
   LineItemVector_t             m_gridLines;
   GridCoordinatesVector_t      m_gridCoordinates;
-  QRectF m_boundaryRect;
   NodeTrajectoryMap_t m_nodeTrajectory;
+  QGraphicsPixmapItem * m_backgroundImage;
+  QPointF m_minPoint;
+  QPointF m_maxPoint;
+  QPointF m_sceneMinPoint;
+  QPointF m_sceneMaxPoint;
 
 
   void repositionInterfaceText (AnimInterfaceText * textItem);

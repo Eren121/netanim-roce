@@ -32,6 +32,15 @@ namespace netanim
 {
 
 
+typedef struct {
+  QString fileName;
+  qreal x;
+  qreal y;
+  qreal scaleX;
+  qreal scaleY;
+
+} BackgroudImageProperties_t;
+
 class AnimatorMode: public Mode
 {
   Q_OBJECT
@@ -61,6 +70,7 @@ public:
   void setNodePos (AnimNode * animNode, qreal x, qreal y);
   void setNodeResource (AnimNode * animNode, uint32_t resourceId);
   void setShowNodeTrajectory (AnimNode * animNode);
+  void setBackgroundImageProperties (BackgroudImageProperties_t prop);
 
   // Actions
 
@@ -109,6 +119,9 @@ private:
   qreal m_thousandthPacketTime;
   qreal m_pauseAtTime;
   bool m_pauseAtTimeTriggered;
+  BackgroudImageProperties_t m_backgroundImageProperties;
+  QPointF m_minPoint;
+  QPointF m_maxPoint;
 
 
 

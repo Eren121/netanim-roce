@@ -48,18 +48,23 @@ AnimPropertyBroswer::AnimPropertyBroswer ():
   m_vboxLayout = new QVBoxLayout;
 
   setLayout (m_vboxLayout);
-  m_tree = new QtTreePropertyBrowser;
+  m_nodeBrowser = new QtTreePropertyBrowser;
+  m_backgroundBrowser = new QtTreePropertyBrowser;
   m_nodePosTable = new QTableWidget;
   m_mode = new QComboBox;
   m_nodeIdSelector = new QComboBox;
   m_mode->addItem ("Node");
+  m_mode->addItem ("Background");
   m_vboxLayout->addWidget (m_mode);
 
   m_vboxLayout->addWidget (m_nodeIdSelector);
-  m_vboxLayout->addWidget (m_tree);
+  m_vboxLayout->addWidget (m_nodeBrowser);
   m_vboxLayout->addWidget (m_nodePosTable);
+  m_vboxLayout->addWidget (m_backgroundBrowser);
+  m_backgroundBrowser->setVisible (false);
   m_nodePosTable->setVisible (false);
   m_nodePosTable->setColumnCount (3);
+  connect (m_mode, SIGNAL(currentIndexChanged(QString)), this, SLOT(modeChangedSlot(QString)));
 
 }
 
@@ -103,7 +108,9 @@ AnimPropertyBroswer::postParse ()
     {
       m_nodeIdSelector->addItem (QString::number (i));
     }
-  setup ();
+  setupManagers ();
+  setupFactories ();
+  setupNodeProperties ();
   connect (m_nodeIdSelector, SIGNAL(currentIndexChanged(QString)), this, SLOT (nodeIdSelectorSlot(QString)));
 
 }
@@ -166,9 +173,8 @@ AnimPropertyBroswer::reset ()
 }
 
 void
-AnimPropertyBroswer::setup ()
+AnimPropertyBroswer::setupManagers ()
 {
-  //reset ();
   m_intManager = new QtIntPropertyManager;
   m_stringManager = new QtStringPropertyManager;
   m_doubleManager = new QtDoublePropertyManager;
@@ -179,28 +185,41 @@ AnimPropertyBroswer::setup ()
   m_macAddressManager = new QtGroupPropertyManager;
   m_staticStringManager = new QtStringPropertyManager;
   m_boolManager = new QtBoolPropertyManager;
+}
 
-
+void
+AnimPropertyBroswer::setupFactories ()
+{
   m_doubleSpinBoxFactory = new QtDoubleSpinBoxFactory;
   m_spinBoxFactory = new QtSpinBoxFactory;
   m_fileEditFactory = new FileEditFactory;
   m_lineEditFactory = new QtLineEditFactory;
   m_checkBoxFactory = new QtCheckBoxFactory;
+}
 
+void
+AnimPropertyBroswer::setupBackgroundProperties ()
+{
+
+}
+
+void
+AnimPropertyBroswer::setupNodeProperties ()
+{
 
   // Properties
 
   // Node Id
   m_nodeIdProperty = m_intManager->addProperty ("Node Id");
   m_intManager->setValue (m_nodeIdProperty, m_currentNodeId);
-  m_tree->addProperty (m_nodeIdProperty);
+  m_nodeBrowser->addProperty (m_nodeIdProperty);
 
 
   // Node Description
   m_nodeDescriptionProperty = m_stringManager->addProperty ("Node Description");
-  m_tree->setFactoryForManager (m_stringManager, m_lineEditFactory);
+  m_nodeBrowser->setFactoryForManager (m_stringManager, m_lineEditFactory);
   connect (m_stringManager, SIGNAL(valueChanged(QtProperty*,QString)), this, SLOT(valueChangedSlot(QtProperty*,QString)));
-  m_tree->addProperty (m_nodeDescriptionProperty);
+  m_nodeBrowser->addProperty (m_nodeDescriptionProperty);
   AnimNode * animNode = AnimNodeMgr::getInstance ()->getNode (m_currentNodeId);
   m_stringManager->setValue (m_nodeDescriptionProperty, animNode->getDescription ()->toPlainText ());
 
@@ -216,15 +235,15 @@ AnimPropertyBroswer::setup ()
   m_doubleManager->setValue (m_nodeXProperty, animNode->getX ());
   m_doubleManager->setValue (m_nodeYProperty, animNode->getY ());
   connect (m_doubleManager, SIGNAL(valueChanged(QtProperty*,double)), this, SLOT(valueChangedSlot(QtProperty*,double)));
-  m_tree->addProperty (m_nodePositionGroupProperty);
-  m_tree->setFactoryForManager (m_doubleManager, m_doubleSpinBoxFactory);
+  m_nodeBrowser->addProperty (m_nodePositionGroupProperty);
+  m_nodeBrowser->setFactoryForManager (m_doubleManager, m_doubleSpinBoxFactory);
 
 
   // Node Color
   m_nodeColorProperty = m_colorManager->addProperty ("Node Color");
   connect(m_colorManager, SIGNAL(valueChanged(QtProperty*,QColor)), this, SLOT(valueChangedSlot(QtProperty*,QColor)));
-  m_tree->addProperty (m_nodeColorProperty);
-  m_tree->setFactoryForManager (m_colorManager->subIntPropertyManager (), m_spinBoxFactory);
+  m_nodeBrowser->addProperty (m_nodeColorProperty);
+  m_nodeBrowser->setFactoryForManager (m_colorManager->subIntPropertyManager (), m_spinBoxFactory);
   QColor c = animNode->getColor ();
   m_colorManager->setValue (m_nodeColorProperty, c);
 
@@ -233,7 +252,7 @@ AnimPropertyBroswer::setup ()
   m_nodeSizeProperty = m_doubleManager->addProperty ("Node Size");
   m_doubleManager->setValue (m_nodeSizeProperty, animNode->getWidth ());
   m_doubleManager->setMinimum (m_nodeSizeProperty, 0.1);
-  m_tree->addProperty (m_nodeSizeProperty);
+  m_nodeBrowser->addProperty (m_nodeSizeProperty);
 
 
   // Node Resource
@@ -245,16 +264,16 @@ AnimPropertyBroswer::setup ()
     }
    m_fileEditProperty = m_filePathManager->addProperty ("Node Resource");
    m_filePathManager->setValue (m_fileEditProperty, resourcePath);
-   m_tree->addProperty (m_fileEditProperty);
-   m_tree->setFactoryForManager (m_filePathManager, m_fileEditFactory);
+   m_nodeBrowser->addProperty (m_fileEditProperty);
+   m_nodeBrowser->setFactoryForManager (m_filePathManager, m_fileEditFactory);
    connect (m_filePathManager, SIGNAL(valueChanged(QtProperty*,QString)), this, SLOT(valueChangedSlot(QtProperty*,QString)));
 
 
    // Node Trajectory
    m_showNodeTrajectoryProperty = m_boolManager->addProperty ("Show Node Trajectory");
-   m_tree->setFactoryForManager  (m_boolManager, m_checkBoxFactory);
+   m_nodeBrowser->setFactoryForManager  (m_boolManager, m_checkBoxFactory);
    m_boolManager->setValue (m_showNodeTrajectoryProperty, animNode->getShowNodeTrajectory ());
-   m_tree->addProperty (m_showNodeTrajectoryProperty);
+   m_nodeBrowser->addProperty (m_showNodeTrajectoryProperty);
    connect (m_boolManager, SIGNAL(valueChanged(QtProperty*,bool)), this, SLOT(valueChangedSlot(QtProperty*,bool)));
 
 
@@ -279,8 +298,8 @@ AnimPropertyBroswer::setup ()
       m_macAddressGroupProperty->addSubProperty (property);
       m_macAddressVectorProperty.push_back (property);
     }
-   m_tree->addProperty (m_ipv4AddressGroupProperty);
-   m_tree->addProperty (m_macAddressGroupProperty);
+   m_nodeBrowser->addProperty (m_ipv4AddressGroupProperty);
+   m_nodeBrowser->addProperty (m_macAddressGroupProperty);
 
 
 }
@@ -339,6 +358,27 @@ AnimPropertyBroswer::valueChangedSlot(QtProperty * property, QString description
       AnimResourceManager::getInstance ()->add (newResourceId, description);
       AnimNode * animNode = AnimNodeMgr::getInstance ()->getNode (m_currentNodeId);
       animNode->setResource (newResourceId);
+    }
+}
+
+void
+AnimPropertyBroswer::modeChangedSlot (QString mode)
+{
+  if (mode == "Node")
+    {
+      m_nodeIdSelector->setVisible (true);
+      m_nodeBrowser->setVisible (true);
+      m_nodePosTable->setVisible (true);
+      m_backgroundBrowser->setVisible (false);
+
+    }
+  else if (mode == "Background")
+    {
+      m_nodeIdSelector->setVisible (false);
+      m_nodeBrowser->setVisible (false);
+      m_nodePosTable->setVisible (false);
+      m_backgroundBrowser->setVisible (true);
+
     }
 }
 
