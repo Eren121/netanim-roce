@@ -179,7 +179,6 @@ AnimatorMode::setToolButtonVector ()
   m_toolButtonVector.push_back (m_showMacButton);
   m_toolButtonVector.push_back (m_simulationTimeSlider);
   m_toolButtonVector.push_back (m_showRoutePathButton);
-  m_toolButtonVector.push_back (m_addCustomImageButton);
   m_toolButtonVector.push_back (m_showPropertiesButton);
   m_toolButtonVector.push_back (m_stepButton);
 }
@@ -207,6 +206,7 @@ AnimatorMode::setVerticalToolbarWidgets ()
   m_verticalToolbar->addWidget (m_showMetaButton);
   m_verticalToolbar->addWidget (m_showPropertiesButton);
   m_verticalToolbar->addWidget (m_batteryCapacityButton);
+  m_verticalToolbar->addWidget (m_mousePositionButton);
 }
 
 void
@@ -238,7 +238,6 @@ AnimatorMode::setTopToolbarWidgets ()
   m_topToolBar->addWidget (m_showMacButton);
   //m_topToolBar->addWidget (m_showRoutePathButton);
   m_topToolBar->addWidget (m_testButton);
-  m_topToolBar->addWidget (m_addCustomImageButton);
 }
 
 
@@ -417,10 +416,11 @@ AnimatorMode::initControls ()
   m_stepButton->setIcon (QIcon (":/resources/animator_step.svg"));
   connect (m_stepButton, SIGNAL (clicked()), this, SLOT (stepSlot()));
 
-  m_addCustomImageButton = new QToolButton;
-  m_addCustomImageButton->setText ("Background");
-  m_addCustomImageButton->setToolTip ("Add a custome image to the scene");
-  connect (m_addCustomImageButton, SIGNAL (clicked ()), this, SLOT (clickAddCustomImageSlot ()));
+  m_mousePositionButton = new QToolButton;
+  m_mousePositionButton->setToolTip ("Show Mouse Position");
+  m_mousePositionButton->setIcon (QIcon (":/resources/animator_mouseposition.png"));
+  m_mousePositionButton->setCheckable (true);
+  connect (m_mousePositionButton, SIGNAL(clicked()), this, SLOT (enableMousePositionSlot()));
 
   m_parseProgressBar = new QProgressBar;
   //m_animationGroup  = new QParallelAnimationGroup;
@@ -743,7 +743,14 @@ AnimatorMode::parseXMLTraceFile (QString traceFileName)
   showParsingXmlDialog (false);
   setMaxSimulationTime (parser.getMaxSimulationTime ());
   AnimatorScene::getInstance ()->setSimulationBoundaries (m_minPoint, m_maxPoint);
+  AnimatorScene::getInstance ()->setBackgroundImage (m_backgroundImageProperties.fileName,
+                                                     m_backgroundImageProperties.x,
+                                                     m_backgroundImageProperties.y,
+                                                     m_backgroundImageProperties.scaleX,
+                                                     m_backgroundImageProperties.scaleY,
+                                                     m_backgroundImageProperties.opacity);
   postParse ();
+
   return true;
 }
 
@@ -984,6 +991,13 @@ void
 AnimatorMode::pauseAtTimeSlot ()
 {
   m_pauseAtTime = m_pauseAtEdit->text ().toDouble ();
+}
+
+
+void
+AnimatorMode::enableMousePositionSlot ()
+{
+  AnimatorScene::getInstance ()->enableMousePositionLabel (m_mousePositionButton->isChecked ());
 }
 
 void
@@ -1590,7 +1604,6 @@ void
 AnimatorMode::setBackgroundImageProperties (BackgroudImageProperties_t prop)
 {
   m_backgroundImageProperties = prop;
-  AnimatorScene::getInstance ()->setBackgroundImage (prop.fileName, prop.x, prop.y, prop.scaleX, prop.scaleY);
 }
 
 void

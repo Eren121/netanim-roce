@@ -31,7 +31,8 @@ AnimatorScene * pAnimatorScene = 0;
 
 AnimatorScene::AnimatorScene ():
   QGraphicsScene (0, 0, ANIMATORSCENE_USERAREA_WIDTH, ANIMATORSCENE_USERAREA_WIDTH),
-  m_backgroundImage (0)
+  m_backgroundImage (0),
+  m_enableMousePositionLabel (false)
 {
   m_mousePositionLabel = new QLabel ("");
   m_mousePositionLabel->setSizePolicy (QSizePolicy::Minimum, QSizePolicy::Minimum);
@@ -88,7 +89,13 @@ AnimatorScene::setSimulationBoundaries (QPointF minPoint, QPointF maxPoint)
 }
 
 void
-AnimatorScene::setBackgroundImage (QString fileName, qreal x, qreal y, qreal scaleX, qreal scaleY)
+AnimatorScene::enableMousePositionLabel (bool enable)
+{
+  m_enableMousePositionLabel = enable;
+}
+
+void
+AnimatorScene::setBackgroundImage (QString fileName, qreal x, qreal y, qreal scaleX, qreal scaleY, qreal opacity)
 {
 
   QPixmap pix (fileName);
@@ -99,12 +106,15 @@ AnimatorScene::setBackgroundImage (QString fileName, qreal x, qreal y, qreal sca
       removeItem (m_backgroundImage);
       delete m_backgroundImage;
     }
-  m_backgroundImage = new QGraphicsPixmapItem (pix);
+  m_backgroundImage = new QGraphicsPixmapItem;
+  m_backgroundImage->setPixmap (pix);
   addItem (m_backgroundImage);
   m_backgroundImage->setPos (x, y);
   m_backgroundImage->setFlags (QGraphicsItem::ItemIsMovable|QGraphicsItem::ItemIsSelectable);
   m_backgroundImage->scale (scaleX, scaleY);
   m_backgroundImage->setZValue (ANIMBACKGROUND_ZVALUE);
+  m_backgroundImage->setOpacity (opacity);
+
 }
 
 void
@@ -343,19 +353,21 @@ AnimatorScene::mouseDoubleClickEvent (QGraphicsSceneMouseEvent *event)
 void
 AnimatorScene::mouseMoveEvent (QGraphicsSceneMouseEvent *event)
 {
-
-  QPointF scenePos = event->scenePos ();
-//   QString s = "Mouse:" + QString::number (event->scenePos ().x ()) + "," + QString::number (event->scenePos ().y ());
-//   qDebug (s.toAscii ().data ());
-  setMousePositionLabel (scenePos);
-  if ((scenePos.x () < 0) ||
-      (scenePos.y () < 0))
+  if (m_enableMousePositionLabel)
     {
-      showMousePositionLabel (false);
-    }
-  else
-    {
-      showMousePositionLabel (true);
+      QPointF scenePos = event->scenePos ();
+    //   QString s = "Mouse:" + QString::number (event->scenePos ().x ()) + "," + QString::number (event->scenePos ().y ());
+    //   qDebug (s.toAscii ().data ());
+      setMousePositionLabel (scenePos);
+      if ((scenePos.x () < 0) ||
+          (scenePos.y () < 0))
+        {
+          showMousePositionLabel (false);
+        }
+      else
+        {
+          showMousePositionLabel (true);
+        }
     }
   return QGraphicsScene::mouseMoveEvent (event);
 }

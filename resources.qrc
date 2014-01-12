@@ -12,5 +12,6 @@
         <file>animator_reload.svg</file>
         <file>animator_packetstats.svg</file>
         <file>animator_step.svg</file>
+        <file>animator_mouseposition.png</file>
     </qresource>
 </RCC>

@@ -96,7 +96,8 @@ public:
   void setShowNodeTrajectory (AnimNode * animNode);
   void setSceneInfoText (QString text, bool show);
   void setSimulationBoundaries (QPointF minPoint, QPointF maxPoint);
-  void setBackgroundImage (QString fileName, qreal x, qreal y, qreal scaleX, qreal scaleY);
+  void setBackgroundImage (QString fileName, qreal x, qreal y, qreal scaleX, qreal scaleY, qreal opacity);
+  void enableMousePositionLabel(bool enable);
 
 
 public slots:
@@ -136,6 +137,7 @@ private:
   QPointF m_maxPoint;
   QPointF m_sceneMinPoint;
   QPointF m_sceneMaxPoint;
+  bool m_enableMousePositionLabel;
 
 
   void repositionInterfaceText (AnimInterfaceText * textItem);

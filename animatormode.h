@@ -38,6 +38,7 @@ typedef struct {
   qreal y;
   qreal scaleX;
   qreal scaleY;
+  qreal opacity;
 
 } BackgroudImageProperties_t;
 
@@ -166,7 +167,6 @@ private:
   QToolButton * m_showMetaButton;
   QProgressBar * m_parseProgressBar;
   QSlider * m_simulationTimeSlider;
-  QToolButton * m_addCustomImageButton;
   QToolButton * m_showRoutePathButton;
   QToolButton * m_showPropertiesButton;
   QParallelAnimationGroup * m_packetAnimationGroup;
@@ -174,6 +174,7 @@ private:
   QLabel * m_pauseAtLabel;
   QLineEdit * m_pauseAtEdit;
   QToolButton * m_stepButton;
+  QToolButton * m_mousePositionButton;
 
 
 
@@ -247,6 +248,7 @@ private slots:
   void showPropertiesSlot ();
   void pauseAtTimeSlot ();
   void stepSlot ();
+  void enableMousePositionSlot ();
 };
 
 

@@ -275,6 +275,7 @@ Animxmlparser::doParse ()
           bgProp.y = parsedElement.y;
           bgProp.scaleX = parsedElement.scaleX;
           bgProp.scaleY = parsedElement.scaleY;
+          bgProp.opacity = parsedElement.opacity;
           AnimatorMode::getInstance ()->setBackgroundImageProperties (bgProp);
           break;
         }
@@ -480,6 +481,7 @@ Animxmlparser::parseBackground ()
   parsedElement.y = m_reader->attributes ().value ("y").toString ().toDouble ();
   parsedElement.scaleX = m_reader->attributes ().value ("sx").toString ().toDouble ();
   parsedElement.scaleY = m_reader->attributes ().value ("sy").toString ().toDouble ();
+  parsedElement.opacity = m_reader->attributes ().value ("o").toString ().toDouble ();
   return parsedElement;
 }
 

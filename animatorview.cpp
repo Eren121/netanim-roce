@@ -78,7 +78,6 @@ AnimatorView::updateTransform ()
   //qDebug (height (), "height");
   qreal minScale = qMin (xScale, yScale);
   transform.scale (minScale, minScale);
-  //getAnimatorScene ()->setCurrentScale (minScale, minScale);
   setTransform (transform);
 
 }

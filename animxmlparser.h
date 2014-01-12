@@ -106,6 +106,7 @@ struct ParsedElement
   qreal y;
   qreal scaleX;
   qreal scaleY;
+  qreal opacity;
 
   // Resource
   QString resourcePath;
