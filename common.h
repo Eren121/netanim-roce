@@ -39,6 +39,7 @@
 #include <QScrollBar>
 #include <QTableWidget>
 #include <QCheckBox>
+#include <QRegExp>
 
 
 #include "log.h"

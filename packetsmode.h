@@ -70,6 +70,8 @@ private:
   QCheckBox * m_olsrFilterCb;
   QCheckBox * m_ipv4FilterCb;
   QCheckBox * m_icmpFilterCb;
+  QLineEdit * m_regexFilterEdit;
+  QLabel * m_regexFilterLabel;
 
 
   Table * m_packetsTable;
@@ -91,6 +93,7 @@ private slots:
   void fromTimeChangedSlot (QString fromTimeText);
   void toTimeChangedSlot (QString toTimeText);
   void allowedNodesChangedSlot (QString allowedNodes);
+  void regexFilterSlot (QString reg);
   void showGridLinesSlot ();
   void showPacketTableSlot ();
   void filterClickedSlot ();

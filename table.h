@@ -27,8 +27,9 @@ class Table: public QTableWidget
 public:
   Table ();
   void setHeaderList (QStringList headerList);
-  void addRow (QStringList rowContents);
+  void addRow (QStringList rowContents, bool autoAdjust = false);
   void removeAllRows ();
+  void adjust ();
 
 };
 

@@ -238,6 +238,7 @@ LogComponent::EnvVarCheck (char const * name)
       cur = next + 1;
     }
 #endif
+  (void)name;
 }
 
 
@@ -443,6 +444,7 @@ LogComponentPrintList (void)
     }
 }
 
+#if NETANIM
 static bool ComponentExists(std::string componentName)
 {
   char const*name=componentName.c_str();
@@ -461,6 +463,7 @@ static bool ComponentExists(std::string componentName)
   // nothing matched
   return false;
 }
+#endif
 
 static void CheckEnvironmentVariables (void)
 {

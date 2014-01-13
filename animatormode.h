@@ -114,6 +114,7 @@ private:
   bool m_showPacketMetaInfo;
   QString m_traceFileName;
   bool m_showPackets;
+  QParallelAnimationGroup * m_packetAnimationGroup;
   bool m_fastForwarding;
   qreal m_lastPacketEventTime;
   qreal m_firstPacketEventTime;
@@ -125,6 +126,7 @@ private:
   QPointF m_minPoint;
   QPointF m_maxPoint;
   bool m_backgroundExists;
+
 
 
 
@@ -171,7 +173,6 @@ private:
   QSlider * m_simulationTimeSlider;
   QToolButton * m_showRoutePathButton;
   QToolButton * m_showPropertiesButton;
-  QParallelAnimationGroup * m_packetAnimationGroup;
   QParallelAnimationGroup * m_buttonAnimationGroup;
   QLabel * m_pauseAtLabel;
   QLineEdit * m_pauseAtEdit;

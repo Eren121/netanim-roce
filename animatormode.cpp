@@ -47,13 +47,13 @@ AnimatorMode::AnimatorMode ():
   m_simulationCompleted (false),
   m_showPacketMetaInfo (true),
   m_showPackets (true),
-  m_fastForwarding (false),
-  m_parsingXMLDialog (0),
   m_packetAnimationGroup (0),
+  m_fastForwarding (false),
   m_lastPacketEventTime (-1),
   m_pauseAtTime (65535),
   m_pauseAtTimeTriggered (false),
-  m_backgroundExists (false)
+  m_backgroundExists (false),
+  m_parsingXMLDialog (0)
 
 {
   init ();

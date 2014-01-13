@@ -33,6 +33,8 @@ public:
   void addPackets ();
   void redraw (qreal fromTime, qreal toTime , QVector <uint32_t> allowedNodes, bool showGrid);
   void setFilter (int ft);
+  void setRegexFilter (QString reg);
+
 private:
   PacketsScene ();
   bool setUpNodeLines ();
@@ -58,12 +60,13 @@ private:
   QGraphicsProxyWidget * m_infoWidget;
   qreal m_borderHeight;
   qreal m_lineLength;
+  TextBubble * m_textBubble;
   bool m_showGrid;
   bool m_showTable;
   int m_filter;
 
   QGraphicsLineItem * m_rulerLine;
-  TextBubble * m_textBubble;
+  QString m_filterRegex;
 
 };
 }

@@ -151,8 +151,8 @@ private:
   QXmlStreamReader * m_reader;
   QFile * m_traceFile;
   double m_maxSimulationTime;
-  qreal m_lastPacketEventTime;
   bool m_fileIsValid;
+  qreal m_lastPacketEventTime;
   double m_version;
   qreal m_thousandThPacketTime;
   qreal m_firstPacketTime;

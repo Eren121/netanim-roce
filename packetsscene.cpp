@@ -15,6 +15,7 @@
  *
  * Author: John Abraham <john.abraham.in@gmail.com>
  */
+#include <QRegExp>
 #include "packetsscene.h"
 #include "logqt.h"
 #include "animpacket.h"
@@ -38,7 +39,8 @@ PacketsScene::PacketsScene ():
   m_textBubble (0),
   m_showGrid (true),
   m_showTable (true),
-  m_filter (AnimPacket::ALL)
+  m_filter (AnimPacket::ALL),
+  m_filterRegex (".*")
 {
   m_textBubble = new TextBubble ("Info:", "No data available\nDid you load the XML file?");
   m_infoWidget = addWidget (m_textBubble);
@@ -139,7 +141,7 @@ PacketsScene::setUpNodeLines ()
   if (!nodeCount)
     return foundNodes;
 
-  for (uint32_t lineIndex = 0; lineIndex < m_allowedNodes.count () ; ++lineIndex)
+  for (int lineIndex = 0; lineIndex < m_allowedNodes.count () ; ++lineIndex)
     {
       foundNodes = true;
       QGraphicsLineItem * lineItem = addLine (m_interNodeSpacing * lineIndex, m_borderHeight, m_interNodeSpacing * lineIndex, m_lineLength);
@@ -181,6 +183,12 @@ PacketsScene::addPacket (qreal tx, qreal rx, uint32_t fromNodeId, uint32_t toNod
     {
       shortMeta = AnimPacket::getShortMeta (metaInfo);
     }
+
+  QRegExp rex (m_filterRegex);
+  if (rex.indexIn (metaInfo) == -1)
+  {
+    return;
+  }
 
   qreal fromNodeX = m_interNodeSpacing * m_lineIndex[fromNodeId];
   qreal toNodeX = m_interNodeSpacing * m_lineIndex[toNodeId];
@@ -248,6 +256,12 @@ PacketsScene::addPacket (qreal tx, qreal rx, uint32_t fromNodeId, uint32_t toNod
 }
 
 void
+PacketsScene::setRegexFilter (QString reg)
+{
+  m_filterRegex = reg;
+}
+
+void
 PacketsScene::setFilter (int ft)
 {
   m_filter = ft;
@@ -274,7 +288,7 @@ PacketsScene::redraw (qreal fromTime, qreal toTime, QVector<uint32_t> allowedNod
 bool
 PacketsScene::isAllowedNode (uint32_t nodeId)
 {
-  for (uint32_t i = 0; i < m_allowedNodes.count (); ++i)
+  for (int i = 0; i < m_allowedNodes.count (); ++i)
     {
       if (m_allowedNodes[i] == nodeId)
         return true;
@@ -310,8 +324,10 @@ PacketsScene::addPackets ()
 
 
           addPacket (packetEvent->m_fbTx, packetEvent->m_fbRx, packetEvent->m_fromId, packetEvent->m_toId, packetEvent->m_metaInfo);
+          AnimatorMode::getInstance ()->keepAppResponsive ();
         }
     }
+  table->adjust ();
   m_infoWidget->setVisible (false);
 
 }

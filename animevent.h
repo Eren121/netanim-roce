@@ -30,8 +30,6 @@ public:
   typedef enum
   {
     PACKET_FBTX_EVENT,
-    PACKET_FBRX_EVENT,
-    PACKET_LBTX_EVENT,
     PACKET_LBRX_EVENT,
     ADD_NODE_EVENT,
     UPDATE_NODE_POS_EVENT,
@@ -207,20 +205,6 @@ public:
   uint32_t m_resourceId;
 
 };
-
-
-class AnimPacketLbTxEvent: public AnimEvent
-{
-public:
-  AnimPacketLbTxEvent (void * p):
-    AnimEvent (PACKET_LBTX_EVENT),
-    m_pkt (p)
-  {
-  }
-  void * m_pkt;
-
-};
-
 
 class AnimPacketLbRxEvent: public AnimEvent
 {

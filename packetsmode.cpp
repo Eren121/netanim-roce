@@ -25,6 +25,7 @@
 #define TIME_EDIT_MASK "dddd.ddddddddd"
 #define ALLOWED_NODES_WITH 300
 #define ALLOWED_NODES "0:1:2:3:4:5:6:7:8:9"
+#define REGEX_EDIT_WIDTH 300
 
 namespace netanim {
 PacketsMode * pPacketsMode = 0;
@@ -113,6 +114,9 @@ PacketsMode::PacketsMode ():
   m_olsrFilterCb = new QCheckBox ("Olsr");
 
 
+  m_regexFilterLabel = new QLabel ("Regex on meta data");
+  m_regexFilterEdit = new QLineEdit (".*");
+  m_regexFilterEdit->setMaximumWidth (REGEX_EDIT_WIDTH);
 
   m_packetsTable = new Table;
   QStringList packetTableHeaders;
@@ -130,6 +134,11 @@ PacketsMode::PacketsMode ():
   m_filterToolBar->addWidget (m_ethernetFilterCb);
   m_filterToolBar->addWidget (m_pppFilterCb);
   m_filterToolBar->addWidget (m_aodvFilterCb);
+  m_filterToolBar->addWidget (m_olsrFilterCb);
+  m_filterToolBar->addWidget (m_arpFilterCb);
+  m_filterToolBar->addSeparator ();
+  m_filterToolBar->addWidget (m_regexFilterLabel);
+  m_filterToolBar->addWidget (m_regexFilterEdit);
 
   m_mainSplitter = new QSplitter;
   m_vLayout = new QVBoxLayout;
@@ -161,6 +170,9 @@ PacketsMode::PacketsMode ():
   connect (m_ethernetFilterCb, SIGNAL(clicked()), this, SLOT(filterClickedSlot()));
   connect (m_pppFilterCb, SIGNAL(clicked()), this, SLOT(filterClickedSlot()));
   connect (m_aodvFilterCb, SIGNAL(clicked()), this, SLOT(filterClickedSlot()));
+  connect (m_olsrFilterCb, SIGNAL(clicked()), this, SLOT(filterClickedSlot()));
+  connect (m_arpFilterCb, SIGNAL(clicked()), this, SLOT(filterClickedSlot()));
+  connect (m_regexFilterEdit, SIGNAL(textEdited(QString)), this, SLOT(regexFilterSlot(QString)));
 
 }
 
@@ -211,15 +223,15 @@ PacketsMode::setFocus (bool focus)
       m_allowedNodes.clear ();
       for (uint32_t i = 0; i < nodeCount; ++i)
         {
-          if (i>10)
-            break;
+          //if (i>10)
+          //  break;
           m_allowedNodes.push_back (i);
         }
       setAllowedNodes (nodeVectorToString (m_allowedNodes));
       //m_allowedNodes.clear ();
       qreal thousandthPacketTime = AnimatorMode::getInstance ()->getThousandthPacketTime ();
       if (thousandthPacketTime < 0)
-        return;
+        m_toTime = lastPacketTime;
       m_fromTime = AnimatorMode::getInstance ()->getFirstPacketTime ();
       m_toTime = thousandthPacketTime;
       m_toTimeEdit->setText (QString::number (m_toTime, 'g', 6));
@@ -286,7 +298,7 @@ QString
 PacketsMode::nodeVectorToString (QVector<uint32_t> nodeVector)
 {
   QString s;
-  for (uint32_t i = 0; i < nodeVector.size (); ++i)
+  for (int i = 0; i < nodeVector.size (); ++i)
     {
       s += QString::number (nodeVector[i]) + ":";
     }
@@ -357,6 +369,12 @@ PacketsMode::filterClickedSlot ()
 
 }
 
+void
+PacketsMode::regexFilterSlot (QString reg)
+{
+  PacketsScene::getInstance ()->setRegexFilter (reg);
+  PacketsScene::getInstance ()->redraw(m_fromTime, m_toTime, m_allowedNodes, m_showGrid);
+}
 
 void
 PacketsMode::allowedNodesChangedSlot (QString allowedNodes)

@@ -78,6 +78,8 @@ private:
   QtProperty * m_backgroundScaleY;
   QtProperty * m_backgroundOpacity;
 
+  uint32_t m_currentNodeId;
+
   QtIntPropertyManager * m_intManager;
   QtStringPropertyManager * m_stringManager;
   QtDoublePropertyManager * m_doubleManager;
@@ -85,9 +87,9 @@ private:
 
   QtColorPropertyManager * m_colorManager;
   FilePathManager * m_filePathManager;
+  QtGroupPropertyManager * m_nodePositionManager;
   QtGroupPropertyManager * m_ipv4AddressManager;
   QtGroupPropertyManager * m_macAddressManager;
-  QtGroupPropertyManager * m_nodePositionManager;
   QtStringPropertyManager * m_staticStringManager;
   QtBoolPropertyManager * m_boolManager;
 
@@ -99,7 +101,6 @@ private:
 
 
 
-  uint32_t m_currentNodeId;
   typedef std::map <QtProperty *, QString> PropertyIdMap_t;
   PropertyIdMap_t m_propertyId;
 private slots:

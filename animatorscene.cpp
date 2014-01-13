@@ -463,9 +463,12 @@ AnimatorScene::initGridCoordinates ()
 void
 AnimatorScene::markGridCoordinates ()
 {
+  QRectF simulationRect (m_minPoint, m_maxPoint);
+  if (!(simulationRect.width ()) || !(simulationRect.height ()))
+    return;
   int i = 0;
-  for (qreal x = 0; x <= sceneRect ().width () ; x = x + (sceneRect ().width ()/2))
-    for (qreal y = 0; y <= sceneRect ().height () ; y = y + (sceneRect ().height ()/2))
+  for (qreal x = 0; x <= simulationRect.right () ; x = x + (simulationRect.right ()/2))
+    for (qreal y = 0; y <= simulationRect.bottom () ; y = y + (simulationRect.bottom ()/2))
       {
         QString text = QString::number (qRound (x))
                        + ","
@@ -483,10 +486,10 @@ AnimatorScene::addGrid ()
 {
   m_showGrid = true;
   QRectF simulationRect (m_minPoint, m_maxPoint);
-  qreal xStep =  simulationRect.width ()/ (m_nGridLines-1);
-  qreal yStep = simulationRect.height ()/ (m_nGridLines-1);
-  xStep = ceil (xStep);
-  yStep = ceil (yStep);
+  qreal xStep = (simulationRect.right ())/ (m_nGridLines-1);
+  qreal yStep = (simulationRect.bottom ())/ (m_nGridLines-1);
+  //xStep = ceil (xStep);
+  //yStep = ceil (yStep);
   QPen pen (QColor (100, 100, 155, 125));
 
   // draw horizontal grid
@@ -494,12 +497,12 @@ AnimatorScene::addGrid ()
   qreal x;
   for (int c = 0; c < m_nGridLines; ++c, y += yStep)
     {
-      m_gridLines.push_back (addLine (0, y, simulationRect.right () + xStep, y, pen));
+      m_gridLines.push_back (addLine (0, y, simulationRect.right (), y, pen));
     }
   // now draw vertical grid
   for (int c = 0; c < m_nGridLines; ++c, x += xStep)
     {
-      m_gridLines.push_back (addLine (x, 0, x,  simulationRect.bottom () + yStep, pen));
+      m_gridLines.push_back (addLine (x, 0, x,  simulationRect.bottom (), pen));
     }
   initGridCoordinates ();
   markGridCoordinates ();

@@ -31,7 +31,7 @@ Table::setHeaderList (QStringList headerList)
 }
 
 void
-Table::addRow (QStringList rowContents)
+Table::addRow (QStringList rowContents, bool autoAdjust)
 {
   uint32_t rows = rowCount ();
   setRowCount (rows + 1);
@@ -41,19 +41,30 @@ Table::addRow (QStringList rowContents)
       QTableWidgetItem * item = new QTableWidgetItem (st);
       setItem (rows, column++, item);
     }
-  resizeRowsToContents();
-  resizeColumnsToContents ();
+  if (autoAdjust)
+    {
+      resizeRowsToContents();
+      resizeColumnsToContents ();
+    }
 }
 
 
 void
 Table::removeAllRows ()
 {
-  for (uint32_t i = 0; i < rowCount (); ++i)
+  for (int i = 0; i < rowCount (); ++i)
     {
       removeRow (i);
     }
   setRowCount (0);
+}
+
+
+void
+Table::adjust ()
+{
+  resizeRowsToContents();
+  resizeColumnsToContents ();
 }
 
 
