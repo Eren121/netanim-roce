@@ -150,3 +150,8 @@ RESOURCES += \
 OTHER_FILES += \
     qtpropertybrowser/src/qtpropertybrowser.pri
 
+macx {
+ CONFIG -= app_bundle
+ QMAKESPEC = macx-g++
+}
+
