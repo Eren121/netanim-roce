@@ -39,7 +39,9 @@ public:
     UPDATE_NODE_IMAGE_EVENT,
     ADD_LINK_EVENT,
     UPDATE_LINK_EVENT,
-    WIRED_PACKET_UPDATE_EVENT
+    WIRED_PACKET_UPDATE_EVENT,
+    UPDATE_NODE_COUNTER_EVENT,
+    CREATE_NODE_COUNTER_EVENT
   } AnimEventType_h;
   AnimEventType_h m_type;
   AnimEvent (AnimEventType_h type): m_type (type)
@@ -71,6 +73,38 @@ public:
   uint8_t m_b;
 
 
+};
+
+
+class AnimCreateNodeCounterEvent: public AnimEvent
+{
+public:
+  // Node Counter
+  typedef enum {
+    UINT32_COUNTER,
+    DOUBLE_COUNTER
+  } NodeCounterType_t;
+  AnimCreateNodeCounterEvent (uint32_t counterId, QString counterName, NodeCounterType_t counterType):
+    AnimEvent (CREATE_NODE_COUNTER_EVENT), m_counterId (counterId), m_counterName (counterName), m_counterType (counterType)
+  {
+  }
+  uint32_t m_counterId;
+  QString m_counterName;
+  NodeCounterType_t m_counterType;
+
+
+};
+
+class AnimNodeCounterUpdateEvent: public AnimEvent
+{
+public:
+  AnimNodeCounterUpdateEvent (uint32_t counterId, uint32_t nodeId, qreal counterValue):
+    AnimEvent (UPDATE_NODE_COUNTER_EVENT), m_counterId (counterId), m_nodeId (nodeId), m_counterValue (counterValue)
+  {
+  }
+  uint32_t m_counterId;
+  uint32_t m_nodeId;
+  qreal m_counterValue;
 };
 
 

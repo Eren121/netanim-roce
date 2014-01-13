@@ -1133,6 +1133,10 @@ AnimatorMode::updateRateTimeoutSlot ()
       connect (m_simulationTimeSlider, SIGNAL (valueChanged (int)), this, SLOT (updateTimelineSlot (int)));
       m_qLcdNumber->display (m_currentTime);
       keepAppResponsive ();
+      if (m_showPropertiesButton->isChecked ())
+        {
+          AnimPropertyBroswer::getInstance ()->refresh ();
+        }
       if (m_packetAnimationGroup)
         {
           connect (m_packetAnimationGroup,
@@ -1343,6 +1347,21 @@ AnimatorMode::dispatchEvents ()
                   setNodePos (animNode, addEvent->m_x, addEvent->m_y);
                   //animNode->setPos (addEvent->m_x, addEvent->m_y);
                 }
+              break;
+            }
+            case AnimEvent::CREATE_NODE_COUNTER_EVENT:
+            {
+              AnimCreateNodeCounterEvent * createEvent = static_cast<AnimCreateNodeCounterEvent *> (j->second);
+              if (createEvent->m_counterType == AnimCreateNodeCounterEvent::DOUBLE_COUNTER)
+                AnimNodeMgr::getInstance ()->addNodeCounterDouble (createEvent->m_counterId, createEvent->m_counterName);
+              else if (createEvent->m_counterType == AnimCreateNodeCounterEvent::UINT32_COUNTER)
+                AnimNodeMgr::getInstance ()->addNodeCounterUint32 (createEvent->m_counterId, createEvent->m_counterName);
+              break;
+            }
+            case AnimEvent::UPDATE_NODE_COUNTER_EVENT:
+            {
+              AnimNodeCounterUpdateEvent * counterEvent = static_cast<AnimNodeCounterUpdateEvent*> (j->second);
+              AnimNodeMgr::getInstance ()->updateNodeCounter (counterEvent->m_nodeId, counterEvent->m_counterId, counterEvent->m_counterValue);
               break;
             }
             case AnimEvent::PACKET_LBRX_EVENT:

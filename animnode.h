@@ -35,6 +35,10 @@ class AnimNode: public ResizeableItem
 public:
   typedef QVector <QString> Ipv4Vector_t;
   typedef QVector <QString> MacVector_t;
+  typedef std::map <uint32_t, QString> CounterIdName_t;
+  typedef std::map <uint32_t, uint32_t> CounterIdValueUint32_t;
+  typedef std::map <uint32_t, double> CounterIdValueDouble_t;
+
 
   AnimNode (uint32_t nodeId, qreal x, qreal y, QString nodeDescription);
   ~AnimNode ();
@@ -65,6 +69,14 @@ public:
   bool hasIpv4 (QString ip);
   bool hasMac (QString mac);
   void showNodeId (bool show);
+  void addCounterUint32 (uint32_t counterId, QString counterName);
+  void addCounterDouble (uint32_t counterId, QString counterName);
+  void updateCounter (uint32_t counterId, qreal counterValue);
+  CounterIdName_t getUint32CounterNames ();
+  CounterIdName_t getDoubleCounterNames ();
+  qreal getDoubleCounterValue (uint32_t counterId);
+  uint32_t getUint32CounterValue (uint32_t counterId);
+
 private:
   QGraphicsTextItem * m_nodeDescription;
   uint32_t m_nodeId;
@@ -75,7 +87,10 @@ private:
   MacVector_t m_macVector;
   int m_resourceId;
   bool m_showNodeTrajectory;
-
+  CounterIdName_t m_counterIdToNamesUint32;
+  CounterIdName_t m_counterIdToNamesDouble;
+  CounterIdValueUint32_t m_counterIdToValuesUint32;
+  CounterIdValueDouble_t m_counterIdToValuesDouble;
 
 };
 
@@ -100,6 +115,10 @@ public:
   void showNodeId (bool show);
   TimePosVector_t getPositions (uint32_t nodeId);
   void addAPosition (uint32_t nodeId, qreal t, QPointF pos);
+
+  void addNodeCounterUint32 (uint32_t counterId, QString counterName);
+  void addNodeCounterDouble (uint32_t counterId, QString counterName);
+  void updateNodeCounter (uint32_t nodeId, uint32_t counterId, qreal counterValue);
 
 
 private:

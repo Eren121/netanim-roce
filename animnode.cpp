@@ -62,6 +62,61 @@ AnimNode::showNodeId (bool show)
   m_nodeDescription->setVisible (m_showNodeId);
 }
 
+AnimNode::CounterIdName_t
+AnimNode::getUint32CounterNames ()
+{
+  return m_counterIdToNamesUint32;
+}
+
+AnimNode::CounterIdName_t
+AnimNode::getDoubleCounterNames ()
+{
+  return m_counterIdToNamesDouble;
+}
+
+uint32_t
+AnimNode::getUint32CounterValue (uint32_t counterId)
+{
+  if (m_counterIdToValuesUint32.find (counterId) == m_counterIdToValuesUint32.end ())
+    return -1;
+  return m_counterIdToValuesUint32[counterId];
+}
+
+
+qreal
+AnimNode::getDoubleCounterValue (uint32_t counterId)
+{
+  if (m_counterIdToValuesDouble.find (counterId) == m_counterIdToValuesDouble.end ())
+    return -1;
+  return m_counterIdToValuesDouble[counterId];
+}
+
+void
+AnimNode::updateCounter (uint32_t counterId, qreal counterValue)
+{
+  if (m_counterIdToNamesDouble.find (counterId) != m_counterIdToNamesDouble.end ())
+    {
+      m_counterIdToValuesDouble[counterId] = counterValue;
+    }
+
+  if (m_counterIdToNamesUint32.find (counterId) != m_counterIdToNamesUint32.end ())
+    {
+      m_counterIdToValuesUint32[counterId] = counterValue;
+    }
+}
+
+void
+AnimNode::addCounterDouble (uint32_t counterId, QString counterName)
+{
+  m_counterIdToNamesDouble[counterId] = counterName;
+}
+
+void
+AnimNode::addCounterUint32 (uint32_t counterId, QString counterName)
+{
+  m_counterIdToNamesUint32[counterId] = counterName;
+}
+
 int
 AnimNode::getResourceId ()
 {
@@ -407,6 +462,41 @@ AnimNodeMgr::addAPosition (uint32_t nodeId, qreal t, QPointF pos)
   tp.t = t;
   pv.push_back (tp);
 }
+
+
+void
+AnimNodeMgr::addNodeCounterUint32 (uint32_t counterId, QString counterName)
+{
+  for (NodeIdAnimNodeMap_t::const_iterator i = m_nodes.begin ();
+      i != m_nodes.end ();
+      ++i)
+    {
+      AnimNode * animNode = i->second;
+      animNode->addCounterUint32 (counterId, counterName);
+    }
+
+}
+
+void
+AnimNodeMgr::addNodeCounterDouble (uint32_t counterId, QString counterName)
+{
+  for (NodeIdAnimNodeMap_t::const_iterator i = m_nodes.begin ();
+      i != m_nodes.end ();
+      ++i)
+    {
+      AnimNode * animNode = i->second;
+      animNode->addCounterDouble (counterId, counterName);
+    }
+
+}
+
+void
+AnimNodeMgr::updateNodeCounter (uint32_t nodeId, uint32_t counterId, qreal counterValue)
+{
+  AnimNode * animNode = getNode (nodeId);
+  animNode->updateCounter (counterId, counterValue);
+}
+
 
 
 

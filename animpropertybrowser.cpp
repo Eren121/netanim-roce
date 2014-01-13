@@ -341,6 +341,31 @@ AnimPropertyBroswer::setupNodeProperties ()
    m_nodeBrowser->addProperty (m_ipv4AddressGroupProperty);
    m_nodeBrowser->addProperty (m_macAddressGroupProperty);
 
+   AnimNode::CounterIdName_t doubleCounterNames = animNode->getDoubleCounterNames ();
+   AnimNode::CounterIdName_t uint32CounterNames = animNode->getUint32CounterNames ();
+   for (AnimNode::CounterIdName_t::const_iterator i = doubleCounterNames.begin ();
+        i != doubleCounterNames.end ();
+        ++i)
+     {
+       QString counterName = i->second;
+       qreal counterValue = animNode->getDoubleCounterValue (i->first);
+       QtProperty * prop = m_doubleManager->addProperty (counterName);
+       m_doubleManager->setValue (prop, counterValue);
+       m_nodeBrowser->addProperty (prop);
+       m_nodeCounterDoubleProperty.push_back (prop);
+     }
+
+   for (AnimNode::CounterIdName_t::const_iterator i = uint32CounterNames.begin ();
+        i != uint32CounterNames.end ();
+        ++i)
+     {
+       QString counterName = i->second;
+       qreal counterValue = animNode->getUint32CounterValue (i->first);
+       QtProperty * prop = m_intManager->addProperty (counterName);
+       m_intManager->setValue (prop, counterValue);
+       m_nodeBrowser->addProperty (prop);
+       m_nodeCounterUint32Property.push_back (prop);
+     }
 
 }
 
@@ -461,6 +486,12 @@ AnimPropertyBroswer::valueChangedSlot (QtProperty * property, bool showNodeTraje
     }
 }
 
+void
+AnimPropertyBroswer::refresh ()
+{
+  nodeIdSelectorSlot (m_nodeIdSelector->currentText ());
+}
+
 
 void
 AnimPropertyBroswer::showNodePositionTable (bool show)
@@ -567,6 +598,50 @@ AnimPropertyBroswer::nodeIdSelectorSlot (QString newIndex)
       m_macAddressGroupProperty->addSubProperty (property);
       m_macAddressVectorProperty.push_back (property);
     }
+
+
+   for (AnimPropertyBroswer::QtPropertyVector_t::const_iterator i = m_nodeCounterDoubleProperty.begin ();
+        i != m_nodeCounterDoubleProperty.end ();
+        ++i)
+     {
+       QtProperty * property = *i;
+       m_nodeBrowser->removeProperty (property);
+     }
+   m_nodeCounterDoubleProperty.clear ();
+
+   for (AnimPropertyBroswer::QtPropertyVector_t::const_iterator i = m_nodeCounterUint32Property.begin ();
+        i != m_nodeCounterUint32Property.end ();
+        ++i)
+     {
+       QtProperty * property = *i;
+       m_nodeBrowser->removeProperty (property);
+     }
+   m_nodeCounterUint32Property.clear ();
+   AnimNode::CounterIdName_t doubleCounterNames = animNode->getDoubleCounterNames ();
+   AnimNode::CounterIdName_t uint32CounterNames = animNode->getUint32CounterNames ();
+   for (AnimNode::CounterIdName_t::const_iterator i = doubleCounterNames.begin ();
+        i != doubleCounterNames.end ();
+        ++i)
+     {
+       QString counterName = i->second;
+       qreal counterValue = animNode->getDoubleCounterValue (i->first);
+       QtProperty * prop = m_doubleManager->addProperty (counterName);
+       m_doubleManager->setValue (prop, counterValue);
+       m_nodeBrowser->addProperty (prop);
+       m_nodeCounterDoubleProperty.push_back (prop);
+     }
+
+   for (AnimNode::CounterIdName_t::const_iterator i = uint32CounterNames.begin ();
+        i != uint32CounterNames.end ();
+        ++i)
+     {
+       QString counterName = i->second;
+       qreal counterValue = animNode->getUint32CounterValue (i->first);
+       QtProperty * prop = m_intManager->addProperty (counterName);
+       m_intManager->setValue (prop, counterValue);
+       m_nodeBrowser->addProperty (prop);
+       m_nodeCounterUint32Property.push_back (prop);
+     }
 
 }
 
