@@ -48,6 +48,7 @@ private:
   void setupBackgroundProperties ();
   void setupManagers ();
   void setupFactories ();
+  void refreshBackgroundProperties ();
   QVBoxLayout * m_vboxLayout;
   QtAbstractPropertyBrowser * m_nodeBrowser;
   QtAbstractPropertyBrowser * m_backgroundBrowser;

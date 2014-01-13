@@ -52,7 +52,8 @@ AnimatorMode::AnimatorMode ():
   m_packetAnimationGroup (0),
   m_lastPacketEventTime (-1),
   m_pauseAtTime (65535),
-  m_pauseAtTimeTriggered (false)
+  m_pauseAtTimeTriggered (false),
+  m_backgroundExists (false)
 
 {
   init ();
@@ -504,6 +505,7 @@ void
 AnimatorMode::systemReset ()
 {
   m_pauseAtTime = 65535;
+  m_backgroundExists = false;
   m_state = SYSTEM_RESET_IN_PROGRESS;
   clickResetSlot ();
   purgeWiredPackets ();
@@ -743,12 +745,15 @@ AnimatorMode::parseXMLTraceFile (QString traceFileName)
   showParsingXmlDialog (false);
   setMaxSimulationTime (parser.getMaxSimulationTime ());
   AnimatorScene::getInstance ()->setSimulationBoundaries (m_minPoint, m_maxPoint);
-  AnimatorScene::getInstance ()->setBackgroundImage (m_backgroundImageProperties.fileName,
-                                                     m_backgroundImageProperties.x,
-                                                     m_backgroundImageProperties.y,
-                                                     m_backgroundImageProperties.scaleX,
-                                                     m_backgroundImageProperties.scaleY,
-                                                     m_backgroundImageProperties.opacity);
+  if (m_backgroundExists)
+    {
+      AnimatorScene::getInstance ()->setBackgroundImage (m_backgroundImageProperties.fileName,
+                                                         m_backgroundImageProperties.x,
+                                                         m_backgroundImageProperties.y,
+                                                         m_backgroundImageProperties.scaleX,
+                                                         m_backgroundImageProperties.scaleY,
+                                                         m_backgroundImageProperties.opacity);
+    }
   postParse ();
 
   return true;
@@ -982,9 +987,14 @@ AnimatorMode::showNodePositionStatsSlot ()
 void
 AnimatorMode::showPropertiesSlot ()
 {
-  AnimPropertyBroswer::getInstance ()->show (m_showPropertiesButton->isChecked ());
   if (m_showPropertiesButton->isChecked ())
-    externalPauseEvent ();
+    {
+      externalPauseEvent ();
+      m_mousePositionButton->setChecked (true);
+      enableMousePositionSlot ();
+    }
+  AnimPropertyBroswer::getInstance ()->show (m_showPropertiesButton->isChecked ());
+
 }
 
 void
@@ -1620,6 +1630,7 @@ void
 AnimatorMode::setBackgroundImageProperties (BackgroudImageProperties_t prop)
 {
   m_backgroundImageProperties = prop;
+  m_backgroundExists = true;
 }
 
 void

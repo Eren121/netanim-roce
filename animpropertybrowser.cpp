@@ -203,14 +203,27 @@ AnimPropertyBroswer::setupFactories ()
   m_checkBoxFactory = new QtCheckBoxFactory;
 }
 
+
+void
+AnimPropertyBroswer::refreshBackgroundProperties ()
+{
+  BackgroudImageProperties_t prop = AnimatorMode::getInstance ()->getBackgroundProperties ();
+  m_backgroundDoubleManager->setValue (m_backgroundX, prop.x);
+  m_backgroundDoubleManager->setValue (m_backgroundY, prop.y);
+  //m_backgroundDoubleManager->setValue (m_backgroundScaleX, prop.scaleX);
+  //m_backgroundDoubleManager->setValue (m_backgroundScaleY, prop.scaleY);
+  m_backgroundDoubleManager->setValue (m_backgroundOpacity, prop.opacity);
+  m_backgroundBrowser->setFactoryForManager (m_backgroundDoubleManager, m_doubleSpinBoxFactory);
+
+}
 void
 AnimPropertyBroswer::setupBackgroundProperties ()
 {
-  m_backgroundX = m_backgroundDoubleManager->addProperty ("Bg X");
-  m_backgroundY = m_backgroundDoubleManager->addProperty ("Bg Y");
-  m_backgroundScaleX = m_backgroundDoubleManager->addProperty ("Bg Scale X");
-  m_backgroundScaleY = m_backgroundDoubleManager->addProperty ("Bg Scale Y");
-  m_backgroundOpacity = m_backgroundDoubleManager->addProperty ("Bg Opacity");
+  m_backgroundX = m_backgroundDoubleManager->addProperty ("X");
+  m_backgroundY = m_backgroundDoubleManager->addProperty ("Y");
+  m_backgroundScaleX = m_backgroundDoubleManager->addProperty ("Scale X By");
+  m_backgroundScaleY = m_backgroundDoubleManager->addProperty ("Scale Y By");
+  m_backgroundOpacity = m_backgroundDoubleManager->addProperty ("Opacity (0.0 to 1.0)");
 
   m_backgroundBrowser->addProperty (m_backgroundX);
   m_backgroundBrowser->addProperty (m_backgroundY);
@@ -429,6 +442,7 @@ AnimPropertyBroswer::modeChangedSlot (QString mode)
           m_nodeBrowser->setVisible (false);
           m_nodePosTable->setVisible (false);
           m_backgroundBrowser->setVisible (true);
+          refreshBackgroundProperties ();
         }
 
 

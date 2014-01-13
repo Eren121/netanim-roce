@@ -124,6 +124,7 @@ private:
   BackgroudImageProperties_t m_backgroundImageProperties;
   QPointF m_minPoint;
   QPointF m_maxPoint;
+  bool m_backgroundExists;
 
 
 

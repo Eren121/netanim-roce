@@ -72,6 +72,8 @@ AnimatorScene::systemReset ()
   if (m_backgroundImage)
     {
       removeItem (m_backgroundImage);
+      delete (m_backgroundImage);
+      m_backgroundImage = 0;
     }
 }
 
@@ -120,7 +122,7 @@ AnimatorScene::setBackgroundScaleX (qreal x)
 {
   if (!m_backgroundImage)
     return;
- // m_backgroundImage->setTransform (m_originalBackgroundTransform);
+  //m_backgroundImage->setTransform (m_originalBackgroundTransform);
   m_backgroundImage->scale (x, 1);
 }
 
@@ -130,7 +132,7 @@ AnimatorScene::setBackgroundScaleY (qreal y)
 {
   if (!m_backgroundImage)
     return;
- // m_backgroundImage->setTransform (m_originalBackgroundTransform);
+  //m_backgroundImage->setTransform (m_originalBackgroundTransform);
   m_backgroundImage->scale (1, y);
 }
 
@@ -159,6 +161,7 @@ AnimatorScene::setBackgroundImage (QString fileName, qreal x, qreal y, qreal sca
     {
       removeItem (m_backgroundImage);
       delete m_backgroundImage;
+      m_backgroundImage = 0;
     }
   m_backgroundImage = new QGraphicsPixmapItem;
   m_backgroundImage->setPixmap (pix);
@@ -482,17 +485,19 @@ AnimatorScene::addGrid ()
   QRectF simulationRect (m_minPoint, m_maxPoint);
   qreal xStep =  simulationRect.width ()/ (m_nGridLines-1);
   qreal yStep = simulationRect.height ()/ (m_nGridLines-1);
+  xStep = ceil (xStep);
+  yStep = ceil (yStep);
   QPen pen (QColor (100, 100, 155, 125));
 
   // draw horizontal grid
   qreal y;
   qreal x;
-  for (int c = 0; c <= m_nGridLines; ++c, y += yStep)
+  for (int c = 0; c < m_nGridLines; ++c, y += yStep)
     {
       m_gridLines.push_back (addLine (0, y, simulationRect.right () + xStep, y, pen));
     }
   // now draw vertical grid
-  for (int c = 0; c <= m_nGridLines; ++c, x += xStep)
+  for (int c = 0; c < m_nGridLines; ++c, x += xStep)
     {
       m_gridLines.push_back (addLine (x, 0, x,  simulationRect.bottom () + yStep, pen));
     }
