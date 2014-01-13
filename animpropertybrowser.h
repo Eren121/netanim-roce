@@ -40,6 +40,7 @@ public:
   void show (bool show);
   void setCurrentNodeId (uint32_t currentNodeId);
   void showNodePositionTable (bool show);
+  void refresh ();
 private:
   typedef QVector <QtProperty *> QtPropertyVector_t;
   AnimPropertyBroswer ();
@@ -69,6 +70,10 @@ private:
   QtPropertyVector_t m_ipv4AddressVectorProperty;
   QtPropertyVector_t m_macAddressVectorProperty;
   QtProperty * m_showNodeTrajectoryProperty;
+
+  QtPropertyVector_t m_nodeCounterDoubleProperty;
+  QtPropertyVector_t m_nodeCounterUint32Property;
+
 
   // Background
   QtProperty * m_backgroundFileEditProperty;

@@ -39,7 +39,9 @@ enum ParsedElementType
   XML_LINKUPDATE,
   XML_NODEUPDATE,
   XML_RESOURCE,
-  XML_BACKGROUNDIMAGE
+  XML_BACKGROUNDIMAGE,
+  XML_CREATE_NODE_COUNTER,
+  XML_NODECOUNTER_UPDATE
 };
 
 struct ParsedElement
@@ -108,6 +110,16 @@ struct ParsedElement
   qreal scaleY;
   qreal opacity;
 
+  // Node Counter
+  typedef enum {
+    UINT32_COUNTER,
+    DOUBLE_COUNTER
+  } NodeCounterType_t;
+  uint32_t nodeCounterId;
+  QString nodeCounterName;
+  NodeCounterType_t nodeCounterType;
+  qreal nodeCounterValue;
+
   // Resource
   QString resourcePath;
   uint32_t resourceId;
@@ -175,6 +187,8 @@ private:
   ParsedElement parseP ();
   ParsedElement parseWp ();
   ParsedElement parseResource ();
+  ParsedElement parseCreateNodeCounter ();
+  ParsedElement parseNodeCounterUpdate ();
   void parseGeneric (ParsedElement &);
 
   void searchForVersion ();

@@ -285,6 +285,27 @@ Animxmlparser::doParse ()
           AnimResourceManager::getInstance ()->add (parsedElement.resourceId, parsedElement.resourcePath);
           break;
         }
+        case XML_CREATE_NODE_COUNTER:
+        {
+            AnimCreateNodeCounterEvent * ev = 0;
+            if (parsedElement.nodeCounterType == ParsedElement::UINT32_COUNTER)
+              ev = new AnimCreateNodeCounterEvent (parsedElement.nodeCounterId, parsedElement.nodeCounterName, AnimCreateNodeCounterEvent::UINT32_COUNTER);
+            if (parsedElement.nodeCounterType == ParsedElement::DOUBLE_COUNTER)
+              ev = new AnimCreateNodeCounterEvent (parsedElement.nodeCounterId, parsedElement.nodeCounterName, AnimCreateNodeCounterEvent::DOUBLE_COUNTER);
+            if (ev)
+              {
+                pAnimatorMode->addAnimEvent (0, ev);
+              }
+            break;
+        }
+        case XML_NODECOUNTER_UPDATE:
+        {
+            AnimNodeCounterUpdateEvent * ev = new AnimNodeCounterUpdateEvent (parsedElement.nodeCounterId,
+                                                                              parsedElement.nodeId,
+                                                                              parsedElement.nodeCounterValue);
+            pAnimatorMode->addAnimEvent (parsedElement.updateTime, ev);
+            break;
+        }
         case XML_NODEUPDATE:
         {
           if (parsedElement.nodeUpdateType == ParsedElement::POSITION)
@@ -417,6 +438,14 @@ Animxmlparser::parseNext ()
       if (m_reader->name () == "bg")
         {
           parsedElement = parseBackground ();
+        }
+      if (m_reader->name () == "ncs")
+        {
+          parsedElement = parseCreateNodeCounter ();
+        }
+      if (m_reader->name () == "nc")
+        {
+          parsedElement = parseNodeCounterUpdate ();
         }
       //qDebug (m_reader->name ().toString ());
     }
@@ -573,6 +602,35 @@ Animxmlparser::parseNodeUpdate ()
       break;
     }
 
+  return parsedElement;
+}
+
+ParsedElement
+Animxmlparser::parseNodeCounterUpdate ()
+{
+  ParsedElement parsedElement;
+  parsedElement.type = XML_NODECOUNTER_UPDATE;
+  parsedElement.nodeCounterId = m_reader->attributes ().value ("c").toString ().toUInt ();
+  parsedElement.nodeId = m_reader->attributes ().value ("i").toString ().toUInt ();
+  parsedElement.updateTime = m_reader->attributes ().value ("t").toString ().toDouble ();
+  parsedElement.nodeCounterValue = m_reader->attributes ().value ("v").toString ().toDouble ();
+  setMaxSimulationTime (parsedElement.updateTime);
+  return parsedElement;
+}
+
+
+ParsedElement
+Animxmlparser::parseCreateNodeCounter ()
+{
+  ParsedElement parsedElement;
+  parsedElement.type = XML_CREATE_NODE_COUNTER;
+  parsedElement.nodeCounterId = m_reader->attributes ().value ("ncId").toString ().toUInt ();
+  parsedElement.nodeCounterName = m_reader->attributes ().value ("n").toString ();
+  QString counterType = m_reader->attributes ().value ("t").toString ();
+  if (counterType == "UINT32")
+    parsedElement.nodeCounterType = ParsedElement::UINT32_COUNTER;
+  if (counterType == "DOUBLE")
+    parsedElement.nodeCounterType = ParsedElement::DOUBLE_COUNTER;
   return parsedElement;
 }
 
