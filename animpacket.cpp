@@ -36,7 +36,8 @@ AnimPacket::AnimPacket (uint32_t fromNodeId,
                         qreal lastBitRx,
                         bool isWPacket,
                         QString metaInfo,
-                        bool showMetaInfo):
+                        bool showMetaInfo,
+                        uint8_t numWirelessSlots):
   m_fromNodeId (fromNodeId),
   m_toNodeId (toNodeId),
   m_firstBitTx (firstBitTx),
@@ -44,7 +45,9 @@ AnimPacket::AnimPacket (uint32_t fromNodeId,
   m_lastBitTx (lastBitTx),
   m_lastBitRx (lastBitRx),
   m_isWPacket (isWPacket),
-  m_infoText (0)
+  m_infoText (0),
+  m_numWirelessSlots (numWirelessSlots),
+  m_currentWirelessSlot (0)
 {
   m_fromPos = AnimNodeMgr::getInstance ()->getNode (fromNodeId)->getCenter ();
   m_toPos = AnimNodeMgr::getInstance ()->getNode (toNodeId)->getCenter ();
@@ -320,6 +323,12 @@ bool
 AnimPacket::getIsWPacket ()
 {
   return m_isWPacket;
+}
+
+bool
+AnimPacket::packetExpired ()
+{
+  return m_currentWirelessSlot >= m_numWirelessSlots;
 }
 
 QGraphicsSimpleTextItem *
@@ -675,6 +684,12 @@ AnimPacket::update (qreal t)
   if (m_isWPacket)
     {
       m_head = QPointF (midPointX, midPointY);
+      QLineF l (m_head, m_toPos);
+      qreal step = l.length ()/m_numWirelessSlots;
+      l.setLength (step * (m_currentWirelessSlot++));
+      m_head = l.p2 ();
+      NS_LOG_DEBUG ("F:" << m_fromNodeId << " T:" << m_toNodeId <<  " Head:" << m_head);
+
     }
   else
     {
@@ -895,9 +910,18 @@ AnimPacketMgr::getInstance ()
 }
 
 AnimPacket *
-AnimPacketMgr::add (uint32_t fromId, uint32_t toId, qreal fbTx, qreal fbRx, qreal lbTx, qreal lbRx, bool isWPacket, QString metaInfo, bool showMetaInfo)
+AnimPacketMgr::add (uint32_t fromId,
+                    uint32_t toId,
+                    qreal fbTx,
+                    qreal fbRx,
+                    qreal lbTx,
+                    qreal lbRx,
+                    bool isWPacket,
+                    QString metaInfo,
+                    bool showMetaInfo,
+                    uint8_t numWirelessSlots)
 {
-  AnimPacket * pkt = new AnimPacket (fromId, toId, fbTx, fbRx, lbTx, lbRx, isWPacket, metaInfo, showMetaInfo);
+  AnimPacket * pkt = new AnimPacket (fromId, toId, fbTx, fbRx, lbTx, lbRx, isWPacket, metaInfo, showMetaInfo, numWirelessSlots);
   return pkt;
 }
 

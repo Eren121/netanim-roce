@@ -114,11 +114,11 @@ private:
   bool m_showPacketMetaInfo;
   QString m_traceFileName;
   bool m_showPackets;
-  QParallelAnimationGroup * m_packetAnimationGroup;
   bool m_fastForwarding;
   qreal m_lastPacketEventTime;
   qreal m_firstPacketEventTime;
   std::map <AnimPacket *, AnimPacket *> m_wiredPacketsToAnimate;
+  std::map <AnimPacket *, AnimPacket *> m_wirelessPacketsToAnimate;
   qreal m_thousandthPacketTime;
   qreal m_pauseAtTime;
   bool m_pauseAtTimeTriggered;
@@ -213,12 +213,14 @@ private:
   void dispatchEvents ();
   void setSimulationCompleted ();
   void purgeWiredPackets ();
+  void purgeWirelessPackets ();
   void purgeAnimatedNodes ();
   void fastForward (qreal t);
   void reset ();
   QPropertyAnimation * getButtonAnimation (QToolButton * toolButton);
   void initPropertyBrowser ();
   void removeWiredPacket (AnimPacket * animPacket);
+  void removeWirelessPacket (AnimPacket * animPacket);
 
 
 private slots:
@@ -229,7 +231,6 @@ private slots:
   void clickZoomOutSlot ();
   void clickResetSlot ();
   void clickPlaySlot ();
-  void clickAddCustomImageSlot ();
   void updateTimelineSlot (int value);
   void updateRateTimeoutSlot ();
   void updateGridLinesSlot (int value);
@@ -246,7 +247,6 @@ private slots:
   void showMacSlot ();
   void showRoutePathSlot ();
   void showBatteryCapacitySlot ();
-  void packetAnimationGroupFinishedSlot ();
   void buttonAnimationGroupFinishedSlot ();
   void showPropertiesSlot ();
   void pauseAtTimeSlot ();

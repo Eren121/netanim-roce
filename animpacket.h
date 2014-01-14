@@ -350,7 +350,8 @@ public:
              qreal lastBitRx,
              bool isWPacket,
              QString metaInfo,
-             bool showMetaInfo);
+             bool showMetaInfo,
+             uint8_t numWirelessSlots);
   ~AnimPacket ();
 
   typedef enum {
@@ -388,6 +389,7 @@ public:
   bool getIsWPacket ();
   static QString getShortMeta (QString metaInfo);
   static QString getShortMeta (QString metaInfo, int filter, bool & result);
+  bool packetExpired ();
 
 
 
@@ -410,6 +412,8 @@ private:
   QRectF m_boundingRect;
   QGraphicsSimpleTextItem * m_infoText;
   qreal m_currentTime;
+  uint8_t m_numWirelessSlots;
+  uint8_t m_currentWirelessSlot;
 
 
   static ArpInfo parseArp (QString metaInfo, bool & result);
@@ -430,7 +434,7 @@ class AnimPacketMgr
 {
 public:
   static AnimPacketMgr * getInstance ();
-  AnimPacket * add (uint32_t fromId, uint32_t toId, qreal fbTx, qreal fbRx, qreal lbTx, qreal lbRx, bool isWPacket, QString metaInfo, bool showMetaInfo);
+  AnimPacket * add (uint32_t fromId, uint32_t toId, qreal fbTx, qreal fbRx, qreal lbTx, qreal lbRx, bool isWPacket, QString metaInfo, bool showMetaInfo, uint8_t numWirelessSlots);
 private:
   AnimPacketMgr ();
 

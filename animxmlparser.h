@@ -141,6 +141,7 @@ struct ParsedElement
 class Animxmlparser
 {
 public:
+  typedef std::map <qreal, int> WirelessUpdateEventTimes_t;
   Animxmlparser (QString traceFileName);
   ~Animxmlparser ();
   ParsedElement parseNext ();
@@ -173,6 +174,8 @@ private:
   qreal m_minNodeY;
   qreal m_maxNodeX;
   qreal m_maxNodeY;
+
+  WirelessUpdateEventTimes_t m_wirelessPacketUpdateEvents;
 
   ParsedElement parseAnim ();
   ParsedElement parseTopology ();

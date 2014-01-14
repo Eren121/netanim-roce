@@ -284,11 +284,18 @@ AnimatorScene::purgeAnimatedLinks ()
 void
 AnimatorScene::showAnimatedPackets (bool show)
 {
-  for (QVector <AnimPacket *>::const_iterator i = m_wirelessAnimatedPackets.begin ();
+  for (std::map <AnimPacket *, AnimPacket *>::const_iterator i = m_wirelessAnimatedPackets.begin ();
       i != m_wirelessAnimatedPackets.end ();
       ++i)
     {
-      AnimPacket * p = *i;
+      AnimPacket * p = i->first;
+      p->setVisible (show);
+    }
+  for (std::map <AnimPacket *, AnimPacket *>::const_iterator i = m_wiredAnimatedPackets.begin ();
+      i != m_wiredAnimatedPackets.end ();
+      ++i)
+    {
+      AnimPacket * p = i->first;
       p->setVisible (show);
     }
 
@@ -304,11 +311,22 @@ AnimatorScene::showAnimatedPackets (bool show)
 void
 AnimatorScene::purgeAnimatedPackets ()
 {
-  for (QVector <AnimPacket *>::const_iterator i = m_wirelessAnimatedPackets.begin ();
+  for (std::map <AnimPacket *, AnimPacket *>::const_iterator i = m_wiredAnimatedPackets.begin ();
+      i != m_wiredAnimatedPackets.end ();
+      ++i)
+    {
+      AnimPacket * p = i->first;
+      p->setVisible (false);
+      removeItem (p->getInfoTextItem ());
+      removeItem (p);
+      delete p;
+    }
+  m_wiredAnimatedPackets.clear ();
+  for (std::map <AnimPacket *, AnimPacket *>::const_iterator i = m_wirelessAnimatedPackets.begin ();
       i != m_wirelessAnimatedPackets.end ();
       ++i)
     {
-      AnimPacket * p = *i;
+      AnimPacket * p = i->first;
       p->setVisible (false);
       removeItem (p->getInfoTextItem ());
       removeItem (p);
@@ -350,23 +368,34 @@ AnimatorScene::addWirelessPacket (AnimPacket *p)
 {
   addItem (p);
   p->getInfoTextItem ()->setPos (p->boundingRect ().bottomLeft ());
-  m_wirelessAnimatedPackets.push_back (p);
+  m_wirelessAnimatedPackets[p] = p;
 }
 
 
 void
 AnimatorScene::removeWiredPacket (AnimPacket *p)
 {
+  m_wiredAnimatedPackets.erase (p);
   p->setVisible (false);
   removeItem (p);
 }
+
+
+void
+AnimatorScene::removeWirelessPacket (AnimPacket *p)
+{
+  m_wirelessAnimatedPackets.erase (p);
+  p->setVisible (false);
+  removeItem (p);
+}
+
 
 void
 AnimatorScene::addWiredPacket (AnimPacket *p)
 {
   addItem (p);
   p->getInfoTextItem ()->setPos (p->boundingRect ().bottomLeft ());
-  m_wiredAnimatedPackets.push_back (p);
+  m_wiredAnimatedPackets[p] = p;
 }
 
 

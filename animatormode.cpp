@@ -47,7 +47,6 @@ AnimatorMode::AnimatorMode ():
   m_simulationCompleted (false),
   m_showPacketMetaInfo (true),
   m_showPackets (true),
-  m_packetAnimationGroup (0),
   m_fastForwarding (false),
   m_lastPacketEventTime (-1),
   m_pauseAtTime (65535),
@@ -509,6 +508,7 @@ AnimatorMode::systemReset ()
   m_state = SYSTEM_RESET_IN_PROGRESS;
   clickResetSlot ();
   purgeWiredPackets ();
+  purgeWirelessPackets ();
   setControlDefaults ();
   AnimatorView::getInstance ()->systemReset ();
   AnimatorScene::getInstance ()->systemReset ();
@@ -637,6 +637,7 @@ AnimatorMode::fastForward (qreal t)
 {
   //AnimatorScene::getInstance ()->invalidate ();
   purgeWiredPackets ();
+  purgeWirelessPackets ();
   while (m_currentTime <t)
     {
       if (m_state == SIMULATION_COMPLETE)
@@ -654,7 +655,6 @@ AnimatorMode::reset ()
   m_updateRateTimer->stop ();
   m_events.rewind ();
   m_events.setCurrentTime (0);
-  //AnimatorScene::getInstance ()->systemReset ();
   m_currentTime = 0;
 }
 
@@ -1074,6 +1074,17 @@ AnimatorMode::removeWiredPacket (AnimPacket *animPacket)
   animPacket = 0;
 }
 
+
+void
+AnimatorMode::removeWirelessPacket (AnimPacket *animPacket)
+{
+  m_wirelessPacketsToAnimate.erase (animPacket);
+  AnimatorScene::getInstance ()->removeWirelessPacket (animPacket);
+  //TODO
+  //delete animPacket;
+  animPacket = 0;
+}
+
 void
 AnimatorMode::purgeWiredPackets ()
 {
@@ -1082,25 +1093,29 @@ AnimatorMode::purgeWiredPackets ()
        ++i)
     {
       AnimPacket * animPacket = i->first;
-      /*AnimEvent * animEvent = i->second;
-      switch (animEvent->m_type)
-        {
-          case AnimEvent::PACKET_LBRX_EVENT:
-          {
-            AnimPacketLbRxEvent * animLbRxEvent = static_cast<AnimPacketLbRxEvent *> (animEvent);
-            animLbRxEvent->m_valid = false;
-            break;
-          }
-        }
-        */
-      //NS_LOG_DEBUG ("Purge P:" << animPacket);
-
       AnimatorScene::getInstance ()->removeWiredPacket (animPacket);
       delete animPacket;
       animPacket = 0;
     }
   m_wiredPacketsToAnimate.clear ();
 }
+
+
+void
+AnimatorMode::purgeWirelessPackets ()
+{
+  for (std::map <AnimPacket *, AnimPacket *>::const_iterator i = m_wirelessPacketsToAnimate.begin ();
+       i != m_wirelessPacketsToAnimate.end ();
+       ++i)
+    {
+      AnimPacket * animPacket = i->first;
+      AnimatorScene::getInstance ()->removeWirelessPacket (animPacket);
+      delete animPacket;
+      animPacket = 0;
+    }
+  m_wirelessPacketsToAnimate.clear ();
+}
+
 
 void
 AnimatorMode::purgeAnimatedNodes ()
@@ -1112,8 +1127,6 @@ void
 AnimatorMode::updateRateTimeoutSlot ()
 {
 
-  //NS_LOG_DEBUG ("updateRateTimeoutSlot");
-  //AnimatorScene::getInstance ()->invalidate ();
   m_updateRateTimer->stop ();
   if (m_currentTime >= m_pauseAtTime)
     {
@@ -1137,54 +1150,19 @@ AnimatorMode::updateRateTimeoutSlot ()
         {
           AnimPropertyBroswer::getInstance ()->refresh ();
         }
-      if (m_packetAnimationGroup)
-        {
-          connect (m_packetAnimationGroup,
-                  SIGNAL (finished ()),
-                  this,
-                  SLOT (packetAnimationGroupFinishedSlot ()));
-          m_packetAnimationGroup->start ();
-          return;
-        }
-      else
-        {
-          m_updateRateTimer->start ();
-        }
+      m_updateRateTimer->start ();
+
     }
 }
 
 void
 AnimatorMode::updateUpdateRateSlot (int value)
 {
-  //if (m_animationGroup)
-  //   m_animationGroup->stop ();
   m_currentUpdateRate = m_updateRates[value];
   if (m_updateRateTimer)
     {
       m_updateRateTimer->setInterval (m_currentUpdateRate * 1000);
     }
-}
-
-void
-AnimatorMode::clickAddCustomImageSlot ()
-{
-  /*     QFileDialog fileDialog;
-       fileDialog.setFileMode (QFileDialog::ExistingFiles);
-       QString traceFileName = "";
-       if (fileDialog.exec ())
-       {
-           traceFileName = fileDialog.selectedFiles ().at (0);
-           //qDebug ((traceFileName));
-           if (traceFileName != "")
-           {
-               QPixmap pixmap (traceFileName);
-               m_background = new QGraphicsPixmapItem (pixmap);
-               AnimatorScene::getInstance ()->addItem (m_background);
-               resetBackground ();
-           }
-       }
-       */
-
 }
 
 
@@ -1257,27 +1235,12 @@ AnimatorMode::clickPlaySlot ()
       m_appResponsiveTimer.restart ();
       m_playButton->setIcon (QIcon (":/resources/animator_pause.svg"));
       m_playButton->setToolTip ("Pause Animation");
-      if (m_packetAnimationGroup)
-        {
-          if (m_packetAnimationGroup->state () == QParallelAnimationGroup::Paused)
-            {
-              m_packetAnimationGroup->resume ();
-            }
-        }
-      else
-        {
-          m_updateRateTimer->start ();
-        }
+      m_updateRateTimer->start ();
 
     }
   else
     {
       m_state = PAUSING;
-      if (m_packetAnimationGroup)
-        {
-          if (m_packetAnimationGroup->state () != QParallelAnimationGroup::Stopped)
-            m_packetAnimationGroup->pause ();
-        }
       m_bottomStatusLabel->setText ("Not Playing");
       m_playButton->setIcon (QIcon (":/resources/animator_play.svg"));
       m_playButton->setToolTip ("Play Animation");
@@ -1291,8 +1254,6 @@ AnimatorMode::dispatchEvents ()
   //NS_LOG_DEBUG ("Dispatch events");
   m_updateRateSlider->setEnabled (false);
   m_simulationTimeSlider->setEnabled (false);
-  //m_zoomInButton->setEnabled (false);
-  //m_zoomOutButton->setEnabled (false);
 
   TimeValue<AnimEvent*>::TimeValueResult_t result;
   TimeValue<AnimEvent*>::TimeValueIteratorPair_t pp = m_events.getNext (result);
@@ -1301,23 +1262,19 @@ AnimatorMode::dispatchEvents ()
     {
       //setCurrentTime (pp.first->first);
       m_currentTime = pp.first->first;
-      if (m_currentTime > 0)
-        {
-          m_simulationTimeSlider->setEnabled (true);
-        }
+      //if (m_currentTime > 0)
+      //  {
+      //    m_simulationTimeSlider->setEnabled (true);
+      //  }
       m_qLcdNumber->display (m_currentTime);
 
 
-      QVector <AnimPacket *> wirelessPacketsToAnimate;
       for (TimeValue<AnimEvent*>::TimeValue_t::const_iterator j = pp.first;
           j != pp.second;
           ++j)
-      //TimeValue<AnimEvent*>::TimeValue_t::const_iterator j = pp.first;
-      //while (j != m_events.End ())
         {
           //NS_LOG_DEBUG ("fbTx:" << j->first);
           AnimEvent * ev = j->second;
-          AnimatorScene::getInstance ()->purgeAnimatedPackets ();
 
           switch (ev->m_type)
             {
@@ -1345,7 +1302,6 @@ AnimatorMode::dispatchEvents ()
               if (animNode)
                 {
                   setNodePos (animNode, addEvent->m_x, addEvent->m_y);
-                  //animNode->setPos (addEvent->m_x, addEvent->m_y);
                 }
               break;
             }
@@ -1402,7 +1358,8 @@ AnimatorMode::dispatchEvents ()
                                         packetEvent->m_lbRx,
                                         packetEvent->m_isWPacket,
                                         packetEvent->m_metaInfo,
-                                        m_showPacketMetaInfo);
+                                        m_showPacketMetaInfo,
+                                        packetEvent->m_numSlots);
               if (!packetEvent->m_isWPacket)
                 {
 
@@ -1418,11 +1375,48 @@ AnimatorMode::dispatchEvents ()
                 }
               else
                 {
-                  wirelessPacketsToAnimate.push_back (animPacket);
+                  AnimatorScene::getInstance ()->addWirelessPacket (animPacket);
+                  animPacket->update (m_currentTime);
+                  animPacket->setVisible (true);
+                  animPacket->setPos (animPacket->getHead ());
+                  m_wirelessPacketsToAnimate[animPacket] = animPacket;
+
                 }
               break;
 
             }
+
+            case AnimEvent::WIRELESS_PACKET_UPDATE_EVENT:
+              {
+                if (m_fastForwarding)
+                  break;
+                QVector <AnimPacket *> packetsToRemove;
+                for (std::map <AnimPacket *, AnimPacket *>::iterator i = m_wirelessPacketsToAnimate.begin ();
+                     i != m_wirelessPacketsToAnimate.end ();
+                     ++i)
+                  {
+                    AnimPacket * animPacket = 0;
+                    animPacket = i->first;
+                    if (animPacket->packetExpired ())
+                      {
+                        packetsToRemove.push_back (animPacket);
+                        continue;
+                      }
+                    animPacket->update (m_currentTime);
+                    animPacket->setPos (animPacket->getHead ());
+                    AnimatorScene::getInstance ()->update ();
+                    //NS_LOG_DEBUG ("Updating");
+                  }
+                for (QVector <AnimPacket *>::const_iterator i = packetsToRemove.begin ();
+                     i != packetsToRemove.end ();
+                     ++i)
+                  {
+                    AnimPacket * animPacket = *i;
+                    removeWirelessPacket (animPacket);
+                  }
+
+                break;
+              }
             case AnimEvent::WIRED_PACKET_UPDATE_EVENT:
             {
               if (m_fastForwarding)
@@ -1521,63 +1515,6 @@ AnimatorMode::dispatchEvents ()
 
             } //switch
         } // for/while loop
-      if (!wirelessPacketsToAnimate.empty ())
-        {
-          //NS_LOG_DEBUG ("Created animation Group");
-          m_packetAnimationGroup  = new QParallelAnimationGroup;
-        }
-      for (QVector <AnimPacket *>::const_iterator i = wirelessPacketsToAnimate.begin ();
-           i != wirelessPacketsToAnimate.end ();
-           ++i)
-        {
-          AnimPacket * animPacket = *i;
-          AnimatorScene::getInstance ()->addWirelessPacket (animPacket);
-          animPacket->update (m_currentTime);
-          animPacket->setVisible (true);
-          animPacket->setPos (animPacket->getHead ());
-
-          if (animPacket->getIsWPacket () && m_showWiressCircles)
-            {
-              uint32_t fromNodeId = animPacket->getFromNodeId ();
-              uint32_t toNodeId = animPacket->getToNodeId ();
-
-              QPointF fromNodePos = AnimNodeMgr::getInstance ()->getNode (fromNodeId)->getCenter ();
-              QPointF toNodePos = AnimNodeMgr::getInstance ()->getNode (toNodeId)->getCenter ();
-              AnimWirelessCircles * pAnimWirelessCircle = new AnimWirelessCircles;
-              AnimatorScene::getInstance ()->addWirelessCircle (pAnimWirelessCircle);
-
-              QPropertyAnimation * wirelessAnimation = new QPropertyAnimation (pAnimWirelessCircle, "rect");
-              qreal duration = m_currentUpdateRate * 1000;
-              wirelessAnimation->setDuration (duration);
-              if (m_fastForwarding)
-                duration = 0;
-              wirelessAnimation->setStartValue (QRectF (fromNodePos, fromNodePos));
-              QLineF l (fromNodePos, toNodePos);
-              qreal length = l.length ();
-              qreal hypotenuse = length;// sqrt ((length * length) *2);
-              QPointF topLeft = QPointF (fromNodePos.x () - hypotenuse, fromNodePos.y () - hypotenuse);
-              QPointF bottomRight = QPointF (fromNodePos.x () + hypotenuse, fromNodePos.y () + hypotenuse);
-              wirelessAnimation->setEndValue (QRectF (topLeft, bottomRight));
-              m_packetAnimationGroup->addAnimation (wirelessAnimation);
-
-            }
-
-
-
-          QPropertyAnimation * propertyAnimation = new QPropertyAnimation (animPacket, "pos");
-          qreal duration = m_currentUpdateRate * 1000/1.1;
-          //qreal duration = 2000;
-          if (m_fastForwarding)
-            {
-              //NS_LOG_DEBUG ("Fast Fwd");
-              duration = 0;
-            }
-          propertyAnimation->setDuration (duration);
-          propertyAnimation->setStartValue (animPacket->getFromPos ());
-          propertyAnimation->setEndValue (animPacket->getToPos ());
-          m_packetAnimationGroup->addAnimation (propertyAnimation);
-
-        }
       m_updateRateSlider->setEnabled (true);
       m_simulationTimeSlider->setEnabled (true);
     } // if result == good
@@ -1590,22 +1527,6 @@ AnimatorMode::dispatchEvents ()
 
 
 
-}
-
-void
-AnimatorMode::packetAnimationGroupFinishedSlot ()
-{
-  //NS_LOG_DEBUG ("animationGroupStateChangedSlot");
-  //if (newState != QAbstractAnimation::Stopped)
-  //    return;
-  m_packetAnimationGroup->deleteLater ();
-  m_packetAnimationGroup = 0;
-  updateRateTimeoutSlot ();
-  //m_updateRateTimer->start ();
-  //m_updateRateSlider->setEnabled (true);
-  //m_simulationTimeSlider->setEnabled (true);
-  //m_zoomInButton->setEnabled (true);
-  //m_zoomOutButton->setEnabled (true);
 }
 
 

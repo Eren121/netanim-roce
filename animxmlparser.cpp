@@ -205,6 +205,7 @@ Animxmlparser::doParse ()
           m_firstPacketTime = qMin (m_firstPacketTime, parsedElement.packetrx_fbTx);
           if (parsedElement.packetrx_fromId == parsedElement.packetrx_toId)
             break;
+          uint8_t numWirelessSlots = 3;
           AnimPacketEvent * ev = new AnimPacketEvent (parsedElement.packetrx_fromId,
               parsedElement.packetrx_toId,
               parsedElement.packetrx_fbTx,
@@ -212,7 +213,8 @@ Animxmlparser::doParse ()
               parsedElement.packetrx_lbTx,
               parsedElement.packetrx_lbRx,
               parsedElement.isWpacket,
-              parsedElement.meta_info);
+              parsedElement.meta_info,
+              numWirelessSlots);
           pAnimatorMode->addAnimEvent (parsedElement.packetrx_fbTx, ev);
           ++parsedElementCount;
           m_lastPacketEventTime = parsedElement.packetrx_fbRx;
@@ -222,13 +224,24 @@ Animxmlparser::doParse ()
           if (!parsedElement.isWpacket)
             {
               qreal fullDuration = parsedElement.packetrx_lbRx - parsedElement.packetrx_fbTx;
-              uint32_t numSlots = 15;
+              uint32_t numSlots = 5;
               qreal step = fullDuration/numSlots;
               for (uint32_t i = 1; i <= numSlots; ++i)
                 {
                   qreal point = parsedElement.packetrx_fbTx + (i * step);
                   //NS_LOG_DEBUG ("Point:" << point);
                   pAnimatorMode->addAnimEvent (point, new AnimWiredPacketUpdateEvent ());
+                }
+            }
+          else
+            {
+              qreal fullDuration = parsedElement.packetrx_fbTx/10;
+              qreal step = fullDuration/numWirelessSlots;
+              for (uint8_t i = 1; i <= numWirelessSlots; ++i)
+                {
+                  qreal point = parsedElement.packetrx_fbTx + (i * step);
+                  if (m_wirelessPacketUpdateEvents.find (point) == m_wirelessPacketUpdateEvents.end ())
+                    pAnimatorMode->addAnimEvent (point, new AnimWirelessPacketUpdateEvent ());
                 }
             }
 

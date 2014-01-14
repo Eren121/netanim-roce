@@ -40,6 +40,7 @@ public:
     ADD_LINK_EVENT,
     UPDATE_LINK_EVENT,
     WIRED_PACKET_UPDATE_EVENT,
+    WIRELESS_PACKET_UPDATE_EVENT,
     UPDATE_NODE_COUNTER_EVENT,
     CREATE_NODE_COUNTER_EVENT
   } AnimEventType_h;
@@ -158,6 +159,15 @@ public:
   }
 };
 
+class AnimWirelessPacketUpdateEvent: public AnimEvent
+{
+public:
+  AnimWirelessPacketUpdateEvent ():
+    AnimEvent (WIRELESS_PACKET_UPDATE_EVENT)
+  {
+  }
+};
+
 
 class AnimNodePositionUpdateEvent: public AnimEvent
 {
@@ -265,7 +275,8 @@ public:
                    qreal lbTx,
                    qreal lbRx,
                    bool isWPacket,
-                  QString metaInfo):
+                   QString metaInfo,
+                   uint8_t numSlots):
     AnimEvent (PACKET_FBTX_EVENT),
     m_fromId (fromId),
     m_toId (toId),
@@ -274,7 +285,8 @@ public:
     m_lbTx (lbTx),
     m_lbRx (lbRx),
     m_isWPacket (isWPacket),
-    m_metaInfo (metaInfo)
+    m_metaInfo (metaInfo),
+    m_numSlots (numSlots)
   {
   }
   uint32_t m_fromId;
@@ -285,6 +297,7 @@ public:
   qreal m_lbRx;
   bool m_isWPacket;
   QString m_metaInfo;
+  uint8_t m_numSlots;
 
 
 };

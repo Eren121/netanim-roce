@@ -79,6 +79,7 @@ public:
   void addWirelessPacket (AnimPacket * p);
   void addWiredPacket (AnimPacket * p);
   void removeWiredPacket (AnimPacket * p);
+  void removeWirelessPacket (AnimPacket * p);
   void addNode (AnimNode * animNode);
   void addLink (AnimLink * animLink);
   void addWirelessCircle (AnimWirelessCircles * w);
@@ -121,8 +122,8 @@ private:
 
   QLabel * m_mousePositionLabel;
   QGraphicsProxyWidget * m_mousePositionProxyWidget;
-  QVector <AnimPacket *> m_wirelessAnimatedPackets;
-  QVector <AnimPacket *> m_wiredAnimatedPackets;
+  std::map <AnimPacket *, AnimPacket *> m_wirelessAnimatedPackets;
+  std::map <AnimPacket *, AnimPacket *> m_wiredAnimatedPackets;
 
   QVector <AnimWirelessCircles *> m_animatedWirelessCircles;
   QVector <AnimLink *> m_animatedLinks;
