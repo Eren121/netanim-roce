@@ -220,7 +220,6 @@ private:
   QPropertyAnimation * getButtonAnimation (QToolButton * toolButton);
   void initPropertyBrowser ();
   void removeWiredPacket (AnimPacket * animPacket);
-  void removeWirelessPacket (AnimPacket * animPacket);
 
 
 private slots:

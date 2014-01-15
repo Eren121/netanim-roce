@@ -1071,16 +1071,6 @@ AnimatorMode::removeWiredPacket (AnimPacket *animPacket)
 
 
 void
-AnimatorMode::removeWirelessPacket (AnimPacket *animPacket)
-{
-  m_wirelessPacketsToAnimate.erase (animPacket);
-  AnimatorScene::getInstance ()->removeWirelessPacket (animPacket);
-  //TODO
-  //delete animPacket;
-  animPacket = 0;
-}
-
-void
 AnimatorMode::purgeWiredPackets ()
 {
   for (std::map <AnimPacket *, AnimPacket *>::const_iterator i = m_wiredPacketsToAnimate.begin ();
@@ -1099,16 +1089,9 @@ AnimatorMode::purgeWiredPackets ()
 void
 AnimatorMode::purgeWirelessPackets ()
 {
-  for (std::map <AnimPacket *, AnimPacket *>::const_iterator i = m_wirelessPacketsToAnimate.begin ();
-       i != m_wirelessPacketsToAnimate.end ();
-       ++i)
-    {
-      AnimPacket * animPacket = i->first;
-      AnimatorScene::getInstance ()->removeWirelessPacket (animPacket);
-      //delete animPacket;
-      animPacket = 0;
-    }
+  AnimatorScene::getInstance ()->purgeWirelessPackets ();
   m_wirelessPacketsToAnimate.clear ();
+  AnimatorScene::getInstance ()->invalidate ();
 }
 
 
@@ -1376,37 +1359,19 @@ AnimatorMode::dispatchEvents ()
                   animPacket->setVisible (true);
                   animPacket->setPos (animPacket->getHead ());
                   m_wirelessPacketsToAnimate[animPacket] = animPacket;
-
+                  if (m_showWiressCircles)
+                    {
+                      qreal radius = animPacket->getRadius ();
+                      QPointF topLeft = QPointF (animPacket->getFromPos ().x () - radius,
+                                                 animPacket->getFromPos ().y () - radius);
+                      QPointF bottomRight = QPointF (animPacket->getFromPos ().x () + radius,
+                                                 animPacket->getFromPos ().y () + radius);
+                      AnimatorScene::getInstance ()->addWirelessCircle (QRectF (topLeft, bottomRight));
+                    }
                 }
               break;
 
             }
-
-            case AnimEvent::WIRELESS_PACKET_UPDATE_EVENT:
-              {
-                ///if (m_fastForwarding)
-                //  break;
-                QVector <AnimPacket *> packetsToRemove;
-                for (std::map <AnimPacket *, AnimPacket *>::iterator i = m_wirelessPacketsToAnimate.begin ();
-                     i != m_wirelessPacketsToAnimate.end ();
-                     ++i)
-                  {
-                    AnimPacket * animPacket = 0;
-                    animPacket = i->first;
-                    if (animPacket->packetExpired ())
-                      {
-                        packetsToRemove.push_back (animPacket);
-                        continue;
-                      }
-                    animPacket->update (m_currentTime);
-                    animPacket->setPos (animPacket->getHead ());
-                    AnimatorScene::getInstance ()->update ();
-                    //NS_LOG_DEBUG ("Updating");
-                  }
-
-
-                break;
-              }
             case AnimEvent::WIRED_PACKET_UPDATE_EVENT:
             {
               if (m_fastForwarding)

@@ -82,8 +82,9 @@ public:
   void removeWirelessPacket (AnimPacket * p);
   void addNode (AnimNode * animNode);
   void addLink (AnimLink * animLink);
-  void addWirelessCircle (AnimWirelessCircles * w);
+  void addWirelessCircle (QRectF r);
   void purgeAnimatedPackets ();
+  void purgeWirelessPackets ();
   void showAnimatedPackets (bool show);
   void purgeAnimatedNodes ();
   void purgeAnimatedLinks ();

@@ -223,8 +223,10 @@ AnimatorScene::setShowNodeTrajectory (AnimNode *animNode)
 }
 
 void
-AnimatorScene::addWirelessCircle (AnimWirelessCircles *w)
+AnimatorScene::addWirelessCircle (QRectF r)
 {
+  AnimWirelessCircles * w = new AnimWirelessCircles ();
+  w->setRect (r);
   addItem (w);
   m_animatedWirelessCircles.push_back (w);
 }
@@ -308,6 +310,33 @@ AnimatorScene::showAnimatedPackets (bool show)
     }
 }
 
+
+void
+AnimatorScene::purgeWirelessPackets ()
+{
+  for (std::map <AnimPacket *, AnimPacket *>::const_iterator i = m_wirelessAnimatedPackets.begin ();
+      i != m_wirelessAnimatedPackets.end ();
+      ++i)
+    {
+      AnimPacket * p = i->first;
+      p->setVisible (false);
+      removeItem (p->getInfoTextItem ());
+      removeItem (p);
+      delete p;
+    }
+  m_wirelessAnimatedPackets.clear ();
+  for (QVector <AnimWirelessCircles *>::const_iterator i = m_animatedWirelessCircles.begin ();
+      i != m_animatedWirelessCircles.end ();
+      ++i)
+    {
+      AnimWirelessCircles * w = *i;
+      w->setVisible (false);
+      removeItem (w);
+      delete w;
+    }
+  m_animatedWirelessCircles.clear ();
+
+}
 void
 AnimatorScene::purgeAnimatedPackets ()
 {

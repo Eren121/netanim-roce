@@ -325,6 +325,13 @@ AnimPacket::getIsWPacket ()
   return m_isWPacket;
 }
 
+qreal
+AnimPacket::getRadius ()
+{
+  QLineF l (m_fromPos, m_toPos);
+  return l.length ();
+}
+
 bool
 AnimPacket::packetExpired ()
 {
@@ -680,11 +687,12 @@ AnimPacket::update (qreal t)
 {
   //NS_LOG_DEBUG ("Updating");
   m_currentTime = t;
-  qreal midPointX = (m_toPos.x () + m_fromPos.x ())/2;
-  qreal midPointY = (m_toPos.y () + m_fromPos.y ())/2;
+  //qreal midPointX = (m_toPos.x () + m_fromPos.x ())/2;
+  //qreal midPointY = (m_toPos.y () + m_fromPos.y ())/2;
   if (m_isWPacket)
     {
-      m_head = QPointF (midPointX, midPointY);
+      //m_head = QPointF (midPointX, midPointY);
+      m_head = m_toPos;
     }
   else
     {
@@ -730,7 +738,7 @@ AnimPacket::paint (QPainter *painter, const QStyleOptionGraphicsItem *option, QW
   painter->save ();
   QPainterPath arrowTailPath;
   arrowTailPath.moveTo (0, 0);
-  qreal mag = 5;
+  qreal mag = getRadius ();
   qreal transformedMag = 2 * (10/viewTransform.m22 ());
 
   if (!m_isWPacket)
@@ -760,7 +768,9 @@ AnimPacket::paint (QPainter *painter, const QStyleOptionGraphicsItem *option, QW
     }
   else
     {
-      arrowTailPath.lineTo (-mag * (10/viewTransform.m22 ()) , 0);
+      //arrowTailPath.lineTo (-mag * (10/viewTransform.m22 ()) , 0);
+      arrowTailPath.lineTo (-mag , 0);
+
     }
   p.setColor (Qt::blue);
   //p.setWidthF (0.75);
@@ -808,7 +818,7 @@ AnimPacket::paint (QPainter *painter, const QStyleOptionGraphicsItem *option, QW
   QPainterPath path;
   path.moveTo (0, 0);
   path.addPath (arrowHeadPath);
-  path.moveTo (0, 0);
+  //path.moveTo (0, 0);
   path.addPath (arrowTailPath);
 
 
@@ -856,7 +866,6 @@ AnimPacket::paint (QPainter *painter, const QStyleOptionGraphicsItem *option, QW
   p1.setBrush (brush2);
   painter->setBrush (brush2);
   painter->setPen (p1);
-  textPath.addText (0, -2/viewTransform.m22 (), f, "Jo");
   painter->setTransform (m_infoText->transform ());
   QRectF textBoundingRect = textTransform.mapRect (textPath.boundingRect ());
 

@@ -40,7 +40,6 @@ public:
     ADD_LINK_EVENT,
     UPDATE_LINK_EVENT,
     WIRED_PACKET_UPDATE_EVENT,
-    WIRELESS_PACKET_UPDATE_EVENT,
     UPDATE_NODE_COUNTER_EVENT,
     CREATE_NODE_COUNTER_EVENT
   } AnimEventType_h;
@@ -155,15 +154,6 @@ class AnimWiredPacketUpdateEvent: public AnimEvent
 public:
   AnimWiredPacketUpdateEvent ():
     AnimEvent (WIRED_PACKET_UPDATE_EVENT)
-  {
-  }
-};
-
-class AnimWirelessPacketUpdateEvent: public AnimEvent
-{
-public:
-  AnimWirelessPacketUpdateEvent ():
-    AnimEvent (WIRELESS_PACKET_UPDATE_EVENT)
   {
   }
 };

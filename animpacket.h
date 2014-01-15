@@ -390,6 +390,7 @@ public:
   static QString getShortMeta (QString metaInfo);
   static QString getShortMeta (QString metaInfo, int filter, bool & result);
   bool packetExpired ();
+  qreal getRadius ();
 
 
 
