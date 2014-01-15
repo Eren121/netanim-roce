@@ -377,7 +377,9 @@ AnimatorMode::initControls ()
   m_simulationTimeSlider = new QSlider (Qt::Horizontal);
   m_simulationTimeSlider->setToolTip ("Set Simulation Time");
   m_simulationTimeSlider->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
-  connect (m_simulationTimeSlider, SIGNAL (valueChanged (int)), this, SLOT (updateTimelineSlot (int)));
+//  connect (m_simulationTimeSlider, SIGNAL (valueChanged (int)), this, SLOT (updateTimelineSlot (int)));
+  connect (m_simulationTimeSlider, SIGNAL(sliderReleased()), this, SLOT (updateTimelineSlot ()));
+
 
 
   m_qLcdNumber = new QLCDNumber;
@@ -662,14 +664,19 @@ void
 AnimatorMode::setCurrentTime (qreal currentTime)
 {
   //NS_LOG_DEBUG ("Setting current time:" << currentTime);
+  //disconnect (m_simulationTimeSlider, SIGNAL (valueChanged (int)), this, SLOT (updateTimelineSlot (int)));
   m_simulationTimeSlider->setValue (currentTime);
+  //connect (m_simulationTimeSlider, SIGNAL (valueChanged (int)), this, SLOT (updateTimelineSlot (int)));
+
   m_qLcdNumber->display (currentTime);
   fflush (stdout);
   reset ();
   fastForward (currentTime);
   if (m_playing)
     m_updateRateTimer->start ();
+  //disconnect (m_simulationTimeSlider, SIGNAL (valueChanged (int)), this, SLOT (updateTimelineSlot (int)));
   m_simulationTimeSlider->setValue (currentTime);
+  //connect (m_simulationTimeSlider, SIGNAL (valueChanged (int)), this, SLOT (updateTimelineSlot (int)));
   m_events.setCurrentTime (currentTime);
   m_currentTime = currentTime;
 
@@ -971,6 +978,20 @@ AnimatorMode::clickResetSlot ()
 void
 AnimatorMode::updateTimelineSlot (int value)
 {
+  //NS_LOG_DEBUG ("Updating Timeline");
+  if (value == m_oldTimelineValue)
+    return;
+  m_oldTimelineValue = value;
+  m_fastForwarding = true;
+  setCurrentTime (value);
+}
+
+
+void
+AnimatorMode::updateTimelineSlot ()
+{
+  int value = m_simulationTimeSlider->value ();
+  //NS_LOG_DEBUG ("Updating Timeline");
   if (value == m_oldTimelineValue)
     return;
   m_oldTimelineValue = value;
@@ -1119,9 +1140,9 @@ AnimatorMode::updateRateTimeoutSlot ()
     {
       dispatchEvents ();
 
-      disconnect (m_simulationTimeSlider, SIGNAL (valueChanged (int)), this, SLOT (updateTimelineSlot (int)));
+      //disconnect (m_simulationTimeSlider, SIGNAL (valueChanged (int)), this, SLOT (updateTimelineSlot (int)));
       m_simulationTimeSlider->setValue (m_currentTime);
-      connect (m_simulationTimeSlider, SIGNAL (valueChanged (int)), this, SLOT (updateTimelineSlot (int)));
+      //connect (m_simulationTimeSlider, SIGNAL (valueChanged (int)), this, SLOT (updateTimelineSlot (int)));
       m_qLcdNumber->display (m_currentTime);
       keepAppResponsive ();
       if (m_showPropertiesButton->isChecked ())

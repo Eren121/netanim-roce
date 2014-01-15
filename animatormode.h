@@ -231,6 +231,7 @@ private slots:
   void clickResetSlot ();
   void clickPlaySlot ();
   void updateTimelineSlot (int value);
+  void updateTimelineSlot ();
   void updateRateTimeoutSlot ();
   void updateGridLinesSlot (int value);
   void updateNodeSizeSlot (QString value);
