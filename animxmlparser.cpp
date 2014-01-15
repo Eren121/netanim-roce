@@ -472,6 +472,10 @@ Animxmlparser::parseAnim ()
     return parsedElement;
   v = v.replace ("netanim-","");
   m_version = v.toDouble ();
+  if (m_version < ANIM_MIN_VERSION)
+    {
+      NS_FATAL_ERROR ("This XML format is not supported. Minimum Version:" << ANIM_MIN_VERSION);
+    }
   parsedElement.version = m_version;
   //qDebug (QString::number (m_version));
   return parsedElement;
