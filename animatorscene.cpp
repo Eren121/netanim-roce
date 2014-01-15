@@ -522,8 +522,8 @@ AnimatorScene::addGrid ()
   QPen pen (QColor (100, 100, 155, 125));
 
   // draw horizontal grid
-  qreal y;
-  qreal x;
+  qreal y = 0;
+  qreal x = 0;
   for (int c = 0; c < m_nGridLines; ++c, y += yStep)
     {
       m_gridLines.push_back (addLine (0, y, simulationRect.right (), y, pen));
