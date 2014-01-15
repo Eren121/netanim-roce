@@ -350,7 +350,7 @@ AnimatorMode::initControls ()
 
   m_batteryCapacityButton = new QToolButton ();
   m_batteryCapacityButton->setCheckable (true);
-  m_batteryCapacityButton->setIcon (QIcon (":/animator_resource/battery_icon_4.png"));
+  m_batteryCapacityButton->setIcon (QIcon (":/resources/battery_icon_4.png"));
   connect (m_batteryCapacityButton, SIGNAL (clicked ()), this, SLOT (showBatteryCapacitySlot ()));
 
   m_playButton = new QToolButton;
@@ -974,6 +974,21 @@ AnimatorMode::clickResetSlot ()
   setCurrentTime (0);
 
 }
+
+void
+ AnimatorMode::showBatteryCapacitySlot()
+ {
+    if(m_batteryCapacityButton->isChecked ())
+      {
+        m_batteryCapacityButton->setToolTip("Don't show remaining capacity");
+      }
+    else
+      {
+        m_batteryCapacityButton->setToolTip("Show remaining capacity");
+      }
+    AnimNodeMgr::getInstance ()->showRemainingBatteryCapacity (m_batteryCapacityButton->isChecked ());
+ }
+
 
 void
 AnimatorMode::updateTimelineSlot (int value)
@@ -1607,19 +1622,6 @@ AnimatorMode::showNodeIdSlot ()
   else
     {
       m_showNodeIdButton->setToolTip ("Show Node Id");
-    }
-}
-
-void
-AnimatorMode::showBatteryCapacitySlot ()
-{
-  if (m_batteryCapacityButton->isChecked ())
-    {
-      m_batteryCapacityButton->setToolTip ("Don't show remaining capacity");
-    }
-  else
-    {
-      m_batteryCapacityButton->setToolTip ("Show remaining capacity");
     }
 }
 

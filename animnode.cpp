@@ -14,10 +14,12 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * Author: John Abraham <john.abraham.in@gmail.com>
+ * Contributions: Eugene Kalishenko <ydginster@gmail.com> (Open Source and Linux Laboratory http://dev.osll.ru/)
  */
 
 #include "animnode.h"
 #include "animresource.h"
+#include "animatorview.h"
 
 NS_LOG_COMPONENT_DEFINE ("AnimNode");
 namespace netanim
@@ -25,13 +27,14 @@ namespace netanim
 
 AnimNodeMgr * pAnimNodeMgr = 0;
 
-AnimNode::AnimNode (uint32_t nodeId, qreal x, qreal y, QString nodeDescription):m_nodeDescription (0),
+AnimNode::AnimNode (uint32_t nodeId, qreal x, qreal y, QString nodeDescription): m_nodeDescription (0),
   m_nodeId (nodeId),
   m_x (x),
   m_y (y),
   m_showNodeId (true),
   m_resourceId (-1),
-  m_showNodeTrajectory (false)
+  m_showNodeTrajectory (false),
+  m_showBatteryCapcity (false)
 {
   //setVisible (false);
   setZValue (ANIMNODE_ZVALUE);
@@ -45,6 +48,7 @@ AnimNode::AnimNode (uint32_t nodeId, qreal x, qreal y, QString nodeDescription):
   m_nodeDescription = new QGraphicsTextItem (nodeDescription);
   m_nodeDescription->setFlag (QGraphicsItem::ItemIgnoresTransformations);
   setFlag (QGraphicsItem::ItemIsSelectable);
+
 }
 
 AnimNode::~AnimNode ()
@@ -62,6 +66,53 @@ AnimNode::showNodeId (bool show)
   m_nodeDescription->setVisible (m_showNodeId);
 }
 
+
+void
+AnimNode::updateBatteryCapacityImage (bool show)
+{
+
+  m_showBatteryCapcity = show;
+  QString batteryCapacityImagePath(":/resources/battery_icon_");
+  bool result = false;
+  CounterType_t counterType;
+  uint32_t counterId = getCounterIdForName ("RemainingEnergy", result, counterType);
+  if (!result)
+    {
+      return;
+    }
+
+  result = false;
+  qreal capacity = getDoubleCounterValue (counterId, result);
+  if (!result)
+    {
+      return;
+    }
+
+  if (capacity > 0.75) batteryCapacityImagePath += "4";
+  else if (capacity > 0.5) batteryCapacityImagePath += "3";
+  else if (capacity > 0.25) batteryCapacityImagePath += "2";
+  else if (capacity >= 0) batteryCapacityImagePath += "1";
+  else batteryCapacityImagePath += "0";
+ // NS_LOG_DEBUG ("Capacity:" << batteryCapacityImagePath.toAscii().data());
+
+  batteryCapacityImagePath += ".png";
+  if(show)
+    {
+      m_batteryPixmap = QPixmap (batteryCapacityImagePath);
+    }
+  if (!show)
+    {
+      m_batteryPixmap = QPixmap ();
+    }
+
+
+  //const QGraphicsScene* scene = AnimatorScene::getInstance();
+  //if(scene)
+  //      m_batteryItem->setScale(m_height / scene->height() / 3.);
+}
+
+
+
 AnimNode::CounterIdName_t
 AnimNode::getUint32CounterNames ()
 {
@@ -75,19 +126,54 @@ AnimNode::getDoubleCounterNames ()
 }
 
 uint32_t
-AnimNode::getUint32CounterValue (uint32_t counterId)
+AnimNode::getUint32CounterValue (uint32_t counterId, bool & result)
 {
+  result = false;
   if (m_counterIdToValuesUint32.find (counterId) == m_counterIdToValuesUint32.end ())
     return -1;
+  result = true;
   return m_counterIdToValuesUint32[counterId];
+}
+
+uint32_t
+AnimNode::getCounterIdForName (QString counterName, bool &result, CounterType_t & counterType)
+{
+  result = false;
+  for (CounterIdName_t::const_iterator i = m_counterIdToNamesDouble.begin ();
+       i != m_counterIdToNamesDouble.end ();
+       ++i)
+    {
+      QString n = i->second;
+      if (n == counterName)
+        {
+          result = true;
+          counterType = DOUBLE_COUNTER;
+          return i->first;
+        }
+    }
+  for (CounterIdName_t::const_iterator i = m_counterIdToNamesUint32.begin ();
+       i != m_counterIdToNamesUint32.end ();
+       ++i)
+    {
+      QString n = i->second;
+      if (n == counterName)
+        {
+          result = true;
+          counterType = UINT32_COUNTER;
+          return i->first;
+        }
+    }
+  return -1;
 }
 
 
 qreal
-AnimNode::getDoubleCounterValue (uint32_t counterId)
+AnimNode::getDoubleCounterValue (uint32_t counterId, bool & result)
 {
+  result = false;
   if (m_counterIdToValuesDouble.find (counterId) == m_counterIdToValuesDouble.end ())
     return -1;
+  result = true;
   return m_counterIdToValuesDouble[counterId];
 }
 
@@ -245,6 +331,19 @@ void AnimNode::setNodeDescription (QString description)
 void AnimNode::paint (QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
   ResizeableItem::paint (painter, option, widget);
+  if (!m_batteryPixmap.isNull ())
+    {
+      updateBatteryCapacityImage (m_showBatteryCapcity);
+      QPointF bottomLeft = sceneBoundingRect ().bottomLeft ();
+      //NS_LOG_DEBUG ("Pix Width:" << m_batteryPixmap->width());
+      bottomLeft = QPointF (-1, 1);
+      painter->save ();
+      painter->setRenderHint (QPainter::SmoothPixmapTransform);
+      painter->scale (0.5, 1);
+      painter->drawPixmap (bottomLeft.x (), bottomLeft.y (), 1, 1, m_batteryPixmap);
+
+      painter->restore ();
+    }
 }
 
 
@@ -377,6 +476,19 @@ AnimNodeMgr::setSize (qreal width, qreal height)
     {
       AnimNode * animNode = i->second;
       animNode->setSize (width, height);
+    }
+}
+
+
+void
+AnimNodeMgr::showRemainingBatteryCapacity (bool show)
+{
+  for (NodeIdAnimNodeMap_t::const_iterator i = m_nodes.begin ();
+      i != m_nodes.end ();
+      ++i)
+    {
+      AnimNode * animNode = i->second;
+      animNode->updateBatteryCapacityImage (show);
     }
 }
 

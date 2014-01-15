@@ -348,7 +348,10 @@ AnimPropertyBroswer::setupNodeProperties ()
         ++i)
      {
        QString counterName = i->second;
-       qreal counterValue = animNode->getDoubleCounterValue (i->first);
+       bool result = false;
+       qreal counterValue = animNode->getDoubleCounterValue (i->first, result);
+       if (!result)
+         continue;
        QtProperty * prop = m_doubleManager->addProperty (counterName);
        m_doubleManager->setValue (prop, counterValue);
        m_nodeBrowser->addProperty (prop);
@@ -360,7 +363,10 @@ AnimPropertyBroswer::setupNodeProperties ()
         ++i)
      {
        QString counterName = i->second;
-       qreal counterValue = animNode->getUint32CounterValue (i->first);
+       bool result = false;
+       qreal counterValue = animNode->getUint32CounterValue (i->first, result);
+       if (!result)
+         continue;
        QtProperty * prop = m_intManager->addProperty (counterName);
        m_intManager->setValue (prop, counterValue);
        m_nodeBrowser->addProperty (prop);
@@ -624,7 +630,10 @@ AnimPropertyBroswer::nodeIdSelectorSlot (QString newIndex)
         ++i)
      {
        QString counterName = i->second;
-       qreal counterValue = animNode->getDoubleCounterValue (i->first);
+       bool result = false;
+       qreal counterValue = animNode->getDoubleCounterValue (i->first, result);
+       if (!result)
+         continue;
        QtProperty * prop = m_doubleManager->addProperty (counterName);
        m_doubleManager->setValue (prop, counterValue);
        m_nodeBrowser->addProperty (prop);
@@ -636,7 +645,10 @@ AnimPropertyBroswer::nodeIdSelectorSlot (QString newIndex)
         ++i)
      {
        QString counterName = i->second;
-       qreal counterValue = animNode->getUint32CounterValue (i->first);
+       bool result = false;
+       qreal counterValue = animNode->getUint32CounterValue (i->first, result);
+       if (!result)
+         continue;
        QtProperty * prop = m_intManager->addProperty (counterName);
        m_intManager->setValue (prop, counterValue);
        m_nodeBrowser->addProperty (prop);

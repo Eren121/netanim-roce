@@ -14,6 +14,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * Author: John Abraham <john.abraham.in@gmail.com>
+ * Contributions: Eugene Kalishenko <ydginster@gmail.com> (Open Source and Linux Laboratory http://dev.osll.ru/)
  */
 #ifndef ANIMNODE_H
 #define ANIMNODE_H
@@ -39,6 +40,10 @@ public:
   typedef std::map <uint32_t, uint32_t> CounterIdValueUint32_t;
   typedef std::map <uint32_t, double> CounterIdValueDouble_t;
 
+  typedef enum {
+    UINT32_COUNTER,
+    DOUBLE_COUNTER
+  } CounterType_t;
 
   AnimNode (uint32_t nodeId, qreal x, qreal y, QString nodeDescription);
   ~AnimNode ();
@@ -74,8 +79,10 @@ public:
   void updateCounter (uint32_t counterId, qreal counterValue);
   CounterIdName_t getUint32CounterNames ();
   CounterIdName_t getDoubleCounterNames ();
-  qreal getDoubleCounterValue (uint32_t counterId);
-  uint32_t getUint32CounterValue (uint32_t counterId);
+  uint32_t getCounterIdForName (QString counterName, bool & result, CounterType_t & counterType);
+  qreal getDoubleCounterValue (uint32_t counterId, bool & result);
+  uint32_t getUint32CounterValue (uint32_t counterId, bool & result);
+  void updateBatteryCapacityImage (bool show);
 
 private:
   QGraphicsTextItem * m_nodeDescription;
@@ -87,6 +94,9 @@ private:
   MacVector_t m_macVector;
   int m_resourceId;
   bool m_showNodeTrajectory;
+  QPixmap m_batteryPixmap; //!< Battery image
+  bool m_showBatteryCapcity;
+
   CounterIdName_t m_counterIdToNamesUint32;
   CounterIdName_t m_counterIdToNamesDouble;
   CounterIdValueUint32_t m_counterIdToValuesUint32;
@@ -115,10 +125,12 @@ public:
   void showNodeId (bool show);
   TimePosVector_t getPositions (uint32_t nodeId);
   void addAPosition (uint32_t nodeId, qreal t, QPointF pos);
+  void showRemainingBatteryCapacity (bool show);
 
   void addNodeCounterUint32 (uint32_t counterId, QString counterName);
   void addNodeCounterDouble (uint32_t counterId, QString counterName);
   void updateNodeCounter (uint32_t nodeId, uint32_t counterId, qreal counterValue);
+
 
 
 private:
