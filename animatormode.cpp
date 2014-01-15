@@ -636,8 +636,6 @@ void
 AnimatorMode::fastForward (qreal t)
 {
   //AnimatorScene::getInstance ()->invalidate ();
-  purgeWiredPackets ();
-  purgeWirelessPackets ();
   while (m_currentTime <t)
     {
       if (m_state == SIMULATION_COMPLETE)
@@ -652,6 +650,8 @@ AnimatorMode::fastForward (qreal t)
 void
 AnimatorMode::reset ()
 {
+  purgeWiredPackets ();
+  purgeWirelessPackets ();
   m_updateRateTimer->stop ();
   m_events.rewind ();
   m_events.setCurrentTime (0);
@@ -1037,7 +1037,6 @@ AnimatorMode::showWirelessCirclesSlot ()
 void
 AnimatorMode::clickZoomInSlot ()
 {
-  AnimatorScene::getInstance ()->purgeAnimatedPackets ();
   AnimatorView::getInstance ()->setCurrentZoomFactor (++m_currentZoomFactor);
 
 }
@@ -1048,10 +1047,6 @@ AnimatorMode::clickZoomOutSlot ()
   if (m_currentZoomFactor == 1)
     return;
   AnimatorView::getInstance ()->setCurrentZoomFactor (--m_currentZoomFactor);
-  AnimatorScene::getInstance ()->purgeAnimatedPackets ();
-  AnimatorScene::getInstance ()->invalidate ();
-  AnimatorView::getInstance ()->invalidateScene ();
-
 }
 
 
@@ -1094,7 +1089,7 @@ AnimatorMode::purgeWiredPackets ()
     {
       AnimPacket * animPacket = i->first;
       AnimatorScene::getInstance ()->removeWiredPacket (animPacket);
-      delete animPacket;
+      //delete animPacket;
       animPacket = 0;
     }
   m_wiredPacketsToAnimate.clear ();
@@ -1110,7 +1105,7 @@ AnimatorMode::purgeWirelessPackets ()
     {
       AnimPacket * animPacket = i->first;
       AnimatorScene::getInstance ()->removeWirelessPacket (animPacket);
-      delete animPacket;
+      //delete animPacket;
       animPacket = 0;
     }
   m_wirelessPacketsToAnimate.clear ();
@@ -1258,6 +1253,7 @@ AnimatorMode::dispatchEvents ()
   TimeValue<AnimEvent*>::TimeValueResult_t result;
   TimeValue<AnimEvent*>::TimeValueIteratorPair_t pp = m_events.getNext (result);
   //NS_LOG_DEBUG ("Now:" << pp.first->first);
+  purgeWirelessPackets ();
   if (result == m_events.GOOD)
     {
       //setCurrentTime (pp.first->first);
@@ -1388,8 +1384,8 @@ AnimatorMode::dispatchEvents ()
 
             case AnimEvent::WIRELESS_PACKET_UPDATE_EVENT:
               {
-                if (m_fastForwarding)
-                  break;
+                ///if (m_fastForwarding)
+                //  break;
                 QVector <AnimPacket *> packetsToRemove;
                 for (std::map <AnimPacket *, AnimPacket *>::iterator i = m_wirelessPacketsToAnimate.begin ();
                      i != m_wirelessPacketsToAnimate.end ();
@@ -1407,13 +1403,7 @@ AnimatorMode::dispatchEvents ()
                     AnimatorScene::getInstance ()->update ();
                     //NS_LOG_DEBUG ("Updating");
                   }
-                for (QVector <AnimPacket *>::const_iterator i = packetsToRemove.begin ();
-                     i != packetsToRemove.end ();
-                     ++i)
-                  {
-                    AnimPacket * animPacket = *i;
-                    removeWirelessPacket (animPacket);
-                  }
+
 
                 break;
               }

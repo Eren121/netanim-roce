@@ -384,8 +384,8 @@ AnimatorScene::removeWiredPacket (AnimPacket *p)
 void
 AnimatorScene::removeWirelessPacket (AnimPacket *p)
 {
-  m_wirelessAnimatedPackets.erase (p);
   p->setVisible (false);
+  m_wirelessAnimatedPackets.erase (p);
   removeItem (p);
 }
 

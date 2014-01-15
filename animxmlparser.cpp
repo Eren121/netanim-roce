@@ -233,17 +233,6 @@ Animxmlparser::doParse ()
                   pAnimatorMode->addAnimEvent (point, new AnimWiredPacketUpdateEvent ());
                 }
             }
-          else
-            {
-              qreal fullDuration = parsedElement.packetrx_fbTx/10;
-              qreal step = fullDuration/numWirelessSlots;
-              for (uint8_t i = 1; i <= numWirelessSlots; ++i)
-                {
-                  qreal point = parsedElement.packetrx_fbTx + (i * step);
-                  if (m_wirelessPacketUpdateEvents.find (point) == m_wirelessPacketUpdateEvents.end ())
-                    pAnimatorMode->addAnimEvent (point, new AnimWirelessPacketUpdateEvent ());
-                }
-            }
 
           //NS_LOG_DEBUG ("Packet Last Time:" << m_lastPacketEventTime);
           break;

@@ -678,20 +678,13 @@ AnimPacket::update (qreal t)
 void
 AnimPacket::update (qreal t)
 {
-  NS_LOG_DEBUG ("Updating");
+  //NS_LOG_DEBUG ("Updating");
   m_currentTime = t;
   qreal midPointX = (m_toPos.x () + m_fromPos.x ())/2;
   qreal midPointY = (m_toPos.y () + m_fromPos.y ())/2;
   if (m_isWPacket)
     {
       m_head = QPointF (midPointX, midPointY);
-      QLineF l (m_head, m_toPos);
-      qreal step = l.length ()/m_numWirelessSlots;
-      l.setLength (step * (m_currentWirelessSlot++));
-      m_head = l.p2 ();
-      if (m_toNodeId == 15)
-      NS_LOG_DEBUG ("t:" << t << " F:" << m_fromNodeId << " T:" << m_toNodeId <<  " Head:" << m_head);
-
     }
   else
     {
