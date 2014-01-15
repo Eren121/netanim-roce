@@ -230,6 +230,7 @@ private slots:
   void clickZoomOutSlot ();
   void clickResetSlot ();
   void clickPlaySlot ();
+  void simulationSliderPressedSlot ();
   void updateTimelineSlot (int value);
   void updateTimelineSlot ();
   void updateRateTimeoutSlot ();

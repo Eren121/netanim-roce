@@ -379,6 +379,9 @@ AnimatorMode::initControls ()
   m_simulationTimeSlider->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
 //  connect (m_simulationTimeSlider, SIGNAL (valueChanged (int)), this, SLOT (updateTimelineSlot (int)));
   connect (m_simulationTimeSlider, SIGNAL(sliderReleased()), this, SLOT (updateTimelineSlot ()));
+  connect (m_simulationTimeSlider, SIGNAL(sliderPressed()), this, SLOT (simulationSliderPressedSlot ()));
+  m_simulationTimeSlider->setMinimumWidth (SIMULATION_TIME_SLIDER_WIDTH);
+  m_simulationTimeSlider->setTickPosition (QSlider::TicksBothSides);
 
 
 
@@ -719,6 +722,7 @@ AnimatorMode::setMaxSimulationTime (double maxTime)
 {
   m_parsedMaxSimulationTime = maxTime;
   m_simulationTimeSlider->setRange (0, m_parsedMaxSimulationTime);
+  m_simulationTimeSlider->setTickInterval (1);
 }
 
 void
@@ -1001,12 +1005,20 @@ AnimatorMode::updateTimelineSlot (int value)
   setCurrentTime (value);
 }
 
+void
+AnimatorMode::simulationSliderPressedSlot ()
+{
+  externalPauseEvent ();
+}
+
 
 void
 AnimatorMode::updateTimelineSlot ()
 {
+  purgeWiredPackets ();
+  purgeWirelessPackets ();
   int value = m_simulationTimeSlider->value ();
-  //NS_LOG_DEBUG ("Updating Timeline");
+  //NS_LOG_DEBUG ("Updating Timeline:" << value);
   if (value == m_oldTimelineValue)
     return;
   m_oldTimelineValue = value;
