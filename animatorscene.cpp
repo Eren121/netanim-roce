@@ -90,7 +90,10 @@ AnimatorScene::setSimulationBoundaries (QPointF minPoint, QPointF maxPoint)
   qreal boundaryWidth = m_maxPoint.x () * 0.1;
   m_sceneMinPoint = QPointF (m_minPoint.x () - boundaryWidth, m_minPoint.y () - boundaryWidth);
   m_sceneMaxPoint = QPointF (m_maxPoint.x () + boundaryWidth, m_maxPoint.y () + boundaryWidth);
-
+  qreal minimum = qMin (m_sceneMinPoint.x (), m_sceneMinPoint.y ());
+  m_sceneMinPoint = QPointF (minimum, minimum);
+  qreal maximum = qMax (m_sceneMaxPoint.x (), m_sceneMaxPoint.y ());
+  m_sceneMaxPoint = QPointF (maximum, maximum);
   setSceneRect (QRectF (m_sceneMinPoint, m_sceneMaxPoint));
 }
 
@@ -543,9 +546,10 @@ void
 AnimatorScene::addGrid ()
 {
   m_showGrid = true;
-  QRectF simulationRect (m_minPoint, m_maxPoint);
-  qreal xStep = (simulationRect.right ())/ (m_nGridLines-1);
-  qreal yStep = (simulationRect.bottom ())/ (m_nGridLines-1);
+  qreal maximum = qMax (m_maxPoint.x (), m_maxPoint.y ());
+  QRectF gridRect (QPointF (0, 0), QPointF (maximum, maximum));
+  qreal xStep = (gridRect.right ())/ (m_nGridLines-1);
+  qreal yStep = (gridRect.bottom ())/ (m_nGridLines-1);
   //xStep = ceil (xStep);
   //yStep = ceil (yStep);
   QPen pen (QColor (100, 100, 155, 125));
@@ -555,12 +559,12 @@ AnimatorScene::addGrid ()
   qreal x = 0;
   for (int c = 0; c < m_nGridLines; ++c, y += yStep)
     {
-      m_gridLines.push_back (addLine (0, y, simulationRect.right (), y, pen));
+      m_gridLines.push_back (addLine (0, y, gridRect.right (), y, pen));
     }
   // now draw vertical grid
   for (int c = 0; c < m_nGridLines; ++c, x += xStep)
     {
-      m_gridLines.push_back (addLine (x, 0, x,  simulationRect.bottom (), pen));
+      m_gridLines.push_back (addLine (x, 0, x,  gridRect.bottom (), pen));
     }
   initGridCoordinates ();
   markGridCoordinates ();
