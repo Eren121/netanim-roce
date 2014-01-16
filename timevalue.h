@@ -59,7 +59,7 @@ public:
   T get (qreal tUpperBound, TimeValueResult_t & result);
   TimeValueIteratorPair_t getRange (qreal lowerBound, qreal upperBound);
   TimeValueIteratorPair_t getNext (TimeValueResult_t & result);
-  std::ostringstream toString ();
+  std::string toString ();
   void setLookBack (qreal lookBack);
   bool isEnd ();
   uint32_t getCount ();
@@ -317,7 +317,7 @@ TimeValue<T>::setCurrentTime (qreal t)
 }
 
 template <class T>
-std::ostringstream
+std::string
 TimeValue<T>::toString ()
 {
   std::ostringstream os;
@@ -330,11 +330,11 @@ TimeValue<T>::toString ()
           j != pp.second;
           ++j)
         {
-          os << j->second;
+          os << j->first;
         }
       i = m_timeValues.upper_bound (i->first);
     }
-  return os;
+  return os.str();
 }
 
 template <class T>

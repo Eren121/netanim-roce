@@ -667,19 +667,16 @@ void
 AnimatorMode::setCurrentTime (qreal currentTime)
 {
   //NS_LOG_DEBUG ("Setting current time:" << currentTime);
-  //disconnect (m_simulationTimeSlider, SIGNAL (valueChanged (int)), this, SLOT (updateTimelineSlot (int)));
   m_simulationTimeSlider->setValue (currentTime);
-  //connect (m_simulationTimeSlider, SIGNAL (valueChanged (int)), this, SLOT (updateTimelineSlot (int)));
 
   m_qLcdNumber->display (currentTime);
   fflush (stdout);
   reset ();
+  //NS_LOG_DEBUG ("Events:" << m_events.toString());
   fastForward (currentTime);
   if (m_playing)
     m_updateRateTimer->start ();
-  //disconnect (m_simulationTimeSlider, SIGNAL (valueChanged (int)), this, SLOT (updateTimelineSlot (int)));
   m_simulationTimeSlider->setValue (currentTime);
-  //connect (m_simulationTimeSlider, SIGNAL (valueChanged (int)), this, SLOT (updateTimelineSlot (int)));
   m_events.setCurrentTime (currentTime);
   m_currentTime = currentTime;
 
@@ -1497,7 +1494,7 @@ AnimatorMode::dispatchEvents ()
 
               AnimLinkAddEvent * ev = static_cast<AnimLinkAddEvent *> (j->second);
               AnimLink * animLink = 0;
-              animLink = LinkManager::getInstance ()->getAnimLink (ev->m_fromNodeId, ev->m_toNodeId);
+              animLink = LinkManager::getInstance ()->getAnimLink (ev->m_fromNodeId, ev->m_toNodeId, ev->m_p2p);
               if (!animLink)
                 {
                   animLink = LinkManager::getInstance ()->addLink (ev->m_fromNodeId, ev->m_toNodeId,
@@ -1506,6 +1503,7 @@ AnimatorMode::dispatchEvents ()
                                     ev->m_p2p);
                   AnimatorScene::getInstance ()->addLink (animLink);
                 }
+              break;
 
             }
             case AnimEvent::UPDATE_LINK_EVENT:

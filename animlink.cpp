@@ -86,6 +86,11 @@ AnimLink::~AnimLink ()
 
 }
 
+bool
+AnimLink::isP2p ()
+{
+  return m_p2p;
+}
 
 void
 AnimLink::repairLink ()
@@ -298,7 +303,7 @@ LinkManager::getLinks ()
 }
 
 AnimLink *
-LinkManager::getAnimLink (uint32_t fromId, uint32_t toId)
+LinkManager::getAnimLink (uint32_t fromId, uint32_t toId, bool p2p)
 {
   AnimLink * theLink = 0;
   for (LinkManager::NodeIdAnimLinkVectorMap_t::const_iterator i = m_pointToPointLinks.begin ();
@@ -315,6 +320,11 @@ LinkManager::getAnimLink (uint32_t fromId, uint32_t toId)
           ++j)
         {
           AnimLink * link = *j;
+          if (!p2p)
+            {
+              if (!link->isP2p ())
+                return link;
+            }
           if ( (link->m_fromId == fromId && link->m_toId == toId) ||
               (link->m_fromId == toId && link->m_toId == fromId))
             return link;

@@ -45,6 +45,7 @@ public:
   QString getInterfaceADescription ();
   QString getInterfaceBDescription ();
   void repairLink ();
+  bool isP2p ();
 
 protected:
   void paint (QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
@@ -70,7 +71,7 @@ public:
 
 
   NodeIdAnimLinkVectorMap_t * getLinks ();
-  AnimLink * getAnimLink (uint32_t fromId, uint32_t toId);
+  AnimLink * getAnimLink (uint32_t fromId, uint32_t toId, bool p2p = true);
   void updateLink (uint32_t fromId, uint32_t toId, QString linkDescription);
   void repairLinks (uint32_t nodeId);
   void systemReset ();
