@@ -224,7 +224,7 @@ Animxmlparser::doParse ()
           if (!parsedElement.isWpacket)
             {
               qreal fullDuration = parsedElement.packetrx_lbRx - parsedElement.packetrx_fbTx;
-              uint32_t numSlots = 5;
+              uint32_t numSlots = WIRED_PACKET_SLOTS;
               qreal step = fullDuration/numSlots;
               for (uint32_t i = 1; i <= numSlots; ++i)
                 {
@@ -474,6 +474,7 @@ Animxmlparser::parseAnim ()
   m_version = v.toDouble ();
   if (m_version < ANIM_MIN_VERSION)
     {
+      AnimatorMode::getInstance ()->showPopup ("This XML format is not supported. Minimum Version:" + QString::number (ANIM_MIN_VERSION));
       NS_FATAL_ERROR ("This XML format is not supported. Minimum Version:" << ANIM_MIN_VERSION);
     }
   parsedElement.version = m_version;

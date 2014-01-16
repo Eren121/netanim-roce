@@ -1210,6 +1210,11 @@ AnimatorMode::reloadFileSlot ()
 void
 AnimatorMode::clickTraceFileOpenSlot ()
 {
+  if (m_showPropertiesButton->isChecked ())
+    {
+      showPopup ("Please close the properties panel first");
+      return;
+    }
   StatsMode::getInstance ()->systemReset ();
   systemReset ();
   QFileDialog fileDialog;
