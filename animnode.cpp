@@ -476,6 +476,8 @@ AnimNodeMgr::systemReset ()
   m_minY = 0;
   m_maxX = 0;
   m_maxY = 0;
+  m_counterIdToNamesDouble.clear ();
+  m_counterIdToNamesUint32.clear ();
 }
 
 
