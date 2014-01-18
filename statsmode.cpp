@@ -27,6 +27,7 @@
 #include "routingstatsscene.h"
 #include "flowmonstatsscene.h"
 #include "flowmonxmlparser.h"
+#include "countertablesscene.h"
 #include "textbubble.h"
 #include "timevalue.h"
 
@@ -122,6 +123,7 @@ StatsMode::initTopToolbar ()
   m_statTypeComboBox->addItem ("IP-MAC");
   m_statTypeComboBox->addItem ("Routing");
   m_statTypeComboBox->addItem ("Flow-monitor");
+  m_statTypeComboBox->addItem ("Counter Tables");
   m_topToolbar->addWidget (m_statTypeComboBox);
   m_fileOpenButton = new QToolButton;
   m_fileOpenButton->setEnabled (false);
@@ -453,6 +455,7 @@ StatsMode::enableFlowMonControls (bool enable)
   if (m_flowMonFileButton)
     {
       m_flowMonFileButton->setEnabled (enable);
+      m_flowMonFileButton->setVisible (enable);
     }
 }
 
@@ -468,14 +471,17 @@ StatsMode::enableRoutingStatsControls (bool enable)
   if (m_fileOpenButton)
     {
       m_fileOpenButton->setEnabled (enable);
+      m_fileOpenButton->setVisible (enable);
     }
   if (m_simulationTimeSlider)
     {
       m_simulationTimeSlider->setEnabled (enable);
+      m_simulationTimeSlider->setVisible (enable);
     }
   if (m_qLcdNumber)
     {
       m_qLcdNumber->setEnabled (enable);
+      m_qLcdNumber->setVisible (enable);
     }
 }
 
@@ -483,25 +489,24 @@ StatsMode::enableRoutingStatsControls (bool enable)
 void
 StatsMode::enableControlsForState ()
 {
+  enableRoutingStatsControls (false);
+  enableFlowMonControls (false);
+  enableIpMacControls (false);
+
   if (m_statType == Routing)
     {
       enableRoutingStatsControls (true);
-      enableFlowMonControls (false);
-      enableIpMacControls (false);
     }
   else if (m_statType == IPMAC)
     {
-      enableRoutingStatsControls (false);
-      enableFlowMonControls (false);
       enableIpMacControls (true);
 
     }
   else if (m_statType == FlowMon)
     {
-      enableRoutingStatsControls (false);
       enableFlowMonControls (true);
-      enableIpMacControls (false);
     }
+  //m_hLayout->update ();
 
 }
 
@@ -524,6 +529,10 @@ StatsMode::statTypeChangedSlot (int index)
   else if (m_statType == FlowMon)
     {
       StatsView::getInstance ()->setScene (FlowMonStatsScene::getInstance ());
+    }
+  else if (m_statType == CounterTables)
+    {
+      StatsView::getInstance ()->setScene (CounterTablesScene::getInstance ());
     }
   enableControlsForState ();
 }

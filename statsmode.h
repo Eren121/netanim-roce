@@ -47,7 +47,8 @@ class StatsMode: public Mode
   {
     IPMAC = 0,
     Routing = 1,
-    FlowMon = 2
+    FlowMon = 2,
+    CounterTables = 3
   } StatType_t;
 public:
   // Getters

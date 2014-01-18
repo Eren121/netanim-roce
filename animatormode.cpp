@@ -1000,6 +1000,7 @@ AnimatorMode::updateTimelineSlot (int value)
   m_oldTimelineValue = value;
   m_fastForwarding = true;
   setCurrentTime (value);
+
 }
 
 void
@@ -1021,6 +1022,10 @@ AnimatorMode::updateTimelineSlot ()
   m_oldTimelineValue = value;
   m_fastForwarding = true;
   setCurrentTime (value);
+  if (m_showPropertiesButton->isChecked ())
+    {
+      AnimPropertyBroswer::getInstance ()->refresh ();
+    }
 }
 
 void

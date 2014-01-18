@@ -341,9 +341,9 @@ AnimPropertyBroswer::setupNodeProperties ()
    m_nodeBrowser->addProperty (m_ipv4AddressGroupProperty);
    m_nodeBrowser->addProperty (m_macAddressGroupProperty);
 
-   AnimNode::CounterIdName_t doubleCounterNames = animNode->getDoubleCounterNames ();
-   AnimNode::CounterIdName_t uint32CounterNames = animNode->getUint32CounterNames ();
-   for (AnimNode::CounterIdName_t::const_iterator i = doubleCounterNames.begin ();
+   AnimNodeMgr::CounterIdName_t doubleCounterNames = AnimNodeMgr::getInstance ()->getDoubleCounterNames ();
+   AnimNodeMgr::CounterIdName_t uint32CounterNames = AnimNodeMgr::getInstance ()->getUint32CounterNames ();
+   for (AnimNodeMgr::CounterIdName_t::const_iterator i = doubleCounterNames.begin ();
         i != doubleCounterNames.end ();
         ++i)
      {
@@ -358,7 +358,7 @@ AnimPropertyBroswer::setupNodeProperties ()
        m_nodeCounterDoubleProperty.push_back (prop);
      }
 
-   for (AnimNode::CounterIdName_t::const_iterator i = uint32CounterNames.begin ();
+   for (AnimNodeMgr::CounterIdName_t::const_iterator i = uint32CounterNames.begin ();
         i != uint32CounterNames.end ();
         ++i)
      {
@@ -623,9 +623,9 @@ AnimPropertyBroswer::nodeIdSelectorSlot (QString newIndex)
        m_nodeBrowser->removeProperty (property);
      }
    m_nodeCounterUint32Property.clear ();
-   AnimNode::CounterIdName_t doubleCounterNames = animNode->getDoubleCounterNames ();
-   AnimNode::CounterIdName_t uint32CounterNames = animNode->getUint32CounterNames ();
-   for (AnimNode::CounterIdName_t::const_iterator i = doubleCounterNames.begin ();
+   AnimNodeMgr::CounterIdName_t doubleCounterNames = AnimNodeMgr::getInstance ()->getDoubleCounterNames ();
+   AnimNodeMgr::CounterIdName_t uint32CounterNames = AnimNodeMgr::getInstance ()->getUint32CounterNames ();
+   for (AnimNodeMgr::CounterIdName_t::const_iterator i = doubleCounterNames.begin ();
         i != doubleCounterNames.end ();
         ++i)
      {
@@ -640,7 +640,7 @@ AnimPropertyBroswer::nodeIdSelectorSlot (QString newIndex)
        m_nodeCounterDoubleProperty.push_back (prop);
      }
 
-   for (AnimNode::CounterIdName_t::const_iterator i = uint32CounterNames.begin ();
+   for (AnimNodeMgr::CounterIdName_t::const_iterator i = uint32CounterNames.begin ();
         i != uint32CounterNames.end ();
         ++i)
      {

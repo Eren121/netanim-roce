@@ -75,7 +75,7 @@ AnimNode::updateBatteryCapacityImage (bool show)
   QString batteryCapacityImagePath(":/resources/battery_icon_");
   bool result = false;
   CounterType_t counterType;
-  uint32_t counterId = getCounterIdForName ("RemainingEnergy", result, counterType);
+  uint32_t counterId = AnimNodeMgr::getInstance ()->getCounterIdForName ("RemainingEnergy", result, counterType);
   if (!result)
     {
       return;
@@ -113,17 +113,6 @@ AnimNode::updateBatteryCapacityImage (bool show)
 
 
 
-AnimNode::CounterIdName_t
-AnimNode::getUint32CounterNames ()
-{
-  return m_counterIdToNamesUint32;
-}
-
-AnimNode::CounterIdName_t
-AnimNode::getDoubleCounterNames ()
-{
-  return m_counterIdToNamesDouble;
-}
 
 uint32_t
 AnimNode::getUint32CounterValue (uint32_t counterId, bool & result)
@@ -135,36 +124,7 @@ AnimNode::getUint32CounterValue (uint32_t counterId, bool & result)
   return m_counterIdToValuesUint32[counterId];
 }
 
-uint32_t
-AnimNode::getCounterIdForName (QString counterName, bool &result, CounterType_t & counterType)
-{
-  result = false;
-  for (CounterIdName_t::const_iterator i = m_counterIdToNamesDouble.begin ();
-       i != m_counterIdToNamesDouble.end ();
-       ++i)
-    {
-      QString n = i->second;
-      if (n == counterName)
-        {
-          result = true;
-          counterType = DOUBLE_COUNTER;
-          return i->first;
-        }
-    }
-  for (CounterIdName_t::const_iterator i = m_counterIdToNamesUint32.begin ();
-       i != m_counterIdToNamesUint32.end ();
-       ++i)
-    {
-      QString n = i->second;
-      if (n == counterName)
-        {
-          result = true;
-          counterType = UINT32_COUNTER;
-          return i->first;
-        }
-    }
-  return -1;
-}
+
 
 
 qreal
@@ -178,30 +138,20 @@ AnimNode::getDoubleCounterValue (uint32_t counterId, bool & result)
 }
 
 void
-AnimNode::updateCounter (uint32_t counterId, qreal counterValue)
+AnimNode::updateCounter (uint32_t counterId, qreal counterValue, CounterType_t counterType)
 {
-  if (m_counterIdToNamesDouble.find (counterId) != m_counterIdToNamesDouble.end ())
+  if (counterType == DOUBLE_COUNTER)
     {
       m_counterIdToValuesDouble[counterId] = counterValue;
     }
 
-  if (m_counterIdToNamesUint32.find (counterId) != m_counterIdToNamesUint32.end ())
+  if (counterType == UINT32_COUNTER)
     {
       m_counterIdToValuesUint32[counterId] = counterValue;
     }
 }
 
-void
-AnimNode::addCounterDouble (uint32_t counterId, QString counterName)
-{
-  m_counterIdToNamesDouble[counterId] = counterName;
-}
 
-void
-AnimNode::addCounterUint32 (uint32_t counterId, QString counterName)
-{
-  m_counterIdToNamesUint32[counterId] = counterName;
-}
 
 int
 AnimNode::getResourceId ()
@@ -579,36 +529,94 @@ AnimNodeMgr::addAPosition (uint32_t nodeId, qreal t, QPointF pos)
 void
 AnimNodeMgr::addNodeCounterUint32 (uint32_t counterId, QString counterName)
 {
-  for (NodeIdAnimNodeMap_t::const_iterator i = m_nodes.begin ();
-      i != m_nodes.end ();
-      ++i)
-    {
-      AnimNode * animNode = i->second;
-      animNode->addCounterUint32 (counterId, counterName);
-    }
-
+  m_counterIdToNamesUint32[counterId] = counterName;
 }
 
 void
 AnimNodeMgr::addNodeCounterDouble (uint32_t counterId, QString counterName)
 {
-  for (NodeIdAnimNodeMap_t::const_iterator i = m_nodes.begin ();
-      i != m_nodes.end ();
-      ++i)
-    {
-      AnimNode * animNode = i->second;
-      animNode->addCounterDouble (counterId, counterName);
-    }
-
+  m_counterIdToNamesDouble[counterId] = counterName;
 }
 
 void
 AnimNodeMgr::updateNodeCounter (uint32_t nodeId, uint32_t counterId, qreal counterValue)
 {
   AnimNode * animNode = getNode (nodeId);
-  animNode->updateCounter (counterId, counterValue);
+  AnimNode::CounterType_t ct;
+  bool counterFound = false;
+  for (CounterIdName_t::const_iterator i = m_counterIdToNamesDouble.begin ();
+       i != m_counterIdToNamesDouble.end ();
+       ++i)
+    {
+      if (counterId == i->first)
+        {
+          ct = AnimNode::DOUBLE_COUNTER;
+          counterFound = true;
+          break;
+        }
+    }
+  if (!counterFound)
+    {
+    for (CounterIdName_t::const_iterator i = m_counterIdToNamesUint32.begin ();
+         i != m_counterIdToNamesUint32.end ();
+         ++i)
+      {
+        if (counterId == i->first)
+          {
+            ct = AnimNode::UINT32_COUNTER;
+            counterFound = true;
+            break;
+          }
+      }
+    }
+  animNode->updateCounter (counterId, counterValue, ct);
 }
 
+
+AnimNodeMgr::CounterIdName_t
+AnimNodeMgr::getUint32CounterNames ()
+{
+  return m_counterIdToNamesUint32;
+}
+
+AnimNodeMgr::CounterIdName_t
+AnimNodeMgr::getDoubleCounterNames ()
+{
+  return m_counterIdToNamesDouble;
+}
+
+
+
+uint32_t
+AnimNodeMgr::getCounterIdForName (QString counterName, bool &result, AnimNode::CounterType_t & counterType)
+{
+  result = false;
+  for (CounterIdName_t::const_iterator i = m_counterIdToNamesDouble.begin ();
+       i != m_counterIdToNamesDouble.end ();
+       ++i)
+    {
+      QString n = i->second;
+      if (n == counterName)
+        {
+          result = true;
+          counterType = AnimNode::DOUBLE_COUNTER;
+          return i->first;
+        }
+    }
+  for (CounterIdName_t::const_iterator i = m_counterIdToNamesUint32.begin ();
+       i != m_counterIdToNamesUint32.end ();
+       ++i)
+    {
+      QString n = i->second;
+      if (n == counterName)
+        {
+          result = true;
+          counterType = AnimNode::UINT32_COUNTER;
+          return i->first;
+        }
+    }
+  return -1;
+}
 
 
 

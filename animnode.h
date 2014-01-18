@@ -36,7 +36,6 @@ class AnimNode: public ResizeableItem
 public:
   typedef QVector <QString> Ipv4Vector_t;
   typedef QVector <QString> MacVector_t;
-  typedef std::map <uint32_t, QString> CounterIdName_t;
   typedef std::map <uint32_t, uint32_t> CounterIdValueUint32_t;
   typedef std::map <uint32_t, double> CounterIdValueDouble_t;
 
@@ -74,12 +73,8 @@ public:
   bool hasIpv4 (QString ip);
   bool hasMac (QString mac);
   void showNodeId (bool show);
-  void addCounterUint32 (uint32_t counterId, QString counterName);
-  void addCounterDouble (uint32_t counterId, QString counterName);
-  void updateCounter (uint32_t counterId, qreal counterValue);
-  CounterIdName_t getUint32CounterNames ();
-  CounterIdName_t getDoubleCounterNames ();
-  uint32_t getCounterIdForName (QString counterName, bool & result, CounterType_t & counterType);
+  void updateCounter (uint32_t counterId, qreal counterValue, CounterType_t counterType);
+
   qreal getDoubleCounterValue (uint32_t counterId, bool & result);
   uint32_t getUint32CounterValue (uint32_t counterId, bool & result);
   void updateBatteryCapacityImage (bool show);
@@ -97,8 +92,7 @@ private:
   QPixmap m_batteryPixmap; //!< Battery image
   bool m_showBatteryCapcity;
 
-  CounterIdName_t m_counterIdToNamesUint32;
-  CounterIdName_t m_counterIdToNamesDouble;
+
   CounterIdValueUint32_t m_counterIdToValuesUint32;
   CounterIdValueDouble_t m_counterIdToValuesDouble;
 
@@ -111,6 +105,7 @@ public:
   typedef std::map <uint32_t, AnimNode *> NodeIdAnimNodeMap_t;
   typedef QVector <TimePosition_t> TimePosVector_t;
   typedef std::map <uint32_t, TimePosVector_t> NodeIdPositionMap_t;
+  typedef std::map <uint32_t, QString> CounterIdName_t;
 
   static AnimNodeMgr * getInstance ();
   AnimNode * getNode (uint32_t nodeId);
@@ -131,7 +126,9 @@ public:
   void addNodeCounterDouble (uint32_t counterId, QString counterName);
   void updateNodeCounter (uint32_t nodeId, uint32_t counterId, qreal counterValue);
 
-
+  CounterIdName_t getUint32CounterNames ();
+  CounterIdName_t getDoubleCounterNames ();
+  uint32_t getCounterIdForName (QString counterName, bool & result, AnimNode::CounterType_t & counterType);
 
 private:
   AnimNodeMgr ();
@@ -141,6 +138,8 @@ private:
   qreal m_maxX;
   qreal m_maxY;
   NodeIdPositionMap_t m_nodePositions;
+  CounterIdName_t m_counterIdToNamesUint32;
+  CounterIdName_t m_counterIdToNamesDouble;
 
 };
 
