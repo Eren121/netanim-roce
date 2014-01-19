@@ -56,7 +56,7 @@ CounterTablesScene::setCurrentCounterName (QString name)
 uint32_t
 CounterTablesScene::getIndexForNode (uint32_t nodeId)
 {
-  uint32_t index = 0;
+  int index = 0;
   for (int i = 0; i < m_allowedNodes.count (); ++i)
     {
       if (i == nodeId)
