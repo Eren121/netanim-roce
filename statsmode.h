@@ -56,6 +56,8 @@ public:
   QWidget * getCentralWidget ();
   QString getTabName ();
   bool isNodeActive (uint32_t nodeId);
+  QVector <uint32_t> stringToNodeVector (QString nodeString);
+  QString nodeVectorToString (QVector<uint32_t> nodeVector);
   qreal getCurrentTime ();
   qreal getCurrentFontSize ();
 
@@ -96,6 +98,10 @@ private:
   QLabel * m_fontSizeLabel;
   QSpinBox * m_fontSizeSpinBox;
   QPushButton * m_flowMonFileButton;
+  QComboBox * m_counterTablesCombobox;
+  QLineEdit * m_allowedNodesEdit;
+  QLabel * m_allowedNodesLabel;
+
 
 
 
@@ -133,8 +139,9 @@ private:
   void enableControlsForState ();
   void enableFlowMonControls (bool enable);
   void enableIpMacControls (bool enable);
+  void enableCounterTables (bool enable);
   void enableRoutingStatsControls (bool enable);
-
+  void setAvailableCounters ();
 
 
 
@@ -150,6 +157,9 @@ private slots:
   void updateTimelineSlot (int value);
   void fontSizeSlot (int value);
   void clickFlowMonTraceFileOpenSlot ();
+  void allowedNodesChangedSlot (QString allowedNodes);
+  void counterIndexChangedSlot (QString counterString);
+
 
 
 

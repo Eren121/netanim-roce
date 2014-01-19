@@ -32,6 +32,10 @@
 #include "timevalue.h"
 
 
+#define STATS_ALLOWED_NODES "0:1:2:3:4:5:6:7:8:9"
+#define STATS_ALLOWED_NODES_WITH 300
+
+
 namespace netanim
 {
 
@@ -161,6 +165,18 @@ StatsMode::initTopToolbar ()
   connect (m_flowMonFileButton,SIGNAL (clicked ()), this, SLOT (clickFlowMonTraceFileOpenSlot ()));
   m_topToolbar->addWidget (m_flowMonFileButton);
 
+  m_counterTablesCombobox = new QComboBox;
+  connect (m_counterTablesCombobox, SIGNAL(currentIndexChanged(QString)), this, SLOT(counterIndexChangedSlot(QString)));
+  m_topToolbar->addWidget (m_counterTablesCombobox);
+
+  m_allowedNodesEdit = new QLineEdit;
+  m_allowedNodesEdit->setMaximumWidth (STATS_ALLOWED_NODES_WITH);
+  connect (m_allowedNodesEdit, SIGNAL(textChanged(QString)), this, SLOT(allowedNodesChangedSlot(QString)));
+  m_allowedNodesLabel = new QLabel ("Nodes");
+  m_topToolbar->addWidget (m_allowedNodesLabel);
+  m_topToolbar->addWidget (m_allowedNodesEdit);
+
+
 }
 
 void
@@ -231,6 +247,12 @@ StatsMode::setFocus (bool focus)
       InterfaceStatsScene::getInstance ()->reloadContent ();
       RoutingStatsScene::getInstance ()->reloadContent ();
       FlowMonStatsScene::getInstance ()->reloadContent ();
+      setAvailableCounters ();
+      if (m_statType == CounterTables)
+        {
+
+          CounterTablesScene::getInstance ()->reloadContent ();
+        }
     }
 }
 
@@ -450,6 +472,18 @@ StatsMode::updateTimelineSlot (int value)
 }
 
 void
+StatsMode::enableCounterTables (bool enable)
+{
+  if (m_counterTablesCombobox)
+    {
+      m_counterTablesCombobox->setEnabled (enable);
+      m_counterTablesCombobox->setVisible (enable);
+      m_allowedNodesEdit->setEnabled (enable);
+    }
+
+}
+
+void
 StatsMode::enableFlowMonControls (bool enable)
 {
   if (m_flowMonFileButton)
@@ -458,6 +492,38 @@ StatsMode::enableFlowMonControls (bool enable)
       m_flowMonFileButton->setVisible (enable);
     }
 }
+
+void
+StatsMode::setAvailableCounters ()
+{
+  m_counterTablesCombobox->clear ();
+  AnimNodeMgr::CounterIdName_t doubleCounterNames = AnimNodeMgr::getInstance ()->getDoubleCounterNames ();
+  for (AnimNodeMgr::CounterIdName_t::const_iterator i = doubleCounterNames.begin ();
+       i != doubleCounterNames.end ();
+       ++i)
+    {
+      m_counterTablesCombobox->addItem (i->second);
+
+    }
+  AnimNodeMgr::CounterIdName_t uint32CounterNames = AnimNodeMgr::getInstance ()->getUint32CounterNames ();
+  for (AnimNodeMgr::CounterIdName_t::const_iterator i = uint32CounterNames.begin ();
+       i != uint32CounterNames.end ();
+       ++i)
+    {
+      m_counterTablesCombobox->addItem (i->second);
+    }
+  CounterTablesScene::getInstance ()->setCurrentCounterName (m_counterTablesCombobox->currentText ());
+  uint32_t nodeCount = AnimNodeMgr::getInstance ()->getCount ();
+  QVector <uint32_t> allowedNodes;
+  for (uint32_t i = 0; i < nodeCount; ++i)
+    {
+      //if (i>10)
+      //  break;
+      allowedNodes.push_back (i);
+    }
+  m_allowedNodesEdit->setText (nodeVectorToString (allowedNodes));
+}
+
 
 void
 StatsMode::enableIpMacControls (bool enable)
@@ -492,6 +558,7 @@ StatsMode::enableControlsForState ()
   enableRoutingStatsControls (false);
   enableFlowMonControls (false);
   enableIpMacControls (false);
+  enableCounterTables (false);
 
   if (m_statType == Routing)
     {
@@ -506,6 +573,10 @@ StatsMode::enableControlsForState ()
     {
       enableFlowMonControls (true);
     }
+  else if (m_statType == CounterTables)
+    {
+      enableCounterTables (true);
+    }
   //m_hLayout->update ();
 
 }
@@ -514,6 +585,8 @@ void
 StatsMode::statTypeChangedSlot (int index)
 {
   m_statType = (StatType_t) index;
+  m_nodeToolbar->setVisible (true);
+
   if (m_fileOpenButton)
     {
       m_fileOpenButton->setEnabled (m_statType == Routing);
@@ -533,6 +606,7 @@ StatsMode::statTypeChangedSlot (int index)
   else if (m_statType == CounterTables)
     {
       StatsView::getInstance ()->setScene (CounterTablesScene::getInstance ());
+      m_nodeToolbar->setVisible (false);
     }
   enableControlsForState ();
 }
@@ -654,12 +728,50 @@ StatsMode::setNodeActive (uint32_t nodeId, bool active)
 
 }
 
+
+QVector <uint32_t>
+StatsMode::stringToNodeVector (QString nodeString)
+{
+  QStringList nodes = nodeString.split (":", QString::SkipEmptyParts);
+  QVector <uint32_t> v;
+  foreach (QString s ,nodes)
+    {
+      v.push_back (s.toUInt ());
+    }
+  return v;
+}
+
+QString
+StatsMode::nodeVectorToString (QVector<uint32_t> nodeVector)
+{
+  QString s;
+  for (int i = 0; i < nodeVector.size (); ++i)
+    {
+      s += QString::number (nodeVector[i]) + ":";
+    }
+  return s;
+}
+
+
 bool
 StatsMode::isNodeActive (uint32_t nodeId)
 {
   return (m_activeNodes.find (nodeId)!=m_activeNodes.end ());
 }
 
+void
+StatsMode::counterIndexChangedSlot (QString counterString)
+{
+  CounterTablesScene::getInstance ()->setCurrentCounterName (counterString);
+}
+
+
+void
+StatsMode::allowedNodesChangedSlot (QString allowedNodes)
+{
+  CounterTablesScene::getInstance ()->setAllowedNodesVector (stringToNodeVector (allowedNodes));
+  CounterTablesScene::getInstance ()->reloadContent ();
+}
 
 NodeButton::NodeButton (uint32_t nodeId): QPushButton (QString::number (nodeId)),m_nodeId (nodeId)
 {
@@ -678,6 +790,8 @@ NodeButton::setNodeActive (bool active)
 {
   StatsMode::getInstance ()->setNodeActive (m_nodeId, active);
 }
+
+
 
 
 } // namespace netanim
