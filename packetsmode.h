@@ -72,7 +72,8 @@ private:
   QCheckBox * m_icmpFilterCb;
   QLineEdit * m_regexFilterEdit;
   QLabel * m_regexFilterLabel;
-
+  QPushButton * m_submitButton;
+  QPushButton * m_showGraphButton;
 
   Table * m_packetsTable;
 
@@ -97,6 +98,8 @@ private slots:
   void showGridLinesSlot ();
   void showPacketTableSlot ();
   void filterClickedSlot ();
+  void submitFilterClickedSlot ();
+  void showGraphClickedSlot ();
 
 
 };

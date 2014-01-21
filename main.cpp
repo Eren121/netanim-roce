@@ -35,6 +35,7 @@ int main (int argc, char *argv[])
   //ns3::LogComponentEnable ("PacketsView", ns3::LOG_LEVEL_ALL);
   ns3::LogComponentEnable ("GraphPacket", ns3::LOG_LEVEL_ALL);
   ns3::LogComponentEnable ("CounterTablesScene", ns3::LOG_LEVEL_ALL);
+  ns3::LogComponentEnable ("PacketsMode", ns3::LOG_LEVEL_ALL);
 
 
   QApplication app (argc, argv);

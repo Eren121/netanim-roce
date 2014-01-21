@@ -38,7 +38,8 @@ PacketsScene::PacketsScene ():
   m_toTime (0),
   m_textBubble (0),
   m_showGrid (false),
-  m_showTable (true),
+  //m_showTable (true),
+  m_showGraph (true),
   m_filter (AnimPacket::ALL),
   m_filterRegex (".*")
 {
@@ -192,7 +193,7 @@ PacketsScene::addPacket (qreal tx, qreal rx, uint32_t fromNodeId, uint32_t toNod
 
   qreal txY = 0;
   qreal rxY = 0;
-  if (drawPacket)
+  if (drawPacket && m_showGraph)
     {
       qreal fromNodeX = m_interNodeSpacing * m_lineIndex[fromNodeId];
       qreal toNodeX = m_interNodeSpacing * m_lineIndex[toNodeId];
@@ -233,7 +234,7 @@ PacketsScene::addPacket (qreal tx, qreal rx, uint32_t fromNodeId, uint32_t toNod
      << shortMeta;
   table->addRow (sl);
 
-  if (m_showGrid & drawPacket)
+  if (m_showGrid && drawPacket && m_showGraph)
     {
       QGraphicsSimpleTextItem * txText = new QGraphicsSimpleTextItem (QString::number (tx));
       txText->setFlag (QGraphicsItem::ItemIgnoresTransformations);
@@ -258,6 +259,12 @@ PacketsScene::addPacket (qreal tx, qreal rx, uint32_t fromNodeId, uint32_t toNod
       m_horizontalRulerLines.push_back (horizontalRxLine);
     }
 
+}
+
+void
+PacketsScene::showGraph (bool show)
+{
+  m_showGraph = show;
 }
 
 void
@@ -329,7 +336,7 @@ PacketsScene::addPackets ()
           if (packetEvent->m_fbTx < m_fromTime)
               continue;
 
-          if (count == maxPackets)
+          if ((count == maxPackets) && m_showGraph)
             AnimatorMode::getInstance ()->showPopup ("Currently only the first " + QString::number (maxPackets) + " packets will be shown. Table will be fully populated");
           addPacket (packetEvent->m_fbTx, packetEvent->m_fbRx, packetEvent->m_fromId, packetEvent->m_toId, packetEvent->m_metaInfo, count < maxPackets );
           AnimatorMode::getInstance ()->keepAppResponsive ();

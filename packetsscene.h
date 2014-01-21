@@ -34,6 +34,7 @@ public:
   void redraw (qreal fromTime, qreal toTime , QVector <uint32_t> allowedNodes, bool showGrid);
   void setFilter (int ft);
   void setRegexFilter (QString reg);
+  void showGraph (bool show);
 
 private:
   PacketsScene ();
@@ -62,7 +63,8 @@ private:
   qreal m_lineLength;
   TextBubble * m_textBubble;
   bool m_showGrid;
-  bool m_showTable;
+  //bool m_showTable;
+  bool m_showGraph;
   int m_filter;
 
   QGraphicsLineItem * m_rulerLine;

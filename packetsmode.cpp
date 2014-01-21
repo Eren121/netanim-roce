@@ -27,13 +27,14 @@
 #define ALLOWED_NODES "0:1:2:3:4:5:6:7:8:9"
 #define REGEX_EDIT_WIDTH 300
 
+NS_LOG_COMPONENT_DEFINE ("PacketsMode");
 namespace netanim {
 PacketsMode * pPacketsMode = 0;
 
 PacketsMode::PacketsMode ():
   m_fromTime (0),
   m_toTime (0),
-  m_showGrid (true)
+  m_showGrid (false)
 {
   m_mainToolBar = new QToolBar;
   m_filterToolBar = new QToolBar;
@@ -88,8 +89,12 @@ PacketsMode::PacketsMode ():
   m_showPacketsTableButton->setChecked (true);
   connect (m_showPacketsTableButton, SIGNAL (clicked ()), this, SLOT (showPacketTableSlot()));
 
+  m_showGraphButton = new QPushButton ("Show Graph");
+  m_showGraphButton->setCheckable (true);
+  m_showGraphButton->setChecked (true);
+
   connect (m_testButton, SIGNAL(clicked()), this, SLOT(testSlot()));
-  m_mainToolBar->addWidget (m_testButton);
+  //m_mainToolBar->addWidget (m_testButton);
   m_mainToolBar->addWidget (m_zoomInButton);
   m_mainToolBar->addWidget (m_zoomOutButton);
   m_mainToolBar->addSeparator ();
@@ -101,6 +106,7 @@ PacketsMode::PacketsMode ():
   m_mainToolBar->addWidget (m_allowedNodesLabel);
   m_mainToolBar->addWidget (m_allowedNodesEdit);
   m_mainToolBar->addWidget (m_showPacketsTableButton);
+  m_mainToolBar->addWidget (m_showGraphButton);
 
   m_wifiFilterCb = new QCheckBox ("Wifi");
   m_pppFilterCb = new QCheckBox ("Ppp");
@@ -126,6 +132,9 @@ PacketsMode::PacketsMode ():
                      << "Meta";
   m_packetsTable->setHeaderList (packetTableHeaders);
 
+  m_submitButton = new QPushButton ("Submit");
+
+
   m_filterToolBar->addWidget (m_tcpFilterCb);
   m_filterToolBar->addWidget (m_udpFilterCb);
   m_filterToolBar->addWidget (m_ipv4FilterCb);
@@ -139,6 +148,7 @@ PacketsMode::PacketsMode ():
   m_filterToolBar->addSeparator ();
   m_filterToolBar->addWidget (m_regexFilterLabel);
   m_filterToolBar->addWidget (m_regexFilterEdit);
+  m_filterToolBar->addWidget (m_submitButton);
 
   m_mainSplitter = new QSplitter;
   m_vLayout = new QVBoxLayout;
@@ -157,9 +167,9 @@ PacketsMode::PacketsMode ():
   setToTime (0.0);
   setFromTime (0.0);
   setAllowedNodes (ALLOWED_NODES);
-  connect (m_fromTimeEdit, SIGNAL(textEdited(QString)), this, SLOT (fromTimeChangedSlot(QString)));
-  connect (m_toTimeEdit, SIGNAL(textEdited(QString)), this, SLOT (toTimeChangedSlot(QString)));
-  connect (m_allowedNodesEdit, SIGNAL(textEdited(QString)), this, SLOT (allowedNodesChangedSlot(QString)));
+  connect (m_fromTimeEdit, SIGNAL(textChanged(QString)), this, SLOT (fromTimeChangedSlot(QString)));
+  connect (m_toTimeEdit, SIGNAL(textChanged(QString)), this, SLOT (toTimeChangedSlot(QString)));
+  connect (m_allowedNodesEdit, SIGNAL(textChanged(QString)), this, SLOT (allowedNodesChangedSlot(QString)));
 
   connect (m_wifiFilterCb, SIGNAL(clicked()), this, SLOT(filterClickedSlot()));
   connect (m_tcpFilterCb, SIGNAL(clicked()), this, SLOT(filterClickedSlot()));
@@ -173,7 +183,8 @@ PacketsMode::PacketsMode ():
   connect (m_olsrFilterCb, SIGNAL(clicked()), this, SLOT(filterClickedSlot()));
   connect (m_arpFilterCb, SIGNAL(clicked()), this, SLOT(filterClickedSlot()));
   connect (m_regexFilterEdit, SIGNAL(textEdited(QString)), this, SLOT(regexFilterSlot(QString)));
-
+  connect (m_submitButton, SIGNAL(clicked()), this, SLOT (submitFilterClickedSlot()));
+  connect (m_showGraphButton, SIGNAL(clicked()), this, SLOT(showGraphClickedSlot()));
 }
 
 QString
@@ -265,7 +276,7 @@ PacketsMode::setFromTime (qreal fromTime)
 {
   m_fromTime = fromTime;
   //m_fromTimeEdit->setText (QString::number (fromTime, 'g', 6));
-  PacketsScene::getInstance ()->redraw(m_fromTime, m_toTime, m_allowedNodes, m_showGrid);
+  //PacketsScene::getInstance ()->redraw(m_fromTime, m_toTime, m_allowedNodes, m_showGrid);
   PacketsView::getInstance ()->horizontalScrollBar ()->setValue (-100);
 
 }
@@ -275,7 +286,7 @@ PacketsMode::setToTime (qreal toTime)
 {
   m_toTime = toTime;
   //m_toTimeEdit->setText (QString::number (toTime, 'g', 6));
-  PacketsScene::getInstance ()->redraw(m_fromTime, m_toTime, m_allowedNodes, m_showGrid);
+  //PacketsScene::getInstance ()->redraw(m_fromTime, m_toTime, m_allowedNodes, m_showGrid);
   PacketsView::getInstance ()->horizontalScrollBar ()->setValue (-100);
 
 }
@@ -348,6 +359,18 @@ PacketsMode::showPacketTableSlot ()
   m_packetsTable->setVisible (m_showPacketsTableButton->isChecked ());
 }
 
+void
+PacketsMode::submitFilterClickedSlot ()
+{
+  PacketsScene::getInstance ()->redraw(m_fromTime, m_toTime, m_allowedNodes, m_showGrid);
+}
+
+void
+PacketsMode::showGraphClickedSlot ()
+{
+  PacketsScene::getInstance ()->showGraph (m_showGraphButton->isChecked ());
+}
+
 
 void
 PacketsMode::filterClickedSlot ()
@@ -365,15 +388,14 @@ PacketsMode::filterClickedSlot ()
   ft |= m_pppFilterCb->isChecked () ? AnimPacket::PPP: AnimPacket::ALL;
   ft |= m_ethernetFilterCb->isChecked () ? AnimPacket::ETHERNET: AnimPacket::ALL;
   PacketsScene::getInstance ()->setFilter (ft);
-  PacketsScene::getInstance ()->redraw(m_fromTime, m_toTime, m_allowedNodes, m_showGrid);
 
 }
 
 void
 PacketsMode::regexFilterSlot (QString reg)
 {
+  //NS_LOG_DEBUG ("Regex");
   PacketsScene::getInstance ()->setRegexFilter (reg);
-  PacketsScene::getInstance ()->redraw(m_fromTime, m_toTime, m_allowedNodes, m_showGrid);
 }
 
 void
