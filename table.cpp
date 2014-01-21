@@ -21,7 +21,7 @@ namespace netanim {
 
 Table::Table ()
 {
-  m_exportTableButton = new QPushButton ("export Table");
+  m_exportTableButton = new QPushButton ("Export Table");
   m_exportTableButton->setMaximumWidth (100);
   m_table = new QTableWidget;
   m_vLayout = new QVBoxLayout;

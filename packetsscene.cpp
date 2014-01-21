@@ -37,7 +37,7 @@ PacketsScene::PacketsScene ():
   m_fromTime (0),
   m_toTime (0),
   m_textBubble (0),
-  m_showGrid (true),
+  m_showGrid (false),
   m_showTable (true),
   m_filter (AnimPacket::ALL),
   m_filterRegex (".*")
@@ -169,7 +169,7 @@ PacketsScene::timeToY (qreal t)
 }
 
 void
-PacketsScene::addPacket (qreal tx, qreal rx, uint32_t fromNodeId, uint32_t toNodeId, QString metaInfo)
+PacketsScene::addPacket (qreal tx, qreal rx, uint32_t fromNodeId, uint32_t toNodeId, QString metaInfo, bool drawPacket)
 {
   QString shortMeta = "";
   if (m_filter != AnimPacket::ALL)
@@ -190,35 +190,40 @@ PacketsScene::addPacket (qreal tx, qreal rx, uint32_t fromNodeId, uint32_t toNod
     return;
   }
 
-  qreal fromNodeX = m_interNodeSpacing * m_lineIndex[fromNodeId];
-  qreal toNodeX = m_interNodeSpacing * m_lineIndex[toNodeId];
-  qreal txY = timeToY (tx);
-  qreal rxY = timeToY (rx);
-  GraphPacket * graphPacket = new GraphPacket (QPointF (fromNodeX, txY), QPointF (toNodeX, rxY));
-  addItem (graphPacket);
-  m_packetLines.push_back (graphPacket);
-  //QString shortMeta = AnimPacket::getShortMeta (metaInfo);
-  QGraphicsSimpleTextItem * info = new QGraphicsSimpleTextItem (shortMeta);
-  addItem (info);
-  m_packetInfoTexts.push_back (info);
-  info->setFlag (QGraphicsItem::ItemIgnoresTransformations);
-  info->setPos (QPointF (fromNodeX, txY));
-  qreal textAngle = graphPacket->line().angle ();
-  if(textAngle < 90)
+  qreal txY = 0;
+  qreal rxY = 0;
+  if (drawPacket)
     {
-      textAngle = 360-textAngle;
-    }
-  else if (textAngle > 270)
-    {
-      textAngle = 360-textAngle;
-    }
-  else
-    {
-      textAngle = 180-textAngle;
-      info->setPos (QPointF (toNodeX, rxY));
+      qreal fromNodeX = m_interNodeSpacing * m_lineIndex[fromNodeId];
+      qreal toNodeX = m_interNodeSpacing * m_lineIndex[toNodeId];
+      txY = timeToY (tx);
+      rxY = timeToY (rx);
 
+      GraphPacket * graphPacket = new GraphPacket (QPointF (fromNodeX, txY), QPointF (toNodeX, rxY));
+      addItem (graphPacket);
+      m_packetLines.push_back (graphPacket);
+      QGraphicsSimpleTextItem * info = new QGraphicsSimpleTextItem (shortMeta);
+      addItem (info);
+      m_packetInfoTexts.push_back (info);
+      info->setFlag (QGraphicsItem::ItemIgnoresTransformations);
+      info->setPos (QPointF (fromNodeX, txY));
+      qreal textAngle = graphPacket->line().angle ();
+      if(textAngle < 90)
+        {
+          textAngle = 360-textAngle;
+        }
+      else if (textAngle > 270)
+        {
+          textAngle = 360-textAngle;
+        }
+      else
+        {
+          textAngle = 180-textAngle;
+          info->setPos (QPointF (toNodeX, rxY));
+
+        }
+      info->rotate (textAngle);
     }
-  info->rotate (textAngle);
 
   Table * table = PacketsMode::getInstance ()->getTable ();
   QStringList sl;
@@ -228,7 +233,7 @@ PacketsScene::addPacket (qreal tx, qreal rx, uint32_t fromNodeId, uint32_t toNod
      << shortMeta;
   table->addRow (sl);
 
-  if (m_showGrid)
+  if (m_showGrid & drawPacket)
     {
       QGraphicsSimpleTextItem * txText = new QGraphicsSimpleTextItem (QString::number (tx));
       txText->setFlag (QGraphicsItem::ItemIgnoresTransformations);
@@ -304,6 +309,8 @@ PacketsScene::addPackets ()
     return;
   Table * table = PacketsMode::getInstance ()->getTable ();
   table->removeAllRows ();
+  uint32_t count = 0;
+  uint32_t maxPackets = 1000;
   TimeValue <AnimEvent*> *events = AnimatorMode::getInstance ()->getEvents ();
   for (TimeValue<AnimEvent *>::TimeValue_t::const_iterator i = events->Begin ();
       i != events->End ();
@@ -322,9 +329,12 @@ PacketsScene::addPackets ()
           if (packetEvent->m_fbTx < m_fromTime)
               continue;
 
-
-          addPacket (packetEvent->m_fbTx, packetEvent->m_fbRx, packetEvent->m_fromId, packetEvent->m_toId, packetEvent->m_metaInfo);
+          if (count == maxPackets)
+            AnimatorMode::getInstance ()->showPopup ("Currently only the first " + QString::number (maxPackets) + " packets will be shown. Table will be fully populated");
+          addPacket (packetEvent->m_fbTx, packetEvent->m_fbRx, packetEvent->m_fromId, packetEvent->m_toId, packetEvent->m_metaInfo, count < maxPackets );
           AnimatorMode::getInstance ()->keepAppResponsive ();
+          ++count;
+
         }
     }
   table->adjust ();

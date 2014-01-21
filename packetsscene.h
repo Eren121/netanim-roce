@@ -42,7 +42,7 @@ private:
   void resetLines ();
   bool isAllowedNode (uint32_t nodeId);
 
-  void addPacket (qreal tx, qreal rx, uint32_t fromNodeId, uint32_t toNodeId, QString metaInfo);
+  void addPacket (qreal tx, qreal rx, uint32_t fromNodeId, uint32_t toNodeId, QString metaInfo, bool drawPacket);
   std::map <uint32_t, QGraphicsLineItem *> m_nodeLines;
   std::map <uint32_t, uint32_t> m_lineIndex;
 

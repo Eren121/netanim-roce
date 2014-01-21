@@ -56,7 +56,7 @@ PacketsMode::PacketsMode ():
   m_showGridLinesButton = new QToolButton;  
   m_showGridLinesButton->setIcon (QIcon (":/resources/animator_grid.svg"));
   m_showGridLinesButton->setCheckable (true);
-  m_showGridLinesButton->setChecked (true);
+  m_showGridLinesButton->setChecked (false);
   connect (m_showGridLinesButton, SIGNAL (clicked ()), this, SLOT (showGridLinesSlot ()));
 
 
