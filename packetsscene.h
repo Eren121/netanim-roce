@@ -69,6 +69,8 @@ private:
 
   QGraphicsLineItem * m_rulerLine;
   QString m_filterRegex;
+  QGraphicsPathItem * m_packetPathItem;
+  QPainterPath m_packetPath;
 
 };
 }

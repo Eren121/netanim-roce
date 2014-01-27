@@ -27,6 +27,7 @@
 #include <QTableWidget>
 #include "filepathmanager.h"
 #include "fileeditfactory.h"
+#include "table.h"
 
 
 namespace netanim {
@@ -53,7 +54,7 @@ private:
   QVBoxLayout * m_vboxLayout;
   QtAbstractPropertyBrowser * m_nodeBrowser;
   QtAbstractPropertyBrowser * m_backgroundBrowser;
-  QTableWidget * m_nodePosTable;
+  Table * m_nodePosTable;
   QComboBox * m_mode;
   QComboBox * m_nodeIdSelector;
 

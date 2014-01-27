@@ -26,6 +26,7 @@
 #define PACKETS_SCENE_LEFT -100
 #define PACKETS_SCENE_TOP -100
 #define RULER_X (PACKETS_SCENE_LEFT * 2/3)
+#define PI 3.14159265
 
 namespace netanim {
 NS_LOG_COMPONENT_DEFINE ("PacketsScene");
@@ -41,7 +42,8 @@ PacketsScene::PacketsScene ():
   //m_showTable (true),
   m_showGraph (true),
   m_filter (AnimPacket::ALL),
-  m_filterRegex (".*")
+  m_filterRegex (".*"),
+  m_packetPathItem (0)
 {
   m_textBubble = new TextBubble ("Info:", "No data available\nDid you load the XML file?");
   m_infoWidget = addWidget (m_textBubble);
@@ -50,6 +52,8 @@ PacketsScene::PacketsScene ():
 
   m_rulerLine = new QGraphicsLineItem;
   addItem (m_rulerLine);
+  m_packetPathItem = new QGraphicsPathItem;
+  addItem (m_packetPathItem);
 }
 PacketsScene *
 PacketsScene::getInstance ()
@@ -89,7 +93,7 @@ PacketsScene::resetLines ()
        ++i)
     {
       QGraphicsLineItem * packetLine = *i;
-      removeItem (packetLine);
+      //removeItem (packetLine);
       delete packetLine;
     }
   m_packetLines.clear ();
@@ -201,7 +205,37 @@ PacketsScene::addPacket (qreal tx, qreal rx, uint32_t fromNodeId, uint32_t toNod
       rxY = timeToY (rx);
 
       GraphPacket * graphPacket = new GraphPacket (QPointF (fromNodeX, txY), QPointF (toNodeX, rxY));
-      addItem (graphPacket);
+      //addItem (graphPacket);
+      m_packetPath.moveTo (graphPacket->line ().p1 ());
+      m_packetPath.lineTo (graphPacket->line ().p2 ());
+      qreal angle = 45;
+      qreal mag = 9;
+      QPointF endPoint (graphPacket->line ().p2 ());
+      if (1)
+        {
+        if (graphPacket->line ().angle () > 270)
+          {
+            m_packetPath.moveTo (endPoint);
+            angle += graphPacket->line ().angle ();
+            //NS_LOG_DEBUG ("Angle:" << graphPacket->line ().angle () << " Final Angle:" << angle);
+            m_packetPath.lineTo (endPoint.x () - mag * cos (angle * PI/180), endPoint.y () - mag * sin (angle * PI/180));
+            m_packetPath.moveTo (endPoint);
+            m_packetPath.lineTo (endPoint.x () - mag * cos (angle * PI/180), endPoint.y () + mag * sin (angle * PI/180));
+
+          }
+        else if (graphPacket->line ().angle () > 180)
+          {
+            m_packetPath.moveTo (endPoint);
+            angle += 180 - graphPacket->line ().angle ();
+            //NS_LOG_DEBUG ("Angle:" << graphPacket->line ().angle () << " Final Angle:" << angle);
+            m_packetPath.lineTo (endPoint.x () + mag * cos (angle * PI/180), endPoint.y () - mag * sin (angle * PI/180));
+            m_packetPath.moveTo (endPoint);
+            m_packetPath.lineTo (endPoint.x () + mag * cos (angle * PI/180), endPoint.y () + mag * sin (angle * PI/180));
+          }
+        }
+
+      m_packetPathItem->setPath (m_packetPath);
+
       m_packetLines.push_back (graphPacket);
       QGraphicsSimpleTextItem * info = new QGraphicsSimpleTextItem (shortMeta);
       addItem (info);
@@ -317,7 +351,15 @@ PacketsScene::addPackets ()
   Table * table = PacketsMode::getInstance ()->getTable ();
   table->removeAllRows ();
   uint32_t count = 0;
-  uint32_t maxPackets = 1000;
+  uint32_t maxPackets = 10000;
+
+  if (m_packetPathItem)
+    {
+      removeItem (m_packetPathItem);
+    }
+  m_packetPathItem = new QGraphicsPathItem;
+  addItem (m_packetPathItem);
+  m_packetPath = QPainterPath ();
   TimeValue <AnimEvent*> *events = AnimatorMode::getInstance ()->getEvents ();
   for (TimeValue<AnimEvent *>::TimeValue_t::const_iterator i = events->Begin ();
       i != events->End ();

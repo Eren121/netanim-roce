@@ -51,7 +51,7 @@ AnimPropertyBroswer::AnimPropertyBroswer ():
   setLayout (m_vboxLayout);
   m_nodeBrowser = new QtTreePropertyBrowser;
   m_backgroundBrowser = new QtTreePropertyBrowser;
-  m_nodePosTable = new QTableWidget;
+  m_nodePosTable = new Table;
   m_mode = new QComboBox;
   m_nodeIdSelector = new QComboBox;
   m_mode->addItem ("Node");
@@ -64,7 +64,7 @@ AnimPropertyBroswer::AnimPropertyBroswer ():
   m_vboxLayout->addWidget (m_backgroundBrowser);
   m_backgroundBrowser->setVisible (false);
   m_nodePosTable->setVisible (false);
-  m_nodePosTable->setColumnCount (3);
+  //m_nodePosTable->setColumnCount (3);
   connect (m_mode, SIGNAL(currentIndexChanged(QString)), this, SLOT(modeChangedSlot(QString)));
 
 }
@@ -503,21 +503,18 @@ void
 AnimPropertyBroswer::showNodePositionTable (bool show)
 {
   m_nodePosTable->setVisible (show);
+  m_nodePosTable->clear ();
   AnimNodeMgr::TimePosVector_t tpv = AnimNodeMgr::getInstance ()->getPositions (m_currentNodeId);
-  int rowCount = 0;
-  m_nodePosTable->setRowCount (tpv.count ());
+  QStringList headerList;
+  headerList << "Time" << "X-Coord" << "Y-Coord";
+  m_nodePosTable->setHeaderList (headerList);
   foreach (TimePosition_t tp, tpv)
     {
-      QStringList headerList;
-      headerList << "Time" << "X-Coord" << "Y-Coord";
-      m_nodePosTable->setHorizontalHeaderLabels (headerList);
-      QTableWidgetItem * timeItem = new QTableWidgetItem (QString::number (tp.t));
-      QTableWidgetItem * posXItem = new QTableWidgetItem (QString::number (tp.p.x ()));
-      QTableWidgetItem * posYItem = new QTableWidgetItem (QString::number (tp.p.y ()));
-      m_nodePosTable->setItem (rowCount, 0, timeItem);
-      m_nodePosTable->setItem (rowCount, 1, posXItem);
-      m_nodePosTable->setItem (rowCount, 2, posYItem);
-      ++rowCount;
+      QStringList rowStringList;
+      rowStringList << QString::number (tp.t)
+                    << QString::number (tp.p.x ())
+                    << QString::number (tp.p.y ());
+      m_nodePosTable->addRow (rowStringList);
     }
 }
 
