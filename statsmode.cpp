@@ -585,7 +585,8 @@ void
 StatsMode::statTypeChangedSlot (int index)
 {
   m_statType = (StatType_t) index;
-  m_nodeToolbar->setVisible (true);
+  if (!m_nodeButtonVector.empty ())
+    m_nodeToolbar->setVisible (true);
 
   if (m_fileOpenButton)
     {
