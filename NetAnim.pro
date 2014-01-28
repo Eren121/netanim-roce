@@ -40,7 +40,8 @@ SOURCES += \
     packetsscene.cpp \
     graphpacket.cpp \
     table.cpp \
-    countertablesscene.cpp
+    countertablesscene.cpp \
+    qcustomplot.cpp
 HEADERS += \
     log.h \
     fatal-error.h \
@@ -138,7 +139,8 @@ HEADERS += \
     packetsscene.h \
     graphpacket.h \
     table.h \
-    countertablesscene.h
+    countertablesscene.h \
+    qcustomplot.h
 
 
 INCLUDEPATH += qtpropertybrowser/src

@@ -101,6 +101,7 @@ private:
   QComboBox * m_counterTablesCombobox;
   QLineEdit * m_allowedNodesEdit;
   QLabel * m_allowedNodesLabel;
+  QPushButton * m_showChartButton;
 
 
 
@@ -116,6 +117,7 @@ private:
   double m_currentTime;
   qreal m_parsedMaxSimulationTime;
   qreal m_currentFontSize;
+  bool m_showChart;
 
 
   StatsMode ();
@@ -159,6 +161,7 @@ private slots:
   void clickFlowMonTraceFileOpenSlot ();
   void allowedNodesChangedSlot (QString allowedNodes);
   void counterIndexChangedSlot (QString counterString);
+  void showChartSlot ();
 
 
 

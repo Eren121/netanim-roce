@@ -21,6 +21,8 @@
 
 #include "common.h"
 #include "table.h"
+#include "qcustomplot.h"
+
 namespace netanim {
 
 class CounterTablesScene : public QGraphicsScene
@@ -31,6 +33,7 @@ public:
   void setCurrentCounterName (QString Name);
   void reloadContent (bool force = false);
   void setAllowedNodesVector (QVector <uint32_t> allowedNodes);
+  void showChart (bool show);
 
 private:
   CounterTablesScene ();
@@ -40,6 +43,10 @@ private:
   QVector <uint32_t> m_allowedNodes;
   bool isAllowedNode (uint32_t);
   uint32_t getIndexForNode (uint32_t nodeId);
+  QCustomPlot * m_plot;
+  QGraphicsProxyWidget * m_plotItem;
+  bool m_showChart;
+
 
 };
 

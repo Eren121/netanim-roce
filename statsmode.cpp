@@ -58,7 +58,8 @@ StatsMode::StatsMode ():
   m_simulationTimeSlider (0),
   m_flowMonFileButton (0),
   m_statType (StatsMode::IPMAC),
-  m_currentFontSize (10)
+  m_currentFontSize (10),
+  m_showChart (true)
 {
   init ();
 }
@@ -123,7 +124,6 @@ StatsMode::initTopToolbar ()
 {
   m_topToolbar = new QToolBar;
   m_statTypeComboBox = new QComboBox;
-  connect (m_statTypeComboBox, SIGNAL (currentIndexChanged (int)), this, SLOT (statTypeChangedSlot (int)));
   m_statTypeComboBox->addItem ("IP-MAC");
   m_statTypeComboBox->addItem ("Routing");
   m_statTypeComboBox->addItem ("Flow-monitor");
@@ -175,7 +175,10 @@ StatsMode::initTopToolbar ()
   m_allowedNodesLabel = new QLabel ("Nodes");
   m_topToolbar->addWidget (m_allowedNodesLabel);
   m_topToolbar->addWidget (m_allowedNodesEdit);
-
+  connect (m_statTypeComboBox, SIGNAL (currentIndexChanged (int)), this, SLOT (statTypeChangedSlot (int)));
+  m_showChartButton = new QPushButton ("Show Chart");
+  connect (m_showChartButton, SIGNAL(clicked()), this, SLOT(showChartSlot()));
+  m_topToolbar->addWidget (m_showChartButton);
 
 }
 
@@ -479,6 +482,7 @@ StatsMode::enableCounterTables (bool enable)
       m_counterTablesCombobox->setEnabled (enable);
       m_counterTablesCombobox->setVisible (enable);
       m_allowedNodesEdit->setEnabled (enable);
+      m_showChartButton->setEnabled (enable);
     }
 
 }
@@ -772,6 +776,17 @@ StatsMode::allowedNodesChangedSlot (QString allowedNodes)
 {
   CounterTablesScene::getInstance ()->setAllowedNodesVector (stringToNodeVector (allowedNodes));
   CounterTablesScene::getInstance ()->reloadContent ();
+}
+
+void
+StatsMode::showChartSlot ()
+{
+  m_showChart = !m_showChart;
+  CounterTablesScene::getInstance ()->showChart (m_showChart);
+  if (m_showChart)
+    m_showChartButton->setText ("Show Table");
+  else
+    m_showChartButton->setText ("Show Chart");
 }
 
 NodeButton::NodeButton (uint32_t nodeId): QPushButton (QString::number (nodeId)),m_nodeId (nodeId)
