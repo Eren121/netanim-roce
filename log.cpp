@@ -380,7 +380,7 @@ LogComponentPrintList (void)
        i != components->end ();
        i++)
     {
-      std::cout << i->first << "=";
+      std::cout << i->first.c_str () << "=";
       if (i->second->IsNoneEnabled ())
         {
           std::cout << "0" << std::endl;

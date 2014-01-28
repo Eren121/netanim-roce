@@ -65,7 +65,7 @@ CounterTablesScene::getIndexForNode (uint32_t nodeId)
   int index = 0;
   for (int i = 0; i < m_allowedNodes.count (); ++i)
     {
-      if (i == nodeId)
+      if (i == static_cast <int> (nodeId))
         return index;
       ++index;
     }
