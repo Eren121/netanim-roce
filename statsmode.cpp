@@ -176,7 +176,7 @@ StatsMode::initTopToolbar ()
   m_topToolbar->addWidget (m_allowedNodesLabel);
   m_topToolbar->addWidget (m_allowedNodesEdit);
   connect (m_statTypeComboBox, SIGNAL (currentIndexChanged (int)), this, SLOT (statTypeChangedSlot (int)));
-  m_showChartButton = new QPushButton ("Show Chart");
+  m_showChartButton = new QPushButton ("Show Table");
   connect (m_showChartButton, SIGNAL(clicked()), this, SLOT(showChartSlot()));
   m_topToolbar->addWidget (m_showChartButton);
 
