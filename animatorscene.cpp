@@ -399,7 +399,7 @@ void
 AnimatorScene::addWirelessPacket (AnimPacket *p)
 {
   addItem (p);
-  p->getInfoTextItem ()->setPos (p->boundingRect ().bottomLeft ());
+  //p->getInfoTextItem ()->setPos (p->boundingRect ().bottomLeft ());
   m_wirelessAnimatedPackets[p] = p;
 }
 
@@ -426,7 +426,7 @@ void
 AnimatorScene::addWiredPacket (AnimPacket *p)
 {
   addItem (p);
-  p->getInfoTextItem ()->setPos (p->boundingRect ().bottomLeft ());
+  //p->getInfoTextItem ()->setPos (p->boundingRect ().bottomLeft ());
   m_wiredAnimatedPackets[p] = p;
 }
 

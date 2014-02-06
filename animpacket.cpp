@@ -734,11 +734,11 @@ AnimPacket::paint (QPainter *painter, const QStyleOptionGraphicsItem *option, QW
   //NS_LOG_DEBUG ("Scene Transform:" << sceneTransform());
   QPen p;
   QTransform viewTransform = AnimatorView::getInstance ()->transform ();
-
   painter->save ();
   QPainterPath arrowTailPath;
   arrowTailPath.moveTo (0, 0);
   qreal mag = getRadius ();
+
   qreal transformedMag = 2 * (10/viewTransform.m22 ());
 
   if (!m_isWPacket)
@@ -762,22 +762,20 @@ AnimPacket::paint (QPainter *painter, const QStyleOptionGraphicsItem *option, QW
       //NS_LOG_DEBUG ("Mag:" << mag << " MagLbTx:" << magLbTx);
       arrowTailPath.lineTo (-mag, 0);
       arrowTailPath.addEllipse( QPointF (-mag, 0), transformedMag/10, transformedMag/10);
-      //arrowTailPath.lineTo (-mag , 0);
-
-
     }
   else
     {
-      //arrowTailPath.lineTo (-mag * (10/viewTransform.m22 ()) , 0);
       arrowTailPath.lineTo (-mag , 0);
 
     }
+  //arrowTailPath.addText (-mag, 0, f, "HOLA");
   p.setColor (Qt::blue);
   //p.setWidthF (0.75);
   painter->setPen (p);
   painter->rotate (360 - m_line.angle ());
   painter->drawPath (arrowTailPath);
   painter->restore ();
+
 
 
   QPolygonF arrowHeadPolygon;
@@ -846,15 +844,10 @@ AnimPacket::paint (QPainter *painter, const QStyleOptionGraphicsItem *option, QW
     {
       textAngle = 180-textAngle;
     }
-  painter->rotate (textAngle);
+  //painter->rotate (textAngle);
   textTransform.rotate (textAngle);
   QPainterPath textPath;
-  QFont f ;
-  f.setKerning (false);
-  f.setStyleHint (QFont::Times);
 
-  f.setPointSizeF (15/viewTransform.m22 ());
-  f.setFixedPitch (true);
 
   QPen p1 = painter->pen ();
   p1.setColor (Qt::red);
@@ -870,11 +863,116 @@ AnimPacket::paint (QPainter *painter, const QStyleOptionGraphicsItem *option, QW
   QRectF textBoundingRect = textTransform.mapRect (textPath.boundingRect ());
 
   painter->restore ();
-  m_boundingRect = QRectF (QPointF(qMin (m_boundingRect.left (), textBoundingRect.left ()),
+  /*m_boundingRect = QRectF (QPointF(qMin (m_boundingRect.left (), textBoundingRect.left ()),
                                   qMin (m_boundingRect.top (), textBoundingRect.top ())),
                           QPointF(qMax (m_boundingRect.right (), textBoundingRect.right ()),
-                                  qMax (m_boundingRect.bottom (), textBoundingRect.bottom ())));
+                                  qMax (m_boundingRect.bottom (), textBoundingRect.bottom ())));*/
 
+
+
+
+#if 1
+  painter->save();
+
+  //NS_LOG_DEBUG ("MM:" << painter->device()->heightMM());
+  //f.setPointSizeF (10.0 / painter->device()->heightMM());
+  //NS_LOG_DEBUG ("View T:" << viewTransform.m22 ());
+  //NS_LOG_DEBUG ("This:" << transform().m22 ());
+
+  //NS_LOG_DEBUG ("This:" << painter->transform().m22 ());
+  //NS_LOG_DEBUG ("This World:" << painter->worldTransform().m22 ());
+
+  //NS_LOG_DEBUG ("This:" << painter->transform().inverted().m22 ());
+
+  //NS_LOG_DEBUG ("w:" << painter->font().pointSizeF());
+  //NS_LOG_DEBUG ("wPixal:" << painter->font().pixelSize());
+
+
+  QFont f2;
+  //f2.setPointSizeF (1 * painter->transform().inverted().m22 ());
+  f2.setPixelSize(15/painter->transform().m22 () );
+  painter->setFont (f2);
+
+  QFontMetricsF fm = painter->fontMetrics();
+  qreal w = fm.width("H");
+  //NS_LOG_DEBUG ("FM:" << w);
+  //painter->drawText(0, 0, "Holllla");
+  QPointF p_1;// = mapFromScene(m_line.p1());
+  QPointF p_2;// = mapFromScene(m_line.p2());
+  p_1 = mapFromScene(m_line.p1());
+  p_2 = mapFromScene(m_line.p2());
+
+  bool leftToRight = false;
+  if (p_1.x () < p_2.x ())
+    {
+      leftToRight = true;
+
+    }
+  if (m_isWPacket)
+    {
+      //p_1 = mapFromScene(m_line.p1());
+      //p_2 = mapFromScene(m_line.p2());
+    }
+  else
+    {
+      p_1 = m_boundingRect.bottomLeft();
+      p_2 = m_boundingRect.topRight();
+      QPointF p_3 = m_boundingRect.topLeft();
+      QPointF p_4 = m_boundingRect.bottomRight();
+
+
+      if (p_1.x() > p_3.x())
+        {
+          p_1 = p_3;
+        }
+      if (p_2.y() < p_4.y())
+        {
+          p_2 = p_4;
+        }
+
+    }
+  QLineF lf(p_1, p_2);
+
+  qreal diff = lf.length() - w;
+  diff /= 2;
+  diff = qMax (diff, 0.0);
+
+  if (m_isWPacket)
+    {
+      if (leftToRight)
+        {
+          lf.setLength (diff);
+          painter->translate(lf.p2());
+        }
+      else
+        {
+          lf.setLength (lf.length() - diff);
+          painter->translate(lf.p2());
+        }
+    }
+  else
+    {
+      if (leftToRight)
+        {
+          QTransform tempTransform;
+          tempTransform.rotate(360 - m_line.angle());
+          m_infoText->setPos(tempTransform.map(QPointF(-mag, 0)));
+        }
+      else
+        {
+          QTransform tempTransform;
+          tempTransform.rotate(360 - m_line.angle());
+
+          m_infoText->setPos(tempTransform.map(QPointF(0, 0)));
+        }
+    }
+  painter->rotate(textAngle);
+  //painter->drawText(QPointF (0, 0), "Abcdefg" );
+
+#endif
+
+
+  painter->restore();
 
   //NS_LOG_DEBUG ("m_boundingRect:" << m_boundingRect);
 
