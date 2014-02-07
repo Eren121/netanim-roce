@@ -52,7 +52,8 @@ AnimatorMode::AnimatorMode ():
   m_pauseAtTime (65535),
   m_pauseAtTimeTriggered (false),
   m_backgroundExists (false),
-  m_parsingXMLDialog (0)
+  m_parsingXMLDialog (0),
+  m_transientDialog (0)
 
 {
   init ();
@@ -293,7 +294,8 @@ AnimatorMode::initControls ()
   m_nodeSizeComboBox->setToolTip ("Node Size");
   QStringList nodeSizes;
 
-  nodeSizes << "0.2"
+  nodeSizes << "0.1"
+            << "0.2"
             << "0.4"
             << "0.5"
             << "0.6"
@@ -569,6 +571,8 @@ AnimatorMode::initUpdateRate ()
 qreal
 AnimatorMode::nodeSizeStringToValue (QString nodeSize)
 {
+  if (nodeSize == "0.1")
+    return 0.1;
   if (nodeSize == "0.2")
     return 0.2;
   if (nodeSize == "0.4")
@@ -615,6 +619,28 @@ AnimatorMode::externalPauseEvent ()
 }
 
 void
+AnimatorMode::showTransientDialog (bool show, QString msg)
+{
+  if (m_transientDialog)
+    {
+      delete m_transientDialog;
+      m_transientDialog = 0;
+    }
+  if (!show)
+    return;
+  m_transientDialog = new QDialog (this);
+  m_transientDialog->setWindowTitle ("Please Wait");
+  QVBoxLayout * vboxLayout = new QVBoxLayout;
+  vboxLayout->addWidget (new QLabel (msg));
+  m_transientDialog->setLayout (vboxLayout);
+  if (show)
+    {
+      m_transientDialog->show ();
+      m_transientDialog->raise ();
+      m_transientDialog->activateWindow ();
+    }
+}
+void
 AnimatorMode::showParsingXmlDialog (bool show)
 {
   if (!m_parsingXMLDialog)
@@ -640,6 +666,12 @@ AnimatorMode::showParsingXmlDialog (bool show)
 void
 AnimatorMode::fastForward (qreal t)
 {
+  AnimatorModeState_t currentState = m_state;
+  bool simTimeSliderEnabled = m_simulationTimeSlider->isEnabled ();
+  m_simulationTimeSlider->setEnabled (false);
+  externalPauseEvent ();
+  showTransientDialog (true, "Please Wait. Parsing all events");
+  m_playButton->setEnabled (false);
   //AnimatorScene::getInstance ()->invalidate ();
   while (m_currentTime <t)
     {
@@ -649,6 +681,14 @@ AnimatorMode::fastForward (qreal t)
       dispatchEvents ();
     }
   m_fastForwarding = false;
+  m_playButton->setEnabled (true);
+  showTransientDialog (false);
+  if (currentState == PLAYING)
+    {
+      clickPlaySlot ();
+    }
+  m_simulationTimeSlider->setEnabled (simTimeSliderEnabled);
+\
 }
 
 
@@ -1006,7 +1046,7 @@ AnimatorMode::updateTimelineSlot (int value)
 void
 AnimatorMode::simulationSliderPressedSlot ()
 {
-  externalPauseEvent ();
+  //externalPauseEvent ();
 }
 
 

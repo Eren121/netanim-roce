@@ -154,6 +154,7 @@ private:
   QLCDNumber * m_qLcdNumber;
   QWidget * m_centralWidget;
   QDialog * m_parsingXMLDialog;
+  QDialog * m_transientDialog;
   QToolBar * m_topToolBar;
   QToolButton * m_packetStatsButton;
   QSplitter * m_mainSplitter;
@@ -203,6 +204,7 @@ private:
   void doSimulationCompleted ();
   void timerCleanup ();
   void showParsingXmlDialog (bool show);
+  void showTransientDialog (bool show, QString msg = "");
   void setProgressBarRange (uint64_t rxCount);
   void init ();
   void showAnimatorView (bool show);
