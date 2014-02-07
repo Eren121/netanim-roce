@@ -844,7 +844,6 @@ AnimPacket::paint (QPainter *painter, const QStyleOptionGraphicsItem *option, QW
     {
       textAngle = 180-textAngle;
     }
-  //painter->rotate (textAngle);
   textTransform.rotate (textAngle);
   QPainterPath textPath;
 
@@ -871,32 +870,7 @@ AnimPacket::paint (QPainter *painter, const QStyleOptionGraphicsItem *option, QW
 
 
 
-#if 1
-  painter->save();
 
-  //NS_LOG_DEBUG ("MM:" << painter->device()->heightMM());
-  //f.setPointSizeF (10.0 / painter->device()->heightMM());
-  //NS_LOG_DEBUG ("View T:" << viewTransform.m22 ());
-  //NS_LOG_DEBUG ("This:" << transform().m22 ());
-
-  //NS_LOG_DEBUG ("This:" << painter->transform().m22 ());
-  //NS_LOG_DEBUG ("This World:" << painter->worldTransform().m22 ());
-
-  //NS_LOG_DEBUG ("This:" << painter->transform().inverted().m22 ());
-
-  //NS_LOG_DEBUG ("w:" << painter->font().pointSizeF());
-  //NS_LOG_DEBUG ("wPixal:" << painter->font().pixelSize());
-
-
-  //QFont f2;
-  //f2.setPointSizeF (1 * painter->transform().inverted().m22 ());
-  //f2.setPixelSize(15/painter->transform().m22 () );
-  //painter->setFont (f2);
-
-  QFontMetricsF fm = painter->fontMetrics();
-  qreal w = fm.width("H");
-  //NS_LOG_DEBUG ("FM:" << w);
-  //painter->drawText(0, 0, "Holllla");
   QPointF p_1;// = mapFromScene(m_line.p1());
   QPointF p_2;// = mapFromScene(m_line.p2());
   p_1 = mapFromScene(m_line.p1());
@@ -908,34 +882,6 @@ AnimPacket::paint (QPainter *painter, const QStyleOptionGraphicsItem *option, QW
       leftToRight = true;
 
     }
-  if (m_isWPacket)
-    {
-      //p_1 = mapFromScene(m_line.p1());
-      //p_2 = mapFromScene(m_line.p2());
-    }
-  else
-    {
-      p_1 = m_boundingRect.bottomLeft();
-      p_2 = m_boundingRect.topRight();
-      QPointF p_3 = m_boundingRect.topLeft();
-      QPointF p_4 = m_boundingRect.bottomRight();
-
-
-      if (p_1.x() > p_3.x())
-        {
-          p_1 = p_3;
-        }
-      if (p_2.y() < p_4.y())
-        {
-          p_2 = p_4;
-        }
-
-    }
-  QLineF lf(p_1, p_2);
-
-  qreal diff = lf.length() - w;
-  diff /= 2;
-  diff = qMax (diff, 0.0);
 
   if (m_isWPacket)
     {
@@ -969,15 +915,6 @@ AnimPacket::paint (QPainter *painter, const QStyleOptionGraphicsItem *option, QW
           m_infoText->setPos(tempTransform.map(QPointF(0, 0)));
         }
     }
-  painter->rotate(textAngle);
-  //painter->drawText(QPointF (0, 0), "Abcdefg" );
-
-#endif
-
-
-  painter->restore();
-
-  //NS_LOG_DEBUG ("m_boundingRect:" << m_boundingRect);
 
 
 }
