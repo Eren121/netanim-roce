@@ -666,7 +666,7 @@ AnimatorMode::showParsingXmlDialog (bool show)
 void
 AnimatorMode::fastForward (qreal t)
 {
-  AnimatorModeState_t currentState = m_state;
+  //AnimatorModeState_t currentState = m_state;
   bool simTimeSliderEnabled = m_simulationTimeSlider->isEnabled ();
   m_simulationTimeSlider->setEnabled (false);
   externalPauseEvent ();
