@@ -27,7 +27,8 @@ PacketsView * pPacketsView = 0;
 PacketsView::PacketsView ():
   QGraphicsView (PacketsScene::getInstance ())
 {
-  setRenderHints (QPainter::Antialiasing);
+  setRenderHint (QPainter::Antialiasing);
+  setViewportUpdateMode (BoundingRectViewportUpdate);
 }
 
 PacketsView *
