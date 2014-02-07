@@ -228,6 +228,9 @@ AnimatorScene::setShowNodeTrajectory (AnimNode *animNode)
 void
 AnimatorScene::addWirelessCircle (QRectF r)
 {
+  //NS_LOG_DEBUG ("WirelessCircles Rect:" << r);
+  if (r.width() == 0)
+    return;
   AnimWirelessCircles * w = new AnimWirelessCircles ();
   w->setRect (r);
   addItem (w);
