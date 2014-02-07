@@ -863,10 +863,10 @@ AnimPacket::paint (QPainter *painter, const QStyleOptionGraphicsItem *option, QW
   QRectF textBoundingRect = textTransform.mapRect (textPath.boundingRect ());
 
   painter->restore ();
-  /*m_boundingRect = QRectF (QPointF(qMin (m_boundingRect.left (), textBoundingRect.left ()),
+  m_boundingRect = QRectF (QPointF(qMin (m_boundingRect.left (), textBoundingRect.left ()),
                                   qMin (m_boundingRect.top (), textBoundingRect.top ())),
                           QPointF(qMax (m_boundingRect.right (), textBoundingRect.right ()),
-                                  qMax (m_boundingRect.bottom (), textBoundingRect.bottom ())));*/
+                                  qMax (m_boundingRect.bottom (), textBoundingRect.bottom ())));
 
 
 
@@ -888,10 +888,10 @@ AnimPacket::paint (QPainter *painter, const QStyleOptionGraphicsItem *option, QW
   //NS_LOG_DEBUG ("wPixal:" << painter->font().pixelSize());
 
 
-  QFont f2;
+  //QFont f2;
   //f2.setPointSizeF (1 * painter->transform().inverted().m22 ());
-  f2.setPixelSize(15/painter->transform().m22 () );
-  painter->setFont (f2);
+  //f2.setPixelSize(15/painter->transform().m22 () );
+  //painter->setFont (f2);
 
   QFontMetricsF fm = painter->fontMetrics();
   qreal w = fm.width("H");
@@ -941,13 +941,16 @@ AnimPacket::paint (QPainter *painter, const QStyleOptionGraphicsItem *option, QW
     {
       if (leftToRight)
         {
-          lf.setLength (diff);
-          painter->translate(lf.p2());
+          QTransform tempTransform;
+          tempTransform.rotate(360 - m_line.angle());
+          m_infoText->setPos(tempTransform.map(QPointF(-mag * 3/4, 0)));
         }
       else
         {
-          lf.setLength (lf.length() - diff);
-          painter->translate(lf.p2());
+          QTransform tempTransform;
+          tempTransform.rotate(360 - m_line.angle());
+
+          m_infoText->setPos(tempTransform.map(QPointF(-mag / 4, 0)));
         }
     }
   else
