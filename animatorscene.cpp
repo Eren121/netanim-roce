@@ -94,6 +94,11 @@ AnimatorScene::setSimulationBoundaries (QPointF minPoint, QPointF maxPoint)
   m_sceneMinPoint = QPointF (minimum, minimum);
   qreal maximum = qMax (m_sceneMaxPoint.x (), m_sceneMaxPoint.y ());
   m_sceneMaxPoint = QPointF (maximum, maximum);
+  if ((m_sceneMaxPoint.x () == 0) && (m_sceneMaxPoint.y () == 0))
+    {
+      m_sceneMaxPoint = QPointF (1, 1);
+    }
+
   setSceneRect (QRectF (m_sceneMinPoint, m_sceneMaxPoint));
 }
 
