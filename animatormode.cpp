@@ -683,10 +683,10 @@ AnimatorMode::fastForward (qreal t)
   m_fastForwarding = false;
   m_playButton->setEnabled (true);
   showTransientDialog (false);
-  if (currentState == PLAYING)
+  /*if (currentState == PLAYING)
     {
       clickPlaySlot ();
-    }
+    }*/
   m_simulationTimeSlider->setEnabled (simTimeSliderEnabled);
 \
 }
