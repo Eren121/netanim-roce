@@ -30,7 +30,7 @@ AnimatorView::AnimatorView (QGraphicsScene * scene) :
   m_currentZoomFactor (1)
 
 {
-  setRenderHint (QPainter::Antialiasing);
+  setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform | QPainter::TextAntialiasing);
   setViewportUpdateMode (BoundingRectViewportUpdate);
 }
 
