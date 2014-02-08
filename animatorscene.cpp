@@ -237,6 +237,9 @@ AnimatorScene::addWirelessCircle (QRectF r)
   if (r.width() == 0)
     return;
   AnimWirelessCircles * w = new AnimWirelessCircles ();
+  QPen p = w->pen ();
+  p.setColor (QColor (0, 0, 255, 50));
+  w->setPen (p);
   w->setRect (r);
   addItem (w);
   m_animatedWirelessCircles.push_back (w);
