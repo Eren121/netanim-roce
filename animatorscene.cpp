@@ -808,6 +808,9 @@ AnimatorScene::removeInterfaceTextCollision ()
       AnimInterfaceText * text = *i;
       QList <QGraphicsItem *> collidingList = getInterfaceTextCollisionList (text);
       //qDebug (collidingList.count (), "CL count");
+      //NS_LOG_DEBUG ("Colliding List:" << collidingList.count());
+
+      //NS_LOG_DEBUG ("Colliding List S:" << collidingList.size());
       if (collidingList.count ())
         {
           repositionInterfaceText (text);
