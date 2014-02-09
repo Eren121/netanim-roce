@@ -199,20 +199,7 @@ AnimNode::getWidth ()
   return m_width;
 }
 
-void
-AnimNode::setWidth (qreal width)
-{
-  m_width = width;
-  update ();
-}
 
-void
-AnimNode::setHeight (qreal height)
-{
-  m_height = height;
-  update ();
-
-}
 
 qreal
 AnimNode::getX ()

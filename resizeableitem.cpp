@@ -67,9 +67,22 @@ void
 ResizeableItem::setWidth (qreal width)
 {
   m_width = width;
+  update ();
 }
+
+
+void
+ResizeableItem::setHeight (qreal height)
+{
+  m_height = height;
+  update ();
+
+}
+
 void ResizeableItem::setSize (qreal width, qreal height)
 {
+  setWidth (width);
+  setHeight (height);
   qreal xScale = width/sceneBoundingRect ().width ();
   qreal yScale = height/sceneBoundingRect ().height ();
   scale (xScale, yScale);
