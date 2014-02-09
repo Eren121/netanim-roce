@@ -1217,9 +1217,9 @@ AnimatorMode::updateRateTimeoutSlot ()
     {
       dispatchEvents ();
 
-      //disconnect (m_simulationTimeSlider, SIGNAL (valueChanged (int)), this, SLOT (updateTimelineSlot (int)));
+      disconnect (m_simulationTimeSlider, SIGNAL (valueChanged (int)), this, SLOT (updateTimelineSlot (int)));
       m_simulationTimeSlider->setValue (m_currentTime);
-      //connect (m_simulationTimeSlider, SIGNAL (valueChanged (int)), this, SLOT (updateTimelineSlot (int)));
+      connect (m_simulationTimeSlider, SIGNAL (valueChanged (int)), this, SLOT (updateTimelineSlot (int)));
       m_qLcdNumber->display (m_currentTime);
       keepAppResponsive ();
       if (m_showPropertiesButton->isChecked ())
