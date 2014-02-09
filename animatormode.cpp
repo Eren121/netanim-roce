@@ -379,9 +379,9 @@ AnimatorMode::initControls ()
   m_simulationTimeSlider = new QSlider (Qt::Horizontal);
   m_simulationTimeSlider->setToolTip ("Set Simulation Time");
   m_simulationTimeSlider->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
-//  connect (m_simulationTimeSlider, SIGNAL (valueChanged (int)), this, SLOT (updateTimelineSlot (int)));
-  connect (m_simulationTimeSlider, SIGNAL(sliderReleased()), this, SLOT (updateTimelineSlot ()));
-  connect (m_simulationTimeSlider, SIGNAL(sliderPressed()), this, SLOT (simulationSliderPressedSlot ()));
+  connect (m_simulationTimeSlider, SIGNAL (valueChanged (int)), this, SLOT (updateTimelineSlot (int)));
+  //connect (m_simulationTimeSlider, SIGNAL(sliderReleased()), this, SLOT (updateTimelineSlot ()));
+  //connect (m_simulationTimeSlider, SIGNAL(sliderPressed()), this, SLOT (simulationSliderPressedSlot ()));
   m_simulationTimeSlider->setMinimumWidth (SIMULATION_TIME_SLIDER_WIDTH);
   m_simulationTimeSlider->setTickPosition (QSlider::TicksBothSides);
 
@@ -666,7 +666,7 @@ AnimatorMode::showParsingXmlDialog (bool show)
 void
 AnimatorMode::fastForward (qreal t)
 {
-  //AnimatorModeState_t currentState = m_state;
+  AnimatorModeState_t currentState = m_state;
   bool simTimeSliderEnabled = m_simulationTimeSlider->isEnabled ();
   m_simulationTimeSlider->setEnabled (false);
   externalPauseEvent ();
@@ -683,10 +683,10 @@ AnimatorMode::fastForward (qreal t)
   m_fastForwarding = false;
   m_playButton->setEnabled (true);
   showTransientDialog (false);
-  /*if (currentState == PLAYING)
+  if (currentState == PLAYING)
     {
       clickPlaySlot ();
-    }*/
+    }
   m_simulationTimeSlider->setEnabled (simTimeSliderEnabled);
 \
 }
@@ -711,7 +711,8 @@ AnimatorMode::setCurrentTime (qreal currentTime)
 
   m_qLcdNumber->display (currentTime);
   fflush (stdout);
-  reset ();
+  if (currentTime < m_currentTime)
+    reset ();
   //NS_LOG_DEBUG ("Events:" << m_events.toString());
   fastForward (currentTime);
   if (m_playing)
@@ -1034,12 +1035,19 @@ void
 void
 AnimatorMode::updateTimelineSlot (int value)
 {
-  //NS_LOG_DEBUG ("Updating Timeline");
+  purgeWiredPackets ();
+  purgeWirelessPackets ();
+
+  //NS_LOG_DEBUG ("Updating Timeline:" << value);
   if (value == m_oldTimelineValue)
     return;
   m_oldTimelineValue = value;
   m_fastForwarding = true;
   setCurrentTime (value);
+  if (m_showPropertiesButton->isChecked ())
+    {
+      AnimPropertyBroswer::getInstance ()->refresh ();
+    }
 
 }
 
