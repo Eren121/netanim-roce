@@ -88,8 +88,13 @@ AnimatorScene::setSimulationBoundaries (QPointF minPoint, QPointF maxPoint)
   m_minPoint = minPoint;
   m_maxPoint = maxPoint;
   qreal boundaryWidth = m_maxPoint.x () * 0.1;
-  m_sceneMinPoint = QPointF (m_minPoint.x () - boundaryWidth, m_minPoint.y () - boundaryWidth);
-  m_sceneMaxPoint = QPointF (m_maxPoint.x () + boundaryWidth, m_maxPoint.y () + boundaryWidth);
+  qreal boundaryHeight = m_maxPoint.y () * 0.2;
+  qreal boundary = qMax (boundaryWidth, boundaryHeight);
+
+  m_sceneMinPoint = QPointF (m_minPoint.x () - boundary, m_minPoint.y () - boundary);
+  m_sceneMaxPoint = QPointF (m_maxPoint.x () + boundary, m_maxPoint.y () + boundary);
+
+  // Make it square
   qreal minimum = qMin (m_sceneMinPoint.x (), m_sceneMinPoint.y ());
   m_sceneMinPoint = QPointF (minimum, minimum);
   qreal maximum = qMax (m_sceneMaxPoint.x (), m_sceneMaxPoint.y ());
@@ -446,7 +451,9 @@ void
 AnimatorScene::setMousePositionLabel (QPointF pos)
 {
 
-  QString string = "    (" + QString::number (qRound (pos.x ())) + "," + QString::number (qRound (pos.y ())) + ")";
+  //QString string = "    (" + QString::number (qRound (pos.x ())) + "," + QString::number (qRound (pos.y ())) + ")";
+  QString string = "    (" + QString::number ( (pos.x ())) + "," + QString::number ( (pos.y ())) + ")";
+
   m_mousePositionLabel->setText (string);
   m_mousePositionProxyWidget->setPos (pos.x (), pos.y ());
   m_mousePositionLabel->adjustSize ();
@@ -536,15 +543,17 @@ void
 AnimatorScene::markGridCoordinates ()
 {
   QRectF simulationRect (m_minPoint, m_maxPoint);
-  if (!(simulationRect.width ()) || !(simulationRect.height ()))
+  if ((simulationRect.width () == 0) && (simulationRect.height () == 0))
     return;
   int i = 0;
   for (qreal x = 0; x <= simulationRect.right () ; x = x + (simulationRect.right ()/2))
     for (qreal y = 0; y <= simulationRect.bottom () ; y = y + (simulationRect.bottom ()/2))
       {
-        QString text = QString::number (qRound (x))
+        if (i == 9)
+          return;
+        QString text = QString::number (x, 'f', 1)
                        + ","
-                       + QString::number (qRound (y));
+                       + QString::number (y, 'f', 1);
         m_gridCoordinates[i]->setText (text);
         m_gridCoordinates[i]->setPos (QPointF (x, y));
         m_gridCoordinates[i]->setVisible (m_showGrid);
