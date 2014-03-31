@@ -243,8 +243,9 @@ PacketsMode::setFocus (bool focus)
       qreal thousandthPacketTime = AnimatorMode::getInstance ()->getThousandthPacketTime ();
       if (thousandthPacketTime < 0)
         m_toTime = lastPacketTime;
+      else
+        m_toTime = thousandthPacketTime;
       m_fromTime = AnimatorMode::getInstance ()->getFirstPacketTime ();
-      m_toTime = thousandthPacketTime;
       m_toTimeEdit->setText (QString::number (m_toTime, 'g', 6));
       m_fromTimeEdit->setText (QString::number (m_fromTime, 'g', 6));
 
