@@ -169,7 +169,10 @@ AnimatorScene::setBackgroundImage (QString fileName, qreal x, qreal y, qreal sca
 
   QPixmap pix (fileName);
   if (pix.isNull ())
-    return;
+    {
+      AnimatorMode::getInstance ()->showPopup ("Failed to load background image:" + fileName);
+      return;
+    }
   if (m_backgroundImage)
     {
       removeItem (m_backgroundImage);
