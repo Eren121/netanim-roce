@@ -155,7 +155,7 @@ PacketsScene::setUpNodeLines ()
       QGraphicsSimpleTextItem * nodeIdText = new QGraphicsSimpleTextItem (QString::number (m_allowedNodes[lineIndex]));
       addItem (nodeIdText);
       m_nodeIdTexts.push_back (nodeIdText);
-      nodeIdText->setPos (m_interNodeSpacing * lineIndex, m_borderHeight/3);
+      nodeIdText->setPos (m_interNodeSpacing * lineIndex, -m_borderHeight);
       m_lineIndex[m_allowedNodes[lineIndex]] = lineIndex;
     }
   m_rulerLine->setLine (RULER_X, m_borderHeight, RULER_X, m_lineLength);
