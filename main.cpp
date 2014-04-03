@@ -41,6 +41,7 @@ int main (int argc, char *argv[])
 
   QApplication app (argc, argv);
   app.setApplicationName ("NetAnim");
+  app.setWindowIcon (QIcon (":/resources/netanim-logo.png"));
   NetAnim netAnim;
   return app.exec ();
 
