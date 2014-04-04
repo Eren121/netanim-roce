@@ -85,6 +85,7 @@ StatsMode::getCurrentTime ()
 void
 StatsMode::init ()
 {
+  m_state = INIT;
   initToolbars ();
 
   StatsView::getInstance ()->setScene (InterfaceStatsScene::getInstance ());
@@ -328,9 +329,10 @@ StatsMode::addNodesToToolbar (bool zeroIndexed)
 void
 StatsMode::systemReset ()
 {
+  m_state = INIT;
   InterfaceStatsScene::getInstance ()->systemReset ();
   addNodesToToolbar ();
-
+  m_state = READY;
 }
 
 void
@@ -712,7 +714,10 @@ StatsMode::setNodeActive (uint32_t nodeId, bool active)
         {
           m_activeNodes[nodeId] = active;
         }
-      InterfaceStatsScene::getInstance ()->reloadContent ();
+      if (m_state == READY)
+        {
+          InterfaceStatsScene::getInstance ()->reloadContent ();
+        }
       RoutingStatsScene::getInstance ()->reloadContent ();
       FlowMonStatsScene::getInstance ()->reloadContent ();
 

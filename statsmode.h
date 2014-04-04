@@ -51,6 +51,7 @@ class StatsMode: public Mode
     CounterTables = 3
   } StatType_t;
 public:
+
   // Getters
   static StatsMode * getInstance ();
   QWidget * getCentralWidget ();
@@ -74,6 +75,12 @@ public:
 
 
 private:
+  // state
+  typedef enum
+  {
+    INIT,
+    READY
+  } StatsModeState_t;
 
   typedef std::vector<NodeButton *> NodeButtonVector_t;
   typedef std::map<uint32_t, bool> ActiveNodesMap_t;
@@ -118,6 +125,7 @@ private:
   qreal m_parsedMaxSimulationTime;
   qreal m_currentFontSize;
   bool m_showChart;
+  StatsModeState_t m_state;
 
 
   StatsMode ();
