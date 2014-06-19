@@ -28,7 +28,7 @@ namespace netanim
 
 RoutingStatsScene * pRoutingStatsScene = 0;
 
-RoutingStatsScene::RoutingStatsScene ():QGraphicsScene (100, 0, STATSSCENE_WIDTH_DEFAULT, STATSSCENE_HEIGHT_DEFAULT)
+RoutingStatsScene::RoutingStatsScene ():QGraphicsScene (0, 0, STATSSCENE_WIDTH_DEFAULT, STATSSCENE_HEIGHT_DEFAULT)
 {
   m_lastX = 0;
   m_lastY = 0;
