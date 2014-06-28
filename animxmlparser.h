@@ -41,7 +41,9 @@ enum ParsedElementType
   XML_RESOURCE,
   XML_BACKGROUNDIMAGE,
   XML_CREATE_NODE_COUNTER,
-  XML_NODECOUNTER_UPDATE
+  XML_NODECOUNTER_UPDATE,
+  XML_PACKET_TX_REF,
+  XML_WPACKET_RX_REF
 };
 
 struct ParsedElement
@@ -135,6 +137,8 @@ struct ParsedElement
   // node update type
   NodeUpdate_Type nodeUpdateType;
 
+  // Packet ref
+  uint64_t uid;
 };
 
 
@@ -177,6 +181,9 @@ private:
 
   WirelessUpdateEventTimes_t m_wirelessPacketUpdateEvents;
 
+  typedef std::map <uint64_t, ParsedElement> PacketRefMap;
+  PacketRefMap m_packetRefs;
+
   ParsedElement parseAnim ();
   ParsedElement parseTopology ();
   ParsedElement parseNode ();
@@ -192,6 +199,8 @@ private:
   ParsedElement parseResource ();
   ParsedElement parseCreateNodeCounter ();
   ParsedElement parseNodeCounterUpdate ();
+  ParsedElement parsePacketTxRef ();
+  ParsedElement parseWPacketRxRef ();
   void parseGeneric (ParsedElement &);
 
   void searchForVersion ();

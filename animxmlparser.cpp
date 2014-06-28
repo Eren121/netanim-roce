@@ -199,6 +199,19 @@ Animxmlparser::doParse ()
                                                                                     parsedElement.node_y));
           break;
         }
+        case XML_PACKET_TX_REF:
+        {
+          m_packetRefs[parsedElement.uid] = parsedElement;
+          break;
+        }
+        case XML_WPACKET_RX_REF:
+        {
+            ParsedElement & ref = m_packetRefs[parsedElement.uid];
+            parsedElement.packetrx_fromId = ref.packetrx_fromId;
+            parsedElement.packetrx_fbTx = ref.packetrx_fbTx;
+            parsedElement.packetrx_lbTx = ref.packetrx_lbTx;
+            parsedElement.meta_info = ref.meta_info;
+        }
         case XML_WPACKET_RX:
         case XML_PACKET_RX:
         {
@@ -449,6 +462,14 @@ Animxmlparser::parseNext ()
         {
           parsedElement = parseNodeCounterUpdate ();
         }
+      if (m_reader->name () == "pr")
+        {
+          parsedElement = parsePacketTxRef ();
+        }
+      if (m_reader->name () == "wpr")
+        {
+          parsedElement = parseWPacketRxRef ();
+        }
       //qDebug (m_reader->name ().toString ());
     }
 
@@ -544,6 +565,39 @@ Animxmlparser::parseLinkUpdate ()
   return parsedElement;
 
 }
+
+ParsedElement
+Animxmlparser::parsePacketTxRef ()
+{
+  ParsedElement parsedElement;
+  parsedElement.type = XML_PACKET_TX_REF;
+  parsedElement.uid = m_reader->attributes ().value ("uId").toString ().toLong ();
+  parsedElement.packetrx_fromId = m_reader->attributes ().value ("fId").toString ().toUInt ();
+  parsedElement.packetrx_fbTx = m_reader->attributes ().value ("fbTx").toString ().toDouble ();
+  parsedElement.packetrx_lbTx = m_reader->attributes ().value ("lbTx").toString ().toDouble ();
+  setMaxSimulationTime (parsedElement.packetrx_lbTx);
+  parsedElement.meta_info = m_reader->attributes ().value ("meta-info").toString ();
+  if (parsedElement.meta_info == "")
+    {
+      parsedElement.meta_info = "null";
+    }
+  return parsedElement;
+}
+
+ParsedElement
+Animxmlparser::parseWPacketRxRef ()
+{
+  ParsedElement parsedElement;
+  parsedElement.type = XML_WPACKET_RX_REF;
+  parsedElement.isWpacket = true;
+  parsedElement.uid = m_reader->attributes ().value ("uId").toString ().toLong ();
+  parsedElement.packetrx_toId = m_reader->attributes ().value ("tId").toString ().toUInt ();
+  parsedElement.packetrx_fbRx = m_reader->attributes ().value ("fbRx").toString ().toDouble ();
+  parsedElement.packetrx_lbRx = m_reader->attributes ().value ("lbRx").toString ().toDouble ();
+  setMaxSimulationTime (parsedElement.packetrx_lbRx);
+  return parsedElement;
+}
+
 
 ParsedElement
 Animxmlparser::parseNode ()
