@@ -14,6 +14,8 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * Author: John Abraham <john.abraham.in@gmail.com>
+ * Contributions: Eugene Kalishenko <ydginster@gmail.com> (Open Source and Linux Laboratory http://dev.osll.ru/)
+ * 		  Dmitrii Shakshin <d.shakshin@gmail.com> (Open Source and Linux Laboratory http://dev.osll.ru/)
  */
 
 #ifndef AnimatorPlugin_H
@@ -70,6 +72,7 @@ public:
   void setNodeSize (AnimNode * animNode, qreal size);
   void setNodePos (AnimNode * animNode, qreal x, qreal y);
   void setNodeResource (AnimNode * animNode, uint32_t resourceId);
+  void setNodeSysId (AnimNode * animNode, uint32_t sysId);
   void setShowNodeTrajectory (AnimNode * animNode);
   void setBackgroundImageProperties (BackgroudImageProperties_t prop);
   BackgroudImageProperties_t getBackgroundProperties ();
@@ -142,6 +145,7 @@ private:
   QToolButton * m_showIpButton;
   QToolButton * m_showMacButton;
   QToolButton * m_showNodeIdButton;
+  QToolButton * m_showNodeSysIdButton;
   QToolButton * m_playButton;
   QToolButton * m_fileOpenButton;
   QToolButton * m_reloadFileButton;
@@ -241,6 +245,7 @@ private slots:
   void updateUpdateRateSlot (int);
   void showGridLinesSlot ();
   void showNodeIdSlot ();
+  void showNodeSysIdSlot ();
   void showMetaSlot ();
   void showPacketSlot ();
   void showWirelessCirclesSlot ();
