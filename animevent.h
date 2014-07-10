@@ -14,6 +14,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * Author: John Abraham <john.abraham.in@gmail.com>
+ * Contributions: Dmitrii Shakshin <d.shakshin@gmail.com> (Open Source and Linux Laboratory http://dev.osll.ru/)
  */
 
 #ifndef ANIMEVENT_H
@@ -37,6 +38,7 @@ public:
     UPDATE_NODE_DESCRIPTION_EVENT,
     UPDATE_NODE_SIZE_EVENT,
     UPDATE_NODE_IMAGE_EVENT,
+    UPDATE_NODE_SYSID_EVENT,
     ADD_LINK_EVENT,
     UPDATE_LINK_EVENT,
     WIRED_PACKET_UPDATE_EVENT,
@@ -53,9 +55,10 @@ public:
 class AnimNodeAddEvent: public AnimEvent
 {
 public:
-  AnimNodeAddEvent (uint32_t nodeId, qreal x, qreal y, QString nodeDescription, uint8_t r, uint8_t g, uint8_t b):
-    AnimEvent (ADD_NODE_EVENT),
+  AnimNodeAddEvent (uint32_t nodeId, uint32_t nodeSysId, qreal x, qreal y, QString nodeDescription,
+                    uint8_t r, uint8_t g, uint8_t b): AnimEvent (ADD_NODE_EVENT),
     m_nodeId (nodeId),
+    m_nodeSysId (nodeSysId),
     m_x (x),
     m_y (y),
     m_nodeDescription (nodeDescription),
@@ -65,6 +68,7 @@ public:
   {
   }
   uint32_t m_nodeId;
+  uint32_t m_nodeSysId;
   qreal m_x;
   qreal m_y;
   QString m_nodeDescription;
@@ -238,6 +242,19 @@ public:
   uint32_t m_nodeId;
   uint32_t m_resourceId;
 
+};
+
+class AnimNodeSysIdUpdateEvent : public AnimEvent
+{
+public:
+  AnimNodeSysIdUpdateEvent (uint32_t nodeId, uint32_t systemId) :
+      AnimEvent (UPDATE_NODE_SYSID_EVENT),
+      m_nodeId (nodeId),
+      m_nodeSysId (systemId)
+  {
+  }
+  uint32_t m_nodeId;
+  uint32_t m_nodeSysId;
 };
 
 class AnimPacketLbRxEvent: public AnimEvent
