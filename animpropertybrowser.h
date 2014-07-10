@@ -14,6 +14,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * Author: John Abraham <john.abraham.in@gmail.com>
+ * Contributions: Dmitrii Shakshin <d.shakshin@gmail.com> (Open Source and Linux Laboratory http://dev.osll.ru/)
  */
 
 #ifndef ANIMPROPERTYBROWSER_H
@@ -59,6 +60,7 @@ private:
   QComboBox * m_nodeIdSelector;
 
   QtProperty * m_nodeIdProperty;
+  QtProperty * m_nodeSysIdProperty;
   QtProperty * m_nodeDescriptionProperty;
   QtProperty * m_nodeXProperty;
   QtProperty * m_nodeYProperty;
