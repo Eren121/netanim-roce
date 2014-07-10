@@ -15,11 +15,13 @@
  *
  * Author: John Abraham <john.abraham.in@gmail.com>
  * Contributions: Eugene Kalishenko <ydginster@gmail.com> (Open Source and Linux Laboratory http://dev.osll.ru/)
+ * 		  Dmitrii Shakshin <d.shakshin@gmail.com> (Open Source and Linux Laboratory http://dev.osll.ru/)
  */
 
 #include "animnode.h"
 #include "animresource.h"
 #include "animatorview.h"
+#include <QColor>
 
 NS_LOG_COMPONENT_DEFINE ("AnimNode");
 namespace netanim
@@ -27,11 +29,14 @@ namespace netanim
 
 AnimNodeMgr * pAnimNodeMgr = 0;
 
-AnimNode::AnimNode (uint32_t nodeId, qreal x, qreal y, QString nodeDescription): m_nodeDescription (0),
+AnimNode::AnimNode (uint32_t nodeId, uint32_t nodeSysId, qreal x, qreal y, QString nodeDescription):
+  m_nodeDescription (0),
   m_nodeId (nodeId),
+  m_nodeSysId (nodeSysId),
   m_x (x),
   m_y (y),
   m_showNodeId (true),
+  m_showNodeSysId (false),
   m_resourceId (-1),
   m_showNodeTrajectory (false),
   m_showBatteryCapcity (false)
@@ -48,7 +53,6 @@ AnimNode::AnimNode (uint32_t nodeId, qreal x, qreal y, QString nodeDescription):
   m_nodeDescription = new QGraphicsTextItem (nodeDescription);
   m_nodeDescription->setFlag (QGraphicsItem::ItemIgnoresTransformations);
   setFlag (QGraphicsItem::ItemIsSelectable);
-
 }
 
 AnimNode::~AnimNode ()
@@ -66,6 +70,73 @@ AnimNode::showNodeId (bool show)
   m_nodeDescription->setVisible (m_showNodeId);
 }
 
+QColor
+generateColor (size_t index, uint8_t alpha = 0)
+{
+
+  static const size_t colors[] =
+    { Qt::blue, Qt::magenta, Qt::darkCyan, Qt::darkYellow, Qt::darkRed, Qt::darkMagenta, Qt::darkGreen, Qt::darkBlue,
+	Qt::black, Qt::darkGray, Qt::lightGray };
+  static const size_t COUNT = sizeof (colors) / sizeof (size_t);
+  QColor result;
+
+  if (index < COUNT)
+    result = QColor (Qt::GlobalColor (colors[index]));
+  else
+    {
+      result = QColor (Qt::GlobalColor (colors[index % COUNT]));
+      const int step = 256 * 3 % COUNT;
+
+      result.setRed ((result.red () + step * index) % 255);
+      result.setGreen ((result.blue () + step * index) % 255);
+      result.setBlue (abs (result.green () - step * index) % 255);
+    }
+  if (alpha)
+    result.setAlpha (alpha);
+
+  return result;
+}
+
+
+void
+AnimNode::showNodeSysId (bool show)
+{
+  if (show)
+    {
+      m_lastColor = this->getColor ();
+      int r, g, b, a;
+      m_lastColor.getRgb(&r, &g, &b, &a);
+      const QColor &color = generateColor (m_nodeSysId, a);
+      color.getRgb (&r, &g, &b, &a);
+      setColor (static_cast<uint8_t> (r), static_cast<uint8_t> (g), static_cast<uint8_t> (b), static_cast<uint8_t> (a));
+    }
+  else
+    {
+      if(m_showNodeSysId)
+	{
+	  int r, g, b, a;
+	  m_lastColor.getRgb (&r, &g, &b, &a);
+	  setColor (r, g, b, a);
+	}
+    }
+  m_showNodeSysId = show;
+  m_nodeDescription->setPlainText (QString::number (m_nodeId) + (m_showNodeSysId ? QString(" SysId:") +
+  QString::number (m_nodeSysId): QString()));
+}
+
+bool
+AnimNode::isVisibleNodeSysId() const
+{
+  return m_showNodeSysId;
+}
+
+void
+AnimNode::updateNodeSysId (uint32_t sysId, bool show)
+{
+  m_nodeSysId = sysId;
+  //m_nodeSysIdDescription->setPlainText ("sysId: " + QString::number (sysId));
+  showNodeSysId (show);
+}
 
 void
 AnimNode::updateBatteryCapacityImage (bool show)
@@ -254,6 +325,12 @@ AnimNode::getNodeId ()
   return m_nodeId;
 }
 
+uint32_t
+AnimNode::getNodeSysId ()
+{
+  return m_nodeSysId;
+}
+
 QGraphicsTextItem *
 AnimNode::getDescription ()
 {
@@ -387,14 +464,14 @@ AnimNodeMgr * AnimNodeMgr::getInstance ()
 }
 
 
-AnimNode * AnimNodeMgr::add (uint32_t nodeId, qreal x, qreal y, QString nodeDescription)
+AnimNode * AnimNodeMgr::add (uint32_t nodeId, uint32_t nodeSysId, qreal x, qreal y, QString nodeDescription)
 {
   if (m_nodes.find (nodeId) != m_nodes.end ())
     {
       //NS_FATAL_ERROR ("NodeId:" << nodeId << " Already exists");
     }
   QPixmap pix (":/resources/ns3logo2.png","png");
-  AnimNode * node = new AnimNode (nodeId, x, y, nodeDescription);
+  AnimNode * node = new AnimNode (nodeId, nodeSysId, x, y, nodeDescription);
   node->setPos (x, y);
   //node->setPixmap (pix);
   m_nodes[nodeId] = node;
@@ -495,6 +572,19 @@ AnimNodeMgr::showNodeId (bool show)
     }
 
 }
+
+void
+AnimNodeMgr::showNodeSysId (bool show)
+{
+  for (NodeIdAnimNodeMap_t::const_iterator i = m_nodes.begin ();
+      i != m_nodes.end ();
+      ++i)
+    {
+      AnimNode * animNode = i->second;
+      animNode->showNodeSysId (show);
+    }
+}
+
 
 AnimNodeMgr::TimePosVector_t
 AnimNodeMgr::getPositions (uint32_t nodeId)
