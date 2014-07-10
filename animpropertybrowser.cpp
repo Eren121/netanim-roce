@@ -14,6 +14,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * Author: John Abraham <john.abraham.in@gmail.com>
+ * Contributions: Dmitrii Shakshin <d.shakshin@gmail.com> (Open Source and Linux Laboratory http://dev.osll.ru/)
  */
 
 #include "animpropertybrowser.h"
@@ -249,18 +250,23 @@ AnimPropertyBroswer::setupNodeProperties ()
 
   // Properties
 
-  // Node Id
+  AnimNode * animNode = AnimNodeMgr::getInstance ()->getNode (m_currentNodeId);
+
+
+  // Node Id, Node System Id
   m_nodeIdProperty = m_intManager->addProperty ("Node Id");
   m_intManager->setValue (m_nodeIdProperty, m_currentNodeId);
   m_nodeBrowser->addProperty (m_nodeIdProperty);
+  m_nodeSysIdProperty = m_intManager->addProperty ("Node System Id");
+  m_intManager->setValue (m_nodeSysIdProperty, animNode ->getNodeSysId ());
+  m_nodeBrowser->addProperty (m_nodeSysIdProperty);
 
 
   // Node Description
   m_nodeDescriptionProperty = m_stringManager->addProperty ("Node Description");
   m_nodeBrowser->setFactoryForManager (m_stringManager, m_lineEditFactory);
-  connect (m_stringManager, SIGNAL(valueChanged(QtProperty*,QString)), this, SLOT(valueChangedSlot(QtProperty*,QString)));
+  connect (m_stringManager, SIGNAL (valueChanged (QtProperty*,QString)), this, SLOT (valueChangedSlot (QtProperty*,QString)));
   m_nodeBrowser->addProperty (m_nodeDescriptionProperty);
-  AnimNode * animNode = AnimNodeMgr::getInstance ()->getNode (m_currentNodeId);
   m_stringManager->setValue (m_nodeDescriptionProperty, animNode->getDescription ()->toPlainText ());
 
 
@@ -524,14 +530,20 @@ AnimPropertyBroswer::nodeIdSelectorSlot (QString newIndex)
   //NS_LOG_DEBUG (newIndex.toUInt());
   m_currentNodeId = newIndex.toUInt ();
 
+  AnimNode * animNode = AnimNodeMgr::getInstance ()->getNode (m_currentNodeId);
+
   // Node Id
   m_intManager->setValue (m_nodeIdProperty, m_currentNodeId);
 
 
-  // Node Description
-  AnimNode * animNode = AnimNodeMgr::getInstance ()->getNode (m_currentNodeId);
   if (!animNode)
     return;
+
+  // Node System Id
+  m_intManager->setValue (m_nodeSysIdProperty, animNode->getNodeSysId ());
+
+
+  // Node Description
   m_stringManager->setValue (m_nodeDescriptionProperty, animNode->getDescription ()->toPlainText ());
 
 
