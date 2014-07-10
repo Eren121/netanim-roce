@@ -133,7 +133,7 @@ qreal ResizeableItem::getItemHeight ()
 
 
 QPainterPath
-ResizeableItem::shape ()
+ResizeableItem::shape () const
 {
   QPainterPath path;
   path.addRect (QRectF (0, 0, m_width, m_height));
