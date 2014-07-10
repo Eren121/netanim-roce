@@ -14,6 +14,8 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * Author: John Abraham <john.abraham.in@gmail.com>
+ * Contributions: Eugene Kalishenko <ydginster@gmail.com> (Open Source and Linux Laboratory http://dev.osll.ru/)
+ * 		  Dmitrii Shakshin <d.shakshin@gmail.com> (Open Source and Linux Laboratory http://dev.osll.ru/)
  */
 
 
@@ -188,6 +190,7 @@ Animxmlparser::doParse ()
             m_maxNodeX = qMax (m_maxNodeX, parsedElement.node_x);
             m_maxNodeY = qMax (m_maxNodeY, parsedElement.node_y);
           AnimNodeAddEvent * ev = new AnimNodeAddEvent (parsedElement.nodeId,
+              parsedElement.nodeSysId,
               parsedElement.node_x,
               parsedElement.node_y,
               parsedElement.nodeDescription,
@@ -365,6 +368,12 @@ Animxmlparser::doParse ()
             {
               AnimNodeImageUpdateEvent * ev = new AnimNodeImageUpdateEvent (parsedElement.nodeId,
                   parsedElement.resourceId);
+              pAnimatorMode->addAnimEvent (parsedElement.updateTime, ev);
+            }
+          if (parsedElement.nodeUpdateType == ParsedElement::SYSTEM_ID)
+            {
+              AnimNodeSysIdUpdateEvent * ev = new AnimNodeSysIdUpdateEvent (parsedElement.nodeId,
+                                parsedElement.nodeSysId);
               pAnimatorMode->addAnimEvent (parsedElement.updateTime, ev);
             }
           break;
@@ -605,6 +614,7 @@ Animxmlparser::parseNode ()
   ParsedElement parsedElement;
   parsedElement.type = XML_NODE;
   parsedElement.nodeId = m_reader->attributes ().value ("id").toString ().toUInt ();
+  parsedElement.nodeSysId = m_reader->attributes ().value ("sysId").toString ().toUInt ();
   parsedElement.node_x = m_reader->attributes ().value ("locX").toString ().toDouble ();
   parsedElement.node_y = m_reader->attributes ().value ("locY").toString ().toDouble ();
   parsedElement.node_batteryCapacity = m_reader->attributes ().value ("rc").toString ().toDouble ();
@@ -633,10 +643,11 @@ Animxmlparser::parseNodeUpdate ()
     parsedElement.nodeUpdateType = ParsedElement::SIZE;
   if (nodeUpdateString == "i")
     parsedElement.nodeUpdateType = ParsedElement::IMAGE;
+  if (nodeUpdateString == "y")
+    parsedElement.nodeUpdateType = ParsedElement::SYSTEM_ID;
   parsedElement.updateTime = m_reader->attributes ().value ("t").toString ().toDouble ();
   setMaxSimulationTime (parsedElement.updateTime);
   parsedElement.nodeId = m_reader->attributes ().value ("id").toString ().toUInt ();
-
 
   switch (parsedElement.nodeUpdateType)
     {
@@ -660,6 +671,10 @@ Animxmlparser::parseNodeUpdate ()
 
     case ParsedElement::IMAGE:
       parsedElement.resourceId = m_reader->attributes ().value ("rid").toString ().toUInt ();
+      break;
+
+    case ParsedElement::SYSTEM_ID:
+      parsedElement.nodeSysId = m_reader->attributes ().value ("sysId").toString ().toUInt ();
       break;
     }
 
