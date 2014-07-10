@@ -14,6 +14,8 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * Author: John Abraham <john.abraham.in@gmail.com>
+ * Contributions: Eugene Kalishenko <ydginster@gmail.com> (Open Source and Linux Laboratory http://dev.osll.ru/)
+ * 		  Dmitrii Shakshin <d.shakshin@gmail.com> (Open Source and Linux Laboratory http://dev.osll.ru/)
  */
 
 #include "common.h"
@@ -129,6 +131,7 @@ AnimatorMode::setControlDefaults ()
   m_gridLinesSpinBox->setValue (GRID_LINES_DEFAULT);
   m_nodeSizeComboBox->setCurrentIndex (NODE_SIZE_DEFAULT);
   m_showNodeIdButton->setChecked (true);
+  m_showNodeSysIdButton->setChecked (false);
   showNodeIdSlot ();
   m_showPropertiesButton->setChecked (false);
   showPropertiesSlot ();
@@ -199,6 +202,7 @@ AnimatorMode::setVerticalToolbarWidgets ()
   m_verticalToolbar->addWidget (m_zoomOutButton);
   m_verticalToolbar->addSeparator ();
   m_verticalToolbar->addWidget (m_showNodeIdButton);
+  m_verticalToolbar->addWidget (m_showNodeSysIdButton);
   m_verticalToolbar->addSeparator ();
   m_verticalToolbar->addWidget (m_showWirelessCirclesButton);
   m_verticalToolbar->addSeparator ();
@@ -340,6 +344,12 @@ AnimatorMode::initControls ()
   m_showNodeIdButton->setToolTip ("Show Node Id");
   m_showNodeIdButton->setCheckable (true);
   connect (m_showNodeIdButton, SIGNAL (clicked ()), this, SLOT (showNodeIdSlot ()));
+
+  m_showNodeSysIdButton = new QToolButton;
+  m_showNodeSysIdButton->setIcon (QIcon (":/resources/animator_nodesysid.svg"));
+  m_showNodeSysIdButton->setToolTip ("Show Node System Id");
+  m_showNodeSysIdButton->setCheckable (true);
+  connect (m_showNodeSysIdButton, SIGNAL (clicked ()), this, SLOT (showNodeSysIdSlot ()));
 
 
   m_showPropertiesButton = new QToolButton;
@@ -1370,6 +1380,7 @@ AnimatorMode::dispatchEvents ()
                   if (!AnimNodeMgr::getInstance ()->getNode (nodeId))
                     {
                       animNode = AnimNodeMgr::getInstance ()->add (addEvent->m_nodeId,
+                                            addEvent ->m_nodeSysId,
                                             addEvent->m_x,
                                             addEvent->m_y,
                                             addEvent->m_nodeDescription);
@@ -1547,6 +1558,14 @@ AnimatorMode::dispatchEvents ()
               break;
 
             }
+	    case AnimEvent::UPDATE_NODE_SYSID_EVENT:
+	      {
+		AnimNodeSysIdUpdateEvent * ev = static_cast<AnimNodeSysIdUpdateEvent *> (j->second);
+		AnimNode * animNode = AnimNodeMgr::getInstance ()->getNode (ev->m_nodeId);
+		setNodeSysId (animNode, ev->m_nodeSysId);
+
+		break;
+	      }
             case AnimEvent::ADD_LINK_EVENT:
             {
 
@@ -1666,6 +1685,12 @@ AnimatorMode::setNodePos (AnimNode *animNode, qreal x, qreal y)
 }
 
 void
+AnimatorMode::setNodeSysId (AnimNode * animNode, uint32_t sysId)
+{
+  animNode->updateNodeSysId (sysId, animNode->isVisibleNodeSysId());
+}
+
+void
 AnimatorMode::updateNodeSizeSlot (QString value)
 {
   qreal size = nodeSizeStringToValue (value);
@@ -1693,6 +1718,19 @@ AnimatorMode::showNodeIdSlot ()
     }
 }
 
+void
+AnimatorMode::showNodeSysIdSlot ()
+{
+  AnimNodeMgr::getInstance ()->showNodeSysId (m_showNodeSysIdButton->isChecked ());
+  if (m_showNodeSysIdButton->isChecked ())
+    {
+      m_showNodeSysIdButton->setToolTip ("Don't show Node System Id");
+    }
+  else
+    {
+      m_showNodeSysIdButton->setToolTip ("Show Node System Id");
+    }
+}
 
 void
 AnimatorMode::showIpSlot ()
