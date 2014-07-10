@@ -14,6 +14,8 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * Author: John Abraham <john.abraham.in@gmail.com>
+ * Contributions: Eugene Kalishenko <ydginster@gmail.com> (Open Source and Linux Laboratory http://dev.osll.ru/)
+ * 		  Dmitrii Shakshin <d.shakshin@gmail.com> (Open Source and Linux Laboratory http://dev.osll.ru/)
  */
 
 #ifndef ANIMXMLPARSER_H
@@ -60,6 +62,7 @@ struct ParsedElement
   // Node
 
   uint32_t nodeId;
+  uint32_t nodeSysId;
   qreal node_x;
   qreal node_y;
   qreal node_batteryCapacity;
@@ -132,7 +135,8 @@ struct ParsedElement
     COLOR,
     DESCRIPTION,
     SIZE,
-    IMAGE
+    IMAGE,
+    SYSTEM_ID
   } NodeUpdate_Type;
   // node update type
   NodeUpdate_Type nodeUpdateType;
