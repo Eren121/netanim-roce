@@ -596,7 +596,7 @@ AnimPacket::parseAodv (QString metaInfo, bool & result)
         }
       aodvInfo.destination = rx.cap (1).toAscii ().data ();
       aodvInfo.seq = rx.cap (2).toAscii ().data ();
-      aodvInfo.source = rx.cap (1).toAscii ().data ();
+      aodvInfo.source = rx.cap (3).toAscii ().data ();
 
     }
   if(aodvInfo.type == "RREP")
@@ -610,7 +610,7 @@ AnimPacket::parseAodv (QString metaInfo, bool & result)
         }
       aodvInfo.destination = rx.cap (1).toAscii ().data ();
       aodvInfo.seq = rx.cap (2).toAscii ().data ();
-      aodvInfo.source = rx.cap (1).toAscii ().data ();
+      aodvInfo.source = rx.cap (3).toAscii ().data ();
     }
   if(aodvInfo.type == "RERR")
     {
