@@ -176,10 +176,6 @@ AnimNode::updateBatteryCapacityImage (bool show)
       m_batteryPixmap = QPixmap ();
     }
 
-
-  //const QGraphicsScene* scene = AnimatorScene::getInstance();
-  //if(scene)
-  //      m_batteryItem->setScale(m_height / scene->height() / 3.);
 }
 
 

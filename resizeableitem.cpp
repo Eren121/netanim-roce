@@ -133,13 +133,35 @@ QPainterPath
 ResizeableItem::shape () const
 {
   QPainterPath path;
-  path.addRect (QRectF (0, 0, m_width, m_height));
+  switch (m_type)
+    {
+      case ResizeableItem::CIRCLE:
+        path.addEllipse (QPointF (0, 0), m_width, m_height);
+        break;
+      default:
+        path.addRect (QRectF (0, 0, m_width, m_height));
+        break;
+    }
   return path;
 }
 
+
+
 QRectF ResizeableItem::boundingRect () const
 {
-  return QRectF (0, 0, m_width, m_height);
+  QPainterPath path;
+
+  switch (m_type)
+    {
+      case ResizeableItem::CIRCLE:
+        path.addEllipse (QPointF (0, 0), m_width, m_height);
+        return path.boundingRect();
+        break;
+      default:
+        return QRectF (0, 0, m_width, m_height);
+        break;
+    }
 }
+
 
 
