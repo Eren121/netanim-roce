@@ -339,7 +339,8 @@ AnimNode::getDescription ()
 
 QPointF AnimNode::getCenter ()
 {
-  return sceneBoundingRect ().center ();
+  //return sceneBoundingRect ().center ();
+  return QPointF (m_x, m_y);
 }
 void AnimNode::setNodeDescription (QString description)
 {
