@@ -103,9 +103,7 @@ void ResizeableItem::paint (QPainter *painter, const QStyleOptionGraphicsItem *o
       brush.setStyle (Qt::SolidPattern);
       brush.setColor (QColor (m_r, m_g, m_b, m_alpha));
       painter->setBrush (brush);
-      //painter->drawEllipse () (0, 0, m_width, m_height);
-      painter->drawEllipse (QRectF (0, 0, m_width, m_height));
-      //painter->drawRect (0, 0, m_width, m_height);
+      painter->drawEllipse (QPointF (0, 0), m_width, m_height);
 
     }
     break;
@@ -113,7 +111,6 @@ void ResizeableItem::paint (QPainter *painter, const QStyleOptionGraphicsItem *o
       if (m_pixmap)
         {
           painter->drawPixmap (0, 0, m_width, m_height, *m_pixmap);
-          //painter->drawRect (0, 0, m_width, m_height);
         }
       break;
     }
