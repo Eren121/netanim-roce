@@ -263,7 +263,7 @@ struct TcpInfo
   QString toShortString ()
   {
     return  "TCP:[" + flags + "]" + " S=" + seq +
-            " A=" + ack;
+        " A=" + ack;
   }
   QString SPort;
   QString DPort;
@@ -387,8 +387,8 @@ public:
   QPointF getHead ();
   QGraphicsSimpleTextItem * getInfoTextItem ();
   bool getIsWPacket ();
-  static QString getShortMeta (QString metaInfo);
-  static QString getShortMeta (QString metaInfo, int filter, bool & result);
+  static QString getMeta (QString metaInfo, bool shortString = true);
+  static QString getMeta (QString metaInfo, int filter, bool & result, bool shortString = true);
   bool packetExpired ();
   qreal getRadius ();
 

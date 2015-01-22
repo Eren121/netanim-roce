@@ -180,13 +180,13 @@ PacketsScene::addPacket (qreal tx, qreal rx, uint32_t fromNodeId, uint32_t toNod
   if (m_filter != AnimPacket::ALL)
     {
       bool result;
-      shortMeta = AnimPacket::getShortMeta (metaInfo, m_filter, result);
+      shortMeta = AnimPacket::getMeta (metaInfo, m_filter, result, false);
       if (!result)
         return;
     }
   else
     {
-      shortMeta = AnimPacket::getShortMeta (metaInfo);
+      shortMeta = AnimPacket::getMeta (metaInfo, false);
     }
 
   QRegExp rex (m_filterRegex);

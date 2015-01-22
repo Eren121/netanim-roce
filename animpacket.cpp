@@ -82,7 +82,7 @@ AnimPacket::AnimPacket (uint32_t fromNodeId,
           textAngle = 180-textAngle;
         }
       m_infoText->rotate (textAngle);
-      m_infoText->setText (getShortMeta(metaInfo));
+      m_infoText->setText (getMeta(metaInfo));
     }
 
 }
@@ -96,7 +96,7 @@ AnimPacket::~AnimPacket ()
 }
 
 QString
-AnimPacket::getShortMeta (QString metaInfo, int filter, bool & result)
+AnimPacket::getMeta (QString metaInfo, int filter, bool & result, bool shortString)
 {
   result = false;
   QString metaInfoString = metaInfo.toAscii ().data ();
@@ -127,54 +127,71 @@ AnimPacket::getShortMeta (QString metaInfo, int filter, bool & result)
   QString finalString = "";
   if (filter == AnimPacket::ALL)
     {
-      finalString += aodvInfo.toShortString () +
-                     olsrInfo.toShortString () +
-                     dsdvInfo.toShortString () +
-                     tcpInfo.toShortString () +
-                     udpInfo.toShortString () +
-                     icmpInfo.toShortString () +
-                     ipv4Info.toShortString () +
-                     arpInfo.toShortString () +
-                     wifiMacInfo.toShortString () +
-                     pppInfo.toShortString () +
-                     ethernetInfo.toShortString ();
+      if (shortString)
+        {
+          finalString += aodvInfo.toShortString () +
+                         olsrInfo.toShortString () +
+                         dsdvInfo.toShortString () +
+                         tcpInfo.toShortString () +
+                         udpInfo.toShortString () +
+                         icmpInfo.toShortString () +
+                         ipv4Info.toShortString () +
+                         arpInfo.toShortString () +
+                         wifiMacInfo.toShortString () +
+                         pppInfo.toShortString () +
+                         ethernetInfo.toShortString ();
+        }
+      else
+        {
+          finalString += aodvInfo.toString() +
+                         olsrInfo.toString () +
+                         dsdvInfo.toString () +
+                         tcpInfo.toString () +
+                         udpInfo.toString () +
+                         icmpInfo.toString () +
+                         ipv4Info.toString () +
+                         arpInfo.toString () +
+                         wifiMacInfo.toString () +
+                         pppInfo.toString () +
+                         ethernetInfo.toString ();
+        }
       result = true;
     }
   else
     {
       if (filter & AnimPacket::AODV)
         if (aodvResult)
-          finalString += aodvInfo.toShortString ();
+          finalString += (shortString)?aodvInfo.toShortString ():aodvInfo.toString ();
       if (filter & AnimPacket::OLSR)
         if (olsrResult)
-          finalString += olsrInfo.toShortString ();
+          finalString += (shortString)?olsrInfo.toShortString ():olsrInfo.toString ();
       if (filter & AnimPacket::DSDV)
         if (dsdvResult)
-          finalString += dsdvInfo.toShortString ();
+          finalString += (shortString)?dsdvInfo.toShortString ():dsdvInfo.toString ();
       if (filter & AnimPacket::TCP)
         if (tcpResult)
-          finalString += tcpInfo.toShortString ();
+          finalString += (shortString)?tcpInfo.toShortString ():tcpInfo.toString ();
       if (filter & AnimPacket::UDP)
         if (udpResult)
-          finalString += udpInfo.toShortString ();
+          finalString += (shortString)?udpInfo.toShortString ():udpInfo.toString ();
       if (filter & AnimPacket::ICMP)
         if (icmpResult)
-          finalString += icmpInfo.toShortString ();
+          finalString += (shortString)?icmpInfo.toShortString ():icmpInfo.toString ();
       if (filter & AnimPacket::IPV4)
         if (ipv4Result)
-          finalString += ipv4Info.toShortString ();
+          finalString += (shortString)?ipv4Info.toShortString ():ipv4Info.toString ();
       if (filter & AnimPacket::ARP)
         if (arpResult)
-          finalString += arpInfo.toShortString ();
+          finalString += (shortString)?arpInfo.toShortString ():arpInfo.toString ();
       if (filter & AnimPacket::WIFI)
         if (wifiResult)
-          finalString += wifiMacInfo.toShortString ();
+          finalString += (shortString)?wifiMacInfo.toShortString ():wifiMacInfo.toString ();
       if (filter & AnimPacket::PPP)
         if (pppResult)
-          finalString += pppInfo.toShortString ();
+          finalString += (shortString)?pppInfo.toShortString ():pppInfo.toString ();
       if (filter & AnimPacket::ETHERNET)
         if (ethernetResult)
-          finalString += ethernetInfo.toShortString ();
+          finalString += (shortString)?ethernetInfo.toShortString ():ethernetInfo.toString ();
       if (finalString != "")
         result = true;
 
@@ -184,14 +201,14 @@ AnimPacket::getShortMeta (QString metaInfo, int filter, bool & result)
 }
 
 QString
-AnimPacket::getShortMeta (QString metaInfo)
+AnimPacket::getMeta (QString metaInfo, bool shortString)
 {
   bool result = false;
   QString metaInfoString = metaInfo.toAscii ().data ();
   AodvInfo aodvInfo = parseAodv (metaInfoString, result);
   if (result)
     {
-      return aodvInfo.toShortString ();
+      return (shortString)?aodvInfo.toShortString ():aodvInfo.toString ();
     }
 
 
@@ -199,7 +216,7 @@ AnimPacket::getShortMeta (QString metaInfo)
   OlsrInfo olsrInfo = parseOlsr (metaInfoString, result);
   if(result)
     {
-      return olsrInfo.toShortString ();
+      return (shortString)?olsrInfo.toShortString ():olsrInfo.toString ();
     }
 
 
@@ -207,7 +224,7 @@ AnimPacket::getShortMeta (QString metaInfo)
   DsdvInfo dsdvInfo = parseDsdv (metaInfoString, result);
   if(result)
     {
-      return dsdvInfo.toShortString ();
+      return (shortString)?dsdvInfo.toShortString ():dsdvInfo.toString ();
     }
 
 
@@ -216,7 +233,7 @@ AnimPacket::getShortMeta (QString metaInfo)
   TcpInfo tcpInfo = parseTcp (metaInfoString, result);
   if(result)
     {
-      return tcpInfo.toShortString ();
+      return (shortString)?tcpInfo.toShortString ():tcpInfo.toString ();
     }
 
 
@@ -225,7 +242,7 @@ AnimPacket::getShortMeta (QString metaInfo)
   UdpInfo udpInfo = parseUdp (metaInfoString, result);
   if(result)
     {
-      return udpInfo.toShortString ();
+      return (shortString)?udpInfo.toShortString ():udpInfo.toString ();
     }
 
 
@@ -234,7 +251,7 @@ AnimPacket::getShortMeta (QString metaInfo)
   ArpInfo arpInfo = parseArp (metaInfoString, result);
   if(result)
     {
-      return arpInfo.toShortString ();
+      return (shortString)?arpInfo.toShortString ():arpInfo.toString ();
     }
 
 
@@ -244,7 +261,7 @@ AnimPacket::getShortMeta (QString metaInfo)
   IcmpInfo icmpInfo = parseIcmp (metaInfoString, result);
   if(result)
     {
-      return icmpInfo.toShortString ();
+      return (shortString)?icmpInfo.toShortString ():icmpInfo.toString ();
 
     }
 
@@ -253,7 +270,7 @@ AnimPacket::getShortMeta (QString metaInfo)
   Ipv4Info ipv4Info = parseIpv4 (metaInfoString, result);
   if(result)
     {
-      return ipv4Info.toShortString ();
+      return (shortString)?ipv4Info.toShortString ():ipv4Info.toString ();
     }
 
 
@@ -261,7 +278,7 @@ AnimPacket::getShortMeta (QString metaInfo)
   WifiMacInfo wifiMacInfo = parseWifi (metaInfoString, result);
   if(result)
     {
-      return wifiMacInfo.toShortString ();
+      return (shortString)?wifiMacInfo.toShortString ():wifiMacInfo.toString ();
     }
 
 
@@ -269,14 +286,14 @@ AnimPacket::getShortMeta (QString metaInfo)
   PppInfo pppInfo = parsePpp (metaInfoString, result);
   if(result)
     {
-      return pppInfo.toShortString ();
+      return (shortString)?pppInfo.toShortString ():pppInfo.toString ();
     }
 
   result = false;
   EthernetInfo ethernetInfo = parseEthernet (metaInfoString, result);
   if(result)
     {
-      return ethernetInfo.toShortString ();
+      return (shortString)?ethernetInfo.toShortString ():ethernetInfo.toString ();
     }
   return "";
 
@@ -478,7 +495,7 @@ AnimPacket::parseTcp (QString metaInfo, bool & result)
 {
   TcpInfo tcpInfo;
 
-  QRegExp rx ("ns3::TcpHeader \\((\\S+) > (\\S+) \\[([^\\]]*)\\] Seq=(\\S+) Ack=(\\S+) Win=(\\S+)\\)");
+  QRegExp rx ("ns3::TcpHeader \\((\\d+) > (\\d+) \\[([^\\]]*)\\] Seq=(\\d+) Ack=(\\d+) Win=(\\d+)");
   int pos = 0;
   if ((pos = rx.indexIn (metaInfo)) == -1)
     {
