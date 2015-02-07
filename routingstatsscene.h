@@ -30,10 +30,13 @@ struct NodeIdDest_t
 {
   uint32_t fromNodeId;
   QString destination;
+
   bool operator< (const NodeIdDest_t & rhs ) const
   {
+
     return ( fromNodeId < rhs.fromNodeId) ||
-           ( fromNodeId == rhs.fromNodeId && (destination.toAscii () < rhs.destination.toAscii ()));
+         ( fromNodeId == rhs.fromNodeId &&
+         ( GET_ASCII (destination) < GET_ASCII (rhs.destination) ) );
   }
 } ;
 
@@ -47,7 +50,6 @@ typedef std::vector <RoutePath_t> RoutePathVector_t;
 
 class RoutingStatsScene : public QGraphicsScene
 {
-
 public:
   static RoutingStatsScene * getInstance ();
   void test ();

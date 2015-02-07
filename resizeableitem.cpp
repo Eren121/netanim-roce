@@ -14,6 +14,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * Author: John Abraham <john.abraham.in@gmail.com>
+ * Contributions: Makhtar Diouf <makhtar.diouf@gmail.com>
  */
 
 #include "resizeableitem.h"
@@ -31,7 +32,7 @@ ResizeableItem::ResizeableItem ():
   m_height (1)
 {
   //NS_LOG_FUNCTION (m_mousePressed);
-  setAcceptsHoverEvents (true);
+  setAcceptHoverEvents (true);  // Typo fixed
 }
 
 ResizeableItem::~ResizeableItem ()
@@ -85,7 +86,7 @@ void ResizeableItem::setSize (qreal width, qreal height)
   setHeight (height);
   qreal xScale = width/sceneBoundingRect ().width ();
   qreal yScale = height/sceneBoundingRect ().height ();
-  scale (xScale, yScale);
+  setTransform (QTransform::fromScale (xScale, yScale), true);
 }
 
 void ResizeableItem::paint (QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -99,9 +100,12 @@ void ResizeableItem::paint (QPainter *painter, const QStyleOptionGraphicsItem *o
       break;
     case ResizeableItem::CIRCLE:
     {
+      QPen pen;
+      pen.setCosmetic (true);
       QBrush brush;
       brush.setStyle (Qt::SolidPattern);
       brush.setColor (QColor (m_r, m_g, m_b, m_alpha));
+      painter->setPen (pen);
       painter->setBrush (brush);
       painter->drawEllipse (QPointF (0, 0), m_width, m_height);
 

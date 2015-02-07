@@ -106,7 +106,7 @@ QPointF
 AnimLink::getLinkDescriptionCenter (QPainter * painter , QPointF * offset)
 {
   QFontMetrics fm = painter->fontMetrics ();
-  qreal x = (line ().length () - fm.width (m_currentLinkDescription->toAscii ().data ()))/2;
+  qreal x = (line ().length () - fm.width (GET_DATA_PTR (m_currentLinkDescription)))/2;
   QPointF pOffset = line ().p1 ().x () < line ().p2 ().x ()? line ().p1 ():line ().p2 ();
   *offset = pOffset;
   QPointF p = QPointF (x, -1);
@@ -121,6 +121,7 @@ AnimLink::paint (QPainter *painter, const QStyleOptionGraphicsItem *option, QWid
   QFont font;
   font.setPointSize (2);
   QPen pen;
+  pen.setCosmetic (true);
   QColor bl(0, 0, 0, 50);
   pen.setColor (bl);
   painter->setFont (font);
@@ -129,6 +130,7 @@ AnimLink::paint (QPainter *painter, const QStyleOptionGraphicsItem *option, QWid
   painter->drawLine (line ());
   bl = QColor (0, 0, 0);
   pen.setColor (bl);
+  pen.setCosmetic (true);
   painter->setPen (pen);
 
   if (m_currentLinkDescription)

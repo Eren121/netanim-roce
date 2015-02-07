@@ -14,11 +14,17 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * Author: John Abraham <john.abraham.in@gmail.com>
+ * Contributions: Makhtar Diouf <makhtar.diouf@gmail.com>
  */
 
+#include "common.h"
+#include "log.h"
 #include "flowmonxmlparser.h"
 #include "animatormode.h"
 #include "flowmonstatsscene.h"
+#include <exception>
+
+NS_LOG_COMPONENT_DEFINE ("FlowMonXmlParser");
 
 namespace netanim
 {
@@ -34,12 +40,20 @@ FlowMonXmlparser::FlowMonXmlparser (QString traceFileName):
     return;
 
   m_traceFile = new QFile (m_traceFileName);
-  if (!m_traceFile->open (QIODevice::ReadOnly | QIODevice::Text))
+  try
     {
-      m_fileIsValid = false;
-      return;
+      if ((m_traceFile->size () <= 0) || !m_traceFile->open (QIODevice::ReadOnly | QIODevice::Text))
+        {
+          m_fileIsValid = false;
+          return;
+        }
+    m_reader = new QXmlStreamReader (m_traceFile);
     }
-  m_reader = new QXmlStreamReader (m_traceFile);
+  catch (std::exception& e)
+    {
+      NS_LOG_DEBUG ("Unable to load flowmonitor file:" << e.what ());
+      m_fileIsValid = false;
+    }
 }
 
 FlowMonXmlparser::~FlowMonXmlparser ()

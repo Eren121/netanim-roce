@@ -1,3 +1,5 @@
+QT += widgets printsupport
+
 SOURCES += \
     main.cpp \
     log.cpp \
@@ -144,7 +146,6 @@ HEADERS += \
 
 
 INCLUDEPATH += qtpropertybrowser/src
-
 DEFINES += NS3_LOG_ENABLE
 
 RESOURCES += \

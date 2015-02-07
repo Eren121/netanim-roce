@@ -14,6 +14,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * Author: John Abraham <john.abraham.in@gmail.com>
+ * Contributions: Makhtar Diouf <makhtar.diouf@gmail.com>
  */
 
 #ifndef ANIMPACKET_H
@@ -391,7 +392,6 @@ public:
   static QString getMeta (QString metaInfo, int filter, bool & result, bool shortString = true);
   bool packetExpired ();
   qreal getRadius ();
-
 
 
 private:

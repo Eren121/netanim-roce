@@ -14,6 +14,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * Author: John Abraham <john.abraham.in@gmail.com>
+ * Contributions: Makhtar Diouf <makhtar.diouf@gmail.com>
  */
 
 #include "animpacket.h"
@@ -81,7 +82,11 @@ AnimPacket::AnimPacket (uint32_t fromNodeId,
         {
           textAngle = 180-textAngle;
         }
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
+      m_infoText->setTransform (QTransform().rotate (textAngle));
+#else
       m_infoText->rotate (textAngle);
+#endif
       m_infoText->setText (getMeta(metaInfo));
     }
 
@@ -99,7 +104,7 @@ QString
 AnimPacket::getMeta (QString metaInfo, int filter, bool & result, bool shortString)
 {
   result = false;
-  QString metaInfoString = metaInfo.toAscii ().data ();
+  QString metaInfoString = GET_DATA (metaInfo);
 
   bool aodvResult = false;
   AodvInfo aodvInfo = parseAodv (metaInfoString, aodvResult);
@@ -204,7 +209,9 @@ QString
 AnimPacket::getMeta (QString metaInfo, bool shortString)
 {
   bool result = false;
-  QString metaInfoString = metaInfo.toAscii ().data ();
+  QString metaInfoString = GET_DATA (metaInfo);
+
+
   AodvInfo aodvInfo = parseAodv (metaInfoString, result);
   if (result)
     {
@@ -392,12 +399,13 @@ AnimPacket::parseArp (QString metaInfo, bool & result)
       result = false;
       return arpInfo;
     }
-  arpInfo.type = rx.cap (1).toAscii ().data ();
-  arpInfo.sourceMac = rx.cap (2).toAscii ().data ();
-  arpInfo.sourceIpv4 = rx.cap (3).toAscii ().data ();
-  if(QString (rx.cap (4).toAscii ().data ()) != "")
-    arpInfo.destMac = rx.cap (4).toAscii ().data ();
-  arpInfo.destIpv4  = rx.cap (5).toAscii ().data ();
+
+  arpInfo.type = GET_DATA (rx.cap (1));
+  arpInfo.sourceMac = GET_DATA (rx.cap (2));
+  arpInfo.sourceIpv4 = GET_DATA (rx.cap (3));
+  if(QString (GET_DATA (rx.cap (4))) != "")
+    arpInfo.destMac = GET_DATA (rx.cap (4));
+  arpInfo.destIpv4  = GET_DATA (rx.cap (5));
   result = true;
   return arpInfo;
   /*qDebug (" Type:" + arpInfo->type +
@@ -420,8 +428,10 @@ AnimPacket::parseEthernet (QString metaInfo, bool & result)
       result = false;
       return ethernetInfo;
     }
-  ethernetInfo.sourceMac = rx.cap (1).toAscii ().data ();
-  ethernetInfo.destMac = rx.cap (2).toAscii ().data ();
+
+  ethernetInfo.sourceMac = GET_DATA (rx.cap (1));
+  ethernetInfo.destMac = GET_DATA (rx.cap (2));
+
   result = true;
   return ethernetInfo;
 }
@@ -439,8 +449,9 @@ AnimPacket::parseIcmp (QString metaInfo, bool & result)
       result = false;
       return icmpInfo;
     }
-  icmpInfo.type = rx.cap (1).toAscii ().data ();
-  icmpInfo.code = rx.cap (2).toAscii ().data ();
+
+  icmpInfo.type =  GET_DATA (rx.cap (1));
+  icmpInfo.code =  GET_DATA (rx.cap (2));
   result = true;
   return icmpInfo;
 
@@ -458,9 +469,10 @@ AnimPacket::parseUdp (QString metaInfo, bool & result)
       result = false;
       return udpInfo;
     }
-  udpInfo.length = rx.cap (1).toAscii ().data ();
-  udpInfo.SPort = rx.cap (2).toAscii ().data ();
-  udpInfo.DPort = rx.cap (3).toAscii ().data ();
+
+  udpInfo.length = GET_DATA (rx.cap (1));
+  udpInfo.SPort = GET_DATA (rx.cap (2));
+  udpInfo.DPort = GET_DATA (rx.cap (3));
   result = true;
   return udpInfo;
 }
@@ -477,15 +489,15 @@ AnimPacket::parseIpv4 (QString metaInfo, bool & result)
       result = false;
       return ipv4Info;
     }
-  ipv4Info.tos = rx.cap (1).toAscii ().data ();
-  ipv4Info.Dscp = rx.cap (2).toAscii ().data ();
-  ipv4Info.Ecn = rx.cap (3).toAscii ().data ();
-  ipv4Info.Ttl = rx.cap (4).toAscii ().data ();
-  ipv4Info.Id = rx.cap (5).toAscii ().data ();
-  ipv4Info.protocol = rx.cap (6).toAscii ().data ();
-  ipv4Info.length = rx.cap (7).toAscii ().data ();
-  ipv4Info.SrcIp = rx.cap (8).toAscii ().data ();
-  ipv4Info.DstIp = rx.cap (9).toAscii ().data ();
+  ipv4Info.tos = GET_DATA (rx.cap (1));
+  ipv4Info.Dscp = GET_DATA (rx.cap (2));
+  ipv4Info.Ecn = GET_DATA (rx.cap (3));
+  ipv4Info.Ttl = GET_DATA (rx.cap (4));
+  ipv4Info.Id = GET_DATA (rx.cap (5));
+  ipv4Info.protocol = GET_DATA (rx.cap (6));
+  ipv4Info.length = GET_DATA (rx.cap (7));
+  ipv4Info.SrcIp = GET_DATA (rx.cap (8));
+  ipv4Info.DstIp = GET_DATA (rx.cap (9));
   result = true;
   return ipv4Info;
 }
@@ -502,12 +514,12 @@ AnimPacket::parseTcp (QString metaInfo, bool & result)
       result = false;
       return tcpInfo;
     }
-  tcpInfo.SPort = rx.cap (1).toAscii ().data ();
-  tcpInfo.DPort = rx.cap (2).toAscii ().data ();
-  tcpInfo.flags = rx.cap (3).toAscii ().data ();
-  tcpInfo.seq = rx.cap (4).toAscii ().data ();
-  tcpInfo.ack = rx.cap (5).toAscii ().data ();
-  tcpInfo.window = rx.cap (6).toAscii ().data ();
+  tcpInfo.SPort = GET_DATA (rx.cap (1));
+  tcpInfo.DPort = GET_DATA (rx.cap (2));
+  tcpInfo.flags = GET_DATA (rx.cap (3));
+  tcpInfo.seq = GET_DATA (rx.cap (4));
+  tcpInfo.ack = GET_DATA (rx.cap (5));
+  tcpInfo.window = GET_DATA (rx.cap (6));
   result = true;
   return tcpInfo;
 }
@@ -521,7 +533,7 @@ AnimPacket::parseWifi (QString metaInfo, bool & result)
   if ((pos = rxCTL_ACK.indexIn (metaInfo)) != -1)
     {
       wifiMacInfo.type = "CTL_ACK";
-      wifiMacInfo.Ra = rxCTL_ACK.cap (1).toAscii ().data ();
+      wifiMacInfo.Ra = GET_DATA (rxCTL_ACK.cap (1));
       result = true;
       return wifiMacInfo;
 
@@ -531,8 +543,8 @@ AnimPacket::parseWifi (QString metaInfo, bool & result)
   if ((pos = rxCTL_RTS.indexIn (metaInfo)) != -1)
     {
       wifiMacInfo.type = "CTL_RTS";
-      wifiMacInfo.Ra = rxCTL_RTS.cap (1).toAscii ().data ();
-      wifiMacInfo.Sa = rxCTL_RTS.cap (2).toAscii ().data ();
+      wifiMacInfo.Ra = GET_DATA (rxCTL_RTS.cap (1));
+      wifiMacInfo.Sa = GET_DATA (rxCTL_RTS.cap (2));
       result = true;
       return wifiMacInfo;
 
@@ -543,7 +555,7 @@ AnimPacket::parseWifi (QString metaInfo, bool & result)
   if ((pos = rxCTL_CTS.indexIn (metaInfo)) != -1)
     {
       wifiMacInfo.type = "CTL_CTS";
-      wifiMacInfo.Ra = rxCTL_CTS.cap (1).toAscii ().data ();
+      wifiMacInfo.Ra = GET_DATA (rxCTL_CTS.cap (1));
       result = true;
       return wifiMacInfo;
 
@@ -556,12 +568,12 @@ AnimPacket::parseWifi (QString metaInfo, bool & result)
       result = false;
       return wifiMacInfo;
     }
-  wifiMacInfo.type = rx.cap (1).toAscii ().data ();
-  wifiMacInfo.toDs = rx.cap (2).toAscii ().data ();
-  wifiMacInfo.fromDs = rx.cap (3).toAscii ().data ();
-  wifiMacInfo.Da = rx.cap (4).toAscii ().data ();
-  wifiMacInfo.Sa = rx.cap (5).toAscii ().data ();
-  wifiMacInfo.Bssid = rx.cap (6).toAscii ().data ();
+  wifiMacInfo.type = GET_DATA (rx.cap (1));
+  wifiMacInfo.toDs = GET_DATA (rx.cap (2));
+  wifiMacInfo.fromDs = GET_DATA (rx.cap (3));
+  wifiMacInfo.Da = GET_DATA (rx.cap (4));
+  wifiMacInfo.Sa = GET_DATA (rx.cap (5));
+  wifiMacInfo.Bssid = GET_DATA (rx.cap (6));
 
   if(wifiMacInfo.type == "MGT_ASSOCIATION_REQUEST")
     {
@@ -572,7 +584,7 @@ AnimPacket::parseWifi (QString metaInfo, bool & result)
           result = false;
           return wifiMacInfo;
         }
-      wifiMacInfo.SSid = rx.cap (1).toAscii ().data ();
+      wifiMacInfo.SSid = GET_DATA (rx.cap (1));
     }
   if(wifiMacInfo.type == "MGT_ASSOCIATION_RESPONSE")
     {
@@ -583,7 +595,7 @@ AnimPacket::parseWifi (QString metaInfo, bool & result)
           result = false;
           return wifiMacInfo;
         }
-      wifiMacInfo.assocResponseStatus = rx.cap (1).toAscii ().data ();
+      wifiMacInfo.assocResponseStatus = GET_DATA (rx.cap (1));
     }
   result = true;
   return wifiMacInfo;
@@ -601,7 +613,7 @@ AnimPacket::parseAodv (QString metaInfo, bool & result)
       result = false;
       return aodvInfo;
     }
-  aodvInfo.type = rx.cap (1).toAscii ().data ();
+  aodvInfo.type = GET_DATA (rx.cap (1));
   if(aodvInfo.type == "RREQ")
     {
       QRegExp rx ("ns3::aodv::RreqHeader \\(RREQ ID \\d+ destination: ipv4 (\\S+) sequence number (\\d+) source: ipv4 (\\S+) sequence number \\d+");
@@ -611,9 +623,9 @@ AnimPacket::parseAodv (QString metaInfo, bool & result)
           result = false;
           return aodvInfo;
         }
-      aodvInfo.destination = rx.cap (1).toAscii ().data ();
-      aodvInfo.seq = rx.cap (2).toAscii ().data ();
-      aodvInfo.source = rx.cap (3).toAscii ().data ();
+      aodvInfo.destination = GET_DATA (rx.cap (1));
+      aodvInfo.seq = GET_DATA (rx.cap (2));
+      aodvInfo.source = GET_DATA (rx.cap (3));
 
     }
   if(aodvInfo.type == "RREP")
@@ -625,9 +637,9 @@ AnimPacket::parseAodv (QString metaInfo, bool & result)
           result = false;
           return aodvInfo;
         }
-      aodvInfo.destination = rx.cap (1).toAscii ().data ();
-      aodvInfo.seq = rx.cap (2).toAscii ().data ();
-      aodvInfo.source = rx.cap (3).toAscii ().data ();
+      aodvInfo.destination = GET_DATA (rx.cap (1));
+      aodvInfo.seq = GET_DATA (rx.cap (2));
+      aodvInfo.source = GET_DATA (rx.cap (3));
     }
   if(aodvInfo.type == "RERR")
     {
@@ -638,8 +650,8 @@ AnimPacket::parseAodv (QString metaInfo, bool & result)
           result = false;
           return aodvInfo;
         }
-      aodvInfo.rerrInfo = rx.cap (1).toAscii ().data ();
-      aodvInfo.destination = rx.cap (2).toAscii ().data ();
+      aodvInfo.rerrInfo = GET_DATA (rx.cap (1));
+      aodvInfo.destination = GET_DATA (rx.cap (2));
     }
   result = true;
   return aodvInfo;
@@ -788,6 +800,7 @@ AnimPacket::paint (QPainter *painter, const QStyleOptionGraphicsItem *option, QW
   //arrowTailPath.addText (-mag, 0, f, "HOLA");
   p.setColor (Qt::blue);
   //p.setWidthF (0.75);
+  p.setCosmetic (true);
   painter->setPen (p);
   painter->rotate (360 - m_line.angle ());
   painter->drawPath (arrowTailPath);
@@ -813,6 +826,7 @@ AnimPacket::paint (QPainter *painter, const QStyleOptionGraphicsItem *option, QW
   arrowHeadPath.moveTo (0, 0);
   painter->save();
   QPen arrowHeadPen;
+  arrowHeadPen.setCosmetic (true);
   //arrowHeadPen.setWidthF (0.75);
 
   QColor black (0, 0, 5, 130);

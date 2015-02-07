@@ -20,6 +20,10 @@
 #include "statsmode.h"
 #include "animatormode.h"
 #include "routingstatsscene.h"
+#include "log.h"
+#include <exception>
+
+NS_LOG_COMPONENT_DEFINE("RoutingXmlParser");
 
 namespace netanim
 {
@@ -37,17 +41,26 @@ RoutingXmlparser::RoutingXmlparser (QString traceFileName):
     return;
 
   m_traceFile = new QFile (m_traceFileName);
-  if (!m_traceFile->open (QIODevice::ReadOnly | QIODevice::Text))
+  try
     {
-      m_fileIsValid = false;
-      return;
+      if ((m_traceFile->size () <= 0) || !m_traceFile->open (QIODevice::ReadOnly | QIODevice::Text))
+        {
+          m_fileIsValid = false;
+          return;
+        }
     }
+  catch (std::exception& e)
+    {
+      NS_LOG_DEBUG ("Unable to load routing xml file:" << e.what ());
+      m_fileIsValid = false;
+    }
+
   //qDebug (m_traceFileName);
   QString allChars (m_traceFile->readAll ().constData ());
   allChars.replace ("\n", "&#13;&#10;");
   //qDebug (allChars);
 
-  m_reader = new QXmlStreamReader (allChars.toAscii ());
+  m_reader = new QXmlStreamReader (GET_ASCII (allChars));
 }
 
 RoutingXmlparser::~RoutingXmlparser ()

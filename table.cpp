@@ -17,6 +17,7 @@
  */
 
 #include "table.h"
+
 namespace netanim {
 
 Table::Table ()
@@ -124,7 +125,7 @@ Table::exportButtonClickedSlot ()
   if (f.open (QIODevice::WriteOnly))
     {
       QString headerString = stringListToRowString (m_headerList);
-      f.write (headerString.toAscii ().data ());
+      f.write (GET_DATA (headerString));
       int rowCount = m_table->rowCount ();
       int columnCount = m_table->columnCount ();
       for (int i = 0; i < rowCount; ++i)
@@ -142,7 +143,7 @@ Table::exportButtonClickedSlot ()
                   rowStringList << item->text ();
                 }
             }
-          f.write (stringListToRowString (rowStringList).toAscii ().data ());
+          f.write (GET_DATA (stringListToRowString (rowStringList)));
         }
     }
   f.close();

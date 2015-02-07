@@ -16,6 +16,7 @@
  * Author: John Abraham <john.abraham.in@gmail.com>
  * Contributions: Eugene Kalishenko <ydginster@gmail.com> (Open Source and Linux Laboratory http://dev.osll.ru/)
  * 		  Dmitrii Shakshin <d.shakshin@gmail.com> (Open Source and Linux Laboratory http://dev.osll.ru/)
+ *        Makhtar Diouf <makhtar.diouf@gmail.com>
  */
 
 #ifndef AnimatorPlugin_H
@@ -28,7 +29,7 @@
 #include "mode.h"
 #include "timevalue.h"
 #include "animevent.h"
-#include <QtTreePropertyBrowser>
+#include "QtTreePropertyBrowser"
 
 namespace netanim
 {

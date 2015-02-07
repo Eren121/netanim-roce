@@ -15,10 +15,11 @@
  *
  * Author: John Abraham <john.abraham.in@gmail.com>
  * Contributions: Eugene Kalishenko <ydginster@gmail.com> (Open Source and Linux Laboratory http://dev.osll.ru/)
- * 		  Dmitrii Shakshin <d.shakshin@gmail.com> (Open Source and Linux Laboratory http://dev.osll.ru/)
+ * 		          Dmitrii Shakshin <d.shakshin@gmail.com> (Open Source and Linux Laboratory http://dev.osll.ru/)
+ *                Makhtar Diouf <makhtar.diouf@gmail.com>
  */
 
-
+#include "common.h"
 #include "animxmlparser.h"
 #include "animatormode.h"
 #include "animatorscene.h"
@@ -26,7 +27,8 @@
 #include "animlink.h"
 #include "animresource.h"
 #include "animnode.h"
-
+#include <QtDebug>
+#include <exception>
 
 namespace netanim
 {
@@ -51,15 +53,23 @@ Animxmlparser::Animxmlparser (QString traceFileName):
   if (m_traceFileName == "")
     return;
 
-  m_traceFile = new QFile (m_traceFileName);
-  if (!m_traceFile->open (QIODevice::ReadOnly | QIODevice::Text))
-    {
-      //qDebug (QString ("Critical:Trace file is invalid"));
-      m_fileIsValid = false;
-      return;
-    }
-  //qDebug (m_traceFileName);
-  m_reader = new QXmlStreamReader (m_traceFile);
+    try
+      {
+        m_traceFile = new QFile (m_traceFileName);
+        if ((m_traceFile->size () <= 0) || !m_traceFile->open (QIODevice::ReadOnly | QIODevice::Text))
+          {
+            //qDebug (QString ("Critical:Trace file is invalid"));
+            m_fileIsValid = false;
+            return;
+          }
+        //qDebug (m_traceFileName);
+        m_reader = new QXmlStreamReader (m_traceFile);
+       }
+    catch (std::exception &e)
+      {
+        NS_LOG_DEBUG ("Error opening trace file: " << e.what ());
+        m_fileIsValid = false;
+      }
 }
 
 Animxmlparser::~Animxmlparser ()

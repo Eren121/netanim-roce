@@ -15,6 +15,7 @@
  *
  * Author: John Abraham <john.abraham.in@gmail.com>
  * Contributions: Dmitrii Shakshin <d.shakshin@gmail.com> (Open Source and Linux Laboratory http://dev.osll.ru/)
+ *                Makhtar Diouf <makhtar.diouf@gmail.com>
  */
 
 
@@ -131,13 +132,18 @@ AnimatorScene::setBackgroundY (qreal y)
   m_backgroundImage->setY(y);
 }
 
+void AnimatorScene::setScale (QGraphicsPixmapItem* img, qreal x, qreal y)
+{
+  img->setTransform (QTransform::fromScale (x, y), true);
+}
+
 void
 AnimatorScene::setBackgroundScaleX (qreal x)
 {
   if (!m_backgroundImage)
     return;
   //m_backgroundImage->setTransform (m_originalBackgroundTransform);
-  m_backgroundImage->scale (x, 1);
+  setScale (m_backgroundImage, x, 1);
 }
 
 
@@ -147,7 +153,7 @@ AnimatorScene::setBackgroundScaleY (qreal y)
   if (!m_backgroundImage)
     return;
   //m_backgroundImage->setTransform (m_originalBackgroundTransform);
-  m_backgroundImage->scale (1, y);
+  setScale (m_backgroundImage, 1, y);
 }
 
 void
@@ -186,7 +192,7 @@ AnimatorScene::setBackgroundImage (QString fileName, qreal x, qreal y, qreal sca
   m_backgroundImage->setPos (x, y);
   m_backgroundImage->setFlags (QGraphicsItem::ItemIsMovable|QGraphicsItem::ItemIsSelectable);
   m_originalBackgroundTransform = m_backgroundImage->transform ();
-  m_backgroundImage->scale (scaleX, scaleY);
+  setScale (m_backgroundImage, scaleX, scaleY); // scale (scaleX, scaleY);
   m_backgroundImage->setZValue (ANIMBACKGROUND_ZVALUE);
   m_backgroundImage->setOpacity (opacity);
 
@@ -234,6 +240,9 @@ AnimatorScene::setShowNodeTrajectory (AnimNode *animNode)
           path.lineTo (pt);
         }
       QGraphicsPathItem * pathItem = addPath (path);
+      QPen pen;
+      pen.setCosmetic (true);
+      pathItem->setPen (pen);
       m_nodeTrajectory[nodeId] = pathItem;
     }
   m_nodeTrajectory[nodeId]->setVisible (animNode->getShowNodeTrajectory ());
@@ -247,6 +256,7 @@ AnimatorScene::addWirelessCircle (QRectF r)
     return;
   AnimWirelessCircles * w = new AnimWirelessCircles ();
   QPen p = w->pen ();
+  p.setCosmetic (true);
   p.setColor (QColor (0, 0, 255, 50));
   w->setPen (p);
   w->setRect (r);
@@ -577,6 +587,7 @@ AnimatorScene::addGrid ()
   //xStep = ceil (xStep);
   //yStep = ceil (yStep);
   QPen pen (QColor (100, 100, 155, 125));
+  pen.setCosmetic (true);
 
   // draw horizontal grid
   qreal y = 0;
@@ -691,6 +702,8 @@ AnimatorScene::setShowInterfaceTexts (bool showIp, bool showMac)
       removeInterfaceTextCollision ();
       return;
     }
+  QPen pen;
+  pen.setCosmetic (true);
   for (AnimInterfaceTextVector_t::const_iterator i = m_interfaceATexts.begin ();
       i != m_interfaceATexts.end ();
       ++i)
@@ -698,6 +711,7 @@ AnimatorScene::setShowInterfaceTexts (bool showIp, bool showMac)
       AnimInterfaceText * interfaceText = *i;
       interfaceText->setMode (m_showIpInterfaceTexts, m_showMacInterfaceTexts);
       QGraphicsLineItem * l = interfaceText->getLine ();
+      l->setPen (pen);
       if (l)
         {
           l->setVisible (showIp || showMac);
@@ -711,6 +725,7 @@ AnimatorScene::setShowInterfaceTexts (bool showIp, bool showMac)
       AnimInterfaceText * interfaceText = *i;
       interfaceText->setMode (m_showIpInterfaceTexts, m_showMacInterfaceTexts);
       QGraphicsLineItem * l = interfaceText->getLine ();
+      l->setPen (pen);
       if (l)
         {
           l->setVisible (showIp || showMac);
@@ -936,7 +951,7 @@ AnimInterfaceText::setLine (QLineF l)
       newLine = true;
     }
   QPen p;
-
+  p.setCosmetic (true);
   p.setColor (QColor (0, 0, 255, 50));
   m_line->setPen (p);
   m_line->setLine (l);

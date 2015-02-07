@@ -14,6 +14,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * Author: John Abraham <john.abraham.in@gmail.com>
+ * Contributions: Makhtar Diouf <makhtar.diouf@gmail.com>
  */
 #include <QRegExp>
 #include "packetsscene.h"
@@ -257,7 +258,7 @@ PacketsScene::addPacket (qreal tx, qreal rx, uint32_t fromNodeId, uint32_t toNod
           info->setPos (QPointF (toNodeX, rxY));
 
         }
-      info->rotate (textAngle);
+      info->setTransform (QTransform ().rotate (textAngle));
     }
 
   Table * table = PacketsMode::getInstance ()->getTable ();
