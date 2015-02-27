@@ -16,9 +16,9 @@ Makhtar Diouf <makhtar.diouf@gmail.com>
 
 Wiki
 ====
-http://www.nsnam.org/wiki/NetAnim_3.105
+http://www.nsnam.org/wiki/NetAnim
 
-Release 3.105
+Release 3.106
 =============
 Please use the following to download using mercurial:
 hg clone http://code.nsnam.org/netanim
@@ -31,6 +31,7 @@ hg clone http://code.nsnam.org/netanim
 Supported Qt versions
 ---------------------
 - Qt 4.7.x to Qt 4.8.0
+- Qt 5.4
 
 Supported platforms
 -------------------

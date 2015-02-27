@@ -232,6 +232,12 @@ RoutingXmlparser::parseAnim ()
   m_version = v.toDouble ();
   parsedElement.version = m_version;
   //qDebug (QString::number (m_version));
+  QString fileType = m_reader->attributes ().value ("filetype").toString ();
+  if (fileType != "routing")
+    {
+      AnimatorMode::getInstance ()->showPopup ("filetype must be == routing. Invalid routing trace file?");
+      NS_FATAL_ERROR ("Invalid routing trace file");
+    }
   return parsedElement;
 }
 

@@ -519,6 +519,12 @@ Animxmlparser::parseAnim ()
     }
   parsedElement.version = m_version;
   //qDebug (QString::number (m_version));
+  QString fileType = m_reader->attributes ().value ("filetype").toString ();
+  if (fileType != "animation")
+    {
+      AnimatorMode::getInstance ()->showPopup ("filetype must be == animation. Invalid animation trace file?");
+      NS_FATAL_ERROR ("Invalid animation trace file");
+    }
   return parsedElement;
 }
 
