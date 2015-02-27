@@ -114,7 +114,8 @@ void ResizeableItem::paint (QPainter *painter, const QStyleOptionGraphicsItem *o
     case ResizeableItem::PIXMAP:
       if (m_pixmap)
         {
-          painter->drawPixmap (0, 0, m_width, m_height, *m_pixmap);
+          //painter->drawPixmap (0, 0, m_width, m_height, *m_pixmap);
+          painter->drawPixmap (-m_width/2, -m_height/2, m_width/2, m_height/2, *m_pixmap);
         }
       break;
     }

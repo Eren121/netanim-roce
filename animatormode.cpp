@@ -1267,7 +1267,7 @@ AnimatorMode::reloadFileSlot ()
   StatsMode::getInstance ()->systemReset ();
 
   QApplication::processEvents ();
-
+  AnimatorScene::getInstance ()->setSceneInfoText ("Please select an XML trace file using the file load button on the top-left corner", false);
 
 }
 void
@@ -1295,10 +1295,11 @@ AnimatorMode::clickTraceFileOpenSlot ()
             m_fileOpenButton->setEnabled (true);
         }
     }
-  AnimatorScene::getInstance ()->setSceneInfoText ("Please select an XML trace file using the file load button on the top-left corner", false);
 
   StatsMode::getInstance ()->systemReset ();
   QApplication::processEvents ();
+  AnimatorScene::getInstance ()->setSceneInfoText ("Please select an XML trace file using the file load button on the top-left corner", false);
+
 }
 
 
