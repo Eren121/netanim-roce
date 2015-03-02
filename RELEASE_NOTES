@@ -23,6 +23,14 @@ Release 3.106
 Please use the following to download using mercurial:
 hg clone http://code.nsnam.org/netanim
 
+Changelog
+---------
+1. Adds support for Qt 5 with gcc. Tested upto Qt 5.4
+2. Nodes which are images(pixmaps) are positioned with their centers aligned with the node's 
+   x, y co-ordinate. Prior to this change, the node's x, y co-ordinate was aligned with the pixmap's
+   top-left corner.
+3. Enhancements to the early detection of invalid trace files.
+
 Availability
 ------------
 Please use the following to download using mercurial:
@@ -31,11 +39,11 @@ hg clone http://code.nsnam.org/netanim
 Supported Qt versions
 ---------------------
 - Qt 4.7.x to Qt 4.8.0
-- Qt 5.4
+- Qt 5.4 (with gcc only)
 
 Supported platforms
 -------------------
 - Fedora Core 15 
 - Ubuntu 12.10
-- OS X Mountain Lion
+- OS X Mountain Lion (with Qt 4.x only)
 
