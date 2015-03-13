@@ -125,9 +125,8 @@ Animxmlparser::getRxCount ()
       f->close ();
       delete f;
       //qDebug (QString::number (count));
-      return count;
     }
-  return count;
+  return qMax (count, (uint64_t)1);
 }
 
 bool
