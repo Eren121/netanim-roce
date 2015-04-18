@@ -107,7 +107,7 @@ uint64_t
 Animxmlparser::getRxCount ()
 {
   searchForVersion ();
-  uint64_t count = 0;
+  uint64_t count = 1;
   QFile * f = new QFile (m_traceFileName);
   if (f->open (QIODevice::ReadOnly | QIODevice::Text))
     {
@@ -244,11 +244,11 @@ Animxmlparser::doParse ()
           ++parsedElementCount;
           m_lastPacketEventTime = parsedElement.packetrx_fbRx;
           if (parsedElementCount == 50)
-            m_thousandThPacketTime = parsedElement.packetrx_lbRx;
+            m_thousandThPacketTime = parsedElement.packetrx_fbRx;
 
           if (!parsedElement.isWpacket)
             {
-              qreal fullDuration = parsedElement.packetrx_lbRx - parsedElement.packetrx_fbTx;
+              qreal fullDuration = parsedElement.packetrx_fbRx - parsedElement.packetrx_fbTx;
               uint32_t numSlots = WIRED_PACKET_SLOTS;
               qreal step = fullDuration/numSlots;
               for (uint32_t i = 1; i <= numSlots; ++i)
