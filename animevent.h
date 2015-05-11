@@ -201,7 +201,7 @@ public:
 class AnimNodeSizeUpdateEvent: public AnimEvent
 {
 public:
-  AnimNodeSizeUpdateEvent (uint32_t nodeId, double width, double height):
+  AnimNodeSizeUpdateEvent (uint32_t nodeId, qreal width, qreal height):
     AnimEvent (UPDATE_NODE_SIZE_EVENT),
     m_nodeId (nodeId),
     m_width (width),
@@ -209,8 +209,8 @@ public:
   {
   }
   uint32_t m_nodeId;
-  uint8_t m_width;
-  uint8_t m_height;
+  qreal m_width;
+  qreal m_height;
 
 };
 
