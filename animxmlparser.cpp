@@ -745,6 +745,10 @@ Animxmlparser::parseGeneric (ParsedElement & parsedElement)
   parsedElement.packetrx_toId = m_reader->attributes ().value ("tId").toString ().toUInt ();
   parsedElement.packetrx_fbRx = m_reader->attributes ().value ("fbRx").toString ().toDouble ();
   parsedElement.packetrx_lbRx = m_reader->attributes ().value ("lbRx").toString ().toDouble ();
+  if (!parsedElement.packetrx_lbRx && parsedElement.packetrx_fbRx)
+    {
+      parsedElement.packetrx_lbRx = parsedElement.packetrx_fbRx;
+    }
   setMaxSimulationTime (parsedElement.packetrx_lbRx);
   parsedElement.meta_info = m_reader->attributes ().value ("meta-info").toString ();
   if (parsedElement.meta_info == "")
