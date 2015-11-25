@@ -387,7 +387,7 @@ AnimPropertyBroswer::valueChangedSlot (QtProperty * property, QColor c)
   if (m_nodeColorProperty == property)
     {
       AnimNode * animNode = AnimNodeMgr::getInstance ()->getNode (m_currentNodeId);
-      animNode->setColor (c.red (), c.blue (), c.green (), c.alpha ());
+      animNode->setColor (c.red (), c.green (), c.blue (), c.alpha ());
     }
 }
 
