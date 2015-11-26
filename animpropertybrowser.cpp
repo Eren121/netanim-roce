@@ -29,6 +29,30 @@ NS_LOG_COMPONENT_DEFINE ("AnimPropertyBroswer");
 AnimPropertyBroswer * pAnimPropertyBrowser = 0;
 
 AnimPropertyBroswer::AnimPropertyBroswer ():
+  m_vboxLayout (0),
+  m_nodeBrowser (0),
+  m_backgroundBrowser (0),
+  m_nodePosTable (0),
+  m_mode (0),
+  m_nodeIdSelector (0),
+  m_nodeIdProperty (0),
+  m_nodeSysIdProperty (0),
+  m_nodeDescriptionProperty (0),
+  m_nodeXProperty (0),
+  m_nodeYProperty (0),
+  m_nodeColorProperty (0),
+  m_nodeSizeProperty (0),
+  m_fileEditProperty (0),
+  m_ipv4AddressGroupProperty (0),
+  m_macAddressGroupProperty (0),
+  m_nodePositionGroupProperty (0),
+  m_showNodeTrajectoryProperty (0),
+  m_backgroundFileEditProperty (0),
+  m_backgroundX (0),
+  m_backgroundY (0),
+  m_backgroundScaleX (0),
+  m_backgroundScaleY (0),
+  m_backgroundOpacity (0),
   m_currentNodeId (0),
   m_intManager (0),
   m_stringManager (0),
@@ -481,8 +505,10 @@ AnimPropertyBroswer::modeChangedSlot (QString mode)
           m_backgroundBrowser->setVisible (true);
           refreshBackgroundProperties ();
         }
-
-
+      else
+        {
+          AnimatorMode::getInstance ()->showPopup ("No Background image set in the xml file");
+        }
     }
 }
 

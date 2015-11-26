@@ -1633,7 +1633,7 @@ BackgroudImageProperties_t
 AnimatorMode::getBackgroundProperties ()
 {
   QGraphicsPixmapItem * background = AnimatorScene::getInstance ()->getBackgroundImage ();
-  BackgroudImageProperties_t prop;
+  BackgroudImageProperties_t prop = {"", 0, 0, 0, 0, 0};
   if (!background)
     return prop;
   prop.fileName = m_backgroundImageProperties.fileName;
