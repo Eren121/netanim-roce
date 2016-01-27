@@ -143,6 +143,9 @@ ResizeableItem::shape () const
       case ResizeableItem::CIRCLE:
         path.addEllipse (QPointF (0, 0), m_width, m_height);
         break;
+      case ResizeableItem::PIXMAP:
+        path.addRect (-m_width/2, -m_height/2, m_width/2, m_height/2);
+        break;
       default:
         path.addRect (QRectF (0, 0, m_width, m_height));
         break;
@@ -160,12 +163,15 @@ QRectF ResizeableItem::boundingRect () const
     {
       case ResizeableItem::CIRCLE:
         path.addEllipse (QPointF (0, 0), m_width, m_height);
-        return path.boundingRect();
+        break;
+      case ResizeableItem::PIXMAP:
+        path.addRect (-m_width/2, -m_height/2, m_width/2, m_height/2);
         break;
       default:
-        return QRectF (0, 0, m_width, m_height);
+        path.addRect (0, 0, m_width, m_height);
         break;
     }
+  return path.boundingRect();
 }
 
 
