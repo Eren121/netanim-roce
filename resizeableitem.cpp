@@ -114,8 +114,7 @@ void ResizeableItem::paint (QPainter *painter, const QStyleOptionGraphicsItem *o
     case ResizeableItem::PIXMAP:
       if (m_pixmap)
         {
-          //painter->drawPixmap (0, 0, m_width, m_height, *m_pixmap);
-          painter->drawPixmap (-m_width/2, -m_height/2, m_width/2, m_height/2, *m_pixmap);
+          painter->drawPixmap (-m_width/2, -m_height/2, m_width, m_height, *m_pixmap);
         }
       break;
     }
@@ -144,7 +143,7 @@ ResizeableItem::shape () const
         path.addEllipse (QPointF (0, 0), m_width, m_height);
         break;
       case ResizeableItem::PIXMAP:
-        path.addRect (-m_width/2, -m_height/2, m_width/2, m_height/2);
+        path.addRect (-m_width/2, -m_height/2, m_width, m_height);
         break;
       default:
         path.addRect (QRectF (0, 0, m_width, m_height));
@@ -165,7 +164,7 @@ QRectF ResizeableItem::boundingRect () const
         path.addEllipse (QPointF (0, 0), m_width, m_height);
         break;
       case ResizeableItem::PIXMAP:
-        path.addRect (-m_width/2, -m_height/2, m_width/2, m_height/2);
+        path.addRect (-m_width/2, -m_height/2, m_width, m_height);
         break;
       default:
         path.addRect (0, 0, m_width, m_height);
