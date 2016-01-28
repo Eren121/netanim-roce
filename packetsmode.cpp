@@ -64,7 +64,7 @@ PacketsMode::PacketsMode ():
 
   m_fromTimeLabel = new QLabel ("From Time");
   m_fromTimeEdit = new QLineEdit;
-  QDoubleValidator * doubleValidator = new QDoubleValidator;
+  QDoubleValidator * doubleValidator = new QDoubleValidator (0);
   doubleValidator->setDecimals (10);
   doubleValidator->setNotation (QDoubleValidator::StandardNotation);
   m_fromTimeEdit->setValidator (doubleValidator);

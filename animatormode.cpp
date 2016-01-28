@@ -373,7 +373,7 @@ AnimatorMode::initControls ()
 
   m_pauseAtEdit = new QLineEdit;
   m_pauseAtEdit->setText (QString::number (65535));
-  QDoubleValidator * doubleValidator = new QDoubleValidator;
+  QDoubleValidator * doubleValidator = new QDoubleValidator (0);
   m_pauseAtEdit->setValidator (doubleValidator);
   m_pauseAtEdit->setToolTip ("Pause Simulation At Time");
   m_pauseAtEdit->setMaximumWidth (PAUSE_AT_EDIT_WITH);
