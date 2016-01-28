@@ -18,6 +18,19 @@ Wiki
 ====
 http://www.nsnam.org/wiki/NetAnim
 
+Release 3.107
+=============
+Please use the following to download using mercurial:
+hg clone http://code.nsnam.org/netanim
+
+Changelog
+---------
+1. Fixes an issue where nodes with images get incorrectly centered with the description missing
+2. Fixes an issue where CSMA packets were not being completely animated
+3. Fixes incorrect RGB assignment on node's colors, when property browser is used for editing
+4. Fixes an issue where node colors change if cliked
+
+
 Release 3.106
 =============
 Please use the following to download using mercurial:
