@@ -89,7 +89,7 @@ generateColor (size_t index, uint8_t alpha = 0)
 
       result.setRed ((result.red () + step * index) % 255);
       result.setGreen ((result.blue () + step * index) % 255);
-      result.setBlue (abs ((int)result.green () - step * index) % 255);
+      result.setBlue (((int)result.green () - step * index) % 255);
     }
   if (alpha)
     result.setAlpha (alpha);
