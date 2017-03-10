@@ -181,6 +181,7 @@ AnimPropertyBroswer::reset ()
   m_filePathManager = 0;
   m_nodePositionManager = 0;
   m_ipv4AddressManager = 0;
+  m_ipv6AddressManager = 0;
   m_macAddressManager = 0;
   m_staticStringManager = 0;
   m_boolManager = 0;
@@ -639,6 +640,23 @@ AnimPropertyBroswer::nodeIdSelectorSlot (QString newIndex)
        QtProperty * property = m_staticStringManager->addProperty (*i);
        m_ipv4AddressGroupProperty->addSubProperty (property);
        m_ipv4AddressVectorProperty.push_back (property);
+     }
+   AnimNode::Ipv6Set_t ipv6Addresses = animNode->getIpv6Addresses ();
+   for (AnimPropertyBroswer::QtPropertyVector_t::const_iterator i = m_ipv6AddressVectorProperty.begin ();
+        i != m_ipv6AddressVectorProperty.end ();
+        ++i)
+     {
+       QtProperty * property = *i;
+       m_ipv6AddressGroupProperty->removeSubProperty (property);
+     }
+   m_ipv6AddressVectorProperty.clear ();
+   for (AnimNode::Ipv6Set_t::const_iterator i = ipv6Addresses.begin ();
+        i != ipv6Addresses.end ();
+        ++i)
+     {
+       QtProperty * property = m_staticStringManager->addProperty (*i);
+       m_ipv6AddressGroupProperty->addSubProperty (property);
+       m_ipv6AddressVectorProperty.push_back (property);
      }
    AnimNode::MacVector_t macAddresses = animNode->getMacAddresses ();
 
