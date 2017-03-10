@@ -1408,6 +1408,28 @@ AnimatorMode::dispatchEvents ()
                 AnimNodeMgr::getInstance ()->addNodeCounterUint32 (createEvent->m_counterId, createEvent->m_counterName);
               break;
             }
+            case AnimEvent::IP_EVENT:
+            {
+              AnimIpEvent * ipEvent = static_cast<AnimIpEvent *> (j->second);
+              for (QVector<QString>::const_iterator i = ipEvent->m_ipv4Addresses.begin ();
+                   i != ipEvent->m_ipv4Addresses.end ();
+                   ++i)
+                {
+                  AnimNodeMgr::getInstance ()->getNode (ipEvent->m_nodeId)->addIpv4Address (*i);
+                }
+              break;
+            }
+            case AnimEvent::IPV6_EVENT:
+            {
+              AnimIpv6Event * ipv6Event = static_cast<AnimIpv6Event *> (j->second);
+              for (QVector<QString>::const_iterator i = ipv6Event->m_ipv6Addresses.begin ();
+                 i != ipv6Event->m_ipv6Addresses.end ();
+                 ++i)
+                {
+                  AnimNodeMgr::getInstance ()->getNode (ipv6Event->m_nodeId)->addIpv6Address (*i);
+                }
+              break;
+            }
             case AnimEvent::UPDATE_NODE_COUNTER_EVENT:
             {
               AnimNodeCounterUpdateEvent * counterEvent = static_cast<AnimNodeCounterUpdateEvent*> (j->second);
