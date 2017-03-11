@@ -1186,7 +1186,7 @@ AnimatorMode::purgeWiredPackets (bool systemReset)
        ++i)
     {
       AnimPacket * animPacket = i->first;
-      if (systemReset)
+      if (!systemReset)
         AnimatorScene::getInstance ()->removeWiredPacket (animPacket);
       //delete animPacket;
       animPacket = 0;
