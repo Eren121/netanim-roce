@@ -354,7 +354,7 @@ void AnimNode::paint (QPainter *painter, const QStyleOptionGraphicsItem *option,
       bottomLeft = QPointF (-1, 1);
       painter->save ();
       painter->setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform | QPainter::TextAntialiasing | QPainter::HighQualityAntialiasing | QPainter::NonCosmeticDefaultPen, true);      painter->scale (0.5, 1);
-      painter->drawPixmap (bottomLeft.x (), bottomLeft.y (), 1, 1, m_batteryPixmap);
+      painter->drawPixmap (bottomLeft.x (), bottomLeft.y (), 5, 5, m_batteryPixmap);
 
       painter->restore ();
     }

@@ -524,7 +524,7 @@ AnimatorMode::systemReset ()
   m_backgroundExists = false;
   m_state = SYSTEM_RESET_IN_PROGRESS;
   clickResetSlot ();
-  purgeWiredPackets ();
+  purgeWiredPackets (true);
   purgeWirelessPackets ();
   setControlDefaults ();
   AnimatorView::getInstance ()->systemReset ();
@@ -1179,14 +1179,15 @@ AnimatorMode::removeWiredPacket (AnimPacket *animPacket)
 
 
 void
-AnimatorMode::purgeWiredPackets ()
+AnimatorMode::purgeWiredPackets (bool systemReset)
 {
   for (std::map <AnimPacket *, AnimPacket *>::const_iterator i = m_wiredPacketsToAnimate.begin ();
        i != m_wiredPacketsToAnimate.end ();
        ++i)
     {
       AnimPacket * animPacket = i->first;
-      AnimatorScene::getInstance ()->removeWiredPacket (animPacket);
+      if (systemReset)
+        AnimatorScene::getInstance ()->removeWiredPacket (animPacket);
       //delete animPacket;
       animPacket = 0;
     }
