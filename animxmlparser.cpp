@@ -433,79 +433,79 @@ Animxmlparser::parseNext ()
 
   if (token == QXmlStreamReader::StartElement)
     {
-      if (m_reader->name () == "anim")
+      if (m_reader->name().toString() == "anim")
         {
           parsedElement = parseAnim ();
         }
-      if (m_reader->name () == "topology")
+      if (m_reader->name().toString() == "topology")
         {
           parsedElement = parseTopology ();
         }
-      if (m_reader->name () == "node")
+      if (m_reader->name().toString() == "node")
         {
           parsedElement = parseNode ();
         }
-      if (m_reader->name () == "ip")
+      if (m_reader->name().toString() == "ip")
         {
           parsedElement = parseIpv4 ();
         }
-      if (m_reader->name () == "ipv6")
+      if (m_reader->name().toString() == "ipv6")
         {
           parsedElement = parseIpv6 ();
         }
-      if (m_reader->name () == "packet")
+      if (m_reader->name().toString() == "packet")
         {
           parsedElement = parsePacket ();
         }
-      if (m_reader->name () == "p")
+      if (m_reader->name().toString() == "p")
         {
           parsedElement = parseP ();
         }
-      if (m_reader->name () == "wp")
+      if (m_reader->name().toString() == "wp")
         {
           parsedElement = parseWp ();
         }
-      if (m_reader->name () == "wpacket")
+      if (m_reader->name().toString() == "wpacket")
         {
           parsedElement = parseWPacket ();
         }
-      if (m_reader->name () == "link")
+      if (m_reader->name().toString() == "link")
         {
           parsedElement = parseLink ();
         }
-      if (m_reader->name () == "nonp2plinkproperties")
+      if (m_reader->name().toString() == "nonp2plinkproperties")
         {
           parsedElement = parseNonP2pLink ();
         }
-      if (m_reader->name () == "linkupdate")
+      if (m_reader->name().toString() == "linkupdate")
         {
           parsedElement = parseLinkUpdate ();
         }
-      if (m_reader->name () == "nu")
+      if (m_reader->name().toString() == "nu")
         {
           parsedElement = parseNodeUpdate ();
         }
-      if (m_reader->name () == "res")
+      if (m_reader->name().toString() == "res")
         {
           parsedElement = parseResource ();
         }
-      if (m_reader->name () == "bg")
+      if (m_reader->name().toString() == "bg")
         {
           parsedElement = parseBackground ();
         }
-      if (m_reader->name () == "ncs")
+      if (m_reader->name().toString() == "ncs")
         {
           parsedElement = parseCreateNodeCounter ();
         }
-      if (m_reader->name () == "nc")
+      if (m_reader->name().toString() == "nc")
         {
           parsedElement = parseNodeCounterUpdate ();
         }
-      if (m_reader->name () == "pr")
+      if (m_reader->name().toString() == "pr")
         {
           parsedElement = parsePacketTxRef ();
         }
-      if (m_reader->name () == "wpr")
+      if (m_reader->name().toString() == "wpr")
         {
           parsedElement = parseWPacketRxRef ();
         }
@@ -836,7 +836,7 @@ Animxmlparser::parsePacket ()
   parsedElement.packetrx_lbTx = m_reader->attributes ().value ("lbTx").toString ().toDouble ();
   parsedElement.meta_info = "null";
   setMaxSimulationTime (parsedElement.packetrx_lbTx);
-  while (m_reader->name () != "rx")
+  while (m_reader->name().toString() != "rx")
     m_reader->readNext ();
 
   if (m_reader->atEnd () || m_reader->hasError ())
@@ -851,12 +851,12 @@ Animxmlparser::parsePacket ()
   parsedElement.packetrx_lbRx = m_reader->attributes ().value ("lbRx").toString ().toDouble ();
   setMaxSimulationTime (parsedElement.packetrx_lbRx);
 
-  while (m_reader->name () == "rx")
+  while (m_reader->name().toString() == "rx")
     m_reader->readNext ();
-  if (m_reader->name () == "packet")
+  if (m_reader->name().toString() == "packet")
     return parsedElement;
   m_reader->readNext ();
-  if (m_reader->name () != "meta")
+  if (m_reader->name().toString() != "meta")
     return parsedElement;
   parsedElement.meta_info = m_reader->attributes ().value ("info").toString ();
   //qDebug (parsedElement.meta_info);
@@ -875,7 +875,7 @@ Animxmlparser::parseWPacket ()
   parsedElement.packetrx_lbTx = m_reader->attributes ().value ("lbTx").toString ().toDouble ();
   parsedElement.meta_info = "null";
   setMaxSimulationTime (parsedElement.packetrx_lbTx);
-  while (m_reader->name () != "rx")
+  while (m_reader->name().toString() != "rx")
     m_reader->readNext ();
   if (m_reader->atEnd () || m_reader->hasError ())
     {
@@ -889,12 +889,12 @@ Animxmlparser::parseWPacket ()
   parsedElement.packetrx_fbRx = m_reader->attributes ().value ("fbRx").toString ().toDouble ();
   parsedElement.packetrx_lbRx = m_reader->attributes ().value ("lbRx").toString ().toDouble ();
   setMaxSimulationTime (parsedElement.packetrx_lbRx);
-  while (m_reader->name () == "rx")
+  while (m_reader->name().toString() == "rx")
     m_reader->readNext ();
-  if (m_reader->name () == "wpacket")
+  if (m_reader->name().toString() == "wpacket")
     return parsedElement;
   m_reader->readNext ();
-  if (m_reader->name () != "meta")
+  if (m_reader->name().toString() != "meta")
     return parsedElement;
   parsedElement.meta_info = m_reader->attributes ().value ("info").toString ();
   //qDebug (parsedElement.meta_info);

@@ -196,15 +196,15 @@ RoutingXmlparser::parseNext ()
 
   if (token == QXmlStreamReader::StartElement)
     {
-      if (m_reader->name () == "anim")
+      if (m_reader->name().toString() == "anim")
         {
           parsedElement = parseAnim ();
         }
-      if (m_reader->name () == "rt")
+      if (m_reader->name().toString() == "rt")
         {
           parsedElement = parseRt ();
         }
-      if (m_reader->name () == "rp")
+      if (m_reader->name().toString() == "rp")
         {
           parsedElement = parseRp ();
         }
@@ -278,9 +278,9 @@ RoutingXmlparser::parseRp ()
   if (parsedElement.rpElementCount)
     {
       QXmlStreamReader::TokenType token = m_reader->readNext ();
-      while (m_reader->name () != "rp")
+      while (m_reader->name().toString() != "rp")
         {
-          if (m_reader->name () == "rpe" && (token != QXmlStreamReader::EndElement))
+          if (m_reader->name().toString() == "rpe" && (token != QXmlStreamReader::EndElement))
             {
               parsedElement.rpes.push_back (parseRpe ());
             }

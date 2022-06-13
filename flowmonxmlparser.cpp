@@ -176,24 +176,24 @@ FlowMonXmlparser::parseNext ()
 
   if (token == QXmlStreamReader::StartElement)
     {
-      if (m_reader->name () == "FlowMonitor")
+      if (m_reader->name().toString() == "FlowMonitor")
         {
           //QDEBUG ("FlowMonitor");
         }
-      if (m_reader->name () == "FlowStats")
+      if (m_reader->name().toString() == "FlowStats")
         {
           parsedElement = parseFlowStats ();
         }
-      if (m_reader->name () == "Ipv4FlowClassifier")
+      if (m_reader->name().toString() == "Ipv4FlowClassifier")
         {
           parsedElement = parseIpv4Classifier ();
         }
-      if (m_reader->name () == "FlowProbes")
+      if (m_reader->name().toString() == "FlowProbes")
         {
           parsedElement = parseFlowProbes ();
         }
 
-      if (m_reader->name () == "Flow")
+      if (m_reader->name().toString() == "Flow")
         {
           if (m_state == FLOWSTATS)
             {
@@ -258,10 +258,10 @@ FlowMonXmlparser::parseFlowProbe ()
   FlowProbe_t probe;
   QXmlStreamReader::TokenType token = m_reader->readNext ();
 
-  while ( (m_reader->name () != "FlowProbe"))
+  while ( (m_reader->name().toString() != "FlowProbe"))
     {
 
-      if ((m_reader->name () == "FlowStats") && (token != QXmlStreamReader::EndElement))
+      if ((m_reader->name().toString() == "FlowStats") && (token != QXmlStreamReader::EndElement))
         {
           if (m_state != FLOWPROBE)
             {
@@ -283,10 +283,10 @@ FlowMonXmlparser::parseFlowProbes ()
   parsedElement.type = FlowMonParsedElement::XML_FLOWPROBES;
   m_state = FLOWPROBE;
   QXmlStreamReader::TokenType token = m_reader->readNext ();
-  while ( (m_reader->name () != "FlowProbes"))
+  while ( (m_reader->name().toString() != "FlowProbes"))
     {
 
-      if ((m_reader->name () == "FlowProbe") && (token != QXmlStreamReader::EndElement))
+      if ((m_reader->name().toString() == "FlowProbe") && (token != QXmlStreamReader::EndElement))
         {
           if (m_state != FLOWPROBE)
             {
@@ -308,9 +308,9 @@ FlowMonXmlparser::parseHistogram (QString name)
   histogram.name = name;
   histogram.nBins = m_reader->attributes ().value ("nBins").toString ().toUInt ();
   QXmlStreamReader::TokenType token = m_reader->readNext ();
-  while (m_reader->name () != name)
+  while (m_reader->name().toString() != name)
     {
-      if (m_reader->name () == "bin" && (token != QXmlStreamReader::EndElement))
+      if (m_reader->name().toString() == "bin" && (token != QXmlStreamReader::EndElement))
         {
           FlowBin_t flowBin;
           flowBin.index = m_reader->attributes ().value ("index").toString ().toUInt ();
@@ -347,9 +347,9 @@ FlowMonXmlparser::parseFlowStatsFlow ()
   flow.timesForwarded = m_reader->attributes ().value ("timesForwarded").toString ().toULong ();
 
   QXmlStreamReader::TokenType token = m_reader->readNext ();
-  while (m_reader->name () != "Flow")
+  while (m_reader->name().toString() != "Flow")
     {
-      if ((m_reader->name () == "packetsDropped") && (token != QXmlStreamReader::EndElement))
+      if ((m_reader->name().toString() == "packetsDropped") && (token != QXmlStreamReader::EndElement))
         {
           if (m_state != FLOWSTATS)
             {
@@ -359,7 +359,7 @@ FlowMonXmlparser::parseFlowStatsFlow ()
 
           parsePacketsDropped (flow);
         }
-      if ((m_reader->name () == "bytesDropped") && (token != QXmlStreamReader::EndElement))
+      if ((m_reader->name().toString() == "bytesDropped") && (token != QXmlStreamReader::EndElement))
         {
 
           if (m_state != FLOWSTATS)
@@ -370,19 +370,19 @@ FlowMonXmlparser::parseFlowStatsFlow ()
 
           parseBytesDropped (flow);
         }
-      if (m_reader->name () == "delayHistogram")
+      if (m_reader->name().toString() == "delayHistogram")
         {
           flow.histograms.push_back (parseHistogram ("delayHistogram"));
         }
-      else if (m_reader->name () == "jitterHistogram")
+      else if (m_reader->name().toString() == "jitterHistogram")
         {
           flow.histograms.push_back (parseHistogram ("jitterHistogram"));
         }
-      else if (m_reader->name () == "flowInterruptionsHistogram")
+      else if (m_reader->name().toString() == "flowInterruptionsHistogram")
         {
           flow.histograms.push_back (parseHistogram ("flowInterruptionsHistogram"));
         }
-      else if (m_reader->name () == "packetSizeHistogram")
+      else if (m_reader->name().toString() == "packetSizeHistogram")
         {
           flow.histograms.push_back (parseHistogram ("packetSizeHistogram"));
         }
