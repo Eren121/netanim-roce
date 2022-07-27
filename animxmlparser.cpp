@@ -22,9 +22,6 @@
 #include "common.h"
 #include "animxmlparser.h"
 #include "animatormode.h"
-#include "animatorscene.h"
-#include "animpacket.h"
-#include "animlink.h"
 #include "animresource.h"
 #include "animnode.h"
 #include <QtDebug>
