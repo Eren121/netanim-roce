@@ -5542,8 +5542,8 @@ void QCPAxis::setupTickVectors()
   }
 
   // generate tick labels according to tick positions:
-  mExponentialChar = mParentPlot->locale().exponential();   // will be needed when drawing the numbers generated here, in getTickLabelData()
-  mPositiveSignChar = mParentPlot->locale().positiveSign(); // will be needed when drawing the numbers generated here, in getTickLabelData()
+  mExponentialChar = QString(mParentPlot->locale().exponential());   // will be needed when drawing the numbers generated here, in getTickLabelData()
+  mPositiveSignChar = QString(mParentPlot->locale().positiveSign()); // will be needed when drawing the numbers generated here, in getTickLabelData()
   if (mAutoTickLabels)
   {
     int vecsize = mTickVector.size();
@@ -6062,7 +6062,7 @@ QCPAxis::TickLabelData QCPAxis::getTickLabelData(const QFont &font, const QStrin
     // clip "+" and leading zeros off expPart:
     while (result.expPart.at(1) == '0' && result.expPart.length() > 2) // length > 2 so we leave one zero when numberFormatChar is 'e'
       result.expPart.remove(1, 1);
-    if (result.expPart.at(0) == mPositiveSignChar)
+    if (QString(result.expPart.at(0)) == mPositiveSignChar)
       result.expPart.remove(0, 1);
     // prepare smaller font for exponent:
     result.expFont = font;
