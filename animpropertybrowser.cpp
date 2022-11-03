@@ -92,7 +92,7 @@ AnimPropertyBroswer::AnimPropertyBroswer ():
   m_backgroundBrowser->setVisible (false);
   m_nodePosTable->setVisible (false);
   //m_nodePosTable->setColumnCount (3);
-  connect (m_mode, SIGNAL(currentIndexChanged(QString)), this, SLOT(modeChangedSlot(QString)));
+  connect (m_mode, SIGNAL(currentTextChanged(QString)), this, SLOT(modeChangedSlot(QString)));
 
 }
 
@@ -140,7 +140,7 @@ AnimPropertyBroswer::postParse ()
   setupFactories ();
   setupNodeProperties ();
   setupBackgroundProperties ();
-  connect (m_nodeIdSelector, SIGNAL(currentIndexChanged(QString)), this, SLOT (nodeIdSelectorSlot(QString)));
+  connect (m_nodeIdSelector, SIGNAL(currentTextChanged(QString)), this, SLOT (nodeIdSelectorSlot(QString)));
 
 }
 
@@ -149,7 +149,7 @@ AnimPropertyBroswer::reset ()
 {
   m_currentNodeId = 0;
   m_nodeIdSelector->clear ();
-  disconnect (m_nodeIdSelector, SIGNAL(currentIndexChanged(QString)), this, SLOT (nodeIdSelectorSlot(QString)));
+  disconnect (m_nodeIdSelector, SIGNAL(currentTextChanged(QString)), this, SLOT (nodeIdSelectorSlot(QString)));
   if (m_intManager)
     delete m_intManager;
   if (m_stringManager)
