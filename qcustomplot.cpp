@@ -10592,7 +10592,11 @@ void QCustomPlot::wheelEvent(QWheelEvent *event)
   emit mouseWheel(event);
   
   // call event of affected layout element:
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+  if (QCPLayoutElement *el = layoutElementAt(event->position()))
+#else
   if (QCPLayoutElement *el = layoutElementAt(event->pos()))
+#endif
     el->wheelEvent(event);
   
   QWidget::wheelEvent(event);
@@ -17798,13 +17802,21 @@ void QCPAxisRect::wheelEvent(QWheelEvent *event)
       {
         factor = pow(mRangeZoomFactorHorz, wheelSteps.x());
         if (mRangeZoomHorzAxis.data())
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+          mRangeZoomHorzAxis.data()->scaleRange(factor, mRangeZoomHorzAxis.data()->pixelToCoord(event->position().x()));
+#else
           mRangeZoomHorzAxis.data()->scaleRange(factor, mRangeZoomHorzAxis.data()->pixelToCoord(event->pos().x()));
+#endif
       }
       if (mRangeZoom.testFlag(Qt::Vertical))
       {
         factor = pow(mRangeZoomFactorVert, wheelSteps.y());
         if (mRangeZoomVertAxis.data())
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+          mRangeZoomVertAxis.data()->scaleRange(factor, mRangeZoomVertAxis.data()->pixelToCoord(event->position().y()));
+#else
           mRangeZoomVertAxis.data()->scaleRange(factor, mRangeZoomVertAxis.data()->pixelToCoord(event->pos().y()));
+#endif
       }
       mParentPlot->replot();
     }
