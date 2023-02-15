@@ -121,7 +121,7 @@ QPointF
 AnimLink::getLinkDescriptionCenter (QPainter * painter , QPointF * offset)
 {
   QFontMetrics fm = painter->fontMetrics ();
-  qreal x = (line ().length () - fm.width (GET_DATA_PTR (m_currentLinkDescription)))/2;
+  qreal x = (line ().length () - fm.horizontalAdvance (GET_DATA_PTR (m_currentLinkDescription)))/2;
   QPointF pOffset = line ().p1 ().x () < line ().p2 ().x ()? line ().p1 ():line ().p2 ();
   *offset = pOffset;
   QPointF p = QPointF (x, -1);

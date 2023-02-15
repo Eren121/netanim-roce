@@ -205,7 +205,7 @@ AnimatorScene::setSceneInfoText(QString text, bool show)
     m_sceneInfoText->setVisible (show);
     QFontMetrics fm (font ());
     QRectF r = sceneRect ();
-    QPointF pos = QPointF ((sceneRect ().width () - fm.width (text))/2, r.center ().y ());
+    QPointF pos = QPointF ((sceneRect ().width () - fm.horizontalAdvance (text))/2, r.center ().y ());
     m_sceneInfoText->setPos (pos);
 }
 
@@ -767,14 +767,14 @@ AnimatorScene::repositionInterfaceText (AnimInterfaceText *textItem)
     {
       textItem->setLeftAligned (false);
       qreal y = m_leftTop + 1.5 * fm.height ()/AnimatorView::getInstance ()->transform ().m11 ();
-      newPos = QPointF (-fm.width (textItem->getText ())/AnimatorView::getInstance ()->transform ().m11 (), y);
+      newPos = QPointF (-fm.horizontalAdvance (textItem->getText ())/AnimatorView::getInstance ()->transform ().m11 (), y);
       m_leftTop = newPos.y ();
     }
   else
     {
       textItem->setLeftAligned (true);
       qreal y = m_rightTop + 1.5 * fm.height ()/AnimatorView::getInstance ()->transform ().m11 ();
-      newPos = QPointF (m_maxPoint.x () + fm.width (textItem->getText ())/AnimatorView::getInstance ()->transform ().m11 (), y);
+      newPos = QPointF (m_maxPoint.x () + fm.horizontalAdvance (textItem->getText ())/AnimatorView::getInstance ()->transform ().m11 (), y);
       m_rightTop = newPos.y ();
     }
   textItem->setPos (newPos);
@@ -891,7 +891,7 @@ AnimInterfaceText::shape () const
 {
   QPainterPath p;
   QFontMetrics fm (font ());
-  QRectF r (0, 0, fm.width (getText ())/AnimatorView::getInstance ()->transform ().m11 (),
+  QRectF r (0, 0, fm.horizontalAdvance (getText ())/AnimatorView::getInstance ()->transform ().m11 (),
            fm.height ()/AnimatorView::getInstance ()->transform ().m11 ());
   p.addRect (r);
   return p;
@@ -926,7 +926,7 @@ AnimInterfaceText::paint (QPainter *painter, const QStyleOptionGraphicsItem *opt
   if (m_leftAligned)
     {
       QFontMetrics fm = painter->fontMetrics ();
-      QPointF leftAlignPoint = QPointF (-fm.width (getText ()), 0);
+      QPointF leftAlignPoint = QPointF (-fm.horizontalAdvance (getText ()), 0);
       painter->save ();
       painter->translate (leftAlignPoint);
       painter->drawText (QPointF (0, 0), getText ());

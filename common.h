@@ -59,14 +59,12 @@
 #include <QFileDialog>
 #include <QGraphicsSceneHoverEvent>
 #include <QGraphicsProxyWidget>
-#include <QRegExp>
 #include <QFontMetrics>
-#include <QDesktopWidget>
 #include <QLineEdit>
 #include <QScrollBar>
 #include <QTableWidget>
 #include <QCheckBox>
-#include <QRegExp>
+#include <QElapsedTimer>
 
 
 #include "log.h"

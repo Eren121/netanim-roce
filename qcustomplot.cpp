@@ -3207,7 +3207,7 @@ Qt::Alignment QCPLayoutInset::insetAlignment(int index) const
   else
   {
     qDebug() << Q_FUNC_INFO << "Invalid element index:" << index;
-    return 0;
+    return Qt::Alignment();
   }
 }
 
@@ -7235,7 +7235,7 @@ QCPItemAnchor::QCPItemAnchor(QCustomPlot *parentPlot, QCPAbstractItem *parentIte
 QCPItemAnchor::~QCPItemAnchor()
 {
   // unregister as parent at children:
-  QList<QCPItemPosition*> currentChildren(mChildren.toList());
+  QList<QCPItemPosition*> currentChildren(mChildren.values());
   for (int i=0; i<currentChildren.size(); ++i)
     currentChildren.at(i)->setParentAnchor(0); // this acts back on this anchor and child removes itself from mChildren
 }
@@ -7342,7 +7342,7 @@ QCPItemPosition::~QCPItemPosition()
   // unregister as parent at children:
   // Note: this is done in ~QCPItemAnchor again, but it's important QCPItemPosition does it itself, because only then
   //       the setParentAnchor(0) call the correct QCPItemPosition::pixelPoint function instead of QCPItemAnchor::pixelPoint
-  QList<QCPItemPosition*> currentChildren(mChildren.toList());
+  QList<QCPItemPosition*> currentChildren(mChildren.values());
   for (int i=0; i<currentChildren.size(); ++i)
     currentChildren.at(i)->setParentAnchor(0); // this acts back on this anchor and child removes itself from mChildren
   // unregister as child in parent:
@@ -8789,7 +8789,7 @@ QCustomPlot::QCustomPlot(QWidget *parent) :
   mAutoAddPlottableToLegend(true),
   mAntialiasedElements(QCP::aeNone),
   mNotAntialiasedElements(QCP::aeNone),
-  mInteractions(0),
+  mInteractions(QCP::Interactions()),
   mSelectionTolerance(8),
   mNoAntialiasingOnDrag(false),
   mBackgroundBrush(Qt::white, Qt::SolidPattern),
@@ -10140,7 +10140,7 @@ void QCustomPlot::replot()
   painter.begin(&mPaintBuffer);
   if (painter.isActive()) 
   {
-    painter.setRenderHint(QPainter::HighQualityAntialiasing); // to make Antialiasing look good if using the OpenGL graphicssystem
+    painter.setRenderHint(QPainter::Antialiasing); // to make Antialiasing look good if using the OpenGL graphicssystem
     if (mBackgroundBrush.style() != Qt::SolidPattern && mBackgroundBrush.style() != Qt::NoBrush)
       painter.fillRect(mViewport, mBackgroundBrush);
     draw(&painter);
@@ -10238,7 +10238,7 @@ bool QCustomPlot::savePdf(const QString &fileName, bool noCosmeticPen, int width
   printer.setColorMode(QPrinter::Color);
   QRect oldViewport = viewport();
   setViewport(QRect(0, 0, newWidth, newHeight));
-  printer.setPaperSize(viewport().size(), QPrinter::DevicePixel);
+  printer.setPageSize(QPageSize(viewport().size()));
   QCPPainter printpainter;
   if (printpainter.begin(&printer))
   {
@@ -11043,7 +11043,7 @@ void QCPGraph::setData(const QVector<double> &key, const QVector<double> &value)
   {
     newData.key = key[i];
     newData.value = value[i];
-    mData->insertMulti(newData.key, newData);
+    mData->insert(newData.key, newData);
   }
 }
 
@@ -11069,7 +11069,7 @@ void QCPGraph::setDataValueError(const QVector<double> &key, const QVector<doubl
     newData.value = value[i];
     newData.valueErrorMinus = valueError[i];
     newData.valueErrorPlus = valueError[i];
-    mData->insertMulti(key[i], newData);
+    mData->insert(key[i], newData);
   }
 }
 
@@ -11096,7 +11096,7 @@ void QCPGraph::setDataValueError(const QVector<double> &key, const QVector<doubl
     newData.value = value[i];
     newData.valueErrorMinus = valueErrorMinus[i];
     newData.valueErrorPlus = valueErrorPlus[i];
-    mData->insertMulti(key[i], newData);
+    mData->insert(key[i], newData);
   }
 }
 
@@ -11122,7 +11122,7 @@ void QCPGraph::setDataKeyError(const QVector<double> &key, const QVector<double>
     newData.value = value[i];
     newData.keyErrorMinus = keyError[i];
     newData.keyErrorPlus = keyError[i];
-    mData->insertMulti(key[i], newData);
+    mData->insert(key[i], newData);
   }
 }
 
@@ -11149,7 +11149,7 @@ void QCPGraph::setDataKeyError(const QVector<double> &key, const QVector<double>
     newData.value = value[i];
     newData.keyErrorMinus = keyErrorMinus[i];
     newData.keyErrorPlus = keyErrorPlus[i];
-    mData->insertMulti(key[i], newData);
+    mData->insert(key[i], newData);
   }
 }
 
@@ -11178,7 +11178,7 @@ void QCPGraph::setDataBothError(const QVector<double> &key, const QVector<double
     newData.keyErrorPlus = keyError[i];
     newData.valueErrorMinus = valueError[i];
     newData.valueErrorPlus = valueError[i];
-    mData->insertMulti(key[i], newData);
+    mData->insert(key[i], newData);
   }
 }
 
@@ -11209,7 +11209,7 @@ void QCPGraph::setDataBothError(const QVector<double> &key, const QVector<double
     newData.keyErrorPlus = keyErrorPlus[i];
     newData.valueErrorMinus = valueErrorMinus[i];
     newData.valueErrorPlus = valueErrorPlus[i];
-    mData->insertMulti(key[i], newData);
+    mData->insert(key[i], newData);
   }
 }
 
@@ -11326,7 +11326,7 @@ void QCPGraph::addData(const QCPDataMap &dataMap)
 */
 void QCPGraph::addData(const QCPData &data)
 {
-  mData->insertMulti(data.key, data);
+  mData->insert(data.key, data);
 }
 
 /*! \overload
@@ -11338,7 +11338,7 @@ void QCPGraph::addData(double key, double value)
   QCPData newData;
   newData.key = key;
   newData.value = value;
-  mData->insertMulti(newData.key, newData);
+  mData->insert(newData.key, newData);
 }
 
 /*! \overload
@@ -11353,7 +11353,7 @@ void QCPGraph::addData(const QVector<double> &keys, const QVector<double> &value
   {
     newData.key = keys[i];
     newData.value = values[i];
-    mData->insertMulti(newData.key, newData);
+    mData->insert(newData.key, newData);
   }
 }
 
@@ -11654,7 +11654,7 @@ void QCPGraph::getScatterPlotData(QVector<QCPData> *pointData) const
     
     // position data points:
     QCPDataMap::const_iterator it = lower;
-    QCPDataMap::const_iterator upperEnd = upper+1;
+    QCPDataMap::const_iterator upperEnd = std::next(upper);
     int i = 0;
     while (it != upperEnd)
     {
@@ -11696,7 +11696,7 @@ void QCPGraph::getLinePlotData(QVector<QPointF> *lineData, QVector<QCPData> *poi
     
     // position data points:
     QCPDataMap::const_iterator it = lower;
-    QCPDataMap::const_iterator upperEnd = upper+1;
+    QCPDataMap::const_iterator upperEnd = std::next(upper);
     int i = 0;
     if (keyAxis->orientation() == Qt::Vertical)
     {
@@ -11755,7 +11755,7 @@ void QCPGraph::getStepLeftPlotData(QVector<QPointF> *lineData, QVector<QCPData> 
     
     // position data points:
     QCPDataMap::const_iterator it = lower;
-    QCPDataMap::const_iterator upperEnd = upper+1;
+    QCPDataMap::const_iterator upperEnd = std::next(upper);
     int i = 0;
     int ipoint = 0;
     if (keyAxis->orientation() == Qt::Vertical)
@@ -11835,7 +11835,7 @@ void QCPGraph::getStepRightPlotData(QVector<QPointF> *lineData, QVector<QCPData>
     
     // position points:
     QCPDataMap::const_iterator it = lower;
-    QCPDataMap::const_iterator upperEnd = upper+1;
+    QCPDataMap::const_iterator upperEnd = std::next(upper);
     int i = 0;
     int ipoint = 0;
     if (keyAxis->orientation() == Qt::Vertical)
@@ -11917,7 +11917,7 @@ void QCPGraph::getStepCenterPlotData(QVector<QPointF> *lineData, QVector<QCPData
     
     // position points:
     QCPDataMap::const_iterator it = lower;
-    QCPDataMap::const_iterator upperEnd = upper+1;
+    QCPDataMap::const_iterator upperEnd = std::next(upper);
     int i = 0;
     int ipoint = 0;
     if (keyAxis->orientation() == Qt::Vertical)
@@ -12022,7 +12022,7 @@ void QCPGraph::getImpulsePlotData(QVector<QPointF> *lineData, QVector<QCPData> *
     
     // position data points:
     QCPDataMap::const_iterator it = lower;
-    QCPDataMap::const_iterator upperEnd = upper+1;
+    QCPDataMap::const_iterator upperEnd = std::next(upper);
     int i = 0;
     int ipoint = 0;
     if (keyAxis->orientation() == Qt::Vertical)
@@ -12356,8 +12356,8 @@ void QCPGraph::getVisibleDataBounds(QCPDataMap::const_iterator &lower, QCPDataMa
   bool lowoutlier = lbound != mData->constBegin(); // indicates whether there exist points below axis range
   bool highoutlier = ubound != mData->constEnd(); // indicates whether there exist points above axis range
   
-  lower = (lowoutlier ? lbound-1 : lbound); // data point range that will be actually drawn
-  upper = (highoutlier ? ubound : ubound-1); // data point range that will be actually drawn
+  lower = (lowoutlier ? std::prev(lbound) : lbound); // data point range that will be actually drawn
+  upper = (highoutlier ? ubound : std::prev(ubound)); // data point range that will be actually drawn
   
   // count number of points in range lower to upper (including them), so we can allocate array for them in draw functions:
   QCPDataMap::const_iterator it = lower;
@@ -13220,7 +13220,7 @@ void QCPCurve::setData(const QVector<double> &t, const QVector<double> &key, con
     newData.t = t[i];
     newData.key = key[i];
     newData.value = value[i];
-    mData->insertMulti(newData.t, newData);
+    mData->insert(newData.t, newData);
   }
 }
 
@@ -13240,7 +13240,7 @@ void QCPCurve::setData(const QVector<double> &key, const QVector<double> &value)
     newData.t = i; // no t vector given, so we assign t the index of the key/value pair
     newData.key = key[i];
     newData.value = value[i];
-    mData->insertMulti(newData.t, newData);
+    mData->insert(newData.t, newData);
   }
 }
 
@@ -13283,7 +13283,7 @@ void QCPCurve::addData(const QCPCurveDataMap &dataMap)
 */
 void QCPCurve::addData(const QCPCurveData &data)
 {
-  mData->insertMulti(data.t, data);
+  mData->insert(data.t, data);
 }
 
 /*! \overload
@@ -13296,7 +13296,7 @@ void QCPCurve::addData(double t, double key, double value)
   newData.t = t;
   newData.key = key;
   newData.value = value;
-  mData->insertMulti(newData.t, newData);
+  mData->insert(newData.t, newData);
 }
 
 /*! \overload
@@ -13311,12 +13311,12 @@ void QCPCurve::addData(double key, double value)
 {
   QCPCurveData newData;
   if (!mData->isEmpty())
-    newData.t = (mData->constEnd()-1).key()+1;
+    newData.t = (std::prev(mData->constEnd())).key()+1;
   else
     newData.t = 0;
   newData.key = key;
   newData.value = value;
-  mData->insertMulti(newData.t, newData);
+  mData->insert(newData.t, newData);
 }
 
 /*! \overload
@@ -13334,7 +13334,7 @@ void QCPCurve::addData(const QVector<double> &ts, const QVector<double> &keys, c
     newData.t = ts[i];
     newData.key = keys[i];
     newData.value = values[i];
-    mData->insertMulti(newData.t, newData);
+    mData->insert(newData.t, newData);
   }
 }
 
@@ -13592,11 +13592,11 @@ void QCPCurve::getCurveData(QVector<QPointF> *lineData) const
     if (currentRegion == 5 || (firstPoint && mBrush.style() != Qt::NoBrush)) // current is in R, add current and last if it wasn't added already
     {
       if (!addedLastAlready) // in case curve just entered R, make sure the last point outside R is also drawn correctly
-        lineData->append(coordsToPixels((it-1).value().key, (it-1).value().value)); // add last point to vector
+        lineData->append(coordsToPixels(std::prev(it).value().key, std::prev(it).value().value)); // add last point to vector
       else if (lastRegion != 5) // added last already. If that's the case, we probably added it at optimized position. So go back and make sure it's at original position (else the angle changes under which this segment enters R)
       {
         if (!firstPoint) // because on firstPoint, currentRegion is 5 and addedLastAlready is true, although there is no last point
-          lineData->replace(lineData->size()-1, coordsToPixels((it-1).value().key, (it-1).value().value));
+          lineData->replace(lineData->size()-1, coordsToPixels(std::prev(it).value().key, std::prev(it).value().value));
       }
       lineData->append(coordsToPixels(it.value().key, it.value().value)); // add current point to vector
       addedLastAlready = true; // so in next iteration, we don't add this point twice
@@ -13614,14 +13614,14 @@ void QCPCurve::getCurveData(QVector<QPointF> *lineData) const
       {
         // always add last point if not added already, original:
         if (!addedLastAlready)
-          lineData->append(coordsToPixels((it-1).value().key, (it-1).value().value));
+          lineData->append(coordsToPixels(std::prev(it).value().key, std::prev(it).value().value));
         // add current point, original:
         lineData->append(coordsToPixels(it.value().key, it.value().value));
       } else // no special case that forbids optimized point placement, so do it:
       {
         // always add last point if not added already, optimized:
         if (!addedLastAlready)
-          lineData->append(outsideCoordsToPixels((it-1).value().key, (it-1).value().value, currentRegion, axisRect));
+          lineData->append(outsideCoordsToPixels(std::prev(it).value().key, std::prev(it).value().value, currentRegion, axisRect));
         // add current point, optimized:
         lineData->append(outsideCoordsToPixels(it.value().key, it.value().value, currentRegion, axisRect));
       }
@@ -13635,7 +13635,7 @@ void QCPCurve::getCurveData(QVector<QPointF> *lineData) const
   }
   // If curve ends outside R, we want to add very last point so the fill looks like it should when the curve started inside R:
   if (lastRegion != 5 && mBrush.style() != Qt::NoBrush && !mData->isEmpty())
-    lineData->append(coordsToPixels((mData->constEnd()-1).value().key, (mData->constEnd()-1).value().value));
+    lineData->append(coordsToPixels(std::prev(mData->constEnd()).value().key, std::prev(mData->constEnd()).value().value));
 }
 
 /*! \internal 
@@ -13932,7 +13932,7 @@ void QCPBars::setData(const QVector<double> &key, const QVector<double> &value)
   {
     newData.key = key[i];
     newData.value = value[i];
-    mData->insertMulti(newData.key, newData);
+    mData->insert(newData.key, newData);
   }
 }
 
@@ -14017,7 +14017,7 @@ void QCPBars::addData(const QCPBarDataMap &dataMap)
 */
 void QCPBars::addData(const QCPBarData &data)
 {
-  mData->insertMulti(data.key, data);
+  mData->insert(data.key, data);
 }
 
 /*! \overload
@@ -14029,7 +14029,7 @@ void QCPBars::addData(double key, double value)
   QCPBarData newData;
   newData.key = key;
   newData.value = value;
-  mData->insertMulti(newData.key, newData);
+  mData->insert(newData.key, newData);
 }
 
 /*! \overload
@@ -14045,7 +14045,7 @@ void QCPBars::addData(const QVector<double> &keys, const QVector<double> &values
   {
     newData.key = keys[i];
     newData.value = values[i];
-    mData->insertMulti(newData.key, newData);
+    mData->insert(newData.key, newData);
   }
 }
 
@@ -16603,7 +16603,7 @@ void QCPItemTracer::updatePosition()
       if (mGraph->data()->size() > 1)
       {
         QCPDataMap::const_iterator first = mGraph->data()->constBegin();
-        QCPDataMap::const_iterator last = mGraph->data()->constEnd()-1;
+        QCPDataMap::const_iterator last = std::prev(mGraph->data()->constEnd());
         if (mGraphKey < first.key())
           position->setCoords(first.key(), first.value().value);
         else if (mGraphKey > last.key())
@@ -16613,7 +16613,7 @@ void QCPItemTracer::updatePosition()
           QCPDataMap::const_iterator it = mGraph->data()->lowerBound(mGraphKey);
           if (it != first) // mGraphKey is somewhere between iterators
           {
-            QCPDataMap::const_iterator prevIt = it-1;
+            QCPDataMap::const_iterator prevIt = std::prev(it);
             if (mInterpolating)
             {
               // interpolate between iterators around mGraphKey:
@@ -17809,16 +17809,16 @@ void QCPAxisRect::wheelEvent(QWheelEvent *event)
     if (mRangeZoom != 0)
     {
       double factor;
-      double wheelSteps = event->delta()/120.0; // a single step delta is +/-120 usually
+      QPoint wheelSteps = event->angleDelta()/120.0; // a single step delta is +/-120 usually
       if (mRangeZoom.testFlag(Qt::Horizontal))
       {
-        factor = pow(mRangeZoomFactorHorz, wheelSteps);
+        factor = pow(mRangeZoomFactorHorz, wheelSteps.x());
         if (mRangeZoomHorzAxis.data())
           mRangeZoomHorzAxis.data()->scaleRange(factor, mRangeZoomHorzAxis.data()->pixelToCoord(event->pos().x()));
       }
       if (mRangeZoom.testFlag(Qt::Vertical))
       {
-        factor = pow(mRangeZoomFactorVert, wheelSteps);
+        factor = pow(mRangeZoomFactorVert, wheelSteps.y());
         if (mRangeZoomVertAxis.data())
           mRangeZoomVertAxis.data()->scaleRange(factor, mRangeZoomVertAxis.data()->pixelToCoord(event->pos().y()));
       }

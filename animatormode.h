@@ -111,7 +111,7 @@ private:
   double m_parsedMaxSimulationTime;
   int m_oldTimelineValue;
   QVector <QWidget *> m_toolButtonVector;
-  QTime m_appResponsiveTimer;
+  QElapsedTimer m_appResponsiveTimer;
   bool m_simulationCompleted;
   uint64_t m_rxCount;
   TimeValue<AnimEvent *> m_events;
