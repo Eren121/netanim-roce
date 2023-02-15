@@ -423,23 +423,6 @@ private:
     QMetaEnum m_policyEnum;
 };
 
-#if QT_VERSION < 0x040300
-
-static QList<QLocale::Country> countriesForLanguage(QLocale::Language language)
-{
-    QList<QLocale::Country> countries;
-    QLocale::Country country = QLocale::AnyCountry;
-    while (country <= QLocale::LastCountry) {
-        QLocale locale(language, country);
-        if (locale.language() == language && !countries.contains(locale.country()))
-            countries << locale.country();
-        country = (QLocale::Country)((uint)country + 1); // ++country
-    }
-    return countries;
-}
-
-#endif
-
 static QList<QLocale::Country> sortCountries(const QList<QLocale::Country> &countries)
 {
     QMultiMap<QString, QLocale::Country> nameToCountry;
@@ -471,11 +454,7 @@ void QtMetaEnumProvider::initLocale()
     while (itLang.hasNext()) {
         QLocale::Language language = itLang.next();
         QList<QLocale::Country> countries;
-#if QT_VERSION < 0x040300
-        countries = countriesForLanguage(language);
-#else
         countries = QLocale::countriesForLanguage(language);
-#endif
         if (countries.isEmpty() && language == system.language())
             countries << system.country();
 
@@ -5933,9 +5912,7 @@ QtFontPropertyManager::QtFontPropertyManager(QObject *parent)
 {
     d_ptr = new QtFontPropertyManagerPrivate;
     d_ptr->q_ptr = this;
-#if QT_VERSION >= 0x040500
     QObject::connect(qApp, SIGNAL(fontDatabaseChanged()), this, SLOT(slotFontDatabaseChanged()));
-#endif
 
     d_ptr->m_intPropertyManager = new QtIntPropertyManager(this);
     connect(d_ptr->m_intPropertyManager, SIGNAL(valueChanged(QtProperty *, int)),
