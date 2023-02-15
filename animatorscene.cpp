@@ -134,26 +134,17 @@ AnimatorScene::setBackgroundY (qreal y)
 
 void AnimatorScene::setScale (QGraphicsPixmapItem* img, qreal x, qreal y)
 {
-  img->setTransform (QTransform::fromScale (x, y), true);
+  img->setTransform (QTransform::fromScale (x, y), false);
 }
 
 void
-AnimatorScene::setBackgroundScaleX (qreal x)
+AnimatorScene::setBackgroundScale (qreal x, qreal y)
 {
   if (!m_backgroundImage)
     return;
   //m_backgroundImage->setTransform (m_originalBackgroundTransform);
-  setScale (m_backgroundImage, x, 1);
-}
 
-
-void
-AnimatorScene::setBackgroundScaleY (qreal y)
-{
-  if (!m_backgroundImage)
-    return;
-  //m_backgroundImage->setTransform (m_originalBackgroundTransform);
-  setScale (m_backgroundImage, 1, y);
+  setScale (m_backgroundImage, x, y);
 }
 
 void

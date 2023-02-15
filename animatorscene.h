@@ -105,8 +105,7 @@ public:
 
   void setBackgroundX (qreal x);
   void setBackgroundY (qreal y);
-  void setBackgroundScaleX (qreal scaleX);
-  void setBackgroundScaleY (qreal scaleY);
+  void setBackgroundScale (qreal scaleX, qreal scaleY);
   void setBackgroundOpacity (qreal opacity);
 
   // Port to Qt5

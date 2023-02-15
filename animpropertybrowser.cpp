@@ -473,11 +473,13 @@ AnimPropertyBroswer::valueChangedSlot(QtProperty * property, double value)
 
   if (m_backgroundScaleX == property)
     {
-      scene->setBackgroundScaleX (value);
+      double scaleY = AnimatorMode::getInstance ()->getBackgroundProperties ().scaleY;
+      scene->setBackgroundScale (value, scaleY);
     }
   if (m_backgroundScaleY == property)
     {
-      scene->setBackgroundScaleY (value);
+      double scaleX = AnimatorMode::getInstance ()->getBackgroundProperties ().scaleX;
+      scene->setBackgroundScale (scaleX, value);
     }
   if (m_backgroundOpacity == property)
     {
