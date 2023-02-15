@@ -53,23 +53,23 @@ Animxmlparser::Animxmlparser (QString traceFileName):
   if (m_traceFileName == "")
     return;
 
-    try
-      {
-        m_traceFile = new QFile (m_traceFileName);
-        if ((m_traceFile->size () <= 0) || !m_traceFile->open (QIODevice::ReadOnly | QIODevice::Text))
-          {
-            //qDebug (QString ("Critical:Trace file is invalid"));
-            m_fileIsValid = false;
-            return;
-          }
-        //qDebug (m_traceFileName);
-        m_reader = new QXmlStreamReader (m_traceFile);
-       }
-    catch (std::exception &e)
-      {
-        NS_LOG_DEBUG ("Error opening trace file: " << e.what ());
-        m_fileIsValid = false;
-      }
+  try
+    {
+      m_traceFile = new QFile (m_traceFileName);
+      if ((m_traceFile->size () <= 0) || !m_traceFile->open (QIODevice::ReadOnly | QIODevice::Text))
+        {
+          //qDebug (QString ("Critical:Trace file is invalid"));
+          m_fileIsValid = false;
+          return;
+        }
+      //qDebug (m_traceFileName);
+      m_reader = new QXmlStreamReader (m_traceFile);
+     }
+  catch (std::exception &e)
+    {
+      NS_LOG_DEBUG ("Error opening trace file: " << e.what ());
+      m_fileIsValid = false;
+    }
 }
 
 Animxmlparser::~Animxmlparser ()
@@ -218,11 +218,12 @@ Animxmlparser::doParse ()
         }
         case XML_WPACKET_RX_REF:
         {
-            ParsedElement & ref = m_packetRefs[parsedElement.uid];
-            parsedElement.packetrx_fromId = ref.packetrx_fromId;
-            parsedElement.packetrx_fbTx = ref.packetrx_fbTx;
-            parsedElement.packetrx_lbTx = ref.packetrx_lbTx;
-            parsedElement.meta_info = ref.meta_info;
+          ParsedElement & ref = m_packetRefs[parsedElement.uid];
+          parsedElement.packetrx_fromId = ref.packetrx_fromId;
+          parsedElement.packetrx_fbTx = ref.packetrx_fbTx;
+          parsedElement.packetrx_lbTx = ref.packetrx_lbTx;
+          parsedElement.meta_info = ref.meta_info;
+          break;
         }
         case XML_WPACKET_RX:
         case XML_PACKET_RX:
