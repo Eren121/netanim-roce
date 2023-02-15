@@ -382,16 +382,10 @@ PppInfo
 AnimPacket::parsePpp(QString metaInfo, bool & result)
 {
   PppInfo pppInfo;
-  QRegExp rx("ns3::PppHeader.*");
-  int pos = 0;
-  if((pos = rx.indexIn (metaInfo)) == -1)
-    {
-      result = false;
-      return pppInfo;
-    }
-  result = true;
+  QRegularExpression rx("ns3::PppHeader.*");
+  QRegularExpressionMatch match = rx.match(metaInfo);
+  result = match.hasMatch();
   return pppInfo;
-
 }
 
 
@@ -400,20 +394,20 @@ AnimPacket::parseArp (QString metaInfo, bool & result)
 {
   ArpInfo arpInfo;
 
-  QRegExp rx ("ns3::ArpHeader\\s+\\((request|reply) source mac: ..-..-(..:..:..:..:..:..) source ipv4: (\\S+) (?:dest mac: ..-..-)?(..:..:..:..:..:.. )?dest ipv4: (\\S+)\\)");
-  int pos = 0;
-  if ((pos = rx.indexIn (metaInfo)) == -1)
+  QRegularExpression rx ("ns3::ArpHeader\\s+\\((request|reply) source mac: ..-..-(..:..:..:..:..:..) source ipv4: (\\S+) (?:dest mac: ..-..-)?(..:..:..:..:..:.. )?dest ipv4: (\\S+)\\)");
+  QRegularExpressionMatch match = rx.match(metaInfo);
+  if (!match.hasMatch())
     {
       result = false;
       return arpInfo;
     }
 
-  arpInfo.type = GET_DATA (rx.cap (1));
-  arpInfo.sourceMac = GET_DATA (rx.cap (2));
-  arpInfo.sourceIpv4 = GET_DATA (rx.cap (3));
-  if(QString (GET_DATA (rx.cap (4))) != "")
-    arpInfo.destMac = GET_DATA (rx.cap (4));
-  arpInfo.destIpv4  = GET_DATA (rx.cap (5));
+  arpInfo.type = GET_DATA (match.captured (1));
+  arpInfo.sourceMac = GET_DATA (match.captured (2));
+  arpInfo.sourceIpv4 = GET_DATA (match.captured (3));
+  if(QString (GET_DATA (match.captured (4))) != "")
+    arpInfo.destMac = GET_DATA (match.captured (4));
+  arpInfo.destIpv4  = GET_DATA (match.captured (5));
   result = true;
   return arpInfo;
   /*qDebug (" Type:" + arpInfo->type +
@@ -429,16 +423,16 @@ EthernetInfo
 AnimPacket::parseEthernet (QString metaInfo, bool & result)
 {
   EthernetInfo ethernetInfo;
-  QRegExp rx ("ns3::EthernetHeader \\( length/type\\S+ source=(..:..:..:..:..:..), destination=(..:..:..:..:..:..)\\)");
-  int pos = 0;
-  if ((pos = rx.indexIn (metaInfo)) == -1)
+  QRegularExpression rx ("ns3::EthernetHeader \\( length/type\\S+ source=(..:..:..:..:..:..), destination=(..:..:..:..:..:..)\\)");
+  QRegularExpressionMatch match = rx.match(metaInfo);
+  if (!match.hasMatch())
     {
       result = false;
       return ethernetInfo;
     }
 
-  ethernetInfo.sourceMac = GET_DATA (rx.cap (1));
-  ethernetInfo.destMac = GET_DATA (rx.cap (2));
+  ethernetInfo.sourceMac = GET_DATA (match.captured (1));
+  ethernetInfo.destMac = GET_DATA (match.captured (2));
 
   result = true;
   return ethernetInfo;
@@ -450,16 +444,16 @@ AnimPacket::parseIcmp (QString metaInfo, bool & result)
 {
   IcmpInfo icmpInfo;
 
-  QRegExp rx ("ns3::Icmpv4Header \\(type=(.*), code=([^\\)]*)");
-  int pos = 0;
-  if ((pos = rx.indexIn (metaInfo)) == -1)
+  QRegularExpression rx ("ns3::Icmpv4Header \\(type=(.*), code=([^\\)]*)");
+  QRegularExpressionMatch match = rx.match(metaInfo);
+  if (!match.hasMatch())
     {
       result = false;
       return icmpInfo;
     }
 
-  icmpInfo.type =  GET_DATA (rx.cap (1));
-  icmpInfo.code =  GET_DATA (rx.cap (2));
+  icmpInfo.type =  GET_DATA (match.captured (1));
+  icmpInfo.code =  GET_DATA (match.captured (2));
   result = true;
   return icmpInfo;
 
@@ -470,17 +464,17 @@ AnimPacket::parseUdp (QString metaInfo, bool & result)
 {
   UdpInfo udpInfo;
 
-  QRegExp rx ("ns3::UdpHeader \\(length: (\\S+) (\\S+) > (\\S+)\\)");
-  int pos = 0;
-  if ((pos = rx.indexIn (metaInfo)) == -1)
+  QRegularExpression rx ("ns3::UdpHeader \\(length: (\\S+) (\\S+) > (\\S+)\\)");
+  QRegularExpressionMatch match = rx.match(metaInfo);
+  if (!match.hasMatch())
     {
       result = false;
       return udpInfo;
     }
 
-  udpInfo.length = GET_DATA (rx.cap (1));
-  udpInfo.SPort = GET_DATA (rx.cap (2));
-  udpInfo.DPort = GET_DATA (rx.cap (3));
+  udpInfo.length = GET_DATA (match.captured (1));
+  udpInfo.SPort = GET_DATA (match.captured (2));
+  udpInfo.DPort = GET_DATA (match.captured (3));
   result = true;
   return udpInfo;
 }
@@ -489,14 +483,9 @@ Ipv6Info
 AnimPacket::parseIpv6 (QString metaInfo, bool & result)
 {
   Ipv6Info ipv6Info;
-  QRegExp rx ("ns3::Ipv6Header");
-  int pos = 0;
-  if ((pos = rx.indexIn (metaInfo)) == -1)
-    {
-      result = false;
-      return ipv6Info;
-    }
-  result = true;
+  QRegularExpression rx ("ns3::Ipv6Header");
+  QRegularExpressionMatch match = rx.match(metaInfo);
+  result = match.hasMatch();
   return ipv6Info;
 }
 
@@ -505,22 +494,22 @@ AnimPacket::parseIpv4 (QString metaInfo, bool & result)
 {
   Ipv4Info ipv4Info;
 
-  QRegExp rx ("ns3::Ipv4Header \\(tos (\\S+) DSCP (\\S+) ECN (\\S+) ttl (\\d+) id (\\d+) protocol (\\d+) .* length: (\\d+) (\\S+) > (\\S+)\\)");
-  int pos = 0;
-  if ((pos = rx.indexIn (metaInfo)) == -1)
+  QRegularExpression rx ("ns3::Ipv4Header \\(tos (\\S+) DSCP (\\S+) ECN (\\S+) ttl (\\d+) id (\\d+) protocol (\\d+) .* length: (\\d+) (\\S+) > (\\S+)\\)");
+  QRegularExpressionMatch match = rx.match(metaInfo);
+  if (!match.hasMatch())
     {
       result = false;
       return ipv4Info;
     }
-  ipv4Info.tos = GET_DATA (rx.cap (1));
-  ipv4Info.Dscp = GET_DATA (rx.cap (2));
-  ipv4Info.Ecn = GET_DATA (rx.cap (3));
-  ipv4Info.Ttl = GET_DATA (rx.cap (4));
-  ipv4Info.Id = GET_DATA (rx.cap (5));
-  ipv4Info.protocol = GET_DATA (rx.cap (6));
-  ipv4Info.length = GET_DATA (rx.cap (7));
-  ipv4Info.SrcIp = GET_DATA (rx.cap (8));
-  ipv4Info.DstIp = GET_DATA (rx.cap (9));
+  ipv4Info.tos = GET_DATA (match.captured (1));
+  ipv4Info.Dscp = GET_DATA (match.captured (2));
+  ipv4Info.Ecn = GET_DATA (match.captured (3));
+  ipv4Info.Ttl = GET_DATA (match.captured (4));
+  ipv4Info.Id = GET_DATA (match.captured (5));
+  ipv4Info.protocol = GET_DATA (match.captured (6));
+  ipv4Info.length = GET_DATA (match.captured (7));
+  ipv4Info.SrcIp = GET_DATA (match.captured (8));
+  ipv4Info.DstIp = GET_DATA (match.captured (9));
   result = true;
   return ipv4Info;
 }
@@ -530,19 +519,19 @@ AnimPacket::parseTcp (QString metaInfo, bool & result)
 {
   TcpInfo tcpInfo;
 
-  QRegExp rx ("ns3::TcpHeader \\((\\d+) > (\\d+) \\[([^\\]]*)\\] Seq=(\\d+) Ack=(\\d+) Win=(\\d+)");
-  int pos = 0;
-  if ((pos = rx.indexIn (metaInfo)) == -1)
+  QRegularExpression rx ("ns3::TcpHeader \\((\\d+) > (\\d+) \\[([^\\]]*)\\] Seq=(\\d+) Ack=(\\d+) Win=(\\d+)");
+  QRegularExpressionMatch match = rx.match(metaInfo);
+  if (!match.hasMatch())
     {
       result = false;
       return tcpInfo;
     }
-  tcpInfo.SPort = GET_DATA (rx.cap (1));
-  tcpInfo.DPort = GET_DATA (rx.cap (2));
-  tcpInfo.flags = GET_DATA (rx.cap (3));
-  tcpInfo.seq = GET_DATA (rx.cap (4));
-  tcpInfo.ack = GET_DATA (rx.cap (5));
-  tcpInfo.window = GET_DATA (rx.cap (6));
+  tcpInfo.SPort = GET_DATA (match.captured (1));
+  tcpInfo.DPort = GET_DATA (match.captured (2));
+  tcpInfo.flags = GET_DATA (match.captured (3));
+  tcpInfo.seq = GET_DATA (match.captured (4));
+  tcpInfo.ack = GET_DATA (match.captured (5));
+  tcpInfo.window = GET_DATA (match.captured (6));
   result = true;
   return tcpInfo;
 }
@@ -550,75 +539,75 @@ AnimPacket::parseTcp (QString metaInfo, bool & result)
 WifiMacInfo
 AnimPacket::parseWifi (QString metaInfo, bool & result)
 {
-  QRegExp rxCTL_ACK ("ns3::WifiMacHeader \\(CTL_ACK .*RA=(..:..:..:..:..:..)");
+  QRegularExpression rxCTL_ACK ("ns3::WifiMacHeader \\(CTL_ACK .*RA=(..:..:..:..:..:..)");
+  QRegularExpressionMatch match_ACK = rxCTL_ACK.match(metaInfo);
   WifiMacInfo wifiMacInfo;
-  int pos = 0;
-  if ((pos = rxCTL_ACK.indexIn (metaInfo)) != -1)
+  if (match_ACK.hasMatch())
     {
       wifiMacInfo.type = "CTL_ACK";
-      wifiMacInfo.Ra = GET_DATA (rxCTL_ACK.cap (1));
+      wifiMacInfo.Ra = GET_DATA (match_ACK.captured(1));
       result = true;
       return wifiMacInfo;
 
     }
-  QRegExp rxCTL_RTS ("ns3::WifiMacHeader \\(CTL_RTS .*RA=(..:..:..:..:..:..), TA=(..:..:..:..:..:..)");
-  pos = 0;
-  if ((pos = rxCTL_RTS.indexIn (metaInfo)) != -1)
+  QRegularExpression rxCTL_RTS ("ns3::WifiMacHeader \\(CTL_RTS .*RA=(..:..:..:..:..:..), TA=(..:..:..:..:..:..)");
+  QRegularExpressionMatch match_RTS = rxCTL_RTS.match(metaInfo);
+  if (match_RTS.hasMatch())
     {
       wifiMacInfo.type = "CTL_RTS";
-      wifiMacInfo.Ra = GET_DATA (rxCTL_RTS.cap (1));
-      wifiMacInfo.Sa = GET_DATA (rxCTL_RTS.cap (2));
+      wifiMacInfo.Ra = GET_DATA (match_RTS.captured (1));
+      wifiMacInfo.Sa = GET_DATA (match_RTS.captured (2));
       result = true;
       return wifiMacInfo;
 
     }
 
-  QRegExp rxCTL_CTS ("ns3::WifiMacHeader \\(CTL_CTS .*RA=(..:..:..:..:..:..)");
-  pos = 0;
-  if ((pos = rxCTL_CTS.indexIn (metaInfo)) != -1)
+  QRegularExpression rxCTL_CTS ("ns3::WifiMacHeader \\(CTL_CTS .*RA=(..:..:..:..:..:..)");
+  QRegularExpressionMatch match_CTS = rxCTL_CTS.match(metaInfo);
+  if (match_CTS.hasMatch())
     {
       wifiMacInfo.type = "CTL_CTS";
-      wifiMacInfo.Ra = GET_DATA (rxCTL_CTS.cap (1));
+      wifiMacInfo.Ra = GET_DATA (match_CTS.captured (1));
       result = true;
       return wifiMacInfo;
 
     }
 
-  QRegExp rx ("ns3::WifiMacHeader \\((\\S+) ToDS=(0|1), FromDS=(0|1), .*DA=(..:..:..:..:..:..), SA=(..:..:..:..:..:..), BSSID=(..:..:..:..:..:..)");
-  pos = 0;
-  if ((pos = rx.indexIn (metaInfo)) == -1)
+  QRegularExpression rx ("ns3::WifiMacHeader \\((\\S+) ToDS=(0|1), FromDS=(0|1), .*DA=(..:..:..:..:..:..), SA=(..:..:..:..:..:..), BSSID=(..:..:..:..:..:..)");
+  QRegularExpressionMatch match = rx.match(metaInfo);
+  if (!match.hasMatch())
     {
       result = false;
       return wifiMacInfo;
     }
-  wifiMacInfo.type = GET_DATA (rx.cap (1));
-  wifiMacInfo.toDs = GET_DATA (rx.cap (2));
-  wifiMacInfo.fromDs = GET_DATA (rx.cap (3));
-  wifiMacInfo.Da = GET_DATA (rx.cap (4));
-  wifiMacInfo.Sa = GET_DATA (rx.cap (5));
-  wifiMacInfo.Bssid = GET_DATA (rx.cap (6));
+  wifiMacInfo.type = GET_DATA (match.captured (1));
+  wifiMacInfo.toDs = GET_DATA (match.captured (2));
+  wifiMacInfo.fromDs = GET_DATA (match.captured (3));
+  wifiMacInfo.Da = GET_DATA (match.captured (4));
+  wifiMacInfo.Sa = GET_DATA (match.captured (5));
+  wifiMacInfo.Bssid = GET_DATA (match.captured (6));
 
   if(wifiMacInfo.type == "MGT_ASSOCIATION_REQUEST")
     {
-      QRegExp rx ("ns3::MgtAssocRequestHeader \\(ssid=(\\S+),");
-      int pos = 0;
-      if ((pos = rx.indexIn (metaInfo)) == -1)
+      QRegularExpression rx ("ns3::MgtAssocRequestHeader \\(ssid=(\\S+),");
+      QRegularExpressionMatch match = rx.match(metaInfo);
+      if (!match.hasMatch())
         {
           result = false;
           return wifiMacInfo;
         }
-      wifiMacInfo.SSid = GET_DATA (rx.cap (1));
+      wifiMacInfo.SSid = GET_DATA (match.captured (1));
     }
   if(wifiMacInfo.type == "MGT_ASSOCIATION_RESPONSE")
     {
-      QRegExp rx ("ns3::MgtAssocResponseHeader \\(status code=(\\S+), rates");
-      int pos = 0;
-      if ((pos = rx.indexIn (metaInfo)) == -1)
+      QRegularExpression rx ("ns3::MgtAssocResponseHeader \\(status code=(\\S+), rates");
+      QRegularExpressionMatch match = rx.match(metaInfo);
+      if (!match.hasMatch())
         {
           result = false;
           return wifiMacInfo;
         }
-      wifiMacInfo.assocResponseStatus = GET_DATA (rx.cap (1));
+      wifiMacInfo.assocResponseStatus = GET_DATA (match.captured (1));
     }
   result = true;
   return wifiMacInfo;
@@ -629,52 +618,52 @@ AnimPacket::parseAodv (QString metaInfo, bool & result)
 {
   AodvInfo aodvInfo;
 
-  QRegExp rx ("ns3::aodv::TypeHeader \\((\\S+)\\) ");
-  int pos = 0;
-  if ((pos = rx.indexIn (metaInfo)) == -1)
+  QRegularExpression rx ("ns3::aodv::TypeHeader \\((\\S+)\\) ");
+  QRegularExpressionMatch match = rx.match(metaInfo);
+  if (!match.hasMatch())
     {
       result = false;
       return aodvInfo;
     }
-  aodvInfo.type = GET_DATA (rx.cap (1));
+  aodvInfo.type = GET_DATA (match.captured (1));
   if(aodvInfo.type == "RREQ")
     {
-      QRegExp rx ("ns3::aodv::RreqHeader \\(RREQ ID \\d+ destination: ipv4 (\\S+) sequence number (\\d+) source: ipv4 (\\S+) sequence number \\d+");
-      int pos = 0;
-      if ((pos = rx.indexIn (metaInfo)) == -1)
+      QRegularExpression rx ("ns3::aodv::RreqHeader \\(RREQ ID \\d+ destination: ipv4 (\\S+) sequence number (\\d+) source: ipv4 (\\S+) sequence number \\d+");
+      QRegularExpressionMatch match = rx.match(metaInfo);
+      if (!match.hasMatch())
         {
           result = false;
           return aodvInfo;
         }
-      aodvInfo.destination = GET_DATA (rx.cap (1));
-      aodvInfo.seq = GET_DATA (rx.cap (2));
-      aodvInfo.source = GET_DATA (rx.cap (3));
+      aodvInfo.destination = GET_DATA (match.captured (1));
+      aodvInfo.seq = GET_DATA (match.captured (2));
+      aodvInfo.source = GET_DATA (match.captured (3));
 
     }
   if(aodvInfo.type == "RREP")
     {
-      QRegExp rx ("ns3::aodv::RrepHeader \\(destination: ipv4 (\\S+) sequence number (\\d+) source ipv4 (\\S+) ");
-      int pos = 0;
-      if ((pos = rx.indexIn (metaInfo)) == -1)
+      QRegularExpression rx ("ns3::aodv::RrepHeader \\(destination: ipv4 (\\S+) sequence number (\\d+) source ipv4 (\\S+) ");
+      QRegularExpressionMatch match = rx.match(metaInfo);
+      if (!match.hasMatch())
         {
           result = false;
           return aodvInfo;
         }
-      aodvInfo.destination = GET_DATA (rx.cap (1));
-      aodvInfo.seq = GET_DATA (rx.cap (2));
-      aodvInfo.source = GET_DATA (rx.cap (3));
+      aodvInfo.destination = GET_DATA (match.captured (1));
+      aodvInfo.seq = GET_DATA (match.captured (2));
+      aodvInfo.source = GET_DATA (match.captured (3));
     }
   if(aodvInfo.type == "RERR")
     {
-      QRegExp rx ("ns3::aodv::RerrHeader \\(([^\\)]+) \\(ipv4 address, seq. number):(\\S+) ");
-      int pos = 0;
-      if ((pos = rx.indexIn (metaInfo)) == -1)
+      QRegularExpression rx ("ns3::aodv::RerrHeader \\(([^\\)]+) \\(ipv4 address, seq. number):(\\S+) ");
+      QRegularExpressionMatch match = rx.match(metaInfo);
+      if (!match.hasMatch())
         {
           result = false;
           return aodvInfo;
         }
-      aodvInfo.rerrInfo = GET_DATA (rx.cap (1));
-      aodvInfo.destination = GET_DATA (rx.cap (2));
+      aodvInfo.rerrInfo = GET_DATA (match.captured (1));
+      aodvInfo.destination = GET_DATA (match.captured (2));
     }
   result = true;
   return aodvInfo;
@@ -686,14 +675,10 @@ AnimPacket::parseDsdv (QString metaInfo, bool & result)
 {
   DsdvInfo dsdvInfo;
 
-  QRegExp rx ("ns3::dsdv::DsdvHeader");
-  int pos = 0;
-  if ((pos = rx.indexIn (metaInfo)) == -1)
-    {
-      result = false;
-      return dsdvInfo;
-    }
-  result = true;
+  QRegularExpression rx ("ns3::dsdv::DsdvHeader");
+  QRegularExpressionMatch match = rx.match(metaInfo);
+
+  result = match.hasMatch();
   return dsdvInfo;
 
 }
@@ -703,14 +688,10 @@ AnimPacket::parseOlsr (QString metaInfo, bool & result)
 {
   OlsrInfo olsrInfo;
 
-  QRegExp rx ("ns3::olsr::MessageHeader");
-  int pos = 0;
-  if ((pos = rx.indexIn (metaInfo)) == -1)
-    {
-      result = false;
-      return olsrInfo;
-    }
-  result = true;
+  QRegularExpression rx ("ns3::olsr::MessageHeader");
+  QRegularExpressionMatch match = rx.match(metaInfo);
+
+  result = match.hasMatch();
   return olsrInfo;
 }
 

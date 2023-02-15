@@ -16,7 +16,7 @@
  * Author: John Abraham <john.abraham.in@gmail.com>
  * Contributions: Makhtar Diouf <makhtar.diouf@gmail.com>
  */
-#include <QRegExp>
+#include <QRegularExpression>
 #include "packetsscene.h"
 #include "logqt.h"
 #include "animpacket.h"
@@ -190,8 +190,9 @@ PacketsScene::addPacket (qreal tx, qreal rx, uint32_t fromNodeId, uint32_t toNod
       shortMeta = AnimPacket::getMeta (metaInfo, false);
     }
 
-  QRegExp rex (m_filterRegex);
-  if (rex.indexIn (metaInfo) == -1)
+  QRegularExpression rex (m_filterRegex);
+  QRegularExpressionMatch match = rex.match(metaInfo);
+  if (!match.hasMatch())
   {
     return;
   }
