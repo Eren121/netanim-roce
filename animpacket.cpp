@@ -82,11 +82,7 @@ AnimPacket::AnimPacket (uint32_t fromNodeId,
         {
           textAngle = 180-textAngle;
         }
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
       m_infoText->setTransform (QTransform().rotate (textAngle));
-#else
-      m_infoText->rotate (textAngle);
-#endif
       m_infoText->setText (getMeta(metaInfo));
     }
 

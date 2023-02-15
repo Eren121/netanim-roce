@@ -24,17 +24,10 @@
 
 #include <QWidget>
 
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
 #include <QToolButton>
 #include <QSpinBox>
 #include <QSlider>
 #include <QLCDNumber>
-#else
-#include <QtGui/QToolButton>
-#include <QtGui/QSpinBox>
-#include <QtGui/QSlider>
-#include <QtGui/QLCDNumber>
-#endif
 #include <QVBoxLayout>
 #include <QSplitter>
 #include <QToolBar>
@@ -71,15 +64,8 @@
 #include "fatal-error.h"
 
 // Utilities to support porting to Qt5
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
 #  define GET_ASCII(x)  x.toLatin1 ()
 #  define GET_DATA(x)  x.toLatin1 ().data ()
 #  define GET_DATA_PTR(x)  x->toLatin1 ().data ()
-
-#else
-#  define GET_ASCII(x)  x.toAscii ()
-#  define GET_DATA(x)  x.toAscii ().data ()
-#  define GET_DATA_PTR(x)  x->toAscii ().data ()
-#endif
 
 #endif // COMMON_H
