@@ -3,7 +3,7 @@
 
 This file contains NetAnim release notes (most recent releases first).  
 
-Please refer the page http://www.nsnam.org/wiki/index.php/NetAnim for detailed instructions
+Please refer the page https://www.nsnam.org/wiki/NetAnim for detailed instructions
 
 Contributors
 ============
@@ -13,13 +13,47 @@ Emanuel Eichhammer (For QCustomPlot www.qcustomplot.com. Included in this packag
 George F Riley (Original Concept for packet animation)
 Dmitrii Shakshin <d.shakshin@gmail.com> (Open Source and Linux Laboratory http://dev.osll.ru/)
 Makhtar Diouf <makhtar.diouf@gmail.com>
+André Apitzsch <andre.apitzsch@etit.tu-chemnitz.de>
 
-Wiki
-====
-http://www.nsnam.org/wiki/NetAnim
+Availability
+============
+Please use the following to download using git:
+git clone https://gitlab.com/nsnam/netanim.git
 
-Please use the following to download using mercurial:
-hg clone http://code.nsnam.org/netanim
+Support
+=======
+
+NetAnim is lightly supported; please use the
+[issue tracker](https://gitlab.com/nsnam/netanim/-/issues) and
+[merge request tracker](https://gitlab.com/nsnam/netanim/-/merge_requests) for improvements.
+
+Supported Qt versions
+---------------------
+Currently, netanim-3.109 has been tested on Qt 5.12.8 and 5.15.6. Qt6 is not yet supported.
+
+netanim-3.108 is compatible with Qt4 series also (support for Qt4 was removed in netanim-3.109).  
+
+For recent Ubuntu releases, the following qt5 packages are needed:
+
+    apt install qtbase5-dev qtchooser qt5-qmake qtbase5-dev-tools
+
+For Ubuntu 20.10 and earlier, the following package is sufficient:
+
+    apt install qt5-default
+
+Supported platforms
+-------------------
+NetAnim is intermittently tested on recent versions of Linux and macOS
+
+Release 3.109
+=============
+
+Changelog
+---------
+1. Remove Qt4 support
+2. Always apply "Scale X/Y By" on the original background size and not on
+the size received after previous scaling.
+3. Fix some compiler warnings and deprecations
 
 Release 3.108
 =============
@@ -52,11 +86,6 @@ Changelog
    x, y co-ordinate. Prior to this change, the node's x, y co-ordinate was aligned with the pixmap's
    top-left corner.
 3. Enhancements to the early detection of invalid trace files.
-
-Availability
-------------
-Please use the following to download using mercurial:
-hg clone http://code.nsnam.org/netanim
 
 Supported Qt versions
 ---------------------
