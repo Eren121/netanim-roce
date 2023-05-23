@@ -104,7 +104,7 @@ FlowMonXmlparser::isParsingComplete ()
 void
 FlowMonXmlparser::doParse ()
 {
-  uint64_t parsedElementCount = 0;
+  // uint64_t parsedElementCount = 0;
   while (!isParsingComplete ())
     {
       if (AnimatorMode::getInstance ()->keepAppResponsive ())
@@ -125,19 +125,19 @@ FlowMonXmlparser::doParse ()
         }
         case FlowMonParsedElement::XML_FLOWSTATSFLOW:
         {
-          ++parsedElementCount;
+          // ++parsedElementCount;
           FlowMonStatsScene::getInstance ()->addFlowStat (parsedElement.flowStats.flowId, parsedElement.flowStats);
           break;
         }
         case FlowMonParsedElement::XML_IPV4CLASSFLOW:
         {
-          ++parsedElementCount;
+          // ++parsedElementCount;
           FlowMonStatsScene::getInstance ()->addIpv4Classifier (parsedElement.ipv4Classifier.flowId, parsedElement.ipv4Classifier);
           break;
         }
         case FlowMonParsedElement::XML_FLOWPROBES:
         {
-          ++parsedElementCount;
+          // ++parsedElementCount;
           FlowMonStatsScene::getInstance ()->addFlowProbes (parsedElement.flowProbes);
           break;
 

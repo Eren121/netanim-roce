@@ -134,7 +134,7 @@ RoutingXmlparser::isParsingComplete ()
 void
 RoutingXmlparser::doParse ()
 {
-  uint64_t parsedElementCount = 0;
+  // uint64_t parsedElementCount = 0;
   while (!isParsingComplete ())
     {
       if (AnimatorMode::getInstance ()->keepAppResponsive ())
@@ -154,13 +154,13 @@ RoutingXmlparser::doParse ()
         case RoutingParsedElement::XML_RT:
         {
           RoutingStatsScene::getInstance ()->add (parsedElement.nodeId, parsedElement.updateTime, parsedElement.rt);
-          ++parsedElementCount;
+          // ++parsedElementCount;
           break;
         }
         case RoutingParsedElement::XML_RP:
         {
           RoutingStatsScene::getInstance ()->addRp (parsedElement.nodeId, parsedElement.destination, parsedElement.updateTime, parsedElement.rpes);
-          ++parsedElementCount;
+          // ++parsedElementCount;
           break;
         }
         case RoutingParsedElement::XML_INVALID:
