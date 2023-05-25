@@ -742,7 +742,11 @@ StatsMode::setNodeActive (uint32_t nodeId, bool active)
 QVector <uint32_t>
 StatsMode::stringToNodeVector (QString nodeString)
 {
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+  QStringList nodes = nodeString.split (":", Qt::SkipEmptyParts);
+#else
   QStringList nodes = nodeString.split (":", QString::SkipEmptyParts);
+#endif
   QVector <uint32_t> v;
   foreach (QString s ,nodes)
     {

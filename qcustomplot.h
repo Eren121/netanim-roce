@@ -1143,7 +1143,7 @@ protected:
   QCPGrid *mGrid;
   QCache<QString, CachedLabel> mLabelCache;
   int mLowestVisibleTick, mHighestVisibleTick;
-  QChar mExponentialChar, mPositiveSignChar;
+  QString mExponentialChar, mPositiveSignChar;
   QVector<double> mTickVector;
   QVector<QString> mTickVectorLabels;
   QVector<double> mSubTickVector;

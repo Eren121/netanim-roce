@@ -5542,8 +5542,8 @@ void QCPAxis::setupTickVectors()
   }
 
   // generate tick labels according to tick positions:
-  mExponentialChar = mParentPlot->locale().exponential();   // will be needed when drawing the numbers generated here, in getTickLabelData()
-  mPositiveSignChar = mParentPlot->locale().positiveSign(); // will be needed when drawing the numbers generated here, in getTickLabelData()
+  mExponentialChar = QString(mParentPlot->locale().exponential());   // will be needed when drawing the numbers generated here, in getTickLabelData()
+  mPositiveSignChar = QString(mParentPlot->locale().positiveSign()); // will be needed when drawing the numbers generated here, in getTickLabelData()
   if (mAutoTickLabels)
   {
     int vecsize = mTickVector.size();
@@ -6062,7 +6062,7 @@ QCPAxis::TickLabelData QCPAxis::getTickLabelData(const QFont &font, const QStrin
     // clip "+" and leading zeros off expPart:
     while (result.expPart.at(1) == '0' && result.expPart.length() > 2) // length > 2 so we leave one zero when numberFormatChar is 'e'
       result.expPart.remove(1, 1);
-    if (result.expPart.at(0) == mPositiveSignChar)
+    if (QString(result.expPart.at(0)) == mPositiveSignChar)
       result.expPart.remove(0, 1);
     // prepare smaller font for exponent:
     result.expFont = font;
@@ -10592,7 +10592,11 @@ void QCustomPlot::wheelEvent(QWheelEvent *event)
   emit mouseWheel(event);
   
   // call event of affected layout element:
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+  if (QCPLayoutElement *el = layoutElementAt(event->position()))
+#else
   if (QCPLayoutElement *el = layoutElementAt(event->pos()))
+#endif
     el->wheelEvent(event);
   
   QWidget::wheelEvent(event);
@@ -17798,13 +17802,21 @@ void QCPAxisRect::wheelEvent(QWheelEvent *event)
       {
         factor = pow(mRangeZoomFactorHorz, wheelSteps.x());
         if (mRangeZoomHorzAxis.data())
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+          mRangeZoomHorzAxis.data()->scaleRange(factor, mRangeZoomHorzAxis.data()->pixelToCoord(event->position().x()));
+#else
           mRangeZoomHorzAxis.data()->scaleRange(factor, mRangeZoomHorzAxis.data()->pixelToCoord(event->pos().x()));
+#endif
       }
       if (mRangeZoom.testFlag(Qt::Vertical))
       {
         factor = pow(mRangeZoomFactorVert, wheelSteps.y());
         if (mRangeZoomVertAxis.data())
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+          mRangeZoomVertAxis.data()->scaleRange(factor, mRangeZoomVertAxis.data()->pixelToCoord(event->position().y()));
+#else
           mRangeZoomVertAxis.data()->scaleRange(factor, mRangeZoomVertAxis.data()->pixelToCoord(event->pos().y()));
+#endif
       }
       mParentPlot->replot();
     }
