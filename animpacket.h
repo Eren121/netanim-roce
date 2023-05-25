@@ -234,7 +234,7 @@ struct IcmpInfo
   }
   QString toShortString ()
   {
-    if ( (type == "3") & (code == "3"))
+    if ( (type == "3") && (code == "3"))
       {
         return "ICMP: Dst Unreachable";
       }
