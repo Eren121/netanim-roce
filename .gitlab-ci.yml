@@ -1,0 +1,21 @@
+stages:
+  - build
+
+.base-build:
+  stage: build
+  image: ubuntu:22.04
+  script:
+    - apt update
+    - DEBIAN_FRONTEND=noninteractive apt install -y g++ ninja-build cmake $QT_LIBRARY_PACKAGE
+    - cmake -B cmake-cache
+    - cmake --build cmake-cache
+
+qt5-build:
+  extends: .base-build
+  variables:
+    QT_LIBRARY_PACKAGE: qtbase5-dev
+
+qt6-build:
+  extends: .base-build
+  variables:
+    QT_LIBRARY_PACKAGE: qt6-base-dev libglvnd-dev
