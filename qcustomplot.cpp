@@ -17278,8 +17278,8 @@ void QCPAxisRect::setupFullAxesBox(bool connectRanges)
   
   if (connectRanges)
   {
-    connect(xAxis, SIGNAL(rangeChanged(QCPRange)), xAxis2, SLOT(setRange(QCPRange)));
-    connect(yAxis, SIGNAL(rangeChanged(QCPRange)), yAxis2, SLOT(setRange(QCPRange)));
+    connect(xAxis, qOverload<const QCPRange&>(&QCPAxis::rangeChanged), xAxis2, qOverload<const QCPRange&>(&QCPAxis::setRange));
+    connect(yAxis, qOverload<const QCPRange&>(&QCPAxis::rangeChanged), yAxis2, qOverload<const QCPRange&>(&QCPAxis::setRange));
   }
 }
 

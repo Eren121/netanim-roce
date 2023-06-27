@@ -48,7 +48,7 @@ NetAnim::NetAnim ():
   DesignerMode * designerMode = new DesignerMode;
   m_tabWidget->addTab (designerMode->getCentralWidget (), designerMode->getTabName ());
 #endif
-  QObject::connect (m_tabWidget, SIGNAL (currentChanged (int)), this, SLOT (currentTabChangedSlot (int)));
+  QObject::connect(m_tabWidget, &QTabWidget::currentChanged, this, &NetAnim::currentTabChangedSlot);
   m_tabWidget->setCurrentIndex (0);
   m_tabWidget->showMaximized ();
   m_tabWidget->show ();

@@ -92,8 +92,7 @@ AnimPropertyBroswer::AnimPropertyBroswer ():
   m_backgroundBrowser->setVisible (false);
   m_nodePosTable->setVisible (false);
   //m_nodePosTable->setColumnCount (3);
-  connect (m_mode, SIGNAL(currentTextChanged(QString)), this, SLOT(modeChangedSlot(QString)));
-
+  connect(m_mode, &QComboBox::currentTextChanged, this, &AnimPropertyBroswer::modeChangedSlot);
 }
 
 
@@ -140,8 +139,7 @@ AnimPropertyBroswer::postParse ()
   setupFactories ();
   setupNodeProperties ();
   setupBackgroundProperties ();
-  connect (m_nodeIdSelector, SIGNAL(currentTextChanged(QString)), this, SLOT (nodeIdSelectorSlot(QString)));
-
+  connect(m_nodeIdSelector, &QComboBox::currentTextChanged, this, &AnimPropertyBroswer::nodeIdSelectorSlot);
 }
 
 void
@@ -149,7 +147,7 @@ AnimPropertyBroswer::reset ()
 {
   m_currentNodeId = 0;
   m_nodeIdSelector->clear ();
-  disconnect (m_nodeIdSelector, SIGNAL(currentTextChanged(QString)), this, SLOT (nodeIdSelectorSlot(QString)));
+  disconnect(m_nodeIdSelector, &QComboBox::currentTextChanged, this, &AnimPropertyBroswer::nodeIdSelectorSlot);
   if (m_intManager)
     delete m_intManager;
   if (m_stringManager)
@@ -269,9 +267,8 @@ AnimPropertyBroswer::setupBackgroundProperties ()
   m_backgroundDoubleManager->setValue (m_backgroundScaleY, prop.scaleY);
   m_backgroundDoubleManager->setValue (m_backgroundOpacity, prop.opacity);
   m_backgroundBrowser->setFactoryForManager (m_backgroundDoubleManager, m_doubleSpinBoxFactory);
-  connect (m_backgroundDoubleManager, SIGNAL(valueChanged(QtProperty*,double)), this, SLOT(valueChangedSlot(QtProperty*,double)));
-
-
+  connect(m_backgroundDoubleManager, &QtDoublePropertyManager::valueChanged, this,
+          qOverload<QtProperty *, double>(&AnimPropertyBroswer::valueChangedSlot));
 }
 
 void
@@ -295,7 +292,8 @@ AnimPropertyBroswer::setupNodeProperties ()
   // Node Description
   m_nodeDescriptionProperty = m_stringManager->addProperty ("Node Description");
   m_nodeBrowser->setFactoryForManager (m_stringManager, m_lineEditFactory);
-  connect (m_stringManager, SIGNAL (valueChanged (QtProperty*,QString)), this, SLOT (valueChangedSlot (QtProperty*,QString)));
+  connect(m_stringManager, &QtStringPropertyManager::valueChanged, this,
+          qOverload<QtProperty *, QString>(&AnimPropertyBroswer::valueChangedSlot));
   m_nodeBrowser->addProperty (m_nodeDescriptionProperty);
   m_stringManager->setValue (m_nodeDescriptionProperty, animNode->getDescription ()->toPlainText ());
 
@@ -310,14 +308,16 @@ AnimPropertyBroswer::setupNodeProperties ()
   m_doubleManager->setMinimum (m_nodeYProperty, 0);
   m_doubleManager->setValue (m_nodeXProperty, animNode->getX ());
   m_doubleManager->setValue (m_nodeYProperty, animNode->getY ());
-  connect (m_doubleManager, SIGNAL(valueChanged(QtProperty*,double)), this, SLOT(valueChangedSlot(QtProperty*,double)));
+  connect(m_doubleManager, &QtDoublePropertyManager::valueChanged, this,
+          qOverload<QtProperty *, double>(&AnimPropertyBroswer::valueChangedSlot));
   m_nodeBrowser->addProperty (m_nodePositionGroupProperty);
   m_nodeBrowser->setFactoryForManager (m_doubleManager, m_doubleSpinBoxFactory);
 
 
   // Node Color
   m_nodeColorProperty = m_colorManager->addProperty ("Node Color");
-  connect(m_colorManager, SIGNAL(valueChanged(QtProperty*,QColor)), this, SLOT(valueChangedSlot(QtProperty*,QColor)));
+  connect(m_colorManager, &QtColorPropertyManager::valueChanged, this,
+          qOverload<QtProperty *, QColor>(&AnimPropertyBroswer::valueChangedSlot));
   m_nodeBrowser->addProperty (m_nodeColorProperty);
   m_nodeBrowser->setFactoryForManager (m_colorManager->subIntPropertyManager (), m_spinBoxFactory);
   QColor c = animNode->getColor ();
@@ -342,16 +342,16 @@ AnimPropertyBroswer::setupNodeProperties ()
    m_filePathManager->setValue (m_fileEditProperty, resourcePath);
    m_nodeBrowser->addProperty (m_fileEditProperty);
    m_nodeBrowser->setFactoryForManager (m_filePathManager, m_fileEditFactory);
-   connect (m_filePathManager, SIGNAL(valueChanged(QtProperty*,QString)), this, SLOT(valueChangedSlot(QtProperty*,QString)));
-
+   connect(m_filePathManager, &FilePathManager::valueChanged, this,
+           qOverload<QtProperty *, QString>(&AnimPropertyBroswer::valueChangedSlot));
 
    // Node Trajectory
    m_showNodeTrajectoryProperty = m_boolManager->addProperty ("Show Node Trajectory");
    m_nodeBrowser->setFactoryForManager  (m_boolManager, m_checkBoxFactory);
    m_boolManager->setValue (m_showNodeTrajectoryProperty, animNode->getShowNodeTrajectory ());
    m_nodeBrowser->addProperty (m_showNodeTrajectoryProperty);
-   connect (m_boolManager, SIGNAL(valueChanged(QtProperty*,bool)), this, SLOT(valueChangedSlot(QtProperty*,bool)));
-
+   connect(m_boolManager, &QtBoolPropertyManager::valueChanged, this,
+           qOverload<QtProperty *, bool>(&AnimPropertyBroswer::valueChangedSlot));
 
    // IPv4 and Mac
    m_ipv4AddressGroupProperty = m_ipv4AddressManager->addProperty ("Ipv4 Addresses");

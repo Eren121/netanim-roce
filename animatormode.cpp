@@ -260,31 +260,31 @@ AnimatorMode::initControls ()
   m_fileOpenButton = new QToolButton;
   m_fileOpenButton->setToolTip ("Open XML trace file");
   m_fileOpenButton->setIcon (QIcon (":/resources/animator_fileopen.svg"));
-  connect (m_fileOpenButton,SIGNAL (clicked ()), this, SLOT (clickTraceFileOpenSlot ()));
+  connect(m_fileOpenButton, &QToolButton::clicked, this, &AnimatorMode::clickTraceFileOpenSlot);
 
 
   m_reloadFileButton = new QToolButton;
   m_reloadFileButton->setToolTip ("Reload a file with the same file name as the previous XML");
   m_reloadFileButton->setIcon (QIcon (":/resources/animator_reload.svg"));
-  connect (m_reloadFileButton,SIGNAL (clicked ()), this, SLOT (reloadFileSlot ()));
+  connect(m_reloadFileButton, &QToolButton::clicked, this, &AnimatorMode::reloadFileSlot);
 
 
   m_zoomInButton = new QToolButton;
   m_zoomInButton->setToolTip ("Zoom in");
   m_zoomInButton->setIcon (QIcon (":/resources/animator_zoomin.svg"));
-  connect (m_zoomInButton, SIGNAL (clicked ()), this, SLOT (clickZoomInSlot ()));
+  connect(m_zoomInButton, &QToolButton::clicked, this, &AnimatorMode::clickZoomInSlot);
 
 
   m_zoomOutButton = new QToolButton;
   m_zoomOutButton->setToolTip ("Zoom out");
   m_zoomOutButton->setIcon (QIcon (":/resources/animator_zoomout.svg"));
-  connect (m_zoomOutButton, SIGNAL (clicked ()), this, SLOT (clickZoomOutSlot ()));
+  connect(m_zoomOutButton, &QToolButton::clicked, this, &AnimatorMode::clickZoomOutSlot);
 
 
   m_gridButton = new QToolButton;
   m_gridButton->setIcon (QIcon (":/resources/animator_grid.svg"));
   m_gridButton->setCheckable (true);
-  connect (m_gridButton, SIGNAL (clicked ()), this, SLOT (showGridLinesSlot ()));
+  connect(m_gridButton, &QToolButton::clicked, this, &AnimatorMode::showGridLinesSlot);
 
   m_gridLinesSpinBox = new QSpinBox;
   m_gridLinesSpinBox->setToolTip ("Set the number of grid lines");
@@ -292,7 +292,11 @@ AnimatorMode::initControls ()
   //m_gridLinesSpinBox->setSingleStep (GRID_LINES_STEP);
   m_gridLinesSpinBox->setRange (GRID_LINES_LOW, GRID_LINES_HIGH);
   m_gridLinesSpinBox->setSingleStep (GRID_LINES_STEP);
-  connect (m_gridLinesSpinBox, SIGNAL (valueChanged (int)), this, SLOT (updateGridLinesSlot (int)));
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+  connect(m_gridLinesSpinBox, &QSpinBox::valueChanged, this, &AnimatorMode::updateGridLinesSlot);
+#else
+  connect(m_gridLinesSpinBox, QOverload<int>::of(&QSpinBox::valueChanged), this, &AnimatorMode::updateGridLinesSlot);
+#endif
 
   m_nodeSizeComboBox = new QComboBox;
   m_nodeSizeComboBox->setToolTip ("Node Size");
@@ -314,42 +318,46 @@ AnimatorMode::initControls ()
             << "10"
             << "20";
   m_nodeSizeComboBox->addItems (nodeSizes);
-  connect (m_nodeSizeComboBox, SIGNAL (currentIndexChanged (int)), this, SLOT (updateNodeSizeSlot (int)));
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+  connect(m_nodeSizeComboBox, &QComboBox::currentIndexChanged, this, &AnimatorMode::updateNodeSizeSlot);
+#else
+  connect(m_nodeSizeComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &AnimatorMode::updateNodeSizeSlot);
+#endif
 
   m_testButton = new QToolButton;
   m_testButton->setText ("T");
-  connect (m_testButton, SIGNAL (clicked ()), this, SLOT (testSlot ()));
+  connect(m_testButton, &QToolButton::clicked, this, &AnimatorMode::testSlot);
 
   m_showIpButton = new QToolButton;
   m_showIpButton->setText ("IP");
   m_showIpButton->setToolTip ("Show IPv4 Addresses");
   m_showIpButton->setCheckable (true);
-  connect (m_showIpButton, SIGNAL (clicked ()), this, SLOT (showIpSlot ()));
+  connect(m_showIpButton, &QToolButton::clicked, this, &AnimatorMode::showIpSlot);
 
   m_showMacButton = new QToolButton;
   m_showMacButton->setText ("MAC");
   m_showMacButton->setToolTip ("Show Mac Addresses");
   m_showMacButton->setCheckable (true);
-  connect (m_showMacButton, SIGNAL (clicked ()), this, SLOT (showMacSlot ()));
+  connect(m_showMacButton, &QToolButton::clicked, this, &AnimatorMode::showMacSlot);
 
   m_showRoutePathButton = new QToolButton;
   m_showRoutePathButton->setText ("Route-Path");
   m_showRoutePathButton->setToolTip ("Show Route Paths. [EXPERIMENTAL]");
   m_showRoutePathButton->setCheckable (true);
-  connect (m_showRoutePathButton, SIGNAL (clicked ()), this, SLOT (showRoutePathSlot ()));
+  connect(m_showRoutePathButton, &QToolButton::clicked, this, &AnimatorMode::showRoutePathSlot);
 
 
   m_showNodeIdButton = new QToolButton;
   m_showNodeIdButton->setIcon (QIcon (":/resources/animator_nodeid.svg"));
   m_showNodeIdButton->setToolTip ("Show Node Id");
   m_showNodeIdButton->setCheckable (true);
-  connect (m_showNodeIdButton, SIGNAL (clicked ()), this, SLOT (showNodeIdSlot ()));
+  connect(m_showNodeIdButton, &QToolButton::clicked, this, &AnimatorMode::showNodeIdSlot);
 
   m_showNodeSysIdButton = new QToolButton;
   m_showNodeSysIdButton->setIcon (QIcon (":/resources/animator_nodesysid.svg"));
   m_showNodeSysIdButton->setToolTip ("Show Node System Id");
   m_showNodeSysIdButton->setCheckable (true);
-  connect (m_showNodeSysIdButton, SIGNAL (clicked ()), this, SLOT (showNodeSysIdSlot ()));
+  connect(m_showNodeSysIdButton, &QToolButton::clicked, this, &AnimatorMode::showNodeSysIdSlot);
 
 
   m_showPropertiesButton = new QToolButton;
@@ -357,18 +365,18 @@ AnimatorMode::initControls ()
   m_showPropertiesButton->setToolTip ("Show Properties Tree");
   m_showPropertiesButton->setCheckable (true);
   m_showPropertiesButton->setIcon (QIcon (":/resources/animator_packetstats.svg"));
-  connect (m_showPropertiesButton, SIGNAL (clicked ()), this, SLOT (showPropertiesSlot()));
+  connect(m_showPropertiesButton, &QToolButton::clicked, this, &AnimatorMode::showPropertiesSlot);
 
 
   m_batteryCapacityButton = new QToolButton ();
   m_batteryCapacityButton->setCheckable (true);
   m_batteryCapacityButton->setIcon (QIcon (":/resources/battery_icon_4.png"));
-  connect (m_batteryCapacityButton, SIGNAL (clicked ()), this, SLOT (showBatteryCapacitySlot ()));
+  connect(m_batteryCapacityButton, &QToolButton::clicked, this, &AnimatorMode::showBatteryCapacitySlot);
 
   m_playButton = new QToolButton;
   m_playButton->setIcon (QIcon (":/resources/animator_play.svg"));
   m_playButton->setToolTip ("Play Animation");
-  connect (m_playButton, SIGNAL (clicked ()), this, SLOT (clickPlaySlot ()));
+  connect(m_playButton, &QToolButton::clicked, this, &AnimatorMode::clickPlaySlot);
 
 
   m_pauseAtEdit = new QLineEdit;
@@ -377,21 +385,21 @@ AnimatorMode::initControls ()
   m_pauseAtEdit->setValidator (doubleValidator);
   m_pauseAtEdit->setToolTip ("Pause Simulation At Time");
   m_pauseAtEdit->setMaximumWidth (PAUSE_AT_EDIT_WITH);
-  connect (m_pauseAtEdit, SIGNAL(editingFinished()), this, SLOT(pauseAtTimeSlot()));
+  connect(m_pauseAtEdit, &QLineEdit::editingFinished, this, &AnimatorMode::pauseAtTimeSlot);
 
   m_updateRateSlider = new QSlider (Qt::Horizontal);
   m_updateRateSlider->setToolTip ("Animation update interval");
   m_updateRateSlider->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
-  connect (m_updateRateSlider, SIGNAL (valueChanged (int)), this, SLOT (updateUpdateRateSlot (int)));
+  connect(m_updateRateSlider, &QSlider::valueChanged, this, &AnimatorMode::updateUpdateRateSlot);
   //m_updateRateSlider->setRange (0, UPDATE_RATE_SLIDER_MAX);
   m_updateRateSlider->setRange (0, UPDATE_RATE_SLIDER_MAX);
 
   m_simulationTimeSlider = new QSlider (Qt::Horizontal);
   m_simulationTimeSlider->setToolTip ("Set Simulation Time");
   m_simulationTimeSlider->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
-  connect (m_simulationTimeSlider, SIGNAL (valueChanged (int)), this, SLOT (updateTimelineSlot (int)));
-  //connect (m_simulationTimeSlider, SIGNAL(sliderReleased()), this, SLOT (updateTimelineSlot ()));
-  //connect (m_simulationTimeSlider, SIGNAL(sliderPressed()), this, SLOT (simulationSliderPressedSlot ()));
+  connect(m_simulationTimeSlider, &QSlider::valueChanged, this, qOverload<int>(&AnimatorMode::updateTimelineSlot));
+  //connect(m_simulationTimeSlider, &QSlider::sliderReleased, this, &AnimatorMode::updateTimelineSlot);
+  //connect(m_simulationTimeSlider, &QSlider::sliderPressed, this, &AnimatorMode::simulationSliderPressedSlot);
   m_simulationTimeSlider->setMinimumWidth (SIMULATION_TIME_SLIDER_WIDTH);
   m_simulationTimeSlider->setTickPosition (QSlider::TicksBothSides);
 
@@ -407,37 +415,37 @@ AnimatorMode::initControls ()
   m_showWirelessCirclesButton->setIcon (QIcon (":/resources/animator_wirelesscircles.svg"));
   m_showWirelessCirclesButton->setToolTip ("Toggle Show Wireless Circles Animation");
   m_showWirelessCirclesButton->setCheckable (true);
-  connect (m_showWirelessCirclesButton, SIGNAL (clicked ()), this, SLOT (showWirelessCirclesSlot ()));
+  connect(m_showWirelessCirclesButton, &QToolButton::clicked, this, &AnimatorMode::showWirelessCirclesSlot);
 
 
   m_blockPacketsButton = new QToolButton;
   m_blockPacketsButton->setIcon (QIcon (":/resources/animator_showpackets.svg"));
   m_blockPacketsButton->setToolTip ("Show packets");
-  connect (m_blockPacketsButton, SIGNAL (clicked ()), this, SLOT (showPacketSlot ()));
+  connect(m_blockPacketsButton, &QToolButton::clicked, this, &AnimatorMode::showPacketSlot);
   m_blockPacketsButton->setCheckable (true);
 
   m_resetButton = new QToolButton;
   m_resetButton->setText ("R");
   m_resetButton->setToolTip ("Reset Simulation to start");
-  connect (m_resetButton, SIGNAL (clicked ()), this, SLOT (clickResetSlot ()));
+  connect(m_resetButton, &QToolButton::clicked, this, &AnimatorMode::clickResetSlot);
 
   m_showMetaButton = new QToolButton;
   m_showMetaButton->setText ("M");
   m_showMetaButton->setCheckable (true);
   m_showMetaButton->setToolTip ("Show Packet meta data");
-  connect (m_showMetaButton, SIGNAL (clicked ()), this, SLOT (showMetaSlot ()));
+  connect(m_showMetaButton, &QToolButton::clicked, this, &AnimatorMode::showMetaSlot);
 
 
   m_stepButton = new QToolButton;
   m_stepButton->setToolTip ("Step through the simulation");
   m_stepButton->setIcon (QIcon (":/resources/animator_step.svg"));
-  connect (m_stepButton, SIGNAL (clicked()), this, SLOT (stepSlot()));
+  connect(m_stepButton, &QToolButton::clicked, this, &AnimatorMode::stepSlot);
 
   m_mousePositionButton = new QToolButton;
   m_mousePositionButton->setToolTip ("Show Mouse Position");
   m_mousePositionButton->setIcon (QIcon (":/resources/animator_mouseposition.png"));
   m_mousePositionButton->setCheckable (true);
-  connect (m_mousePositionButton, SIGNAL(clicked()), this, SLOT (enableMousePositionSlot()));
+  connect(m_mousePositionButton, &QToolButton::clicked, this, &AnimatorMode::enableMousePositionSlot);
 
   m_parseProgressBar = new QProgressBar;
   //m_animationGroup  = new QParallelAnimationGroup;
@@ -575,7 +583,7 @@ AnimatorMode::initUpdateRate ()
   m_updateRateTimer = new QTimer (this);
   //m_updateRateTimer->setInterval (m_updateRates[UPDATE_RATE_SLIDER_DEFAULT] * 1000);
   m_updateRateTimer->setInterval (m_updateRates[UPDATE_RATE_SLIDER_DEFAULT] * 1000);
-  connect (m_updateRateTimer, SIGNAL (timeout ()), this, SLOT (updateRateTimeoutSlot ()));
+  connect(m_updateRateTimer, &QTimer::timeout, this, &AnimatorMode::updateRateTimeoutSlot);
 }
 
 qreal
@@ -946,10 +954,10 @@ AnimatorMode::doSimulationCompleted ()
 
   m_buttonAnimationGroup->start ();
 
-  connect (m_buttonAnimationGroup,
-          SIGNAL (finished ()),
+  connect(m_buttonAnimationGroup,
+          &QParallelAnimationGroup::finished,
           this,
-          SLOT (buttonAnimationGroupFinishedSlot ()));
+          &AnimatorMode::buttonAnimationGroupFinishedSlot);
 
 }
 bool
@@ -1228,9 +1236,9 @@ AnimatorMode::updateRateTimeoutSlot ()
     {
       dispatchEvents ();
 
-      disconnect (m_simulationTimeSlider, SIGNAL (valueChanged (int)), this, SLOT (updateTimelineSlot (int)));
+      disconnect(m_simulationTimeSlider, &QSlider::valueChanged, this, qOverload<int>(&AnimatorMode::updateTimelineSlot));
       m_simulationTimeSlider->setValue (m_currentTime);
-      connect (m_simulationTimeSlider, SIGNAL (valueChanged (int)), this, SLOT (updateTimelineSlot (int)));
+      connect(m_simulationTimeSlider, &QSlider::valueChanged, this, qOverload<int>(&AnimatorMode::updateTimelineSlot));
       m_qLcdNumber->display (m_currentTime);
       keepAppResponsive ();
       if (m_showPropertiesButton->isChecked ())

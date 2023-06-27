@@ -134,7 +134,7 @@ StatsMode::initTopToolbar ()
   m_fileOpenButton->setEnabled (false);
   m_fileOpenButton->setToolTip ("Open Routing XML trace file");
   m_fileOpenButton->setIcon (QIcon (":/resources/animator_fileopen.svg"));
-  connect (m_fileOpenButton,SIGNAL (clicked ()), this, SLOT (clickRoutingTraceFileOpenSlot ()));
+  connect(m_fileOpenButton,&QToolButton::clicked, this, &StatsMode::clickRoutingTraceFileOpenSlot);
   m_topToolbar->addWidget (m_fileOpenButton);
   QSize iconSize (ICON_WIDTH_DEFAULT, ICON_HEIGHT_DEFAULT);
   m_topToolbar->setIconSize (iconSize);
@@ -142,7 +142,7 @@ StatsMode::initTopToolbar ()
   m_simulationTimeSlider = new QSlider (Qt::Horizontal);
   m_simulationTimeSlider->setToolTip ("Set Simulation Time");
   m_simulationTimeSlider->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
-  connect (m_simulationTimeSlider, SIGNAL (valueChanged (int)), this, SLOT (updateTimelineSlot (int)));
+  connect(m_simulationTimeSlider, &QSlider::valueChanged, this, &StatsMode::updateTimelineSlot);
 
 
   m_qLcdNumber = new QLCDNumber;
@@ -157,28 +157,40 @@ StatsMode::initTopToolbar ()
 
   m_fontSizeLabel = new QLabel ("Font Size");
   m_fontSizeSpinBox = new QSpinBox;
-  connect (m_fontSizeSpinBox, SIGNAL (valueChanged (int)), this, SLOT (fontSizeSlot (int)));
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+  connect(m_fontSizeSpinBox, &QSpinBox::valueChanged, this, &StatsMode::fontSizeSlot);
+#else
+  connect(m_fontSizeSpinBox, QOverload<int>::of(&QSpinBox::valueChanged), this, &StatsMode::fontSizeSlot);
+#endif
   m_fontSizeSpinBox->setRange (1, STATS_FONTSIZE_MAX);
   m_topToolbar->addWidget (m_fontSizeLabel);
   m_topToolbar->addWidget (m_fontSizeSpinBox);
 
   m_flowMonFileButton = new QPushButton ("FlowMon file");
-  connect (m_flowMonFileButton,SIGNAL (clicked ()), this, SLOT (clickFlowMonTraceFileOpenSlot ()));
+  connect(m_flowMonFileButton, &QPushButton::clicked, this, &StatsMode::clickFlowMonTraceFileOpenSlot);
   m_topToolbar->addWidget (m_flowMonFileButton);
 
   m_counterTablesCombobox = new QComboBox;
-  connect (m_counterTablesCombobox, SIGNAL(currentIndexChanged(int)), this, SLOT(counterIndexChangedSlot(int)));
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+  connect(m_counterTablesCombobox, &QComboBox::currentIndexChanged, this, &StatsMode::counterIndexChangedSlot);
+#else
+  connect(m_counterTablesCombobox, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &StatsMode::counterIndexChangedSlot);
+#endif
   m_topToolbar->addWidget (m_counterTablesCombobox);
 
   m_allowedNodesEdit = new QLineEdit;
   m_allowedNodesEdit->setMaximumWidth (STATS_ALLOWED_NODES_WITH);
-  connect (m_allowedNodesEdit, SIGNAL(textChanged(QString)), this, SLOT(allowedNodesChangedSlot(QString)));
+  connect(m_allowedNodesEdit, &QLineEdit::textChanged, this, &StatsMode::allowedNodesChangedSlot);
   m_allowedNodesLabel = new QLabel ("Nodes");
   m_topToolbar->addWidget (m_allowedNodesLabel);
   m_topToolbar->addWidget (m_allowedNodesEdit);
-  connect (m_statTypeComboBox, SIGNAL (currentIndexChanged (int)), this, SLOT (statTypeChangedSlot (int)));
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+  connect(m_statTypeComboBox, &QComboBox::currentIndexChanged, this, &StatsMode::statTypeChangedSlot);
+#else
+  connect(m_statTypeComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &StatsMode::statTypeChangedSlot);
+#endif
   m_showChartButton = new QPushButton ("Show Table");
-  connect (m_showChartButton, SIGNAL(clicked()), this, SLOT(showChartSlot()));
+  connect(m_showChartButton, &QPushButton::clicked, this, &StatsMode::showChartSlot);
   m_topToolbar->addWidget (m_showChartButton);
 
 }
@@ -202,13 +214,13 @@ StatsMode::initNodeToolbar ()
   m_nodeToolbar->setOrientation (Qt::Vertical);
   m_nodeToolbarScrollArea->setVisible (false);
   m_selectAllNodesButton = new QPushButton ("All");
-  connect (m_selectAllNodesButton, SIGNAL (clicked ()), this, SLOT (selectAllNodesSlot ()));
+  connect(m_selectAllNodesButton, &QPushButton::clicked, this, &StatsMode::selectAllNodesSlot);
   m_deselectAllNodesButton = new QPushButton ("None");
-  connect (m_deselectAllNodesButton, SIGNAL (clicked ()), this, SLOT (deselectAllNodesSlot ()));
+  connect(m_deselectAllNodesButton, &QPushButton::clicked, this, &StatsMode::deselectAllNodesSlot);
 
 
   /* QPushButton * testButton = new QPushButton ("Test");
-   connect (testButton, SIGNAL (clicked ()), this, SLOT (testSlot ()));
+   connect(testButton, &QPushButton::clicked, this, &StatsMode::testSlot);
    m_nodeToolbar->addWidget (testButton);
   */
 
@@ -802,7 +814,7 @@ StatsMode::showChartSlot ()
 
 NodeButton::NodeButton (uint32_t nodeId): QPushButton (QString::number (nodeId)),m_nodeId (nodeId)
 {
-  connect (this, SIGNAL (clicked ()), this, SLOT (buttonClickedSlot ()));
+  connect(this, &NodeButton::clicked, this, &NodeButton::buttonClickedSlot);
   setCheckable (true);
 }
 

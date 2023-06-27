@@ -28,7 +28,7 @@ Table::Table ()
   m_vLayout = new QVBoxLayout;
   m_vLayout->addWidget (m_exportTableButton);
   m_vLayout->addWidget (m_table);
-  connect (m_exportTableButton, SIGNAL(clicked()), this, SLOT(exportButtonClickedSlot()));
+  connect(m_exportTableButton, &QPushButton::clicked, this, &Table::exportButtonClickedSlot);
   setLayout (m_vLayout);
 }
 

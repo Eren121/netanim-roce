@@ -40,15 +40,15 @@ PacketsMode::PacketsMode ():
   m_filterToolBar = new QToolBar;
   m_testButton = new QToolButton;
   m_zoomInButton = new QToolButton;
-  m_zoomInButton->setText ("Zoom In");  
-  connect (m_zoomInButton, SIGNAL(clicked()), this, SLOT(zoomInSlot()));
+  m_zoomInButton->setText ("Zoom In");
+  connect(m_zoomInButton, &QToolButton::clicked, this, &PacketsMode::zoomInSlot);
   m_zoomInButton->setToolTip ("Zoom in");
   m_zoomInButton->setIcon (QIcon (":/resources/animator_zoomin.svg"));
 
 
   m_zoomOutButton = new QToolButton;
   m_zoomOutButton->setText ("Zoom Out");
-  connect (m_zoomOutButton, SIGNAL(clicked()), this, SLOT(zoomOutSlot()));
+  connect(m_zoomOutButton, &QToolButton::clicked, this, &PacketsMode::zoomOutSlot);
   m_zoomOutButton->setToolTip ("Zoom Out");
   m_zoomOutButton->setIcon (QIcon (":/resources/animator_zoomout.svg"));
 
@@ -58,7 +58,7 @@ PacketsMode::PacketsMode ():
   m_showGridLinesButton->setIcon (QIcon (":/resources/animator_grid.svg"));
   m_showGridLinesButton->setCheckable (true);
   m_showGridLinesButton->setChecked (false);
-  connect (m_showGridLinesButton, SIGNAL (clicked ()), this, SLOT (showGridLinesSlot ()));
+  connect(m_showGridLinesButton, &QToolButton::clicked, this, &PacketsMode::showGridLinesSlot);
 
 
 
@@ -87,13 +87,13 @@ PacketsMode::PacketsMode ():
   m_showPacketsTableButton->setToolTip ("Packet table");
   m_showPacketsTableButton->setCheckable (true);
   m_showPacketsTableButton->setChecked (true);
-  connect (m_showPacketsTableButton, SIGNAL (clicked ()), this, SLOT (showPacketTableSlot()));
+  connect(m_showPacketsTableButton, &QToolButton::clicked, this, &PacketsMode::showPacketTableSlot);
 
   m_showGraphButton = new QPushButton ("Show Graph");
   m_showGraphButton->setCheckable (true);
   m_showGraphButton->setChecked (true);
 
-  connect (m_testButton, SIGNAL(clicked()), this, SLOT(testSlot()));
+  connect(m_testButton, &QToolButton::clicked, this, &PacketsMode::testSlot);
   //m_mainToolBar->addWidget (m_testButton);
   m_mainToolBar->addWidget (m_zoomInButton);
   m_mainToolBar->addWidget (m_zoomOutButton);
@@ -169,25 +169,25 @@ PacketsMode::PacketsMode ():
   setToTime (0.0);
   setFromTime (0.0);
   setAllowedNodes (ALLOWED_NODES);
-  connect (m_fromTimeEdit, SIGNAL(textChanged(QString)), this, SLOT (fromTimeChangedSlot(QString)));
-  connect (m_toTimeEdit, SIGNAL(textChanged(QString)), this, SLOT (toTimeChangedSlot(QString)));
-  connect (m_allowedNodesEdit, SIGNAL(textChanged(QString)), this, SLOT (allowedNodesChangedSlot(QString)));
+  connect(m_fromTimeEdit, &QLineEdit::textChanged, this, &PacketsMode::fromTimeChangedSlot);
+  connect(m_toTimeEdit, &QLineEdit::textChanged, this, &PacketsMode::toTimeChangedSlot);
+  connect(m_allowedNodesEdit, &QLineEdit::textChanged, this, &PacketsMode::allowedNodesChangedSlot);
 
-  connect (m_wifiFilterCb, SIGNAL(clicked()), this, SLOT(filterClickedSlot()));
-  connect (m_tcpFilterCb, SIGNAL(clicked()), this, SLOT(filterClickedSlot()));
-  connect (m_udpFilterCb, SIGNAL(clicked()), this, SLOT(filterClickedSlot()));
-  connect (m_ipv4FilterCb, SIGNAL(clicked()), this, SLOT(filterClickedSlot()));
-  connect (m_ipv6FilterCb, SIGNAL(clicked()), this, SLOT(filterClickedSlot()));
-  connect (m_icmpFilterCb, SIGNAL(clicked()), this, SLOT(filterClickedSlot()));
-  connect (m_wifiFilterCb, SIGNAL(clicked()), this, SLOT(filterClickedSlot()));
-  connect (m_ethernetFilterCb, SIGNAL(clicked()), this, SLOT(filterClickedSlot()));
-  connect (m_pppFilterCb, SIGNAL(clicked()), this, SLOT(filterClickedSlot()));
-  connect (m_aodvFilterCb, SIGNAL(clicked()), this, SLOT(filterClickedSlot()));
-  connect (m_olsrFilterCb, SIGNAL(clicked()), this, SLOT(filterClickedSlot()));
-  connect (m_arpFilterCb, SIGNAL(clicked()), this, SLOT(filterClickedSlot()));
-  connect (m_regexFilterEdit, SIGNAL(textEdited(QString)), this, SLOT(regexFilterSlot(QString)));
-  connect (m_submitButton, SIGNAL(clicked()), this, SLOT (submitFilterClickedSlot()));
-  connect (m_showGraphButton, SIGNAL(clicked()), this, SLOT(showGraphClickedSlot()));
+  connect(m_wifiFilterCb, &QCheckBox::clicked, this, &PacketsMode::filterClickedSlot);
+  connect(m_tcpFilterCb, &QCheckBox::clicked, this, &PacketsMode::filterClickedSlot);
+  connect(m_udpFilterCb, &QCheckBox::clicked, this, &PacketsMode::filterClickedSlot);
+  connect(m_ipv4FilterCb, &QCheckBox::clicked, this, &PacketsMode::filterClickedSlot);
+  connect(m_ipv6FilterCb, &QCheckBox::clicked, this, &PacketsMode::filterClickedSlot);
+  connect(m_icmpFilterCb, &QCheckBox::clicked, this, &PacketsMode::filterClickedSlot);
+  connect(m_wifiFilterCb, &QCheckBox::clicked, this, &PacketsMode::filterClickedSlot);
+  connect(m_ethernetFilterCb, &QCheckBox::clicked, this, &PacketsMode::filterClickedSlot);
+  connect(m_pppFilterCb, &QCheckBox::clicked, this, &PacketsMode::filterClickedSlot);
+  connect(m_aodvFilterCb, &QCheckBox::clicked, this, &PacketsMode::filterClickedSlot);
+  connect(m_olsrFilterCb, &QCheckBox::clicked, this, &PacketsMode::filterClickedSlot);
+  connect(m_arpFilterCb, &QCheckBox::clicked, this, &PacketsMode::filterClickedSlot);
+  connect(m_regexFilterEdit, &QLineEdit::textEdited, this, &PacketsMode::regexFilterSlot);
+  connect(m_submitButton, &QPushButton::clicked, this, &PacketsMode::submitFilterClickedSlot);
+  connect(m_showGraphButton, &QPushButton::clicked, this, &PacketsMode::showGraphClickedSlot);
 }
 
 QString
