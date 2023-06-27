@@ -168,7 +168,7 @@ private slots:
   void fontSizeSlot (int value);
   void clickFlowMonTraceFileOpenSlot ();
   void allowedNodesChangedSlot (QString allowedNodes);
-  void counterIndexChangedSlot (QString counterString);
+  void counterIndexChangedSlot (int index);
   void showChartSlot ();
 
 

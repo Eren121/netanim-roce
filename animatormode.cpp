@@ -314,7 +314,7 @@ AnimatorMode::initControls ()
             << "10"
             << "20";
   m_nodeSizeComboBox->addItems (nodeSizes);
-  connect (m_nodeSizeComboBox, SIGNAL (currentIndexChanged (QString)), this, SLOT (updateNodeSizeSlot (QString)));
+  connect (m_nodeSizeComboBox, SIGNAL (currentIndexChanged (int)), this, SLOT (updateNodeSizeSlot (int)));
 
   m_testButton = new QToolButton;
   m_testButton->setText ("T");
@@ -1715,8 +1715,9 @@ AnimatorMode::setNodeSysId (AnimNode * animNode, uint32_t sysId)
 }
 
 void
-AnimatorMode::updateNodeSizeSlot (QString value)
+AnimatorMode::updateNodeSizeSlot (int index)
 {
+  QString value = m_nodeSizeComboBox->itemText(index);
   qreal size = nodeSizeStringToValue (value);
   AnimNodeMgr::getInstance ()->setSize (size, size);
   uint32_t nodeCount = AnimNodeMgr::getInstance ()->getCount ();

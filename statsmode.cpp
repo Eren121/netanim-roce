@@ -167,7 +167,7 @@ StatsMode::initTopToolbar ()
   m_topToolbar->addWidget (m_flowMonFileButton);
 
   m_counterTablesCombobox = new QComboBox;
-  connect (m_counterTablesCombobox, SIGNAL(currentIndexChanged(QString)), this, SLOT(counterIndexChangedSlot(QString)));
+  connect (m_counterTablesCombobox, SIGNAL(currentIndexChanged(int)), this, SLOT(counterIndexChangedSlot(int)));
   m_topToolbar->addWidget (m_counterTablesCombobox);
 
   m_allowedNodesEdit = new QLineEdit;
@@ -774,8 +774,10 @@ StatsMode::isNodeActive (uint32_t nodeId)
 }
 
 void
-StatsMode::counterIndexChangedSlot (QString counterString)
+StatsMode::counterIndexChangedSlot (int index)
 {
+
+  QString counterString = m_counterTablesCombobox->itemText(index);
   CounterTablesScene::getInstance ()->setCurrentCounterName (counterString);
 }
 

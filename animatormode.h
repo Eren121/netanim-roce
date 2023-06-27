@@ -242,7 +242,7 @@ private slots:
   void updateTimelineSlot ();
   void updateRateTimeoutSlot ();
   void updateGridLinesSlot (int value);
-  void updateNodeSizeSlot (QString value);
+  void updateNodeSizeSlot (int index);
   void updateUpdateRateSlot (int);
   void showGridLinesSlot ();
   void showNodeIdSlot ();
