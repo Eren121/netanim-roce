@@ -18,7 +18,6 @@
 
 #include "textbubble.h"
 
-using namespace std;
 namespace netanim
 {
 
