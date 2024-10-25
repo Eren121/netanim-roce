@@ -170,11 +170,11 @@ add_executable(netanim ${source_files} ${header_files} ${resource_files})
 
 if(Qt6_FOUND)
   target_link_libraries(
-    netanim PUBLIC ${libcore} Qt::Widgets Qt::Core Qt::PrintSupport Qt::Gui
+    netanim PUBLIC Qt::Widgets Qt::Core Qt::PrintSupport Qt::Gui
   )
 else()
   target_link_libraries(
-    netanim PUBLIC ${libcore} Qt5::Widgets Qt5::Core Qt5::PrintSupport Qt5::Gui
+    netanim PUBLIC Qt5::Widgets Qt5::Core Qt5::PrintSupport Qt5::Gui
   )
 endif()
 
