@@ -59,9 +59,13 @@
 #include <QCheckBox>
 #include <QElapsedTimer>
 
-
+#if 0// if with ns3
+#include <ns3/log.h>
+#include <ns3/fatal-error.h>
+#else
 #include "log.h"
 #include "fatal-error.h"
+#endif
 
 // Utilities to support porting to Qt5
 #  define GET_ASCII(x)  x.toLatin1 ()
