@@ -45,9 +45,7 @@
 #include "qtpropertybrowser.h"
 #include <QLineEdit>
 
-#if QT_VERSION >= 0x040400
 QT_BEGIN_NAMESPACE
-#endif
 
 class QDate;
 class QTime;
@@ -762,8 +760,6 @@ private:
     Q_DISABLE_COPY(QtCursorPropertyManager)
 };
 
-#if QT_VERSION >= 0x040400
 QT_END_NAMESPACE
-#endif
 
 #endif
