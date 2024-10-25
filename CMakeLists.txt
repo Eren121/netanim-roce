@@ -180,3 +180,6 @@ endif()
 
 target_include_directories(netanim PRIVATE qtpropertybrowser/src)
 set_target_properties(netanim PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/)
+
+include(GNUInstallDirs)
+install(TARGETS netanim RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
