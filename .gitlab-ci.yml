@@ -18,4 +18,4 @@ qt5-build:
 qt6-build:
   extends: .base-build
   variables:
-    QT_LIBRARY_PACKAGE: qt6-base-dev libglvnd-dev
+    QT_LIBRARY_PACKAGE: qt6-base-dev libqt6svg6 libglvnd-dev
