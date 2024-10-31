@@ -7,13 +7,14 @@ Please refer the page https://www.nsnam.org/wiki/NetAnim for detailed instructio
 
 Contributors
 ============
-John Abraham <john.abraham.in@gmail.com>
-Eugene Kalishenko <ydginster@gmail.com> (Open Source and Linux Laboratory http://dev.osll.ru/)
-Emanuel Eichhammer (For QCustomPlot www.qcustomplot.com. Included in this package with GPLv2 with special permission from the author)
-George F Riley (Original Concept for packet animation)
-Dmitrii Shakshin <d.shakshin@gmail.com> (Open Source and Linux Laboratory http://dev.osll.ru/)
-Makhtar Diouf <makhtar.diouf@gmail.com>
-André Apitzsch <andre.apitzsch@etit.tu-chemnitz.de>
+
+- John Abraham <john.abraham.in@gmail.com>
+- Eugene Kalishenko <ydginster@gmail.com> (Open Source and Linux Laboratory http://dev.osll.ru/)
+- Emanuel Eichhammer (For QCustomPlot www.qcustomplot.com. Included in this package with GPLv2 with special permission from the author)
+- George F Riley (Original Concept for packet animation)
+- Dmitrii Shakshin <d.shakshin@gmail.com> (Open Source and Linux Laboratory http://dev.osll.ru/)
+- Makhtar Diouf <makhtar.diouf@gmail.com>
+- André Apitzsch <andre.apitzsch@etit.tu-chemnitz.de>
 
 Availability
 ============
@@ -29,21 +30,36 @@ NetAnim is lightly supported; please use the
 
 Supported Qt versions
 ---------------------
-Currently, netanim-3.109 has been tested on Qt 5.12.8 and 5.15.6. Qt6 is not yet supported.
+Currently, netanim-3.110 has been tested on Qt 5.15.13 and 6.4.2.
 
-netanim-3.108 is compatible with Qt4 series also (support for Qt4 was removed in netanim-3.109).  
+Older releases netanim-3.109 is compatible with Qt5, and netanim-3.108 is compatible with Qt4 and Qt5.  
 
-For recent Ubuntu releases, the following qt5 packages are needed:
+For recent Ubuntu releases, the following qt6 packages are required:
 
-    apt install qtbase5-dev qtchooser qt5-qmake qtbase5-dev-tools
+    apt install cmake qt6-base-dev libqt6svg6 libglvnd-dev
+
+Alternatively, the following qt5 packages can also be used needed:
+
+    apt install cmake qtbase5-dev
 
 For Ubuntu 20.10 and earlier, the following package is sufficient:
 
-    apt install qt5-default
+    apt install cmake qt5-default
 
 Supported platforms
 -------------------
-NetAnim is intermittently tested on recent versions of Linux and macOS
+NetAnim is intermittently tested on recent versions of Linux, macOS and Windows.
+
+Release 3.110
+=============
+
+Changelog
+---------
+1. Add Qt6 support
+2. Add CI jobs
+3. Switch build system from QMake to CMake
+4. Fix some compiler warnings and deprecations
+5. Remove deprecated Qt4 checks
 
 Release 3.109
 =============
