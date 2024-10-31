@@ -2,6 +2,16 @@ cmake_minimum_required(VERSION 3.16..3.16)
 
 project(netanim CXX)
 
+# Add warning regarding WSL path injection
+if("$ENV{PATH}" MATCHES "/mnt/c/")
+  message(
+          WARNING
+          "To prevent Windows path injection on WSL, append the following to /etc/wsl.conf, then use `wsl --shutdown` to restart the WSL VM:
+[interop]
+appendWindowsPath = false"
+  )
+endif()
+
 find_package(Qt6 COMPONENTS Core Widgets PrintSupport Gui QUIET)
 if(NOT Qt6_FOUND)
     find_package(Qt5 COMPONENTS Core Widgets PrintSupport Gui QUIET)
