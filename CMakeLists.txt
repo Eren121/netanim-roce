@@ -183,3 +183,14 @@ set_target_properties(netanim PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY
 
 include(GNUInstallDirs)
 install(TARGETS netanim RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+
+if(UNIX AND NOT APPLE)
+    install(FILES data/org.nsnam.NetAnim.metainfo.xml
+        DESTINATION share/metainfo)
+
+    install(FILES data/org.nsnam.NetAnim.desktop
+        DESTINATION share/applications)
+
+    install(FILES data/org.nsnam.NetAnim.png
+        DESTINATION share/icons/hicolor/128x128/apps)
+endif()
