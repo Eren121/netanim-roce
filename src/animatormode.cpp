@@ -29,7 +29,6 @@
 #include "animpropertybrowser.h"
 
 
-
 namespace netanim
 {
 
@@ -164,6 +163,7 @@ void
 AnimatorMode::setToolButtonVector ()
 {
   m_toolButtonVector.push_back (m_pauseAtEdit);
+  m_toolButtonVector.push_back (m_metaFilterEdit);
   m_toolButtonVector.push_back (m_playButton);
   m_toolButtonVector.push_back (m_updateRateSlider);
   m_toolButtonVector.push_back (m_fastRateLabel);
@@ -243,6 +243,7 @@ AnimatorMode::setTopToolbarWidgets ()
   m_topToolBar->addWidget (m_showMacButton);
   //m_topToolBar->addWidget (m_showRoutePathButton);
   m_topToolBar->addWidget (m_testButton);
+  m_topToolBar->addWidget (m_metaFilterEdit);
 }
 
 
@@ -386,6 +387,10 @@ AnimatorMode::initControls ()
   m_pauseAtEdit->setToolTip ("Pause Simulation At Time");
   m_pauseAtEdit->setMaximumWidth (PAUSE_AT_EDIT_WITH);
   connect(m_pauseAtEdit, &QLineEdit::editingFinished, this, &AnimatorMode::pauseAtTimeSlot);
+
+  m_metaFilterEdit = new QLineEdit;
+  m_metaFilterEdit->setPlaceholderText("Filter packets by meta");
+  m_metaFilterEdit->setMaximumWidth (PAUSE_AT_EDIT_WITH * 2);
 
   m_updateRateSlider = new QSlider (Qt::Horizontal);
   m_updateRateSlider->setToolTip ("Animation update interval");
@@ -1470,10 +1475,21 @@ AnimatorMode::dispatchEvents ()
             }
             case AnimEvent::PACKET_FBTX_EVENT:
             {
-
               if (m_fastForwarding || !(m_showPackets))
                 break;
               AnimPacketEvent * packetEvent = static_cast<AnimPacketEvent *> (j->second);
+              
+              bool matchRegex = false;
+              if(m_metaFilterEdit->text().isEmpty()) {
+                matchRegex = true;
+              }
+              if(QRegularExpression(m_metaFilterEdit->text()).match(packetEvent->m_metaInfo).hasMatch()) {
+                matchRegex = true;
+              }
+              if(!matchRegex) {
+                break;
+              }
+
               AnimPacket * animPacket = AnimPacketMgr::getInstance ()->add (packetEvent->m_fromId,
                                         packetEvent->m_toId,
                                         packetEvent->m_fbTx,

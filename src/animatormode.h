@@ -182,6 +182,7 @@ private:
   QParallelAnimationGroup * m_buttonAnimationGroup;
   QLabel * m_pauseAtLabel;
   QLineEdit * m_pauseAtEdit;
+  QLineEdit * m_metaFilterEdit;
   QToolButton * m_stepButton;
   QToolButton * m_mousePositionButton;
 
