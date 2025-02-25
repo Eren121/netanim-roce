@@ -45,7 +45,6 @@ protected:
 private:
   explicit AnimatorView (QGraphicsScene *);
   AnimatorScene * getAnimatorScene ();
-  void updateTransform ();
   qreal m_currentZoomFactor;
 
 signals:

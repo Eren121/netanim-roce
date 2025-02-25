@@ -65,24 +65,6 @@ AnimatorView::getAnimatorScene ()
 }
 
 void
-AnimatorView::updateTransform ()
-{
-  QTransform transform;
-  QRectF sceneBoundaryRect = AnimatorScene::getInstance ()->getBoundaryRect ();
-
-  qreal minDimension = qMin (sceneBoundaryRect.width (), sceneBoundaryRect.height ());
-
-  qreal xScale = viewport ()->width ()/minDimension;
-  qreal yScale = viewport ()->height ()/minDimension;
-  //qDebug (width (), "Width");
-  //qDebug (height (), "height");
-  qreal minScale = qMin (xScale, yScale);
-  transform.scale (minScale, minScale);
-  setTransform (transform);
-
-}
-
-void
 AnimatorView::setCurrentZoomFactor (qreal factor)
 {
   if (m_currentZoomFactor < factor)
@@ -107,8 +89,7 @@ AnimatorView::wheelEvent (QWheelEvent *event)
 void
 AnimatorView::fitSceneWithinView ()
 {
-  //QGraphicsView::fitInView (sceneRect ());
-  updateTransform ();
+  QGraphicsView::fitInView (sceneRect (), Qt::KeepAspectRatio);
 
 }
 
