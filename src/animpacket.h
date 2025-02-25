@@ -412,6 +412,7 @@ public:
   static QString getMeta (QString metaInfo, int filter, bool & result, bool shortString = true);
   bool packetExpired ();
   qreal getRadius ();
+  QString getMetaInfo() const;
 
 
 private:
@@ -435,6 +436,7 @@ private:
   qreal m_currentTime;
   uint8_t m_numWirelessSlots;
   uint8_t m_currentWirelessSlot;
+  QString m_metaInfo;
 
 
   static ArpInfo parseArp (QString metaInfo, bool & result);

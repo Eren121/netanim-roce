@@ -62,6 +62,7 @@ AnimPacket::AnimPacket (uint32_t fromNodeId,
   setVisible(false);
   setZValue(ANIMPACKET_ZVAVLUE);
 
+  m_metaInfo = metaInfo;
   m_infoText = new QGraphicsSimpleTextItem (this);
   if(showMetaInfo)
     {
@@ -86,6 +87,11 @@ AnimPacket::AnimPacket (uint32_t fromNodeId,
       m_infoText->setText (getMeta(metaInfo));
     }
 
+}
+
+QString AnimPacket::getMetaInfo() const
+{
+  return m_metaInfo;
 }
 
 AnimPacket::~AnimPacket ()

@@ -85,6 +85,16 @@ AnimatorMode::init ()
   setControlDefaults ();
   m_state = APP_START;
   m_verticalToolbar->adjustSize ();
+
+  connect(AnimatorScene::getInstance (), &QGraphicsScene::selectionChanged, [this]() {
+    QList<QGraphicsItem*> items = AnimatorScene::getInstance()->selectedItems();
+    if(!items.isEmpty()) {
+      QGraphicsItem* first = items[0];
+      if(AnimPacket* pkt = dynamic_cast<AnimPacket*>(first)) {
+        QMessageBox::information(this, "Packet info", pkt->getMetaInfo());
+      }
+    }
+  });
 }
 
 AnimatorMode *
@@ -1518,6 +1528,8 @@ AnimatorMode::dispatchEvents ()
                   animPacket->setVisible (true);
                   m_wiredPacketsToAnimate[animPacket] = animPacket;
                   //NS_LOG_DEBUG ("Events:" << m_events.toString ().str ().c_str ());
+                  
+                  animPacket->setFlag(QGraphicsItem::ItemIsSelectable);
                 }
               else
                 {
