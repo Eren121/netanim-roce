@@ -38,14 +38,18 @@ public:
 
 
 protected:
-  void paintEvent (QPaintEvent * event);
-  void wheelEvent (QWheelEvent *event);
-
+  void paintEvent (QPaintEvent * event) override;
+  void wheelEvent (QWheelEvent *event) override;
+  void mouseMoveEvent(QMouseEvent *event) override;
+  void mousePressEvent(QMouseEvent *event) override;
+  void mouseReleaseEvent(QMouseEvent *event) override;
 
 private:
   explicit AnimatorView (QGraphicsScene *);
   AnimatorScene * getAnimatorScene ();
   qreal m_currentZoomFactor;
+
+  QPoint m_lastMousePos;
 
 signals:
 

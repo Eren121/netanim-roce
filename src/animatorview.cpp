@@ -98,6 +98,43 @@ AnimatorView::wheelEvent (QWheelEvent *event)
   update ();
 }
 
+void AnimatorView::mouseMoveEvent(QMouseEvent *event)
+{
+  if(cursor() == Qt::PointingHandCursor) {
+    QPoint mouse(event->x(), event->y());
+    QPoint delta(m_lastMousePos - mouse);
+    m_lastMousePos = mouse;
+
+    QRect center = viewport()->rect();
+    center.translate(delta);
+    QPointF target = mapToScene(center).boundingRect().center();
+    centerOn(target);
+  }
+
+  QGraphicsView::mouseMoveEvent (event);
+}
+
+void AnimatorView::mousePressEvent(QMouseEvent *event)
+{
+  if(event->button() == Qt::MiddleButton) {
+    setCursor(Qt::PointingHandCursor);
+    m_lastMousePos = QPoint(event->x(), event->y());
+  }
+  else {
+    QGraphicsView::mousePressEvent (event);
+  }
+}
+
+void AnimatorView::mouseReleaseEvent(QMouseEvent *event)
+{
+  if(event->button() == Qt::MiddleButton) {
+    setCursor(Qt::ArrowCursor);
+  }
+  else {
+    QGraphicsView::mouseReleaseEvent (event);
+  }
+}
+
 void
 AnimatorView::fitSceneWithinView ()
 {
