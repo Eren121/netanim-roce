@@ -14,3 +14,5 @@ qrc_resources.cpp
 
 Makefile
 NetAnim
+
+cmake-build-*
