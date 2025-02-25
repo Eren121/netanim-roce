@@ -1264,6 +1264,12 @@ AnimatorMode::updateUpdateRateSlot (int value)
     }
 }
 
+void
+AnimatorMode::setXMLTraceFile(QString traceFileName)
+{
+  m_traceFileName = traceFileName;
+  reloadFileSlot();
+}
 
 void
 AnimatorMode::reloadFileSlot ()

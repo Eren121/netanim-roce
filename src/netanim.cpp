@@ -23,8 +23,32 @@
 #include "designer/designermode.h"
 #endif
 
+#include <QCommandLineParser>
+
+
 namespace netanim
 {
+
+void loadDefaultXMLFile()
+{
+  QCommandLineParser parser;
+  parser.setApplicationDescription("Netanim for ns3-roce");
+  parser.addHelpOption();
+  parser.addVersionOption();
+  parser.addPositionalArgument("anim", "Default XML animation file to load.", "[anim]");
+  parser.process(*QApplication::instance());
+
+  if(parser.positionalArguments().size() > 0) {
+    const QString path = parser.positionalArguments()[0];
+
+    // Don't call directly `setXMLTraceFile()` because the viewport would be a bit too unzoomed
+    // Probably because objects are not yet initialized, so give them time
+    
+    QTimer::singleShot(20, [path]{
+      AnimatorMode::getInstance()->setXMLTraceFile(path);
+    });
+  }
+}
 
 NetAnim::NetAnim ():
   m_tabWidget (new QTabWidget)
@@ -53,6 +77,8 @@ NetAnim::NetAnim ():
   m_tabWidget->showMaximized ();
   m_tabWidget->show ();
   animatorTab->start ();
+
+  loadDefaultXMLFile();
 }
 
 

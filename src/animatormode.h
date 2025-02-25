@@ -86,6 +86,8 @@ public:
   void start ();
   void openPropertyBroswer ();
 
+  void setXMLTraceFile(QString traceFileName);
+
 private:
 
   // state
