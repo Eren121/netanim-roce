@@ -841,8 +841,7 @@ AnimatorMode::postParse ()
   enableAllToolButtons (true);
   m_showNodeIdButton->setChecked (true);
   showNodeIdSlot ();
-  m_gridButton->setChecked (true);
-  showGridLinesSlot ();
+  
   AnimatorView::getInstance ()->postParse ();
   //AnimatorScene::getInstance ()->postParse ();
   //AnimatorScene::getInstance ()->setNodeSize (nodeSizeStringToValue (m_nodeSizeComboBox->currentText ()));
@@ -854,10 +853,10 @@ AnimatorMode::postParse ()
   resetBackground ();
 
   dispatchEvents ();
+  
   m_gridButton->setChecked (false);
   showGridLinesSlot ();
-  m_gridButton->setChecked (true);
-  showGridLinesSlot ();
+  
   AnimatorView::getInstance ()->postParse ();
   AnimPropertyBroswer::getInstance ()->postParse ();
 
