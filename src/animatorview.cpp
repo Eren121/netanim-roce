@@ -71,7 +71,7 @@ AnimatorView::setCurrentZoomFactor (qreal factor)
     {
       scale (1.1, 1.1);
     }
-  else
+  else if(m_currentZoomFactor > factor)
     {
       scale (0.9, 0.9);
     }
@@ -82,7 +82,19 @@ AnimatorView::setCurrentZoomFactor (qreal factor)
 void
 AnimatorView::wheelEvent (QWheelEvent *event)
 {
-  QGraphicsView::wheelEvent (event);
+  if(QApplication::keyboardModifiers() & Qt::ControlModifier) {
+    int delta = event->angleDelta().y();
+    if(delta > 0) {
+      setCurrentZoomFactor (m_currentZoomFactor + 1);
+    }
+    else if(delta < 0) {
+      setCurrentZoomFactor (m_currentZoomFactor -  1);
+    } 
+  }
+  else {
+    QGraphicsView::wheelEvent (event);
+  }
+
   update ();
 }
 
