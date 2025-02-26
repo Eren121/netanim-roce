@@ -769,6 +769,18 @@ AnimPacket::paint (QPainter *painter, const QStyleOptionGraphicsItem *option, QW
   //NS_LOG_DEBUG ("Scene Transform:" << sceneTransform());
   QPen p;
   QTransform viewTransform = AnimatorView::getInstance ()->transform ();
+
+  painter->save ();
+  painter->setOpacity(0.5); 
+  if(isSelected()) {
+    setZValue(1);
+    painter->drawRect(boundingRect());
+  }
+  else {
+    setZValue(0);
+  }
+  painter->restore ();
+
   painter->save ();
   QPainterPath arrowTailPath;
   arrowTailPath.moveTo (0, 0);
